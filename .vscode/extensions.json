@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "bradlc.vscode-tailwindcss",
+    "dsznajder.es7-react-js-snippets",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "usernamehw.errorlens",
+    "yoavbls.pretty-ts-errors",
+    "ms-playwright.playwright",
+    "firsttris.vscode-jest-runner",
+    "aaron-bond.better-comments",
+    "Gruntfuggly.todo-tree"
+  ]
+}
