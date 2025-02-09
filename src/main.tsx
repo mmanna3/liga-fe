@@ -5,6 +5,8 @@ import SeccionPrincipalFichaje from './pages/SeccionPrincipalFichaje/SeccionPrin
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <SeccionPrincipalFichaje />
+    <div className='flex justify-center w-screen'>
+      <SeccionPrincipalFichaje />
+    </div>
   </StrictMode>
 )
