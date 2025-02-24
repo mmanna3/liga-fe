@@ -14,7 +14,7 @@ const fetchClubs = async () => {
 }
 
 export default function Club() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['clubs'],
     queryFn: fetchClubs
   })
@@ -25,7 +25,7 @@ export default function Club() {
       <Botonera>
         <Button>Crear nuevo club</Button>
       </Botonera>
-      <Tabla data={data} isLoading={isLoading} />
+      <Tabla data={data} isLoading={isLoading} isError={isError} />
     </>
   )
 }
