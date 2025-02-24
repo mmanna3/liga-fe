@@ -1,6 +1,7 @@
 import Botonera from '@/components/ui/botonera'
 import { Button } from '@/components/ui/button'
 import Titulo from '@/components/ui/titulo'
+import Tabla from './tabla'
 
 export default function Club() {
   return (
@@ -9,7 +10,7 @@ export default function Club() {
       <Botonera>
         <Button>Crear nuevo club</Button>
       </Botonera>
-      {/* <Table></Table> */}
+      <Tabla />
     </>
   )
 }

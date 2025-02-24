@@ -5,5 +5,5 @@ interface BotoneraProps {
 }
 
 export default function Botonera({ children }: BotoneraProps) {
-  return <div className='mt-12 mb-8'>{children}</div>
+  return <div className='my-12'>{children}</div>
 }
