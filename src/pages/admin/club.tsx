@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import Titulo from '@/components/ui/titulo'
 import { BASE_URL } from '@/consts'
 import { useQuery } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import Tabla from './tabla'
 
 const fetchClubs = async () => {
@@ -19,11 +20,15 @@ export default function Club() {
     queryFn: fetchClubs
   })
 
+  const navigate = useNavigate()
+
   return (
     <>
       <Titulo>Clubs</Titulo>
       <Botonera>
-        <Button>Crear nuevo club</Button>
+        <Button onClick={() => navigate('/admin/clubs/crear')}>
+          Crear nuevo club
+        </Button>
       </Botonera>
       <Tabla data={data} isLoading={isLoading} isError={isError} />
     </>
