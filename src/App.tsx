@@ -1,35 +1,31 @@
-import { useState } from 'react'
-import './App.css'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import AdminLayout from './pages/admin/admin-layout'
+import Club from './pages/admin/Club'
+import PaginaNoEncontrada from './pages/pagina-no-encontrada'
+import SeccionPrincipalFichaje from './pages/SeccionPrincipalFichaje/SeccionPrincipalFichaje'
 
-function App() {
-  const [count, setCount] = useState(0)
+// Definir rutas
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: (
+      <div className='flex justify-center w-screen'>
+        <SeccionPrincipalFichaje />
+      </div>
+    )
+  }, // Ruta base
+  {
+    path: '/admin',
+    element: <AdminLayout />, // Layout de admin
+    children: [
+      { path: '', element: <></> },
+      { path: 'clubs', element: <Club /> } // /admin/users
+      // { path: 'settings', element: <AdminSettings /> } // /admin/settings
+    ]
+  },
+  { path: '*', element: <PaginaNoEncontrada /> } // Página 404
+])
 
-  return (
-    <>
-      <div>
-        <a href='https://vite.dev' target='_blank' rel='noreferrer'>
-          <img src={viteLogo} className='logo' alt='Vite logo' />
-        </a>
-        <a href='https://react.dev' target='_blank' rel='noreferrer'>
-          <img src={reactLogo} className='logo react' alt='React logo' />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className='card'>
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className='read-the-docs'>
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+export default function App() {
+  return <RouterProvider router={router} />
 }
-
-export default App
