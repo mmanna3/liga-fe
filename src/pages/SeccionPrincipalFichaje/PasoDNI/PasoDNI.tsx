@@ -1,5 +1,5 @@
 import { useFormContext } from 'react-hook-form'
-import { BASE_URL } from '../../../../consts'
+import { BASE_URL } from '../../../consts'
 import FormErrorHandler from '../Error/FormErrorHandler'
 import Input from '../Input/Input'
 import Label from '../Label/Label'

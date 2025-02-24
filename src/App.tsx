@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import AdminLayout from './pages/admin/admin-layout'
-import Club from './pages/admin/Club'
+import Club from './pages/admin/club'
 import PaginaNoEncontrada from './pages/pagina-no-encontrada'
 import SeccionPrincipalFichaje from './pages/SeccionPrincipalFichaje/SeccionPrincipalFichaje'
 

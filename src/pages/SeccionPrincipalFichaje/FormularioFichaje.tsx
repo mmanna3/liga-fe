@@ -1,5 +1,5 @@
 import { FormProvider, useForm } from 'react-hook-form'
-import { BASE_URL } from '../../../consts'
+import { BASE_URL } from '../../consts'
 import MessageBox from './MessageBox'
 import PasoBotonEnviar from './PasoBotonEnviar/PasoBotonEnviar'
 import PasoCodigoEquipo from './PasoCodigoEquipo/PasoCodigoEquipo'
