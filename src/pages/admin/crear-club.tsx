@@ -30,7 +30,7 @@ export default function CrearClub() {
     },
     onSuccess: () => {
       setError(null)
-      navigate('admin/clubs')
+      navigate('/admin/clubs')
     },
     onError: (err) => {
       setError(err.message)
