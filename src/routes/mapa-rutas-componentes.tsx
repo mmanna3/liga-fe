@@ -1,3 +1,4 @@
+import DetalleClub from '@/pages/admin/club/detalle-club'
 import AdminLayout from '../pages/admin/admin-layout'
 import Club from '../pages/admin/club/club'
 import CrearClub from '../pages/admin/club/crear-club'
@@ -20,7 +21,8 @@ export const mapaRutasComponentes = [
     children: [
       { path: '', element: <></> },
       { path: rutas.clubs, element: <Club /> },
-      { path: rutas.crearClub, element: <CrearClub /> }
+      { path: rutas.crearClub, element: <CrearClub /> },
+      { path: `${rutas.detalleClub}/:id`, element: <DetalleClub /> }
     ]
   },
   { path: '*', element: <PaginaNoEncontrada /> }

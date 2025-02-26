@@ -1,9 +1,11 @@
 import { api } from '@/api/api'
 import { ClubDTO } from '@/api/clients'
 import useApiMutation from '@/api/custom-hooks/use-api-mutation'
+import Botonera from '@/components/ui/botonera'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import BotonVolver from '@/components/ykn-ui/boton-volver'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -42,18 +44,12 @@ export default function CrearClub() {
             required
           />
           {error && <p className='text-red-500 text-sm'>{error}</p>}
-          <div className='flex justify-end space-x-2'>
-            <Button
-              variant='outline'
-              type='button'
-              onClick={() => navigate(-1)}
-            >
-              Cancelar
-            </Button>
+          <Botonera>
+            <BotonVolver texto='Cancelar' />
             <Button type='submit' disabled={mutation.isPending}>
               {mutation.isPending ? 'Guardando...' : 'Guardar'}
             </Button>
-          </div>
+          </Botonera>
         </form>
       </CardContent>
     </Card>

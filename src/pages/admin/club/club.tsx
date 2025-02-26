@@ -1,8 +1,8 @@
 import { api } from '@/api/api'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
-import Botonera from '@/components/ui/botonera'
 import { Button } from '@/components/ui/button'
-import Titulo from '@/components/ui/titulo'
+import Botonera from '@/components/ykn-ui/botonera'
+import Titulo from '@/components/ykn-ui/titulo'
 import { useNavigate } from 'react-router-dom'
 import Tabla from './tabla'
 

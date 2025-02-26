@@ -1,5 +1,5 @@
 import { ClubDTO } from '@/api/clients'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert' // Asegúrate de que tienes un componente Alert
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -16,7 +16,9 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
+import { rutasNavegacion } from '@/routes/rutas'
 import { MoreVertical } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 type TablaProps = {
   data: ClubDTO[]
@@ -25,6 +27,8 @@ type TablaProps = {
 }
 
 export default function Tabla({ data, isLoading, isError }: TablaProps) {
+  const navigate = useNavigate()
+
   return (
     <Table>
       <TableHeader>
@@ -69,14 +73,11 @@ export default function Tabla({ data, isLoading, isError }: TablaProps) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align='end'>
                     <DropdownMenuItem
-                      onClick={() => alert(`Detalle de ${item.nombre}`)}
+                      onClick={() =>
+                        navigate(`${rutasNavegacion.detalleClub}/${item.id}`)
+                      }
                     >
                       Detalle
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => alert(`Equipos de ${item.nombre}`)}
-                    >
-                      Equipos
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
