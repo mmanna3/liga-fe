@@ -843,7 +843,7 @@ export class EquipoDTO implements IEquipoDTO {
     nombre?: string | undefined;
     clubId?: number;
     clubNombre?: string | undefined;
-    jugadores?: string[] | undefined;
+    jugadores?: JugadorDelEquipoDTO[] | undefined;
 
     constructor(data?: IEquipoDTO) {
         if (data) {
@@ -863,7 +863,7 @@ export class EquipoDTO implements IEquipoDTO {
             if (Array.isArray(_data["jugadores"])) {
                 this.jugadores = [] as any;
                 for (let item of _data["jugadores"])
-                    this.jugadores!.push(item);
+                    this.jugadores!.push(JugadorDelEquipoDTO.fromJS(item));
             }
         }
     }
@@ -884,7 +884,7 @@ export class EquipoDTO implements IEquipoDTO {
         if (Array.isArray(this.jugadores)) {
             data["jugadores"] = [];
             for (let item of this.jugadores)
-                data["jugadores"].push(item);
+                data["jugadores"].push(item.toJSON());
         }
         return data;
     }
@@ -895,7 +895,15 @@ export interface IEquipoDTO {
     nombre?: string | undefined;
     clubId?: number;
     clubNombre?: string | undefined;
-    jugadores?: string[] | undefined;
+    jugadores?: JugadorDelEquipoDTO[] | undefined;
+}
+
+export enum EstadoJugadorEnum {
+    _1 = 1,
+    _2 = 2,
+    _3 = 3,
+    _4 = 4,
+    _5 = 5,
 }
 
 export class JugadorDTO implements IJugadorDTO {
@@ -964,6 +972,58 @@ export interface IJugadorDTO {
     fechaNacimiento: Date;
     equipoInicialId?: number;
     equipos?: EquipoDTO[] | undefined;
+}
+
+export class JugadorDelEquipoDTO implements IJugadorDelEquipoDTO {
+    id?: number;
+    dni?: string | undefined;
+    nombre?: string | undefined;
+    apellido?: string | undefined;
+    estado?: EstadoJugadorEnum;
+
+    constructor(data?: IJugadorDelEquipoDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.dni = _data["dni"];
+            this.nombre = _data["nombre"];
+            this.apellido = _data["apellido"];
+            this.estado = _data["estado"];
+        }
+    }
+
+    static fromJS(data: any): JugadorDelEquipoDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new JugadorDelEquipoDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["dni"] = this.dni;
+        data["nombre"] = this.nombre;
+        data["apellido"] = this.apellido;
+        data["estado"] = this.estado;
+        return data;
+    }
+}
+
+export interface IJugadorDelEquipoDTO {
+    id?: number;
+    dni?: string | undefined;
+    nombre?: string | undefined;
+    apellido?: string | undefined;
+    estado?: EstadoJugadorEnum;
 }
 
 export class ApiException extends Error {

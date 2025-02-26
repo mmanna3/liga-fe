@@ -54,7 +54,9 @@ export default function DetalleEquipo() {
         <h2 className='text-md font-bold'>Jugadores</h2>
         <ul className='list-disc list-inside'>
           {equipo!.jugadores!.map((jug) => (
-            <li key={jug}>{jug}</li>
+            <li key={jug.id}>
+              {jug.nombre} {jug.apellido} - {jug.dni}
+            </li>
           ))}
         </ul>
       </CardContent>
