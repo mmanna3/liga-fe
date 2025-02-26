@@ -1,14 +1,15 @@
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
+import { rutasNavegacion } from '@/routes/rutas'
 import { LayoutDashboard, Menu, Shield, Users } from 'lucide-react'
 import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 
 const menuItems = [
-  { name: 'Clubs', path: '/admin/clubs', icon: LayoutDashboard },
-  { name: 'Equipos', path: '/admin/equipos', icon: Shield },
-  { name: 'Jugadores', path: '/admin/jugadores', icon: Users }
+  { name: 'Clubs', path: rutasNavegacion.clubs, icon: LayoutDashboard },
+  { name: 'Equipos', path: rutasNavegacion.equipos, icon: Shield },
+  { name: 'Jugadores', path: rutasNavegacion.jugadores, icon: Users }
 ]
 
 export default function AdminLayout() {

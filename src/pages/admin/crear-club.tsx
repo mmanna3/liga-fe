@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { BASE_URL } from '@/consts'
+import { rutasNavegacion } from '@/routes/rutas'
 import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -30,7 +31,7 @@ export default function CrearClub() {
     },
     onSuccess: () => {
       setError(null)
-      navigate('/admin/clubs')
+      navigate(rutasNavegacion.clubs)
     },
     onError: (err) => {
       setError(err.message)

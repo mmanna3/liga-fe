@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import { rutas } from './rutas'
+import { mapaRutasComponentes } from './routes/mapa-rutas-componentes'
 
-const router = createBrowserRouter(rutas)
+const router = createBrowserRouter(mapaRutasComponentes)
 
 export default function App() {
   return <RouterProvider router={router} />
