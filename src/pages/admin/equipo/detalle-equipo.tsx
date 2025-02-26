@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
 import Botonera from '@/components/ykn-ui/botonera'
 import DetalleItem from '@/components/ykn-ui/detalle-item'
+import JugadorEstadoBadge from '@/components/ykn-ui/jugador-estado-badge'
 import { useParams } from 'react-router-dom'
 
 export default function DetalleEquipo() {
@@ -43,7 +44,7 @@ export default function DetalleEquipo() {
   }
 
   return (
-    <Card className='max-w-md mx-auto mt-10 p-4'>
+    <Card className='max-w-2lg mx-auto mt-10 p-4'>
       <CardHeader>
         <CardTitle>{equipo!.nombre}</CardTitle>
       </CardHeader>
@@ -54,8 +55,11 @@ export default function DetalleEquipo() {
         <h2 className='text-md font-bold'>Jugadores</h2>
         <ul className='list-disc list-inside'>
           {equipo!.jugadores!.map((jug) => (
-            <li key={jug.id}>
-              {jug.nombre} {jug.apellido} - {jug.dni}
+            <li key={jug.id} className='my-1'>
+              {jug.nombre} {jug.apellido} - {jug.dni}{' '}
+              <span className='ml-2'>
+                <JugadorEstadoBadge estado={Number(jug.estado)} />
+              </span>
             </li>
           ))}
         </ul>
