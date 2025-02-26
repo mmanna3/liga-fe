@@ -5,7 +5,8 @@ export const rutas = {
   equipos: 'equipos',
   crearEquipo: 'equipos/crear',
   detalleEquipo: 'equipos/detalle',
-  jugadores: 'jugadores'
+  jugadores: 'jugadores',
+  detalleJugador: 'jugadores/detalle'
 }
 
 export const rutasNavegacion: { [K in keyof typeof rutas]: string } =

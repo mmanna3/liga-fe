@@ -1,5 +1,6 @@
 import DetalleClub from '@/pages/admin/club/detalle-club'
 import CrearEquipo from '@/pages/admin/equipo/crear-equipo'
+import DetalleEquipo from '@/pages/admin/equipo/detalle-equipo'
 import Equipo from '@/pages/admin/equipo/equipo'
 import AdminLayout from '../pages/admin/admin-layout'
 import Club from '../pages/admin/club/club'
@@ -26,7 +27,8 @@ export const mapaRutasComponentes = [
       { path: rutas.crearClub, element: <CrearClub /> },
       { path: `${rutas.detalleClub}/:id`, element: <DetalleClub /> },
       { path: rutas.equipos, element: <Equipo /> },
-      { path: `${rutas.crearEquipo}/:clubid`, element: <CrearEquipo /> }
+      { path: `${rutas.crearEquipo}/:clubid`, element: <CrearEquipo /> },
+      { path: `${rutas.detalleEquipo}/:id`, element: <DetalleEquipo /> }
     ]
   },
   { path: '*', element: <PaginaNoEncontrada /> }

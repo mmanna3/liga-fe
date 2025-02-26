@@ -842,6 +842,8 @@ export class EquipoDTO implements IEquipoDTO {
     id?: number;
     nombre?: string | undefined;
     clubId?: number;
+    clubNombre?: string | undefined;
+    jugadores?: string[] | undefined;
 
     constructor(data?: IEquipoDTO) {
         if (data) {
@@ -857,6 +859,12 @@ export class EquipoDTO implements IEquipoDTO {
             this.id = _data["id"];
             this.nombre = _data["nombre"];
             this.clubId = _data["clubId"];
+            this.clubNombre = _data["clubNombre"];
+            if (Array.isArray(_data["jugadores"])) {
+                this.jugadores = [] as any;
+                for (let item of _data["jugadores"])
+                    this.jugadores!.push(item);
+            }
         }
     }
 
@@ -872,6 +880,12 @@ export class EquipoDTO implements IEquipoDTO {
         data["id"] = this.id;
         data["nombre"] = this.nombre;
         data["clubId"] = this.clubId;
+        data["clubNombre"] = this.clubNombre;
+        if (Array.isArray(this.jugadores)) {
+            data["jugadores"] = [];
+            for (let item of this.jugadores)
+                data["jugadores"].push(item);
+        }
         return data;
     }
 }
@@ -880,6 +894,8 @@ export interface IEquipoDTO {
     id?: number;
     nombre?: string | undefined;
     clubId?: number;
+    clubNombre?: string | undefined;
+    jugadores?: string[] | undefined;
 }
 
 export class JugadorDTO implements IJugadorDTO {

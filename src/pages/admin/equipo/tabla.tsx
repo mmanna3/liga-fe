@@ -65,7 +65,7 @@ export default function Tabla({ data, isLoading, isError }: TablaProps) {
           data.map((item) => (
             <TableRow key={item.id}>
               <TableCell>{item.nombre}</TableCell>
-              <TableCell>{item.clubId}</TableCell>
+              <TableCell>{item.clubNombre}</TableCell>
               <TableCell className='text-right'>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
