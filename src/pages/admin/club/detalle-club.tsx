@@ -1,14 +1,17 @@
 import { api } from '@/api/api'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
 import Botonera from '@/components/ykn-ui/botonera'
-import { useParams } from 'react-router-dom'
+import { rutasNavegacion } from '@/routes/rutas'
+import { useNavigate, useParams } from 'react-router-dom'
 
 export default function DetalleClub() {
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
 
   const {
     data: club,
@@ -47,6 +50,13 @@ export default function DetalleClub() {
         <CardTitle>{club!.nombre}</CardTitle>
       </CardHeader>
       <CardContent>
+        <Botonera>
+          <Button
+            onClick={() => navigate(`${rutasNavegacion.crearEquipo}/${id}`)}
+          >
+            Crear nuevo equipo
+          </Button>
+        </Botonera>
         <h2 className='text-xl font-bold'>Equipos</h2>
         <ul className='list-disc list-inside'>
           {club!.equipos!.map((equipo) => (
