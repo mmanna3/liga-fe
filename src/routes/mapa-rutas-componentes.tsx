@@ -1,6 +1,6 @@
 import AdminLayout from '../pages/admin/admin-layout'
-import Club from '../pages/admin/club'
-import CrearClub from '../pages/admin/crear-club'
+import Club from '../pages/admin/club/club'
+import CrearClub from '../pages/admin/club/crear-club'
 import PaginaNoEncontrada from '../pages/pagina-no-encontrada'
 import SeccionPrincipalFichaje from '../pages/SeccionPrincipalFichaje/SeccionPrincipalFichaje'
 import { rutas } from './rutas'
