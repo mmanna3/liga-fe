@@ -14,7 +14,6 @@ export default function CrearEquipo() {
   const navigate = useNavigate()
   const { clubid } = useParams<{ clubid: string }>()
   const [nombre, setNombre] = useState<string>('')
-  const [error, setError] = useState<string | null>(null)
 
   const mutation = useApiMutation({
     fn: async (nuevoEquipo: EquipoDTO) => {
@@ -27,7 +26,6 @@ export default function CrearEquipo() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setError(null)
     mutation.mutate(new EquipoDTO({ nombre, clubId: Number(clubid) }))
   }
 
@@ -45,7 +43,6 @@ export default function CrearEquipo() {
             onChange={(e) => setNombre(e.target.value)}
             required
           />
-          {error && <p className='text-red-500 text-sm'>{error}</p>}
           <Botonera>
             <BotonVolver texto='Cancelar' />
             <Button type='submit' disabled={mutation.isPending}>

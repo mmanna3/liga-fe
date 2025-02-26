@@ -13,7 +13,6 @@ import { useNavigate } from 'react-router-dom'
 export default function CrearClub() {
   const navigate = useNavigate()
   const [nombre, setNombre] = useState<string>('')
-  const [error, setError] = useState<string | null>(null)
 
   const mutation = useApiMutation({
     fn: async (nuevoClub: ClubDTO) => {
@@ -25,7 +24,6 @@ export default function CrearClub() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setError(null)
     mutation.mutate(new ClubDTO({ nombre }))
   }
 
@@ -43,7 +41,6 @@ export default function CrearClub() {
             onChange={(e) => setNombre(e.target.value)}
             required
           />
-          {error && <p className='text-red-500 text-sm'>{error}</p>}
           <Botonera>
             <BotonVolver texto='Cancelar' />
             <Button type='submit' disabled={mutation.isPending}>
