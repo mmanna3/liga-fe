@@ -1,47 +1,30 @@
+import { api } from '@/api/api'
+import { ClubDTO } from '@/api/clients'
+import useApiMutation from '@/api/custom-hooks/use-api-mutation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { BASE_URL } from '@/consts'
 import { rutasNavegacion } from '@/routes/rutas'
-import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
-interface Club {
-  nombre: string
-}
 
 export default function CrearClub() {
   const navigate = useNavigate()
   const [nombre, setNombre] = useState<string>('')
   const [error, setError] = useState<string | null>(null)
 
-  const mutation = useMutation<Club, Error, Club>({
-    mutationFn: async (newClub: Club) => {
-      const response = await fetch(`${BASE_URL}/club`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newClub)
-      })
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || 'Error al crear el club')
-      }
-      return response.json()
+  const mutation = useApiMutation({
+    fn: async (nuevoClub: ClubDTO) => {
+      await api.clubPOST(nuevoClub)
     },
-    onSuccess: () => {
-      setError(null)
-      navigate(rutasNavegacion.clubs)
-    },
-    onError: (err) => {
-      setError(err.message)
-    }
+    antesDeMensajeExito: () => navigate(rutasNavegacion.clubs),
+    mensajeDeExito: `Club '${nombre}' creado correctamente`
   })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError(null)
-    mutation.mutate({ nombre })
+    mutation.mutate(new ClubDTO({ nombre }))
   }
 
   return (

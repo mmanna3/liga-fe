@@ -1,3 +1,4 @@
+import { ClubDTO } from '@/api/clients'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert' // Asegúrate de que tienes un componente Alert
 import { Button } from '@/components/ui/button'
 import {
@@ -18,7 +19,7 @@ import {
 import { MoreVertical } from 'lucide-react'
 
 type TablaProps = {
-  data: { id: string | number; nombre: string }[]
+  data: ClubDTO[]
   isLoading: boolean
   isError: boolean
 }

@@ -1,23 +1,15 @@
+import { api } from '@/api/api'
+import useApiQuery from '@/api/custom-hooks/use-api-query'
 import Botonera from '@/components/ui/botonera'
 import { Button } from '@/components/ui/button'
 import Titulo from '@/components/ui/titulo'
-import { BASE_URL } from '@/consts'
-import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import Tabla from './tabla'
 
-const fetchClubs = async () => {
-  const response = await fetch(`${BASE_URL}/club`)
-  if (!response.ok) {
-    throw new Error('Error al obtener los datos')
-  }
-  return response.json()
-}
-
 export default function Club() {
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['clubs'],
-    queryFn: fetchClubs
+  const { data, isLoading, isError } = useApiQuery({
+    key: ['clubs'],
+    fn: async () => await api.clubAll()
   })
 
   const navigate = useNavigate()
@@ -30,7 +22,7 @@ export default function Club() {
           Crear nuevo club
         </Button>
       </Botonera>
-      <Tabla data={data} isLoading={isLoading} isError={isError} />
+      <Tabla data={data!} isLoading={isLoading} isError={isError} />
     </>
   )
 }

@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { Toaster } from '@/components/ui/sonner'
 import { cn } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
 import { LayoutDashboard, Menu, Shield, Users } from 'lucide-react'
@@ -17,6 +18,7 @@ export default function AdminLayout() {
 
   return (
     <div className='flex h-screen w-screen'>
+      <Toaster />
       {/* Menú lateral */}
       <aside className='hidden md:flex flex-col w-64 bg-gray-900 text-white p-4 space-y-4'>
         {/* <h1 className='text-xl font-bold'>Admin</h1> ACÁ PONER EL NOMBRE DE LA LIGA */}
