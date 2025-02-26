@@ -4,6 +4,7 @@ export const rutas = {
   detalleClub: 'clubs/detalle',
   equipos: 'equipos',
   crearEquipo: 'equipos/crear',
+  detalleEquipo: 'equipos/detalle',
   jugadores: 'jugadores'
 }
 
