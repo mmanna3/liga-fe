@@ -1,6 +1,7 @@
+import { api } from '@/api/api'
+import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { BASE_URL } from '../../../consts'
 import FormErrorHandler from '../Error/FormErrorHandler'
 import Input from '../Input/Input'
 import Label from '../Label/Label'
@@ -10,13 +11,8 @@ interface IProps {
   valorInicial: string
 }
 
-const PasoCodigoEquipo = (props: IProps) => {
-  const [codigoEquipo, setCodigoEquipo] = useState<string>(props.valorInicial)
-  const [codigoEquipoEsValido, setCodigoEquipoEsValido] = useState<
-    boolean | null
-  >(null)
-  const [nombreEquipo, setNombreEquipo] = useState('')
-  const [yaValidoCodigoEquipo, setYaValidoCodigoEquipo] = useState(false)
+const PasoCodigoEquipo = ({ valorInicial }: IProps) => {
+  const [codigoEquipo, setCodigoEquipo] = useState<string>(valorInicial)
 
   const {
     register,
@@ -27,27 +23,14 @@ const PasoCodigoEquipo = (props: IProps) => {
     setCodigoEquipo(id)
   }
 
-  const validar = async () => {
-    return fetch(
-      `${BASE_URL}/publico/obtenerNombreDelEquipo?codigoAlfanumerico=${codigoEquipo}`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        setNombreEquipo(data)
-        setCodigoEquipoEsValido(true)
-        setYaValidoCodigoEquipo(true)
-        return true
-      })
-      .catch(() => {
-        setCodigoEquipoEsValido(false)
-        setYaValidoCodigoEquipo(true)
-        return false
-      })
-  }
+  const { data, isLoading, refetch } = useApiQuery({
+    key: ['nombre-equipo', codigoEquipo],
+    fn: async () => await api.obtenerNombreEquipo(codigoEquipo),
+    activado: false
+  })
 
   const onValidarClick = async () => {
-    const resultado = await validar()
-    return resultado
+    await refetch()
   }
 
   return (
@@ -63,11 +46,8 @@ const PasoCodigoEquipo = (props: IProps) => {
           <Input
             onChange={onCodigoEquipoChange}
             type='string'
-            register={register('codigoAlfanumerico', {
-              required: true,
-              validate: { asyncValidate: onValidarClick }
-            })}
-            valorInicial={props.valorInicial}
+            register={register('codigoAlfanumerico', { required: true })}
+            valorInicial={valorInicial}
             name='codigoAlfanumerico'
             className='w-1/2'
           />
@@ -77,20 +57,20 @@ const PasoCodigoEquipo = (props: IProps) => {
               className='py-auto rounded-lg bg-green-700 text-center text-white'
               style={{ width: '100%' }}
               onClick={onValidarClick}
+              disabled={isLoading}
             >
-              Validar
+              {isLoading ? 'Validando...' : 'Validar'}
             </button>
           </div>
         </div>
-        {yaValidoCodigoEquipo &&
-          (codigoEquipoEsValido ? (
-            <MessageBox type='success'>
-              Tu equipo es: <strong>{nombreEquipo}</strong>
-            </MessageBox>
-          ) : (
-            <MessageBox type='error'>El código es incorrecto</MessageBox>
-          ))}
-
+        {data?.respuesta && (
+          <MessageBox type='success'>
+            Tu equipo es: <strong>{data?.respuesta}</strong>
+          </MessageBox>
+        )}
+        {data?.hayError && (
+          <MessageBox type='error'>El código es incorrecto</MessageBox>
+        )}
         <FormErrorHandler
           errors={errors}
           name='codigoAlfanumerico'

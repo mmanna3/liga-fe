@@ -1,9 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query'
 
 interface IProps<T> {
-  fn: () => Promise<T>;
-  key: Array<string | number | null | undefined>;
-  activado?: boolean;
+  fn: () => Promise<T>
+  key: Array<string | number | null | undefined>
+  activado?: boolean
+  onResultadoExitoso?: (data: T) => void
+  onError?: (error: unknown) => void
 }
 
 const useApiQuery = <T,>(props: IProps<T>) => {
@@ -13,15 +15,23 @@ const useApiQuery = <T,>(props: IProps<T>) => {
     throwOnError: true,
     queryFn: async () => {
       try {
-        return await props.fn();
+        return await props.fn()
       } catch (error) {
-        console.log("Error en Request", error);
-        throw new Error("Error en el servidor: " + error);
+        console.log('Error en Request', error)
+        throw new Error('Error en el servidor: ' + error)
       }
-    },
-  });
+    }
+  })
 
-  return query;
-};
+  if (query.isSuccess && props.onResultadoExitoso) {
+    props.onResultadoExitoso(query.data)
+  }
 
-export default useApiQuery;
+  if (query.isError && props.onError) {
+    props.onError(query.error)
+  }
+
+  return query
+}
+
+export default useApiQuery
