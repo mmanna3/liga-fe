@@ -49,8 +49,9 @@ export default function DetalleEquipo() {
         <CardTitle>{equipo!.nombre}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className='mb-4'>
+        <div className='mb-4 space-y-2'>
           <DetalleItem clave='Club' valor={equipo!.clubNombre!} />
+          <DetalleItem clave='Código' valor={equipo!.codigoAlfanumerico!} />
         </div>
         <h2 className='text-md font-bold'>Jugadores</h2>
         <ul className='list-disc list-inside'>
@@ -65,7 +66,7 @@ export default function DetalleEquipo() {
         </ul>
       </CardContent>
       <Botonera>
-        <BotonVolver texto='Cancelar' />
+        <BotonVolver texto='Volver' />
       </Botonera>
     </Card>
   )

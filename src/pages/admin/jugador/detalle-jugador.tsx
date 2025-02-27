@@ -71,7 +71,7 @@ export default function DetalleJugador() {
         </ul>
       </CardContent>
       <Botonera>
-        <BotonVolver texto='Cancelar' />
+        <BotonVolver texto='Volver' />
       </Botonera>
     </Card>
   )

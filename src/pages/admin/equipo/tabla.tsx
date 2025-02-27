@@ -35,6 +35,7 @@ export default function Tabla({ data, isLoading, isError }: TablaProps) {
         <TableRow>
           <TableHead>Nombre</TableHead>
           <TableHead>Club</TableHead>
+          <TableHead>Código</TableHead>
           <TableHead>Jugadores</TableHead>
           <TableHead className='w-12' />
         </TableRow>
@@ -67,6 +68,7 @@ export default function Tabla({ data, isLoading, isError }: TablaProps) {
             <TableRow key={item.id}>
               <TableCell>{item.nombre}</TableCell>
               <TableCell>{item.clubNombre}</TableCell>
+              <TableCell>{item.codigoAlfanumerico}</TableCell>
               <TableCell>{item.jugadores!.length}</TableCell>
               <TableCell className='text-right'>
                 <DropdownMenu>

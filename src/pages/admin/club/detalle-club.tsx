@@ -65,7 +65,7 @@ export default function DetalleClub() {
         </ul>
       </CardContent>
       <Botonera>
-        <BotonVolver texto='Cancelar' />
+        <BotonVolver texto='Volver' />
       </Botonera>
     </Card>
   )
