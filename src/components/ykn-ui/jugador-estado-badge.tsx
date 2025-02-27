@@ -11,23 +11,23 @@ export enum EstadoJugadorEnum {
 const estadoConfig = {
   [EstadoJugadorEnum.FichajePendienteDeAprobacion]: {
     texto: 'Pendiente de aprobación',
-    color: 'bg-yellow-500 text-white'
+    color: 'bg-blue-500 text-slate-200'
   },
   [EstadoJugadorEnum.FichajeRechazado]: {
     texto: 'Fichaje rechazado',
-    color: 'bg-red-500 text-white'
+    color: 'bg-red-500 text-slate-200'
   },
   [EstadoJugadorEnum.Activo]: {
     texto: 'Activo',
-    color: 'bg-green-500 text-white'
+    color: 'bg-green-500 text-slate-200'
   },
   [EstadoJugadorEnum.Suspendido]: {
     texto: 'Suspendido',
-    color: 'bg-orange-500 text-white'
+    color: 'bg-orange-500 text-slate-200'
   },
   [EstadoJugadorEnum.Inhabilitado]: {
     texto: 'Inhabilitado',
-    color: 'bg-gray-500 text-white'
+    color: 'bg-gray-500 text-slate-200'
   }
 }
 
