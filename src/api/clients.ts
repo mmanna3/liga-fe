@@ -898,6 +898,54 @@ export interface IEquipoDTO {
     jugadores?: JugadorDelEquipoDTO[] | undefined;
 }
 
+export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
+    id?: number;
+    nombre?: string | undefined;
+    club?: string | undefined;
+    estado?: EstadoJugadorEnum;
+
+    constructor(data?: IEquipoDelJugadorDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.nombre = _data["nombre"];
+            this.club = _data["club"];
+            this.estado = _data["estado"];
+        }
+    }
+
+    static fromJS(data: any): EquipoDelJugadorDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new EquipoDelJugadorDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["nombre"] = this.nombre;
+        data["club"] = this.club;
+        data["estado"] = this.estado;
+        return data;
+    }
+}
+
+export interface IEquipoDelJugadorDTO {
+    id?: number;
+    nombre?: string | undefined;
+    club?: string | undefined;
+    estado?: EstadoJugadorEnum;
+}
+
 export enum EstadoJugadorEnum {
     _1 = 1,
     _2 = 2,
@@ -913,7 +961,7 @@ export class JugadorDTO implements IJugadorDTO {
     apellido!: string;
     fechaNacimiento!: Date;
     equipoInicialId?: number;
-    equipos?: EquipoDTO[] | undefined;
+    equipos?: EquipoDelJugadorDTO[] | undefined;
 
     constructor(data?: IJugadorDTO) {
         if (data) {
@@ -935,7 +983,7 @@ export class JugadorDTO implements IJugadorDTO {
             if (Array.isArray(_data["equipos"])) {
                 this.equipos = [] as any;
                 for (let item of _data["equipos"])
-                    this.equipos!.push(EquipoDTO.fromJS(item));
+                    this.equipos!.push(EquipoDelJugadorDTO.fromJS(item));
             }
         }
     }
@@ -971,7 +1019,7 @@ export interface IJugadorDTO {
     apellido: string;
     fechaNacimiento: Date;
     equipoInicialId?: number;
-    equipos?: EquipoDTO[] | undefined;
+    equipos?: EquipoDelJugadorDTO[] | undefined;
 }
 
 export class JugadorDelEquipoDTO implements IJugadorDelEquipoDTO {

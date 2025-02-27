@@ -9,16 +9,16 @@ import DetalleItem from '@/components/ykn-ui/detalle-item'
 import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
 import { useParams } from 'react-router-dom'
 
-export default function DetalleEquipo() {
+export default function DetalleJugador() {
   const { id } = useParams<{ id: string }>()
 
   const {
-    data: equipo,
+    data: jugador,
     isError,
     isLoading
   } = useApiQuery({
-    key: ['equipo', id],
-    fn: async () => await api.equipoGET(Number(id))
+    key: ['jugador', id],
+    fn: async () => await api.jugadorGET(Number(id))
   })
 
   if (isError) {
@@ -46,19 +46,25 @@ export default function DetalleEquipo() {
   return (
     <Card className='max-w-2lg mx-auto mt-10 p-4'>
       <CardHeader>
-        <CardTitle>{equipo!.nombre}</CardTitle>
+        <CardTitle>
+          {jugador!.nombre} {jugador!.apellido}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className='mb-4'>
-          <DetalleItem clave='Club' valor={equipo!.clubNombre!} />
+          <DetalleItem clave='DNI' valor={jugador!.dni!} />
+          <DetalleItem
+            clave='Fecha de nacimiento'
+            valor={jugador!.fechaNacimiento!.toDateString()}
+          />
         </div>
-        <h2 className='text-md font-bold'>Jugadores</h2>
+        <h2 className='text-md font-bold'>Equipos</h2>
         <ul className='list-disc list-inside'>
-          {equipo!.jugadores!.map((jug) => (
-            <li key={jug.id} className='my-1'>
-              {jug.nombre} {jug.apellido} - {jug.dni}{' '}
+          {jugador!.equipos!.map((e) => (
+            <li key={e.id} className='my-1'>
+              {e.nombre} - {e.club}
               <span className='ml-2'>
-                <JugadorEquipoEstadoBadge estado={Number(jug.estado)} />
+                <JugadorEquipoEstadoBadge estado={Number(e.estado)} />
               </span>
             </li>
           ))}

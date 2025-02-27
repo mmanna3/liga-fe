@@ -31,7 +31,7 @@ const estadoConfig = {
   }
 }
 
-export default function JugadorEstadoBadge({
+export default function JugadorEquipoEstadoBadge({
   estado
 }: {
   estado: EstadoJugadorEnum
