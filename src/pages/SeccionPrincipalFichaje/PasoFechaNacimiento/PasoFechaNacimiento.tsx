@@ -1,54 +1,54 @@
-import { useState, useEffect } from 'react';
-import Label from '../Label/Label';
-import Input from '../Input/Input';
-import FormErrorHandler from '../Error/FormErrorHandler';
-import { useFormContext } from 'react-hook-form';
+import { useEffect, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
+import FormErrorHandler from '../Error/FormErrorHandler'
+import Input from '../Input/Input'
+import Label from '../Label/Label'
 
 const PasoFechaNacimiento = () => {
   const {
     register,
     setValue,
-    formState: { errors },
-  } = useFormContext();
+    formState: { errors }
+  } = useFormContext()
 
-  const [dia, setDia] = useState<string>();
-  const [mes, setMes] = useState<string>();
-  const [anio, setAnio] = useState<string>();
+  const [dia, setDia] = useState<string>()
+  const [mes, setMes] = useState<string>()
+  const [anio, setAnio] = useState<string>()
 
   useEffect(() => {
-    setValue('fechaNacimiento', `${dia}-${mes}-${anio}`);
-  }, [dia, mes, anio]);
+    setValue('fechaNacimiento', `${dia}-${mes}-${anio}`)
+  }, [dia, mes, anio])
 
   const actualizarDia = (dia: string) => {
-    if (dia.length === 1) dia = '0' + dia;
+    if (dia.length === 1) dia = '0' + dia
 
-    setDia(dia);
-  };
+    setDia(dia)
+  }
 
   const actualizarMes = (mes: string) => {
-    if (mes.length === 1) mes = '0' + mes;
+    if (mes.length === 1) mes = '0' + mes
 
-    setMes(mes);
-  };
+    setMes(mes)
+  }
 
   const actualizarAnio = (anio: string) => {
-    setAnio(anio);
-  };
+    setAnio(anio)
+  }
 
   const validarFecha = (date: string) => {
-    const temp = date.split('-');
-    const d = new Date(temp[1] + '-' + temp[0] + '-' + temp[2]);
+    const temp = date.split('-')
+    const d = new Date(temp[1] + '-' + temp[0] + '-' + temp[2])
     const resultado =
       d &&
       d.getMonth() + 1 == Number(temp[1]) &&
       d.getDate() == Number(temp[0]) &&
-      d.getFullYear() == Number(temp[2]);
-    return resultado || '¡Ups! Hay un problema con la fecha. Revisala.';
-  };
+      d.getFullYear() == Number(temp[2])
+    return resultado || '¡Ups! Hay un problema con la fecha. Revisala.'
+  }
 
   return (
     <div className='bg-red-700 py-6 px-3'>
-      <div className=''>
+      <div className='max-w-[360px] mx-auto'>
         <div className=''>
           <Label texto='Tu fecha de nacimiento' />
         </div>
@@ -70,13 +70,17 @@ const PasoFechaNacimiento = () => {
           type='hidden'
           {...register('fechaNacimiento', {
             required: true,
-            validate: validarFecha,
+            validate: validarFecha
           })}
         />
-        <FormErrorHandler name='fechaNacimiento' errors={errors} nombre='fecha' />
+        <FormErrorHandler
+          name='fechaNacimiento'
+          errors={errors}
+          nombre='fecha'
+        />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PasoFechaNacimiento;
+export default PasoFechaNacimiento

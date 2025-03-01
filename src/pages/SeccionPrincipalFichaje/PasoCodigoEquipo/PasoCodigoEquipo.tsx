@@ -35,7 +35,7 @@ const PasoCodigoEquipo = ({ valorInicial }: IProps) => {
 
   return (
     <div className='bg-blue-700 py-6 px-3'>
-      <div className='flex flex-col'>
+      <div className='flex flex-col max-w-[360px] mx-auto'>
         <div className='w-[100%]'>
           <Label
             texto={'Código de tu equipo'}

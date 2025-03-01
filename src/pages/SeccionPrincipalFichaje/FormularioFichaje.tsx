@@ -68,7 +68,7 @@ const FormularioFichaje = ({
   return (
     <FormProvider {...methods}>
       <div className='flex justify-center font-sans text-slate-100'>
-        <div className='max-w-[360px]'>
+        <div className='max-w-screen'>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             {huboAlgunError && (
               <div className='mb-2'>

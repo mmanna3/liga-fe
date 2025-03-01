@@ -74,48 +74,49 @@ const PasoFotoCarnet = () => {
   return (
     <div>
       <div className='bg-green-700 py-6 px-3'>
-        <div className={estilos.contenedorDeContenidoCentrado}>
-          <Label
-            texto={'Tu foto'}
-            subtitulo='Tiene que tener fondo liso'
-            centrado={true}
-          />
-        </div>
+        <div className='mx-auto'>
+          <div className={estilos.contenedorDeContenidoCentrado}>
+            <Label
+              texto='Tu foto'
+              subtitulo='Tiene que tener fondo liso'
+              centrado={true}
+            />
+          </div>
 
-        <div className={estilos.contenedorDeContenidoCentrado}>
-          <img
-            src={imagenRecortada}
-            alt='Cropped'
-            className={estilos.imagenRecortada}
-          />
-        </div>
+          <div className={estilos.contenedorDeContenidoCentrado}>
+            <img
+              src={imagenRecortada}
+              alt='Cropped'
+              className={estilos.imagenRecortada}
+            />
+          </div>
 
-        <ImageUploader value={imagen} onChange={onSelectFile} />
-        <input
-          readOnly
-          {...register('fotoCarnet', {
-            validate: (value) =>
-              value !== persona || '¡Ups! Te olvidaste tu foto.'
-          })}
-          style={{ display: 'none' }}
-          value={imagenRecortada}
-        />
-        <FormErrorHandler name='fotoCarnet' errors={errors} nombre='foto' />
-        {imagen && (
-          <div className={estilos.contenedorGeneralDeTodo}>
-            <div className={estilos.cropContainer}>
-              <Cropper
-                image={imagen}
-                crop={crop}
-                aspect={4 / 3}
-                onCropChange={setCrop}
-                cropSize={{ width: 360, height: 360 }}
-                onCropComplete={onCropComplete}
-                zoom={zoom}
-                onZoomChange={(zoom) => setZoom(zoom)}
-              />
-            </div>
-            {/* <div className={estilos.sliderContainer}>
+          <ImageUploader value={imagen} onChange={onSelectFile} />
+          <input
+            readOnly
+            {...register('fotoCarnet', {
+              validate: (value) =>
+                value !== persona || '¡Ups! Te olvidaste tu foto.'
+            })}
+            style={{ display: 'none' }}
+            value={imagenRecortada}
+          />
+          <FormErrorHandler name='fotoCarnet' errors={errors} nombre='foto' />
+          {imagen && (
+            <div className={estilos.contenedorGeneralDeTodo}>
+              <div className={estilos.cropContainer}>
+                <Cropper
+                  image={imagen}
+                  crop={crop}
+                  aspect={4 / 3}
+                  onCropChange={setCrop}
+                  cropSize={{ width: 360, height: 360 }}
+                  onCropComplete={onCropComplete}
+                  zoom={zoom}
+                  onZoomChange={(zoom) => setZoom(zoom)}
+                />
+              </div>
+              {/* <div className={estilos.sliderContainer}>
               <Slider
                 value={zoom}
                 min={1}
@@ -125,36 +126,37 @@ const PasoFotoCarnet = () => {
                 onChange={(e, zoom) => setZoom(zoom)}
               />
             </div> */}
-            <div className={estilos.botonesContainer}>
-              <div className=''>
-                <div className='flex justify-around'>
-                  <div className=''>
-                    <button
-                      type='button'
-                      className='rounded-lg bg-green-700 px-10 py-4 text-white md:px-20'
-                      style={{ width: '100%' }}
-                      onClick={onAceptarClick}
-                    >
-                      Aceptar
-                    </button>
-                  </div>
-                  <div className=''>
-                    <button
-                      type='button'
-                      className={
-                        'py-auto rounded-lg bg-red-700 px-10 py-4 text-center text-white md:px-20'
-                      }
-                      style={{ width: '100%' }}
-                      onClick={onCancelarClick}
-                    >
-                      Cancelar
-                    </button>
+              <div className={estilos.botonesContainer}>
+                <div className=''>
+                  <div className='flex justify-around'>
+                    <div className=''>
+                      <button
+                        type='button'
+                        className='rounded-lg bg-green-700 px-10 py-4 text-white md:px-20'
+                        style={{ width: '100%' }}
+                        onClick={onAceptarClick}
+                      >
+                        Aceptar
+                      </button>
+                    </div>
+                    <div className=''>
+                      <button
+                        type='button'
+                        className={
+                          'py-auto rounded-lg bg-red-700 px-10 py-4 text-center text-white md:px-20'
+                        }
+                        style={{ width: '100%' }}
+                        onClick={onCancelarClick}
+                      >
+                        Cancelar
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   )
