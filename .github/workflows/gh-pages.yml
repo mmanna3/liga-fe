@@ -32,4 +32,13 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/ # Cambiar a ./build/ si React genera la carpeta build
-          server-dir: cranky-black.192-64-87-146.plesk.page/wwwroot/
+          server-dir: ${{ secrets.LIGA_1_SERVER_DIR }}
+
+      - name: Deploy to FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/ # Cambiar a ./build/ si React genera la carpeta build
+          server-dir: ${{ secrets.LIGA_2_SERVER_DIR }}
