@@ -1,13 +1,13 @@
 .labelSinSubtitulo {
   font-weight: 600;
-  text-align: center;
+  /* text-align: center; */
   font-size: 22px;
   margin-bottom: 20px;
 }
 
 .labelConSubtitulo {
   font-weight: 600;
-  text-align: center;
+  /* text-align: center; */
   font-size: 22px;
   margin-bottom: 0;
 }

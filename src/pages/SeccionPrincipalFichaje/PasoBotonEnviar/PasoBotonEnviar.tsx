@@ -2,7 +2,7 @@ import estilos from './PasoBotonEnviar.module.css'
 
 const PasoBotonEnviar = () => {
   return (
-    <div className={'bg-red-700 py-6 px-3'}>
+    <div className={'bg-red-700 py-6 px-6'}>
       <div className={'flex '}>
         <div className=''>
           <div className={estilos.contenedorDeContenidoCentrado}>

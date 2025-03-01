@@ -34,7 +34,7 @@ const PasoCodigoEquipo = ({ valorInicial }: IProps) => {
   }
 
   return (
-    <div className='bg-blue-700 py-6 px-3'>
+    <div className='bg-blue-700 py-6 px-6'>
       <div className='flex flex-col max-w-[360px] mx-auto'>
         <div className='w-[100%]'>
           <Label
@@ -54,7 +54,7 @@ const PasoCodigoEquipo = ({ valorInicial }: IProps) => {
           <div className='w-1/2'>
             <button
               type='button'
-              className='py-auto rounded-lg bg-green-700 text-center text-white'
+              className='py-auto rounded-lg h-9 bg-green-700 text-center text-white'
               style={{ width: '100%' }}
               onClick={onValidarClick}
               disabled={isLoading}

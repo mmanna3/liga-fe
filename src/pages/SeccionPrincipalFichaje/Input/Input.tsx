@@ -29,7 +29,7 @@ const Input = ({
     <input
       {...register}
       name={name}
-      className={'bg-white text-black ' + className}
+      className={'bg-white text-black h-9 rounded ' + className}
       value={valor}
       type={type}
       onChange={handleOnChange}

@@ -1,13 +1,13 @@
-import styles from './Label.module.css';
+import styles from './Label.module.css'
 
 interface ILabel {
-  texto: string;
-  subtitulo?: string;
-  centrado?: boolean;
+  texto: string
+  subtitulo?: string
+  centrado?: boolean
 }
 
 const Label = ({ texto, subtitulo, centrado }: ILabel) => {
-  const estiloCentrado = centrado ? styles.centrado : '';
+  const estiloCentrado = centrado ? styles.centrado : ''
 
   return (
     <div className={estiloCentrado}>
@@ -20,7 +20,7 @@ const Label = ({ texto, subtitulo, centrado }: ILabel) => {
         <label className={styles.labelSinSubtitulo}>{texto}</label>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Label;
+export default Label
