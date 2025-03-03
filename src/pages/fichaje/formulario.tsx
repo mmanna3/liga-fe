@@ -13,7 +13,7 @@ import PasoFotoDocumento from './PasoFotoDocumento/PasoFotoDocumento'
 import PasoInput from './PasoInput/PasoInput'
 
 const FormularioFichaje = () => {
-  const methods = useForm()
+  const methods = useForm<JugadorDTO>({ mode: 'onBlur' })
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const codigoEquipo = searchParams.get('codigoEquipo')
@@ -24,9 +24,7 @@ const FormularioFichaje = () => {
     }
   })
 
-  const hacerSubmit = () => {
-    const jugadorDTO = methods.getValues() as JugadorDTO
-
+  const hacerSubmit = methods.handleSubmit((jugadorDTO: JugadorDTO) => {
     mutation.mutate(jugadorDTO, {
       onSuccess: () => {
         navigate(
@@ -38,7 +36,7 @@ const FormularioFichaje = () => {
         navigate('/fichaje-error')
       }
     })
-  }
+  })
 
   const huboAlgunError = !(
     Object.keys(methods.formState.errors).length === 0 &&
@@ -49,7 +47,7 @@ const FormularioFichaje = () => {
     <FormProvider {...methods}>
       <div className='flex justify-center font-sans text-slate-100'>
         <div className=''>
-          <form onSubmit={(e) => e.preventDefault()}>
+          <form onSubmit={hacerSubmit}>
             {huboAlgunError && (
               <div className='mb-2'>
                 <CartelMensaje type='error'>
