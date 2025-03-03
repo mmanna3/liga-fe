@@ -1,3 +1,4 @@
+import { JugadorDTO } from '@/api/clients'
 import { useFormContext } from 'react-hook-form'
 import FormErrorHandler from '../Error/FormErrorHandler'
 import Input from '../Input/Input'
@@ -5,8 +6,7 @@ import Label from '../Label/Label'
 
 interface IPasoInput {
   titulo: string
-  onChange?: React.ChangeEventHandler<HTMLInputElement>
-  name: string
+  name: keyof JugadorDTO
   nombre: string
   longMaxima: number
   type?: string
@@ -14,7 +14,6 @@ interface IPasoInput {
 
 const PasoInput = ({
   titulo,
-  onChange,
   name,
   nombre,
   longMaxima,
@@ -44,7 +43,7 @@ const PasoInput = ({
               }
             })}
             name={name}
-            onChange={onChange}
+            // onChange={onChange}
           />
         </div>
       </div>
