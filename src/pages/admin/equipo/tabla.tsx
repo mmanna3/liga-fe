@@ -1,97 +1,67 @@
-import { EquipoDTO } from '@/api/clients'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
-import { Skeleton } from '@/components/ui/skeleton'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@/components/ui/table'
+import { api } from '@/api/api'
+import { EquipoDTO, JugadorDelEquipoDTO } from '@/api/clients'
+import useApiQuery from '@/api/custom-hooks/use-api-query'
+import Tabla from '@/components/ykn-ui/tabla'
 import { rutasNavegacion } from '@/routes/rutas'
-import { MoreVertical } from 'lucide-react'
+import { ColumnDef } from '@tanstack/react-table'
 import { useNavigate } from 'react-router-dom'
 
-type TablaProps = {
-  data: EquipoDTO[]
-  isLoading: boolean
-  isError: boolean
-}
+export default function TablaEquipo() {
+  const { data, isLoading, isError } = useApiQuery({
+    key: ['equipos'],
+    fn: async () => await api.equipoAll()
+  })
 
-export default function Tabla({ data, isLoading, isError }: TablaProps) {
   const navigate = useNavigate()
 
+  const columnas: ColumnDef<EquipoDTO>[] = [
+    {
+      accessorKey: 'nombre',
+      header: 'Nombre',
+      cell: ({ row }) => <span>{row.getValue('nombre')}</span>
+    },
+    {
+      accessorKey: 'clubNombre',
+      header: 'Club',
+      cell: ({ row }) => <span>{row.getValue('clubNombre')}</span>
+    },
+    {
+      accessorKey: 'codigoAlfanumerico',
+      header: 'Código',
+      cell: ({ row }) => <span>{row.getValue('codigoAlfanumerico')}</span>
+    },
+    {
+      accessorKey: 'jugadores',
+      header: 'Jugadores',
+      cell: ({ row }) => (
+        <span>
+          {(row.getValue('jugadores') as JugadorDelEquipoDTO[]).length}
+        </span>
+      )
+    },
+    {
+      id: 'acciones',
+      header: '',
+      cell: ({ row }) => (
+        <Tabla.MenuContextual
+          items={[
+            {
+              texto: 'Detalle',
+              onClick: () =>
+                navigate(`${rutasNavegacion.detalleEquipo}/${row.original.id}`)
+            }
+          ]}
+        />
+      )
+    }
+  ]
+
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Nombre</TableHead>
-          <TableHead>Club</TableHead>
-          <TableHead>Código</TableHead>
-          <TableHead>Jugadores</TableHead>
-          <TableHead className='w-12' />
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {isError ? (
-          <TableRow>
-            <TableCell colSpan={2}>
-              <Alert variant='destructive' className='mb-4'>
-                <AlertTitle className='text-xl font-semibold'>Error</AlertTitle>
-                <AlertDescription>
-                  No se pudieron recuperar los datos de la tabla.
-                </AlertDescription>
-              </Alert>
-            </TableCell>
-          </TableRow>
-        ) : isLoading ? (
-          Array.from({ length: 3 }).map((_, index) => (
-            <TableRow key={index}>
-              <TableCell>
-                <Skeleton className='h-4 w-32' />
-              </TableCell>
-              <TableCell className='text-right'>
-                <Skeleton className='h-4 w-8' />
-              </TableCell>
-            </TableRow>
-          ))
-        ) : (
-          data.map((item) => (
-            <TableRow key={item.id}>
-              <TableCell>{item.nombre}</TableCell>
-              <TableCell>{item.clubNombre}</TableCell>
-              <TableCell>{item.codigoAlfanumerico}</TableCell>
-              <TableCell>{item.jugadores!.length}</TableCell>
-              <TableCell className='text-right'>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant='ghost' size='icon'>
-                      <MoreVertical className='w-5 h-5' />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align='end'>
-                    <DropdownMenuItem
-                      onClick={() =>
-                        navigate(`${rutasNavegacion.detalleEquipo}/${item.id}`)
-                      }
-                    >
-                      Detalle
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
-          ))
-        )}
-      </TableBody>
-    </Table>
+    <Tabla<EquipoDTO>
+      columnas={columnas}
+      data={data || []}
+      estaCargando={isLoading}
+      hayError={isError}
+    />
   )
 }
