@@ -4,21 +4,31 @@ import DetalleEquipo from '@/pages/admin/equipo/detalle-equipo'
 import Equipo from '@/pages/admin/equipo/equipo'
 import DetalleJugador from '@/pages/admin/jugador/detalle-jugador'
 import Jugador from '@/pages/admin/jugador/jugador'
+import FichajeError from '@/pages/fichaje/fichaje-error'
+import FichajeExitoso from '@/pages/fichaje/fichaje-exitoso'
 import AdminLayout from '../pages/admin/admin-layout'
 import Club from '../pages/admin/club/club'
 import CrearClub from '../pages/admin/club/crear-club'
+import FichajeHome from '../pages/fichaje/home'
 import PaginaNoEncontrada from '../pages/pagina-no-encontrada'
-import SeccionPrincipalFichaje from '../pages/SeccionPrincipalFichaje/SeccionPrincipalFichaje'
 import { rutas } from './rutas'
 
 export const mapaRutasComponentes = [
   {
-    path: '/',
+    path: '/fichaje',
     element: (
       <div className='flex justify-center w-screen'>
-        <SeccionPrincipalFichaje />
+        <FichajeHome />
       </div>
     )
+  },
+  {
+    path: '/fichaje-exitoso',
+    element: <FichajeExitoso />
+  },
+  {
+    path: '/fichaje-error',
+    element: <FichajeError />
   },
   {
     path: '/admin',

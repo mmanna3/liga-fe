@@ -2,8 +2,9 @@ import { api } from '@/api/api'
 import { JugadorDTO } from '@/api/clients'
 import useApiMutation from '@/api/custom-hooks/use-api-mutation'
 import { FormProvider, useForm } from 'react-hook-form'
-import MessageBox from './MessageBox'
-import PasoBotonEnviar from './PasoBotonEnviar/PasoBotonEnviar'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import BotonEnviarDatos from './boton-enviar-datos/boton-enviar-datos'
+import CartelMensaje from './cartel-mensaje'
 import PasoCodigoEquipo from './PasoCodigoEquipo/PasoCodigoEquipo'
 import PasoDNI from './PasoDNI/PasoDNI'
 import PasoFechaNacimiento from './PasoFechaNacimiento/PasoFechaNacimiento'
@@ -11,20 +12,11 @@ import PasoFotoCarnet from './PasoFotoCarnet/PasoFotoCarnet'
 import PasoFotoDocumento from './PasoFotoDocumento/PasoFotoDocumento'
 import PasoInput from './PasoInput/PasoInput'
 
-interface IProps {
-  showLoading: React.Dispatch<React.SetStateAction<boolean>>
-  onSuccess: (codigoAlfanumerico: string) => void
-  onError: (mensaje: string) => void
-  codigoEquipo: string
-}
-
-const FormularioFichaje = ({
-  showLoading,
-  onSuccess,
-  onError,
-  codigoEquipo
-}: IProps) => {
+const FormularioFichaje = () => {
   const methods = useForm()
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const codigoEquipo = searchParams.get('codigoEquipo')
 
   const mutation = useApiMutation({
     fn: async (jug: JugadorDTO) => {
@@ -35,19 +27,17 @@ const FormularioFichaje = ({
   const hacerSubmit = () => {
     const jugadorDTO = methods.getValues() as JugadorDTO
 
-    showLoading(true)
     mutation.mutate(jugadorDTO, {
       onSuccess: () => {
-        showLoading(false)
-        onSuccess(jugadorDTO.codigoAlfanumerico!)
+        navigate(
+          `/fichaje-exitoso?dni=${jugadorDTO.dni}&codigoEquipo=${codigoEquipo}`
+        )
       },
       onError: (err) => {
         console.log('Error del servidor', err)
-        showLoading(false)
-        onError(err.message)
+        navigate('/fichaje-error')
       }
     })
-    showLoading(false)
   }
 
   const huboAlgunError = !(
@@ -62,14 +52,14 @@ const FormularioFichaje = ({
           <form onSubmit={(e) => e.preventDefault()}>
             {huboAlgunError && (
               <div className='mb-2'>
-                <MessageBox type='error'>
+                <CartelMensaje type='error'>
                   ¡Ups! Hubo algún <strong>error</strong>. Revisá tus datos y
                   volvé a enviarlos.
-                </MessageBox>
+                </CartelMensaje>
               </div>
             )}
 
-            <PasoCodigoEquipo valorInicial={codigoEquipo} />
+            <PasoCodigoEquipo valorInicial={codigoEquipo!} />
 
             <PasoInput
               longMaxima={10}
@@ -103,7 +93,7 @@ const FormularioFichaje = ({
               nombre='foto de ATRÁS del DNI'
             />
 
-            <PasoBotonEnviar onEnviarClick={hacerSubmit} />
+            <BotonEnviarDatos onEnviarClick={hacerSubmit} />
           </form>
         </div>
       </div>

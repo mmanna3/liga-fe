@@ -4,7 +4,7 @@ interface Props {
   onEnviarClick: () => void
 }
 
-const PasoBotonEnviar = ({ onEnviarClick }: Props) => {
+const BotonEnviarDatos = ({ onEnviarClick }: Props) => {
   return (
     <div className={'bg-red-700 py-6 px-6'}>
       <div className={'flex '}>
@@ -32,4 +32,4 @@ const PasoBotonEnviar = ({ onEnviarClick }: Props) => {
   )
 }
 
-export default PasoBotonEnviar
+export default BotonEnviarDatos

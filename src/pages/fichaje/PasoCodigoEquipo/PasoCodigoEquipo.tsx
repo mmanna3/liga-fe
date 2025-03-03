@@ -5,7 +5,7 @@ import { useFormContext } from 'react-hook-form'
 import FormErrorHandler from '../Error/FormErrorHandler'
 import Input from '../Input/Input'
 import Label from '../Label/Label'
-import MessageBox from './../MessageBox'
+import CartelMensaje from '../cartel-mensaje'
 
 interface IProps {
   valorInicial: string
@@ -64,12 +64,12 @@ const PasoCodigoEquipo = ({ valorInicial }: IProps) => {
           </div>
         </div>
         {data?.respuesta && (
-          <MessageBox type='success'>
+          <CartelMensaje type='success'>
             Tu equipo es: <strong>{data?.respuesta}</strong>
-          </MessageBox>
+          </CartelMensaje>
         )}
         {data?.hayError && (
-          <MessageBox type='error'>El código es incorrecto</MessageBox>
+          <CartelMensaje type='error'>El código es incorrecto</CartelMensaje>
         )}
         <FormErrorHandler
           errors={errors}
