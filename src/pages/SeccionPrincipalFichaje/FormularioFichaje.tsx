@@ -1,5 +1,7 @@
+import { api } from '@/api/api'
+import { JugadorDTO } from '@/api/clients'
+import useApiMutation from '@/api/custom-hooks/use-api-mutation'
 import { FormProvider, useForm } from 'react-hook-form'
-import { BASE_URL } from '../../consts'
 import MessageBox from './MessageBox'
 import PasoBotonEnviar from './PasoBotonEnviar/PasoBotonEnviar'
 import PasoCodigoEquipo from './PasoCodigoEquipo/PasoCodigoEquipo'
@@ -8,7 +10,6 @@ import PasoFechaNacimiento from './PasoFechaNacimiento/PasoFechaNacimiento'
 import PasoFotoCarnet from './PasoFotoCarnet/PasoFotoCarnet'
 import PasoFotoDocumento from './PasoFotoDocumento/PasoFotoDocumento'
 import PasoInput from './PasoInput/PasoInput'
-import { estaLaSeccionHabilitada } from './SeccionPrincipalFichaje'
 
 interface IProps {
   showLoading: React.Dispatch<React.SetStateAction<boolean>>
@@ -25,39 +26,28 @@ const FormularioFichaje = ({
 }: IProps) => {
   const methods = useForm()
 
-  const hacerElPost = async (data: unknown) => {
-    if (!estaLaSeccionHabilitada()) {
-      onError('La sección no está habilitada')
-      return
+  const mutation = useApiMutation({
+    fn: async (jug: JugadorDTO) => {
+      await api.jugadorPOST(jug)
     }
+  })
+
+  const hacerSubmit = () => {
+    const jugadorDTO = methods.getValues() as JugadorDTO
 
     showLoading(true)
-    fetch(`${BASE_URL}/JugadorAutofichado/autofichaje`, {
-      method: 'POST',
-      mode: 'cors',
-      cache: 'no-cache',
-      credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/json' },
-      redirect: 'follow',
-      referrerPolicy: 'no-referrer',
-      body: JSON.stringify(data)
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        console.log('Respuesta', res)
+    mutation.mutate(jugadorDTO, {
+      onSuccess: () => {
         showLoading(false)
-        if (res === 'OK') onSuccess((data as any).codigoAlfanumerico)
-        else onError(res)
-      })
-      .catch(function (err) {
+        onSuccess(jugadorDTO.codigoAlfanumerico!)
+      },
+      onError: (err) => {
         console.log('Error del servidor', err)
         showLoading(false)
-        onError(err)
-      })
-  }
-
-  const onSubmit = (data: any) => {
-    hacerElPost(data)
+        onError(err.message)
+      }
+    })
+    showLoading(false)
   }
 
   const huboAlgunError = !(
@@ -69,7 +59,7 @@ const FormularioFichaje = ({
     <FormProvider {...methods}>
       <div className='flex justify-center font-sans text-slate-100'>
         <div className=''>
-          <form onSubmit={methods.handleSubmit(onSubmit)}>
+          <form onSubmit={(e) => e.preventDefault()}>
             {huboAlgunError && (
               <div className='mb-2'>
                 <MessageBox type='error'>
@@ -113,7 +103,7 @@ const FormularioFichaje = ({
               nombre='foto de ATRÁS del DNI'
             />
 
-            <PasoBotonEnviar />
+            <PasoBotonEnviar onEnviarClick={hacerSubmit} />
           </form>
         </div>
       </div>

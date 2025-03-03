@@ -16,7 +16,7 @@ const PasoFechaNacimiento = () => {
   const [anio, setAnio] = useState<string>()
 
   useEffect(() => {
-    setValue('fechaNacimiento', `${dia}-${mes}-${anio}`)
+    setValue('fechaNacimiento', `${anio}-${mes}-${dia}T00:00:00`)
   }, [dia, mes, anio])
 
   const actualizarDia = (dia: string) => {
@@ -37,7 +37,7 @@ const PasoFechaNacimiento = () => {
 
   const validarFecha = (date: string) => {
     const temp = date.split('-')
-    const d = new Date(temp[1] + '-' + temp[0] + '-' + temp[2])
+    const d = new Date(temp[0] + '-' + temp[1] + '-' + temp[2].split('T')[0])
     const resultado =
       d &&
       d.getMonth() + 1 == Number(temp[1]) &&

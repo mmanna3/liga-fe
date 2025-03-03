@@ -1,6 +1,10 @@
 import estilos from './PasoBotonEnviar.module.css'
 
-const PasoBotonEnviar = () => {
+interface Props {
+  onEnviarClick: () => void
+}
+
+const PasoBotonEnviar = ({ onEnviarClick }: Props) => {
   return (
     <div className={'bg-red-700 py-6 px-6'}>
       <div className={'flex '}>
@@ -17,7 +21,7 @@ const PasoBotonEnviar = () => {
           <div className={estilos.contenedorDeContenidoCentrado}>
             <button
               className={`py-auto py-auto rounded-lg bg-green-700 text-white ${estilos.boton}`}
-              type='submit'
+              onClick={onEnviarClick}
             >
               ENVIAR MIS DATOS
             </button>

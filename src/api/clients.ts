@@ -1007,7 +1007,11 @@ export class JugadorDTO implements IJugadorDTO {
     apellido!: string;
     fechaNacimiento!: Date;
     equipoInicialId?: number;
+    codigoAlfanumerico?: string | undefined;
     equipos?: EquipoDelJugadorDTO[] | undefined;
+    fotoCarnet?: string | undefined;
+    fotoDNIFrente?: string | undefined;
+    fotoDNIDorso?: string | undefined;
 
     constructor(data?: IJugadorDTO) {
         if (data) {
@@ -1026,11 +1030,15 @@ export class JugadorDTO implements IJugadorDTO {
             this.apellido = _data["apellido"];
             this.fechaNacimiento = _data["fechaNacimiento"] ? new Date(_data["fechaNacimiento"].toString()) : <any>undefined;
             this.equipoInicialId = _data["equipoInicialId"];
+            this.codigoAlfanumerico = _data["codigoAlfanumerico"];
             if (Array.isArray(_data["equipos"])) {
                 this.equipos = [] as any;
                 for (let item of _data["equipos"])
                     this.equipos!.push(EquipoDelJugadorDTO.fromJS(item));
             }
+            this.fotoCarnet = _data["fotoCarnet"];
+            this.fotoDNIFrente = _data["fotoDNIFrente"];
+            this.fotoDNIDorso = _data["fotoDNIDorso"];
         }
     }
 
@@ -1049,11 +1057,15 @@ export class JugadorDTO implements IJugadorDTO {
         data["apellido"] = this.apellido;
         data["fechaNacimiento"] = this.fechaNacimiento ? this.fechaNacimiento.toISOString() : <any>undefined;
         data["equipoInicialId"] = this.equipoInicialId;
+        data["codigoAlfanumerico"] = this.codigoAlfanumerico;
         if (Array.isArray(this.equipos)) {
             data["equipos"] = [];
             for (let item of this.equipos)
                 data["equipos"].push(item.toJSON());
         }
+        data["fotoCarnet"] = this.fotoCarnet;
+        data["fotoDNIFrente"] = this.fotoDNIFrente;
+        data["fotoDNIDorso"] = this.fotoDNIDorso;
         return data;
     }
 }
@@ -1065,7 +1077,11 @@ export interface IJugadorDTO {
     apellido: string;
     fechaNacimiento: Date;
     equipoInicialId?: number;
+    codigoAlfanumerico?: string | undefined;
     equipos?: EquipoDelJugadorDTO[] | undefined;
+    fotoCarnet?: string | undefined;
+    fotoDNIFrente?: string | undefined;
+    fotoDNIDorso?: string | undefined;
 }
 
 export class JugadorDelEquipoDTO implements IJugadorDelEquipoDTO {
