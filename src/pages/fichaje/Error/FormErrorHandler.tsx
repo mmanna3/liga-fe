@@ -15,7 +15,11 @@ const FormErrorHandler = ({ errors, name, nombre }: IError) => {
   else if (errors[name] && errors[name]?.type !== 'required')
     message = (errors[name] as any).message
 
-  return <CartelMensaje type='error'>{message}</CartelMensaje>
+  return (
+    <div className='max-w-[360px] mx-auto'>
+      <CartelMensaje type='error'>{message}</CartelMensaje>
+    </div>
+  )
 }
 
 export default FormErrorHandler

@@ -52,11 +52,13 @@ const FormularioFichaje = () => {
         <div className=''>
           <form onSubmit={hacerSubmit}>
             {huboAlgunError && (
-              <div className='mb-2'>
-                <CartelMensaje type='error'>
-                  ¡Ups! Hubo algún <strong>error</strong>. Revisá tus datos y
-                  volvé a enviarlos.
-                </CartelMensaje>
+              <div className='bg-green-700 py-6 px-6'>
+                <div className='mb-2 max-w-[360px] mx-auto'>
+                  <CartelMensaje type='error'>
+                    ¡Ups! Hubo algún <strong>error</strong>. Revisá tus datos y
+                    volvé a enviarlos.
+                  </CartelMensaje>
+                </div>
               </div>
             )}
 

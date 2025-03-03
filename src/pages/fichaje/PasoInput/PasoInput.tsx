@@ -47,8 +47,8 @@ const PasoInput = ({
             onChange={onChange}
           />
         </div>
-        <FormErrorHandler name={name} errors={errors} nombre={nombre} />
       </div>
+      <FormErrorHandler name={name} errors={errors} nombre={nombre} />
     </div>
   )
 }

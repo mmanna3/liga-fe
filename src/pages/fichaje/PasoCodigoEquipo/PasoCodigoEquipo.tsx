@@ -71,12 +71,12 @@ const PasoCodigoEquipo = ({ valorInicial }: IProps) => {
         {data?.hayError && (
           <CartelMensaje type='error'>El código es incorrecto</CartelMensaje>
         )}
-        <FormErrorHandler
-          errors={errors}
-          name='codigoAlfanumerico'
-          nombre='código de equipo'
-        />
       </div>
+      <FormErrorHandler
+        errors={errors}
+        name='codigoAlfanumerico'
+        nombre='código de equipo'
+      />
     </div>
   )
 }
