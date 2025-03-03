@@ -20,7 +20,7 @@ const BotonEnviarDatos = ({ onEnviarClick }: Props) => {
 
           <div className={estilos.contenedorDeContenidoCentrado}>
             <button
-              className={`py-auto py-auto rounded-lg bg-green-700 text-white ${estilos.boton}`}
+              className={`py-auto py-auto rounded-lg bg-green-700 cursor-pointer text-white ${estilos.boton}`}
               onClick={onEnviarClick}
             >
               ENVIAR MIS DATOS

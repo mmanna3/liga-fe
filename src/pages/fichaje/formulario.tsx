@@ -33,7 +33,10 @@ const FormularioFichaje = () => {
       },
       onError: (err) => {
         console.log('Error del servidor', err)
-        navigate('/fichaje-error')
+        const mensajeError = err?.message || 'Error desconocido'
+        const mensajeCodificado = encodeURIComponent(mensajeError)
+
+        navigate(`/fichaje-error?mensaje=${mensajeCodificado}`)
       }
     })
   })
