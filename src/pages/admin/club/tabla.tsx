@@ -1,13 +1,6 @@
 import { ClubDTO } from '@/api/clients'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -17,75 +10,143 @@ import {
   TableRow
 } from '@/components/ui/table'
 import { rutasNavegacion } from '@/routes/rutas'
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable
+} from '@tanstack/react-table'
 import { MoreVertical } from 'lucide-react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 type TablaProps = {
   data: ClubDTO[]
-  isLoading: boolean
-  isError: boolean
 }
 
-export default function Tabla({ data, isLoading, isError }: TablaProps) {
+export default function Tabla({ data }: TablaProps) {
   const navigate = useNavigate()
+  const [globalFilter, setGlobalFilter] = useState('')
+  const [sorting, setSorting] = useState<SortingState>([])
+
+  const columns: ColumnDef<ClubDTO>[] = [
+    {
+      accessorKey: 'nombre',
+      header: 'Nombre',
+      cell: ({ row }) => <span>{row.getValue('nombre')}</span>
+    },
+    {
+      id: 'acciones',
+      header: '',
+      cell: ({ row }) => (
+        <Button
+          variant='ghost'
+          size='icon'
+          onClick={() =>
+            navigate(`${rutasNavegacion.detalleClub}/${row.original.id}`)
+          }
+        >
+          <MoreVertical className='w-5 h-5' />
+        </Button>
+      )
+    }
+  ]
+
+  // Inicializamos la tabla con react-table
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      globalFilter,
+      sorting
+    },
+    onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter
+  })
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Nombre</TableHead>
-          <TableHead className='w-12' />
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {isError ? (
-          <TableRow>
-            <TableCell colSpan={2}>
-              <Alert variant='destructive' className='mb-4'>
-                <AlertTitle className='text-xl font-semibold'>Error</AlertTitle>
-                <AlertDescription>
-                  No se pudieron recuperar los datos de la tabla.
-                </AlertDescription>
-              </Alert>
-            </TableCell>
-          </TableRow>
-        ) : isLoading ? (
-          Array.from({ length: 3 }).map((_, index) => (
-            <TableRow key={index}>
-              <TableCell>
-                <Skeleton className='h-4 w-32' />
-              </TableCell>
-              <TableCell className='text-right'>
-                <Skeleton className='h-4 w-8' />
+    <div className='space-y-4'>
+      <Input
+        placeholder='Buscar club...'
+        value={globalFilter}
+        onChange={(e) => setGlobalFilter(e.target.value)}
+        className='w-64'
+      />
+
+      <Table>
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <TableHead
+                  key={header.id}
+                  onClick={header.column.getToggleSortingHandler()}
+                  className='cursor-pointer'
+                >
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext()
+                  )}
+                  {header.column.getIsSorted() === 'asc'
+                    ? ' 🔼'
+                    : header.column.getIsSorted() === 'desc'
+                      ? ' 🔽'
+                      : ''}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows.length > 0 ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={columns.length} className='text-center py-4'>
+                No se encontraron resultados.
               </TableCell>
             </TableRow>
-          ))
-        ) : (
-          data.map((item) => (
-            <TableRow key={item.id}>
-              <TableCell>{item.nombre}</TableCell>
-              <TableCell className='text-right'>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant='ghost' size='icon'>
-                      <MoreVertical className='w-5 h-5' />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align='end'>
-                    <DropdownMenuItem
-                      onClick={() =>
-                        navigate(`${rutasNavegacion.detalleClub}/${item.id}`)
-                      }
-                    >
-                      Detalle
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
-          ))
-        )}
-      </TableBody>
-    </Table>
+          )}
+        </TableBody>
+      </Table>
+
+      {/* Controles de paginación */}
+      <div className='flex justify-end items-center space-x-2'>
+        <Button
+          variant='outline'
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          Anterior
+        </Button>
+        <span>
+          Página {table.getState().pagination.pageIndex + 1} de{' '}
+          {table.getPageCount()}
+        </span>
+        <Button
+          variant='outline'
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          Siguiente
+        </Button>
+      </div>
+    </div>
   )
 }

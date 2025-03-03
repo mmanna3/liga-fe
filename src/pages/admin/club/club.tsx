@@ -23,7 +23,7 @@ export default function Club() {
           Crear nuevo club
         </Button>
       </Botonera>
-      <Tabla data={data!} isLoading={isLoading} isError={isError} />
+      <Tabla data={data || []} isLoading={isLoading} isError={isError} />
     </>
   )
 }
