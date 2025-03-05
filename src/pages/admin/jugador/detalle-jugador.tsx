@@ -6,9 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
 import DetalleItem from '@/components/ykn-ui/detalle-item'
-import JugadorEquipoEstadoBadge, {
-  EstadoJugadorEnum
-} from '@/components/ykn-ui/jugador-equipo-estado-badge'
+import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
+import { EstadoJugador } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -85,9 +84,8 @@ export default function DetalleJugador() {
               <div className='flex items-center gap-4'>
                 <JugadorEquipoEstadoBadge estado={Number(equipo.estado)} />
                 {(Number(equipo.estado) ===
-                  EstadoJugadorEnum.FichajePendienteDeAprobacion ||
-                  Number(equipo.estado) ===
-                    EstadoJugadorEnum.FichajeRechazado) && (
+                  EstadoJugador.FichajePendienteDeAprobacion ||
+                  Number(equipo.estado) === EstadoJugador.FichajeRechazado) && (
                   <Button
                     variant='ghost'
                     className='text-blue-600'

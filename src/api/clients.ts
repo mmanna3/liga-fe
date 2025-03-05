@@ -520,6 +520,49 @@ export class Client {
     }
 
     /**
+     * @param body (optional) 
+     * @return Success
+     */
+    gestionarJugador(body: GestionarJugadorDTO | undefined): Promise<number> {
+        let url_ = this.baseUrl + "/api/Jugador/gestionar-jugador";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGestionarJugador(_response);
+        });
+    }
+
+    protected processGestionarJugador(response: Response): Promise<number> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<number>(null as any);
+    }
+
+    /**
      * @return Success
      */
     jugadorAll(): Promise<JugadorDTO[]> {
@@ -998,6 +1041,50 @@ export enum EstadoJugadorEnum {
     _3 = 3,
     _4 = 4,
     _5 = 5,
+}
+
+export class GestionarJugadorDTO implements IGestionarJugadorDTO {
+    estado?: EstadoJugadorEnum;
+    jugadorEquipoId?: number;
+    dni?: string | undefined;
+
+    constructor(data?: IGestionarJugadorDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.estado = _data["estado"];
+            this.jugadorEquipoId = _data["jugadorEquipoId"];
+            this.dni = _data["dni"];
+        }
+    }
+
+    static fromJS(data: any): GestionarJugadorDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new GestionarJugadorDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["estado"] = this.estado;
+        data["jugadorEquipoId"] = this.jugadorEquipoId;
+        data["dni"] = this.dni;
+        return data;
+    }
+}
+
+export interface IGestionarJugadorDTO {
+    estado?: EstadoJugadorEnum;
+    jugadorEquipoId?: number;
+    dni?: string | undefined;
 }
 
 export class JugadorDTO implements IJugadorDTO {

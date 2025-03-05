@@ -47,7 +47,7 @@ export const mapaRutasComponentes = [
       { path: rutas.jugadores, element: <Jugador /> },
       { path: `${rutas.detalleJugador}/:id`, element: <DetalleJugador /> },
       {
-        path: `${rutas.aprobarRechazarJugador}/:equipoid/:jugadorid`,
+        path: `${rutas.aprobarRechazarJugador}/:jugadorequipoid/:jugadorid`,
         element: <AprobarRechazarJugador />
       }
     ]

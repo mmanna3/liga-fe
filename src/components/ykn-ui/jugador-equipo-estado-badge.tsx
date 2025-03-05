@@ -1,31 +1,24 @@
 import { Badge } from '@/components/ui/badge'
-
-export enum EstadoJugadorEnum {
-  FichajePendienteDeAprobacion = 1,
-  FichajeRechazado = 2,
-  Activo = 3,
-  Suspendido = 4,
-  Inhabilitado = 5
-}
+import { EstadoJugador } from '@/lib/utils'
 
 const estadoConfig = {
-  [EstadoJugadorEnum.FichajePendienteDeAprobacion]: {
+  [EstadoJugador.FichajePendienteDeAprobacion]: {
     texto: 'Pendiente de aprobación',
     color: 'bg-blue-500 text-slate-200'
   },
-  [EstadoJugadorEnum.FichajeRechazado]: {
+  [EstadoJugador.FichajeRechazado]: {
     texto: 'Fichaje rechazado',
     color: 'bg-red-500 text-slate-200'
   },
-  [EstadoJugadorEnum.Activo]: {
+  [EstadoJugador.Activo]: {
     texto: 'Activo',
     color: 'bg-green-500 text-slate-200'
   },
-  [EstadoJugadorEnum.Suspendido]: {
+  [EstadoJugador.Suspendido]: {
     texto: 'Suspendido',
     color: 'bg-orange-500 text-slate-200'
   },
-  [EstadoJugadorEnum.Inhabilitado]: {
+  [EstadoJugador.Inhabilitado]: {
     texto: 'Inhabilitado',
     color: 'bg-gray-500 text-slate-200'
   }
@@ -34,7 +27,7 @@ const estadoConfig = {
 export default function JugadorEquipoEstadoBadge({
   estado
 }: {
-  estado: EstadoJugadorEnum
+  estado: EstadoJugador
 }) {
   const config = estadoConfig[estado] || {
     texto: 'Desconocido',

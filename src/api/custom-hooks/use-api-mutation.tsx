@@ -21,7 +21,12 @@ const useApiMutation = <T,>({
     onError: (error: unknown) => {
       console.error('Error en la mutación:', error)
 
-      const mensaje = error instanceof Error ? error.message : mensajeDeError
+      const mensaje =
+        error instanceof Error
+          ? JSON.parse((error as unknown as { response: string }).response)
+              .title
+          : mensajeDeError
+      console.log()
 
       toast.error(mensaje)
     },

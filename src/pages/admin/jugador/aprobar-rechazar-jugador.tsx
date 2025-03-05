@@ -1,4 +1,6 @@
 import { api } from '@/api/api'
+import { EstadoJugadorEnum, GestionarJugadorDTO } from '@/api/clients'
+import useApiMutation from '@/api/custom-hooks/use-api-mutation'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -6,12 +8,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
+import { EstadoJugador } from '@/lib/utils'
+import { rutasNavegacion } from '@/routes/rutas'
 import { useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export default function AprobarRechazarJugador() {
   const navigate = useNavigate()
-  const { equipoid } = useParams<{ equipoid: string }>()
+  const { jugadorequipoid } = useParams<{ jugadorequipoid: string }>()
   const { jugadorid } = useParams<{ jugadorid: string }>()
 
   const {
@@ -23,10 +27,21 @@ export default function AprobarRechazarJugador() {
     fn: async () => await api.jugadorGET(Number(jugadorid))
   })
 
+  const mutation = useApiMutation({
+    fn: async (dto: GestionarJugadorDTO) => {
+      await api.gestionarJugador(dto)
+    },
+    antesDeMensajeExito: () =>
+      navigate(`${rutasNavegacion.detalleJugador}/${jugadorid}`),
+    mensajeDeExito: `Cambios aplicados correctamente`
+  })
+
   const equipo = useMemo(() => {
     if (jugador && jugador.equipos)
-      return jugador.equipos.find((equipo) => equipo.id === Number(equipoid))
-  }, [jugador, equipoid])
+      return jugador.equipos.find(
+        (equipo) => equipo.id === Number(jugadorequipoid)
+      )
+  }, [jugador, jugadorequipoid])
 
   if (isError) {
     return (
@@ -102,7 +117,13 @@ export default function AprobarRechazarJugador() {
               variant='default'
               className='w-full'
               onClick={() => {
-                // Aquí puedes agregar la lógica para aprobar
+                mutation.mutate(
+                  new GestionarJugadorDTO({
+                    jugadorEquipoId: Number(jugadorequipoid),
+                    dni: jugador!.dni,
+                    estado: EstadoJugador.Activo as unknown as EstadoJugadorEnum
+                  })
+                )
               }}
             >
               Aprobar

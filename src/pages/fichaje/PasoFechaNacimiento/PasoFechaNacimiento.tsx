@@ -36,13 +36,21 @@ const PasoFechaNacimiento = () => {
   }
 
   const validarFecha = (date: string) => {
-    const temp = date.split('-')
-    const d = new Date(temp[0] + '-' + temp[1] + '-' + temp[2].split('T')[0])
+    const d = new Date(date)
+
+    const temp = date.split('T')[0].split('-')
+    const tempAnio = Number(temp[0])
+    const tempMes = Number(temp[1])
+    const tempDia = Number(temp[2])
+
     const resultado =
       d &&
-      d.getMonth() + 1 == Number(temp[1]) &&
-      d.getDate() == Number(temp[0]) &&
-      d.getFullYear() == Number(temp[2])
+      d.getFullYear() === tempAnio &&
+      d.getMonth() + 1 === tempMes && // Recordar que getMonth() es 0-indexado
+      d.getDate() === tempDia
+
+    console.log(resultado)
+
     return resultado || '¡Ups! Hay un problema con la fecha. Revisala.'
   }
 
