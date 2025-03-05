@@ -2,6 +2,7 @@ import DetalleClub from '@/pages/admin/club/detalle-club'
 import CrearEquipo from '@/pages/admin/equipo/crear-equipo'
 import DetalleEquipo from '@/pages/admin/equipo/detalle-equipo'
 import Equipo from '@/pages/admin/equipo/equipo'
+import AprobarRechazarJugador from '@/pages/admin/jugador/aprobar-rechazar-jugador'
 import DetalleJugador from '@/pages/admin/jugador/detalle-jugador'
 import Jugador from '@/pages/admin/jugador/jugador'
 import ErrorPage from '@/pages/error'
@@ -44,7 +45,11 @@ export const mapaRutasComponentes = [
       { path: `${rutas.crearEquipo}/:clubid`, element: <CrearEquipo /> },
       { path: `${rutas.detalleEquipo}/:id`, element: <DetalleEquipo /> },
       { path: rutas.jugadores, element: <Jugador /> },
-      { path: `${rutas.detalleJugador}/:id`, element: <DetalleJugador /> }
+      { path: `${rutas.detalleJugador}/:id`, element: <DetalleJugador /> },
+      {
+        path: `${rutas.aprobarRechazarJugador}/:equipoid/:jugadorid`,
+        element: <AprobarRechazarJugador />
+      }
     ]
   },
   { path: '*', element: <PaginaNoEncontrada /> }
