@@ -992,6 +992,7 @@ export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
     nombre?: string | undefined;
     club?: string | undefined;
     estado?: EstadoJugadorEnum;
+    motivoDeRechazo?: string | undefined;
 
     constructor(data?: IEquipoDelJugadorDTO) {
         if (data) {
@@ -1008,6 +1009,7 @@ export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
             this.nombre = _data["nombre"];
             this.club = _data["club"];
             this.estado = _data["estado"];
+            this.motivoDeRechazo = _data["motivoDeRechazo"];
         }
     }
 
@@ -1024,6 +1026,7 @@ export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
         data["nombre"] = this.nombre;
         data["club"] = this.club;
         data["estado"] = this.estado;
+        data["motivoDeRechazo"] = this.motivoDeRechazo;
         return data;
     }
 }
@@ -1033,6 +1036,7 @@ export interface IEquipoDelJugadorDTO {
     nombre?: string | undefined;
     club?: string | undefined;
     estado?: EstadoJugadorEnum;
+    motivoDeRechazo?: string | undefined;
 }
 
 export enum EstadoJugadorEnum {
@@ -1047,6 +1051,7 @@ export class GestionarJugadorDTO implements IGestionarJugadorDTO {
     estado?: EstadoJugadorEnum;
     jugadorEquipoId?: number;
     dni?: string | undefined;
+    motivoRechazo?: string | undefined;
 
     constructor(data?: IGestionarJugadorDTO) {
         if (data) {
@@ -1062,6 +1067,7 @@ export class GestionarJugadorDTO implements IGestionarJugadorDTO {
             this.estado = _data["estado"];
             this.jugadorEquipoId = _data["jugadorEquipoId"];
             this.dni = _data["dni"];
+            this.motivoRechazo = _data["motivoRechazo"];
         }
     }
 
@@ -1077,6 +1083,7 @@ export class GestionarJugadorDTO implements IGestionarJugadorDTO {
         data["estado"] = this.estado;
         data["jugadorEquipoId"] = this.jugadorEquipoId;
         data["dni"] = this.dni;
+        data["motivoRechazo"] = this.motivoRechazo;
         return data;
     }
 }
@@ -1085,6 +1092,7 @@ export interface IGestionarJugadorDTO {
     estado?: EstadoJugadorEnum;
     jugadorEquipoId?: number;
     dni?: string | undefined;
+    motivoRechazo?: string | undefined;
 }
 
 export class JugadorDTO implements IJugadorDTO {

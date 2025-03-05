@@ -8,7 +8,7 @@ import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 
 const menuItems = [
-  { name: 'Clubs', path: rutasNavegacion.clubs, icon: LayoutDashboard },
+  { name: 'Clubes', path: rutasNavegacion.clubs, icon: LayoutDashboard },
   { name: 'Equipos', path: rutasNavegacion.equipos, icon: Shield },
   { name: 'Jugadores', path: rutasNavegacion.jugadores, icon: Users }
 ]

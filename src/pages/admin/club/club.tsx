@@ -10,7 +10,7 @@ export default function Club() {
 
   return (
     <>
-      <Titulo>Clubs</Titulo>
+      <Titulo>Clubes</Titulo>
       <Botonera>
         <Button onClick={() => navigate(rutasNavegacion.crearClub)}>
           Crear nuevo club

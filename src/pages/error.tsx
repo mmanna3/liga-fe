@@ -6,8 +6,22 @@ const ErrorPage: React.FC = () => {
   const navigate = useNavigate()
 
   // Comprobamos si el error tiene los campos status y title
-  const status = JSON.parse((error as { response: string }).response).status
-  const title = JSON.parse((error as { response: string }).response).title
+  console.log('El error es:', error)
+
+  let status: string | undefined
+  let title: string | undefined
+
+  // Intentamos parsear el error si tiene la estructura esperada
+  try {
+    const parsedError = JSON.parse((error as { response: string }).response)
+    status = parsedError.status
+    title = parsedError.title
+  } catch (e) {
+    // Si no se puede parsear, asumimos que el error es un string
+    if (typeof error === 'string') {
+      title = error
+    }
+  }
 
   return (
     <div className='max-w-7xl text-negro'>
@@ -20,12 +34,12 @@ const ErrorPage: React.FC = () => {
           <p>Disculpá, hubo un error inesperado.</p>
           <p>Avisale al administrador con este código:</p>
           <p className='text-gray-500'>{location.pathname}</p>
-          {/* {status === 500 && title && ( */}
-          <p className='text-gray-500'> STATUS: {status}</p>
-          <p className='text-gray-500'>
-            <i>{title}</i> {/* Mostrar el title del error */}
-          </p>
-          {/* )} */}
+          {status && <p className='text-gray-500'>STATUS: {status}</p>}
+          {title && (
+            <p className='text-gray-500'>
+              <i>{title}</i> {/* Mostrar el title del error */}
+            </p>
+          )}
           <button
             onClick={() => navigate(-1)}
             type='button'

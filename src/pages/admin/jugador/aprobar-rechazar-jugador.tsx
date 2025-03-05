@@ -10,13 +10,15 @@ import { Textarea } from '@/components/ui/textarea'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
 import { EstadoJugador } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { toast } from 'sonner'
 
-export default function AprobarRechazarJugador() {
+const AprobarRechazarJugador: React.FC = () => {
   const navigate = useNavigate()
   const { jugadorequipoid } = useParams<{ jugadorequipoid: string }>()
   const { jugadorid } = useParams<{ jugadorid: string }>()
+  const [motivoRechazo, setMotivoRechazo] = useState('')
 
   const {
     data: jugador,
@@ -25,6 +27,16 @@ export default function AprobarRechazarJugador() {
   } = useApiQuery({
     key: ['jugador', jugadorid],
     fn: async () => await api.jugadorGET(Number(jugadorid))
+    // onResultadoExitoso: (data) => {
+    //   // Aquí solo se actualiza motivoRechazo si realmente ha cambiado
+    //   const nuevoMotivo = data.equipos!.find(
+    //     (x) => x.id === Number(jugadorequipoid)
+    //   )?.motivoDeRechazo
+
+    //   if (nuevoMotivo !== motivoRechazo) {
+    //     setMotivoRechazo(nuevoMotivo || '')
+    //   }
+    // }
   })
 
   const mutation = useApiMutation({
@@ -71,7 +83,6 @@ export default function AprobarRechazarJugador() {
         <img
           src={jugador!.fotoCarnet}
           alt={`${jugador!.nombre} ${jugador!.apellido}`}
-          className='w-32 h-32 rounded-lg object-cover'
         />
         <CardTitle className='mt-4 text-3xl font-semibold text-gray-900'>
           {jugador!.nombre} {jugador!.apellido}
@@ -132,7 +143,20 @@ export default function AprobarRechazarJugador() {
               variant='destructive'
               className='w-full'
               onClick={() => {
-                // Aquí puedes agregar la lógica para rechazar
+                if (motivoRechazo === '') {
+                  toast.error('Hay que ingresar un motivo de rechazo.')
+                  return
+                }
+
+                mutation.mutate(
+                  new GestionarJugadorDTO({
+                    jugadorEquipoId: Number(jugadorequipoid),
+                    dni: jugador!.dni,
+                    estado:
+                      EstadoJugador.FichajeRechazado as unknown as EstadoJugadorEnum,
+                    motivoRechazo: motivoRechazo
+                  })
+                )
               }}
             >
               Rechazar
@@ -149,7 +173,10 @@ export default function AprobarRechazarJugador() {
             placeholder='Escribe el motivo del rechazo...'
             rows={4}
             className='w-full'
-            disabled={false} // habilitar solo si el estado es "rechazado"
+            defaultValue={equipo?.motivoDeRechazo}
+            onChange={(e) => {
+              setMotivoRechazo(e.target.value)
+            }}
           />
         </div>
       </CardContent>
@@ -160,3 +187,5 @@ export default function AprobarRechazarJugador() {
     </Card>
   )
 }
+
+export default AprobarRechazarJugador
