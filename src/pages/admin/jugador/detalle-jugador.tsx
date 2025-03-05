@@ -44,11 +44,12 @@ export default function DetalleJugador() {
   }
 
   return (
-    <Card className='max-w-2lg mx-auto mt-10 p-4'>
-      <CardHeader>
+    <Card className='max-w-lg mx-auto mt-10 p-4'>
+      <CardHeader className='flex flex-row'>
         <CardTitle>
           {jugador!.nombre} {jugador!.apellido}
         </CardTitle>
+        <CardTitle>{jugador!.fotoCarnet}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className='mb-4'>

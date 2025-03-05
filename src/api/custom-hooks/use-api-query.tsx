@@ -14,12 +14,12 @@ const useApiQuery = <T,>(props: IProps<T>) => {
     queryKey: props.key,
     throwOnError: true,
     queryFn: async () => {
-      try {
-        return await props.fn()
-      } catch (error) {
-        console.log('Error en Request', error)
-        throw new Error('Error en el servidor: ' + error)
-      }
+      // try {
+      return await props.fn()
+      // } catch (error) {
+      //   console.log('Error en Request', error)
+      //   throw new Error('Error en el servidor: ' + error)
+      // }
     }
   })
 

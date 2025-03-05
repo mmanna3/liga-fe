@@ -4,6 +4,7 @@ import DetalleEquipo from '@/pages/admin/equipo/detalle-equipo'
 import Equipo from '@/pages/admin/equipo/equipo'
 import DetalleJugador from '@/pages/admin/jugador/detalle-jugador'
 import Jugador from '@/pages/admin/jugador/jugador'
+import ErrorPage from '@/pages/error'
 import FichajeError from '@/pages/fichaje/fichaje-error'
 import FichajeExitoso from '@/pages/fichaje/fichaje-exitoso'
 import AdminLayout from '../pages/admin/admin-layout'
@@ -32,6 +33,7 @@ export const mapaRutasComponentes = [
   },
   {
     path: '/admin',
+    errorElement: <ErrorPage />,
     element: <AdminLayout />,
     children: [
       { path: '', element: <></> },
