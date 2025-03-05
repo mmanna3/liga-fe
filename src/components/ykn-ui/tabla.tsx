@@ -133,6 +133,7 @@ export default function Tabla<T>({
             <div className='flex items-center space-x-2 text-gray-600 text-sm'>
               <Button
                 variant='outline'
+                className='w-3 h-7'
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
               >
@@ -144,6 +145,7 @@ export default function Tabla<T>({
               </span>
               <Button
                 variant='outline'
+                className='w-3 h-7'
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}
               >
