@@ -9,6 +9,12 @@ import {
   TableRow
 } from '@/components/ui/table'
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@radix-ui/react-dropdown-menu'
+import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
@@ -18,7 +24,7 @@ import {
   SortingState,
   useReactTable
 } from '@tanstack/react-table'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, MoreVertical } from 'lucide-react'
 import { useState } from 'react'
 
 type TablaProps<T> = {
@@ -124,7 +130,7 @@ export default function Tabla<T>({
             <span className='text-xs text-gray-600'>
               Registros: {data.length}
             </span>
-            <div className='flex items-center space-x-2'>
+            <div className='flex items-center space-x-2 text-gray-600 text-sm'>
               <Button
                 variant='outline'
                 onClick={() => table.previousPage()}
@@ -133,7 +139,7 @@ export default function Tabla<T>({
                 <ChevronLeft className='w-4 h-4' />
               </Button>
               <span>
-                Página {table.getState().pagination.pageIndex + 1} de{' '}
+                {table.getState().pagination.pageIndex + 1} de{' '}
                 {table.getPageCount()}
               </span>
               <Button
@@ -148,5 +154,35 @@ export default function Tabla<T>({
         </>
       )}
     </div>
+  )
+}
+
+interface MenuContextualProps {
+  items: { texto: string; onClick: () => void }[]
+}
+
+Tabla.MenuContextual = function MenuContextual({ items }: MenuContextualProps) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant='ghost' size='icon'>
+          <MoreVertical className='w-5 h-5' />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align='end'
+        className='bg-white min-w-32 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-lg rounded-md z-50 p-3'
+      >
+        {items.map((item, index) => (
+          <DropdownMenuItem
+            key={index}
+            onClick={item.onClick}
+            className='py-1 cursor-pointer'
+          >
+            {item.texto}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
