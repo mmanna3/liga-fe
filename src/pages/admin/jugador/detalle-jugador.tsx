@@ -23,10 +23,10 @@ export default function DetalleJugador() {
 
   if (isError) {
     return (
-      <Alert variant='destructive' className='mb-4'>
+      <Alert variant='destructive' className='mb-4 max-w-md mx-auto'>
         <AlertTitle className='text-xl font-semibold'>Error</AlertTitle>
         <AlertDescription>
-          No se pudieron recuperar los datos del equipo.
+          No se pudieron recuperar los datos del jugador.
         </AlertDescription>
       </Alert>
     )
@@ -44,36 +44,52 @@ export default function DetalleJugador() {
   }
 
   return (
-    <Card className='max-w-lg mx-auto mt-10 p-4'>
-      <CardHeader className='flex flex-row'>
-        <CardTitle>
+    <Card className='max-w-md mx-auto mt-10 p-6 shadow-lg rounded-xl border'>
+      <CardHeader className='flex flex-col items-center text-center'>
+        <div className='w-32 h-32 rounded-full overflow-hidden shadow-md border'>
+          <img
+            src={jugador!.fotoCarnet}
+            alt={`${jugador!.nombre} ${jugador!.apellido}`}
+            className='w-full h-full object-cover'
+          />
+        </div>
+        <CardTitle className='mt-4 text-2xl font-bold'>
           {jugador!.nombre} {jugador!.apellido}
         </CardTitle>
-        <CardTitle>{jugador!.fotoCarnet}</CardTitle>
       </CardHeader>
+
       <CardContent>
-        <div className='mb-4'>
+        <div className='bg-gray-100 p-4 rounded-lg shadow-sm mb-4'>
           <DetalleItem clave='DNI' valor={jugador!.dni!} />
           <DetalleItem
             clave='Fecha de nacimiento'
             valor={jugador!.fechaNacimiento!.toDateString()}
           />
         </div>
-        <h2 className='text-md font-bold'>Equipos</h2>
-        <ul className='list-disc list-inside'>
+
+        <h2 className='text-lg font-semibold mb-2 text-center'>Equipos</h2>
+        <ul className='list-none space-y-2'>
           {jugador!.equipos!.map((e) => (
-            <li key={e.id} className='my-1'>
-              {e.nombre} - {e.club}
-              <span className='ml-2'>
+            <>
+              <li
+                key={e.id}
+                className='p-2 border rounded-lg flex justify-between items-center shadow-sm'
+              >
+                <span>
+                  {e.nombre} - {e.club}
+                </span>
                 <JugadorEquipoEstadoBadge estado={Number(e.estado)} />
-              </span>
-            </li>
+              </li>
+            </>
           ))}
         </ul>
       </CardContent>
-      <Botonera>
-        <BotonVolver texto='Volver' />
-      </Botonera>
+
+      <div className='flex justify-center mt-4'>
+        <Botonera>
+          <BotonVolver texto='Volver' />
+        </Botonera>
+      </div>
     </Card>
   )
 }
