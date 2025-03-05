@@ -1,8 +1,7 @@
 import estilos from './ImageUploader.module.css'
-// import bootstrap from "GlobalStyle/bootstrap.min.css";
 
 interface IImageUploader {
-  onChange: () => any
+  onChange?: React.ChangeEventHandler<HTMLInputElement>
 }
 
 const ImageUploader = ({ onChange }: IImageUploader) => (

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import FormErrorHandler from '../Error/FormErrorHandler'
-import ImageUploader from '../ImageUploader/ImageUploader'
+import ImageUploader from '../ImageUploader/image-uploader'
 import Label from '../Label/Label'
 import estilos from './PasoFotoDocumento.module.css'
 import imagenDniDorso from './dniDorso.jpg'
@@ -27,11 +27,11 @@ const PasoFotoDocumento = ({ titulo, name, nombre }: IPasoFotoDocumento) => {
 
   const [imagenBase64, setImagenBase64] = useState(imagenDefault)
 
-  const onSelectFile = (e) => {
+  const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const reader = new FileReader()
       reader.addEventListener('load', () => {
-        setImagenBase64(reader.result)
+        setImagenBase64(reader.result as string)
         setValue(name, reader.result)
       })
       reader.readAsDataURL(e.target.files[0])
@@ -51,7 +51,7 @@ const PasoFotoDocumento = ({ titulo, name, nombre }: IPasoFotoDocumento) => {
 
         <div className={estilos.contenedorDeContenidoCentrado}>
           <img
-            readOnly
+            aria-readonly
             width='200'
             src={imagenBase64}
             className={estilos.imagenDNIFrente}

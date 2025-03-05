@@ -31,9 +31,10 @@ const FormularioFichaje = () => {
           `/fichaje-exitoso?dni=${jugadorDTO.dni}&codigoEquipo=${codigoEquipo}`
         )
       },
-      onError: (err) => {
-        console.log('Error del servidor', err)
-        const mensajeError = err?.message || 'Error desconocido'
+      onError: (error) => {
+        console.log('Error del servidor', error)
+        const mensajeError =
+          error instanceof Error ? error.message : 'Error desconocido'
         const mensajeCodificado = encodeURIComponent(mensajeError)
 
         navigate(`/fichaje-error?mensaje=${mensajeCodificado}`)

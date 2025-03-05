@@ -5,7 +5,7 @@ import estilos from './PasoFotoCarnet.module.css'
 // import bootstrap from "GlobalStyle/bootstrap.min.css";
 import { useFormContext } from 'react-hook-form'
 import FormErrorHandler from '../Error/FormErrorHandler'
-import ImageUploader from '../ImageUploader/ImageUploader'
+import ImageUploader from '../ImageUploader/image-uploader'
 import Label from '../Label/Label'
 import persona from './chico.jpg'
 import obtenerImagenRecortada from './recortarImagen'
