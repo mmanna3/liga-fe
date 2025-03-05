@@ -1,6 +1,7 @@
 import { api } from '@/api/api'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
@@ -44,9 +45,9 @@ export default function DetalleJugador() {
   }
 
   return (
-    <Card className='max-w-md mx-auto mt-10 p-6 shadow-lg rounded-xl border'>
+    <Card className='max-w-lg mx-auto mt-10 p-6 shadow-lg rounded-xl border'>
       <CardHeader className='flex flex-col items-center text-center'>
-        <div className='w-32 h-32 rounded-full overflow-hidden shadow-md border'>
+        <div className='w-32 h-32 rounded-md overflow-hidden shadow-md border'>
           <img
             src={jugador!.fotoCarnet}
             alt={`${jugador!.nombre} ${jugador!.apellido}`}
@@ -67,25 +68,31 @@ export default function DetalleJugador() {
           />
         </div>
 
-        <h2 className='text-lg font-semibold mb-2 text-center'>Equipos</h2>
-        <ul className='list-none space-y-2'>
+        <h2 className='text-lg font-semibold mt-8 mb-4 text-center'>Equipos</h2>
+        <ul className='space-y-3'>
           {jugador!.equipos!.map((e) => (
-            <>
-              <li
-                key={e.id}
-                className='p-2 border rounded-lg flex justify-between items-center shadow-sm'
-              >
-                <span>
-                  {e.nombre} - {e.club}
-                </span>
-                <JugadorEquipoEstadoBadge estado={Number(e.estado)} />
-              </li>
-            </>
+            <li
+              key={e.id}
+              className='p-4 border rounded-lg flex gap-4 flex-col justify-between shadow-md bg-white'
+            >
+              <div className='flex flex-row justify-between'>
+                <div className='flex flex-col'>
+                  <span className='text-lg font-semibold'>{e.nombre}</span>
+                  <span className='text-sm text-gray-500'>{e.club}</span>
+                </div>
+                <div>
+                  <JugadorEquipoEstadoBadge estado={Number(e.estado)} />
+                </div>
+              </div>
+              <Button variant='outline' className='px-4 py-1'>
+                Gestionar
+              </Button>
+            </li>
           ))}
         </ul>
       </CardContent>
 
-      <div className='flex justify-center mt-4'>
+      <div className='flex justify-end mt-4'>
         <Botonera>
           <BotonVolver texto='Volver' />
         </Botonera>
