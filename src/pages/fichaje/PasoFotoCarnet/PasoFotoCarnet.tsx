@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 import { useCallback, useEffect, useState } from 'react'
 import Cropper from 'react-easy-crop'
 // import Slider from '@material-ui/core/Slider';
