@@ -4,23 +4,23 @@ import { EstadoJugador } from '@/lib/utils'
 const estadoConfig = {
   [EstadoJugador.FichajePendienteDeAprobacion]: {
     texto: 'Pendiente de aprobación',
-    color: 'bg-blue-500 text-slate-200'
+    color: 'bg-blue-600 text-slate-200'
   },
   [EstadoJugador.FichajeRechazado]: {
     texto: 'Fichaje rechazado',
-    color: 'bg-red-500 text-slate-200'
+    color: 'bg-red-600 text-slate-200'
   },
   [EstadoJugador.Activo]: {
     texto: 'Activo',
-    color: 'bg-green-500 text-slate-200'
+    color: 'bg-green-600 text-slate-200'
   },
   [EstadoJugador.Suspendido]: {
     texto: 'Suspendido',
-    color: 'bg-orange-500 text-slate-200'
+    color: 'bg-orange-600 text-slate-200'
   },
   [EstadoJugador.Inhabilitado]: {
     texto: 'Inhabilitado',
-    color: 'bg-gray-500 text-slate-200'
+    color: 'bg-gray-600 text-slate-200'
   }
 }
 

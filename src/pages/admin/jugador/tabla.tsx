@@ -1,5 +1,7 @@
 import { EquipoDelJugadorDTO, JugadorDTO } from '@/api/clients'
+import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
 import Tabla from '@/components/ykn-ui/tabla'
+import { EstadoJugador } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
 import { ColumnDef } from '@tanstack/react-table'
 import { useNavigate } from 'react-router-dom'
@@ -35,9 +37,21 @@ export default function TablaJugador({
     },
     {
       accessorKey: 'equipos',
-      header: 'Equipos',
+      header: 'Estado',
       cell: ({ row }) => (
-        <span>{(row.getValue('equipos') as EquipoDelJugadorDTO[]).length}</span>
+        <span>
+          {/* Cuando los jugadores tengan más de un equipo, esto no va a funcionar bien */}
+          {(row.getValue('equipos') as EquipoDelJugadorDTO[]).length > 0 ? (
+            <JugadorEquipoEstadoBadge
+              estado={
+                (row.getValue('equipos') as EquipoDelJugadorDTO[])[0]
+                  .estado as unknown as EstadoJugador
+              }
+            />
+          ) : (
+            ''
+          )}
+        </span>
       )
     },
     {
