@@ -1,4 +1,5 @@
 import { api } from '@/api/api'
+import { EstadoJugadorEnum } from '@/api/clients'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { Button } from '@/components/ui/button'
 import {
@@ -34,7 +35,8 @@ export default function Jugador() {
 
   const { data, isLoading, isError } = useApiQuery({
     key: ['jugadores', filtroEstados.toString()],
-    fn: async () => await api.jugadorAll()
+    fn: async () =>
+      await api.listarConFiltro(filtroEstados as unknown as EstadoJugadorEnum[])
   })
 
   return (
