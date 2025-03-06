@@ -90,7 +90,7 @@ const AprobarRechazarJugador: React.FC = () => {
         <p className='text-sm text-gray-500'>{jugador!.dni}</p>
 
         <p className='text-sm text-gray-500'>
-          {new Date(jugador!.fechaNacimiento!).toLocaleDateString()}
+          {new Date(jugador!.fechaNacimiento!).toLocaleDateString('es-AR')}
         </p>
         <p className='text-sm text-gray-500'>
           {equipo?.nombre} - {equipo?.club}
