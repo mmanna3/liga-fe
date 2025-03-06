@@ -1,6 +1,7 @@
 import { api } from '@/api/api'
 import { JugadorDTO } from '@/api/clients'
 import useApiMutation from '@/api/custom-hooks/use-api-mutation'
+import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import BotonEnviarDatos from './boton-enviar-datos/boton-enviar-datos'
@@ -41,6 +42,11 @@ const FormularioFichaje = () => {
       }
     })
   })
+
+  useEffect(() => {
+    if (Object.keys(methods.formState.errors).length > 0)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [methods.formState.errors])
 
   return (
     <FormProvider {...methods}>
