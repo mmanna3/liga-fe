@@ -1,17 +1,16 @@
-import { api } from '@/api/api'
 import { ClubDTO } from '@/api/clients'
-import useApiQuery from '@/api/custom-hooks/use-api-query'
 import Tabla from '@/components/ykn-ui/tabla'
 import { rutasNavegacion } from '@/routes/rutas'
 import { ColumnDef } from '@tanstack/react-table'
 import { useNavigate } from 'react-router-dom'
 
-export default function TablaClub() {
-  const { data, isLoading, isError } = useApiQuery({
-    key: ['clubs'],
-    fn: async () => await api.clubAll()
-  })
+interface ITablaClub {
+  data: ClubDTO[]
+  isLoading: boolean
+  isError: boolean
+}
 
+export default function TablaClub({ data, isLoading, isError }: ITablaClub) {
   const navigate = useNavigate()
 
   const columnas: ColumnDef<ClubDTO>[] = [

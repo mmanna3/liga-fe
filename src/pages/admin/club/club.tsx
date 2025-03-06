@@ -1,3 +1,5 @@
+import { api } from '@/api/api'
+import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { Button } from '@/components/ui/button'
 import Botonera from '@/components/ykn-ui/botonera'
 import Titulo from '@/components/ykn-ui/titulo'
@@ -8,6 +10,11 @@ import Tabla from './tabla'
 export default function Club() {
   const navigate = useNavigate()
 
+  const { data, isLoading, isError } = useApiQuery({
+    key: ['clubs'],
+    fn: async () => await api.clubAll()
+  })
+
   return (
     <>
       <Titulo>Clubes</Titulo>
@@ -16,7 +23,7 @@ export default function Club() {
           Crear nuevo club
         </Button>
       </Botonera>
-      <Tabla />
+      <Tabla data={data || []} isLoading={isLoading} isError={isError} />
     </>
   )
 }

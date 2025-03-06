@@ -1,17 +1,20 @@
-import { api } from '@/api/api'
 import { EquipoDTO, JugadorDelEquipoDTO } from '@/api/clients'
-import useApiQuery from '@/api/custom-hooks/use-api-query'
 import Tabla from '@/components/ykn-ui/tabla'
 import { rutasNavegacion } from '@/routes/rutas'
 import { ColumnDef } from '@tanstack/react-table'
 import { useNavigate } from 'react-router-dom'
 
-export default function TablaEquipo() {
-  const { data, isLoading, isError } = useApiQuery({
-    key: ['equipos'],
-    fn: async () => await api.equipoAll()
-  })
+interface ITablaEquipo {
+  data: EquipoDTO[]
+  isLoading: boolean
+  isError: boolean
+}
 
+export default function TablaEquipo({
+  data,
+  isLoading,
+  isError
+}: ITablaEquipo) {
   const navigate = useNavigate()
 
   const columnas: ColumnDef<EquipoDTO>[] = [

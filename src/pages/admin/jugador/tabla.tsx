@@ -1,18 +1,21 @@
-import { api } from '@/api/api'
 import { EquipoDelJugadorDTO, JugadorDTO } from '@/api/clients'
-import useApiQuery from '@/api/custom-hooks/use-api-query'
 import Tabla from '@/components/ykn-ui/tabla'
 import { rutasNavegacion } from '@/routes/rutas'
 import { ColumnDef } from '@tanstack/react-table'
 import { useNavigate } from 'react-router-dom'
 
-export default function TablaJugador() {
-  const navigate = useNavigate()
+interface ITablaJugador {
+  data: JugadorDTO[]
+  isLoading: boolean
+  isError: boolean
+}
 
-  const { data, isLoading, isError } = useApiQuery({
-    key: ['jugadores'],
-    fn: async () => await api.jugadorAll()
-  })
+export default function TablaJugador({
+  data,
+  isLoading,
+  isError
+}: ITablaJugador) {
+  const navigate = useNavigate()
 
   const columnas: ColumnDef<JugadorDTO>[] = [
     {
