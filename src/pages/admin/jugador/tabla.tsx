@@ -37,6 +37,18 @@ export default function TablaJugador({
     },
     {
       accessorKey: 'equipos',
+      header: 'Equipos',
+      cell: ({ row }) => (
+        <span>
+          {/* Cuando los jugadores tengan más de un equipo, esto no va a funcionar bien */}
+          {(row.getValue('equipos') as EquipoDelJugadorDTO[]).length > 0
+            ? (row.getValue('equipos') as EquipoDelJugadorDTO[])[0].nombre
+            : ''}
+        </span>
+      )
+    },
+    {
+      accessorKey: 'equipos',
       header: 'Estado',
       cell: ({ row }) => (
         <span>
