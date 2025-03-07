@@ -4,7 +4,7 @@ import useApiMutation from '@/api/custom-hooks/use-api-mutation'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
@@ -13,6 +13,7 @@ import { rutasNavegacion } from '@/routes/rutas'
 import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import AprobarRechazarHeader from './components/aprobar-rechazar-header'
 
 const AprobarRechazarJugador: React.FC = () => {
   const navigate = useNavigate()
@@ -80,21 +81,7 @@ const AprobarRechazarJugador: React.FC = () => {
   return (
     <Card className='max-w-3xl mx-auto mt-10 p-6 rounded-xl border bg-white'>
       <CardHeader className='flex flex-col items-center text-center'>
-        <img
-          src={jugador!.fotoCarnet}
-          alt={`${jugador!.nombre} ${jugador!.apellido}`}
-        />
-        <CardTitle className='mt-4 text-3xl font-semibold text-gray-900'>
-          {jugador!.nombre} {jugador!.apellido}
-        </CardTitle>
-        <p className='text-sm text-gray-500'>{jugador!.dni}</p>
-
-        <p className='text-sm text-gray-500'>
-          {new Date(jugador!.fechaNacimiento!).toLocaleDateString('es-AR')}
-        </p>
-        <p className='text-sm text-gray-500'>
-          {equipo?.nombre} - {equipo?.club}
-        </p>
+        <AprobarRechazarHeader jugador={jugador} equipo={equipo} />
       </CardHeader>
 
       <CardContent>
@@ -105,19 +92,19 @@ const AprobarRechazarJugador: React.FC = () => {
           <div className='flex flex-col gap-9'>
             <div className='flex flex-col items-center w-full'>
               <img
-                src={jugador!.fotoDNIDorso}
-                alt={`${jugador!.nombre} DNI Dorso`}
-                className='w-full object-cover rounded-lg mb-2'
-              />
-              <span className='text-sm text-gray-500'>DNI Dorso</span>
-            </div>
-            <div className='flex flex-col items-center w-full'>
-              <img
                 src={jugador!.fotoDNIFrente}
                 alt={`${jugador!.nombre} DNI Frente`}
                 className='w-full object-cover rounded-lg mb-2'
               />
               <span className='text-sm text-gray-500'>DNI Frente</span>
+            </div>
+            <div className='flex flex-col items-center w-full'>
+              <img
+                src={jugador!.fotoDNIDorso}
+                alt={`${jugador!.nombre} DNI Dorso`}
+                className='w-full object-cover rounded-lg mb-2'
+              />
+              <span className='text-sm text-gray-500'>DNI Dorso</span>
             </div>
           </div>
         </div>
