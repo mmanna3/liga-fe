@@ -2,7 +2,7 @@ import { EquipoDelJugadorDTO, JugadorDTO } from '@/api/clients'
 import { CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface IProps {
   jugador: JugadorDTO | undefined
@@ -11,6 +11,15 @@ interface IProps {
 
 export default function AprobarRechazarHeader({ jugador, equipo }: IProps) {
   const [dni, setDni] = useState(jugador?.dni)
+  const [nombre, setNombre] = useState(jugador?.nombre)
+  const [apellido, setApellido] = useState(jugador?.apellido)
+  const [fechaNacimiento, setFechaNacimiento] = useState(
+    jugador?.fechaNacimiento
+  )
+
+  useEffect(() => {
+    console.log({ dni, nombre, apellido, fechaNacimiento })
+  }, [dni, nombre, apellido, fechaNacimiento])
 
   if (!jugador)
     return (
@@ -29,9 +38,20 @@ export default function AprobarRechazarHeader({ jugador, equipo }: IProps) {
           alt={`${jugador!.nombre} ${jugador!.apellido}`}
         />
         <CardTitle className='mt-4 text-3xl font-semibold '>
-          {jugador!.nombre} {jugador!.apellido}
+          <div className='flex gap-3'>
+            <ItemTextoEditable
+              valor={nombre}
+              setValor={setNombre}
+              tamanio='titulo'
+            />
+            <ItemTextoEditable
+              valor={apellido}
+              setValor={setApellido}
+              tamanio='titulo'
+            />
+          </div>
         </CardTitle>
-        <ItemEditable valor={dni} setValor={setDni} tamanio='detalle' />
+        <ItemTextoEditable valor={dni} setValor={setDni} tamanio='detalle' />
         <p className='text-sm text-gray-500'>
           {new Date(jugador!.fechaNacimiento!).toLocaleDateString('es-AR')}
         </p>
@@ -48,8 +68,15 @@ interface IItemEditableProps {
   tamanio: 'detalle' | 'titulo'
 }
 
-function ItemEditable({ valor, setValor, tamanio }: IItemEditableProps) {
+function ItemTextoEditable({ valor, setValor, tamanio }: IItemEditableProps) {
   const [esEdicion, setEsEdicion] = useState(false)
+  const inputRef = useRef<HTMLInputElement | null>(null)
+
+  useEffect(() => {
+    if (esEdicion && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [esEdicion])
 
   const tamanioObj = {
     detalle: 'text-sm text-gray-500 ',
@@ -70,6 +97,10 @@ function ItemEditable({ valor, setValor, tamanio }: IItemEditableProps) {
   else
     return (
       <Input
+        ref={(el) => {
+          inputRef.current = el // Asigna el elemento a inputRef
+          if (el) el.focus() // Asegura que se haga focus inmediatamente
+        }}
         onBlur={() => setEsEdicion(false)}
         value={valor}
         onChange={(v) => setValor(v.target.value)}
