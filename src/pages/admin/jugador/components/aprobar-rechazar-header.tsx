@@ -2,6 +2,7 @@ import { EquipoDelJugadorDTO, JugadorDTO } from '@/api/clients'
 import { CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Pencil } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 interface IProps {
@@ -38,7 +39,7 @@ export default function AprobarRechazarHeader({ jugador, equipo }: IProps) {
           alt={`${jugador!.nombre} ${jugador!.apellido}`}
         />
         <CardTitle className='mt-4 text-3xl font-semibold '>
-          <div className='flex gap-3'>
+          <div className='flex gap-2'>
             <ItemTextoEditable
               valor={nombre}
               setValor={setNombre}
@@ -79,20 +80,29 @@ function ItemTextoEditable({ valor, setValor, tamanio }: IItemEditableProps) {
   }, [esEdicion])
 
   const tamanioObj = {
-    detalle: 'text-sm text-gray-500 ',
-    titulo: 'text-3xl text-gray-900'
+    detalle: {
+      p: 'text-sm text-gray-500',
+      lapiz: 'w-3 ml-1 pb-1 text-gray-500'
+    },
+    titulo: {
+      p: 'text-3xl text-gray-900',
+      lapiz: 'w-5 ml-1 mt-2 text-gray-900'
+    }
   }
 
   if (!esEdicion)
     return (
-      <>
+      <div className='flex group'>
         <p
-          className={`${tamanioObj[tamanio]}`}
+          className={`${tamanioObj[tamanio].p}  group-hover:text-blue-700 group-hover:font-semibold`}
           onClick={() => setEsEdicion(true)}
         >
           {valor}
         </p>
-      </>
+        <Pencil
+          className={`${tamanioObj[tamanio].lapiz} hidden group-hover:block group-hover:text-blue-700 group-hover:font-semibold`}
+        />
+      </div>
     )
   else
     return (
@@ -101,6 +111,7 @@ function ItemTextoEditable({ valor, setValor, tamanio }: IItemEditableProps) {
           inputRef.current = el // Asigna el elemento a inputRef
           if (el) el.focus() // Asegura que se haga focus inmediatamente
         }}
+        className='max-w-32 text-center'
         onBlur={() => setEsEdicion(false)}
         value={valor}
         onChange={(v) => setValor(v.target.value)}
