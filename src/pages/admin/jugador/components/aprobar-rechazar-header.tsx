@@ -1,7 +1,15 @@
 import { EquipoDelJugadorDTO, JugadorDTO } from '@/api/clients'
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
 import { CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@radix-ui/react-popover'
+import { es } from 'date-fns/locale'
 import { Pencil } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
@@ -57,10 +65,6 @@ export default function AprobarRechazarHeader({ jugador, equipo }: IProps) {
           valor={fechaNacimiento}
           setValor={setFechaNacimiento}
         />
-        <p className='text-sm text-gray-500'>
-          {new Date(jugador!.fechaNacimiento!).toLocaleDateString('es-AR')}
-        </p>
-
         <p className='text-sm text-gray-500'>
           {equipo?.nombre} - {equipo?.club}
         </p>
@@ -131,13 +135,10 @@ interface IItemFechaEditableProps {
 
 function ItemFechaEditable({ valor, setValor }: IItemFechaEditableProps) {
   const [esEdicion, setEsEdicion] = useState(false)
-  const inputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
-    if (esEdicion && inputRef.current) {
-      inputRef.current.focus()
-    }
-  }, [esEdicion])
+    console.log('fecha', valor)
+  }, [valor])
 
   if (!esEdicion)
     return (
@@ -153,18 +154,25 @@ function ItemFechaEditable({ valor, setValor }: IItemFechaEditableProps) {
     )
   else
     return (
-      <Input
-        ref={(el) => {
-          inputRef.current = el
-          if (el) el.focus()
-        }}
-        className='max-w-32 text-center'
-        type='date'
-        value={valor ? valor.toISOString().split('T')[0] : ''}
-        onBlur={() => setEsEdicion(false)}
-        onChange={(e) =>
-          setValor(e.target.value ? new Date(e.target.value) : undefined)
-        }
-      />
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant='outline'>
+            {valor ? valor.toLocaleDateString('es-AR') : 'Seleccionar fecha'}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className='w-auto p-2 bg-white shadow-lg border rounded-md'>
+          <Calendar
+            className='w-full'
+            mode='single'
+            selected={valor}
+            onSelect={(date) => {
+              setValor(date || undefined)
+              setEsEdicion(false)
+            }}
+            initialFocus
+            locale={es}
+          />
+        </PopoverContent>
+      </Popover>
     )
 }
