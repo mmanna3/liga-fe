@@ -53,9 +53,14 @@ export default function AprobarRechazarHeader({ jugador, equipo }: IProps) {
           </div>
         </CardTitle>
         <ItemTextoEditable valor={dni} setValor={setDni} tamanio='detalle' />
+        <ItemFechaEditable
+          valor={fechaNacimiento}
+          setValor={setFechaNacimiento}
+        />
         <p className='text-sm text-gray-500'>
           {new Date(jugador!.fechaNacimiento!).toLocaleDateString('es-AR')}
         </p>
+
         <p className='text-sm text-gray-500'>
           {equipo?.nombre} - {equipo?.club}
         </p>
@@ -115,6 +120,51 @@ function ItemTextoEditable({ valor, setValor, tamanio }: IItemEditableProps) {
         onBlur={() => setEsEdicion(false)}
         value={valor}
         onChange={(v) => setValor(v.target.value)}
+      />
+    )
+}
+
+interface IItemFechaEditableProps {
+  valor: Date | undefined
+  setValor: (value: Date | undefined) => void
+}
+
+function ItemFechaEditable({ valor, setValor }: IItemFechaEditableProps) {
+  const [esEdicion, setEsEdicion] = useState(false)
+  const inputRef = useRef<HTMLInputElement | null>(null)
+
+  useEffect(() => {
+    if (esEdicion && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [esEdicion])
+
+  if (!esEdicion)
+    return (
+      <div className='flex group'>
+        <p
+          className='text-sm text-gray-500 group-hover:text-blue-700 group-hover:font-semibold'
+          onClick={() => setEsEdicion(true)}
+        >
+          {valor ? valor.toLocaleDateString('es-AR') : 'Sin fecha'}
+        </p>
+        <Pencil className='w-3 ml-1 pb-1 text-gray-500 hidden group-hover:block group-hover:text-blue-700 group-hover:font-semibold' />
+      </div>
+    )
+  else
+    return (
+      <Input
+        ref={(el) => {
+          inputRef.current = el
+          if (el) el.focus()
+        }}
+        className='max-w-32 text-center'
+        type='date'
+        value={valor ? valor.toISOString().split('T')[0] : ''}
+        onBlur={() => setEsEdicion(false)}
+        onChange={(e) =>
+          setValor(e.target.value ? new Date(e.target.value) : undefined)
+        }
       />
     )
 }
