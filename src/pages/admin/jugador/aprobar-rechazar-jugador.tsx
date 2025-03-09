@@ -14,6 +14,7 @@ import { Textarea } from '@/components/ui/textarea'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
 import { EstadoJugador } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
+import { Loader2 } from 'lucide-react' // Spinner
 import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -33,22 +34,7 @@ const AprobarRechazarJugador: React.FC = () => {
   } = useApiQuery({
     key: ['jugador', jugadorid],
     fn: async () => await api.jugadorGET(Number(jugadorid))
-    // onResultadoExitoso: (data) => {
-    //   // Aquí solo se actualiza motivoRechazo si realmente ha cambiado
-    //   const nuevoMotivo = data.equipos!.find(
-    //     (x) => x.id === Number(jugadorequipoid)
-    //   )?.motivoDeRechazo
-
-    //   if (nuevoMotivo !== motivoRechazo) {
-    //     setMotivoRechazo(nuevoMotivo || '')
-    //   }
-    // }
   })
-
-  const onJugadorChange = (jugador: JugadorDTO) => {
-    console.log('jugador', jugador)
-    setDatosCabecera(jugador)
-  }
 
   const mutation = useApiMutation({
     fn: async (dto: GestionarJugadorDTO) => {
@@ -60,7 +46,7 @@ const AprobarRechazarJugador: React.FC = () => {
   })
 
   const equipo = useMemo(() => {
-    if (jugador && jugador.equipos)
+    if (jugador?.equipos)
       return jugador.equipos.find(
         (equipo) => equipo.id === Number(jugadorequipoid)
       )
@@ -94,7 +80,7 @@ const AprobarRechazarJugador: React.FC = () => {
         <AprobarRechazarHeader
           jugador={jugador}
           equipo={equipo}
-          onChange={onJugadorChange}
+          onChange={setDatosCabecera}
         />
       </CardHeader>
 
@@ -128,6 +114,7 @@ const AprobarRechazarJugador: React.FC = () => {
             <Button
               variant='default'
               className='w-full'
+              disabled={mutation.isPending}
               onClick={() => {
                 mutation.mutate(
                   new GestionarJugadorDTO({
@@ -143,13 +130,22 @@ const AprobarRechazarJugador: React.FC = () => {
                 )
               }}
             >
-              Aprobar
+              {mutation.isPending ? (
+                <>
+                  <Loader2 className='mr-2 h-5 w-5 animate-spin' />
+                  Procesando...
+                </>
+              ) : (
+                'Aprobar'
+              )}
             </Button>
+
             <Button
               variant='destructive'
               className='w-full'
+              disabled={mutation.isPending}
               onClick={() => {
-                if (motivoRechazo === '') {
+                if (!motivoRechazo) {
                   toast.error('Hay que ingresar un motivo de rechazo.')
                   return
                 }
@@ -160,7 +156,7 @@ const AprobarRechazarJugador: React.FC = () => {
                     jugadorEquipoId: Number(jugadorequipoid),
                     estado:
                       EstadoJugador.FichajeRechazado as unknown as EstadoJugadorEnum,
-                    motivoRechazo: motivoRechazo,
+                    motivoRechazo,
                     dni: datosCabecera!.dni,
                     nombre: datosCabecera!.nombre,
                     apellido: datosCabecera!.apellido,
@@ -169,12 +165,18 @@ const AprobarRechazarJugador: React.FC = () => {
                 )
               }}
             >
-              Rechazar
+              {mutation.isPending ? (
+                <>
+                  <Loader2 className='mr-2 h-5 w-5 animate-spin' />
+                  Procesando...
+                </>
+              ) : (
+                'Rechazar'
+              )}
             </Button>
           </div>
         </div>
 
-        {/* Mostrar cuadro de texto solo si se rechaza */}
         <div className='mt-6'>
           <h3 className='text-lg font-medium mb-2 text-gray-700'>
             Motivo del rechazo
@@ -184,9 +186,7 @@ const AprobarRechazarJugador: React.FC = () => {
             rows={4}
             className='w-full'
             defaultValue={equipo?.motivoDeRechazo}
-            onChange={(e) => {
-              setMotivoRechazo(e.target.value)
-            }}
+            onChange={(e) => setMotivoRechazo(e.target.value)}
           />
         </div>
       </CardContent>
