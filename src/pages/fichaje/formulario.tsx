@@ -97,7 +97,10 @@ const FormularioFichaje = () => {
             nombre='foto de ATRÁS del DNI'
           />
 
-          <BotonEnviarDatos onEnviarClick={hacerSubmit} />
+          <BotonEnviarDatos
+            onEnviarClick={hacerSubmit}
+            estaCargando={mutation.isPending}
+          />
         </form>
       </div>
     </FormProvider>
