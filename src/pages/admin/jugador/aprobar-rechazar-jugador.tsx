@@ -1,5 +1,9 @@
 import { api } from '@/api/api'
-import { EstadoJugadorEnum, GestionarJugadorDTO } from '@/api/clients'
+import {
+  EstadoJugadorEnum,
+  GestionarJugadorDTO,
+  JugadorDTO
+} from '@/api/clients'
 import useApiMutation from '@/api/custom-hooks/use-api-mutation'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -20,6 +24,7 @@ const AprobarRechazarJugador: React.FC = () => {
   const { jugadorequipoid } = useParams<{ jugadorequipoid: string }>()
   const { jugadorid } = useParams<{ jugadorid: string }>()
   const [motivoRechazo, setMotivoRechazo] = useState('')
+  const [datosCabecera, setDatosCabecera] = useState<JugadorDTO>()
 
   const {
     data: jugador,
@@ -39,6 +44,11 @@ const AprobarRechazarJugador: React.FC = () => {
     //   }
     // }
   })
+
+  const onJugadorChange = (jugador: JugadorDTO) => {
+    console.log('jugador', jugador)
+    setDatosCabecera(jugador)
+  }
 
   const mutation = useApiMutation({
     fn: async (dto: GestionarJugadorDTO) => {
@@ -81,7 +91,11 @@ const AprobarRechazarJugador: React.FC = () => {
   return (
     <Card className='max-w-3xl mx-auto mt-10 p-6 rounded-xl border bg-white'>
       <CardHeader className='flex flex-col items-center text-center'>
-        <AprobarRechazarHeader jugador={jugador} equipo={equipo} />
+        <AprobarRechazarHeader
+          jugador={jugador}
+          equipo={equipo}
+          onChange={onJugadorChange}
+        />
       </CardHeader>
 
       <CardContent>
@@ -117,9 +131,14 @@ const AprobarRechazarJugador: React.FC = () => {
               onClick={() => {
                 mutation.mutate(
                   new GestionarJugadorDTO({
+                    id: jugador!.id,
                     jugadorEquipoId: Number(jugadorequipoid),
-                    dni: jugador!.dni,
-                    estado: EstadoJugador.Activo as unknown as EstadoJugadorEnum
+                    estado:
+                      EstadoJugador.Activo as unknown as EstadoJugadorEnum,
+                    dni: datosCabecera!.dni,
+                    nombre: datosCabecera!.nombre,
+                    apellido: datosCabecera!.apellido,
+                    fechaNacimiento: datosCabecera!.fechaNacimiento
                   })
                 )
               }}
@@ -137,11 +156,15 @@ const AprobarRechazarJugador: React.FC = () => {
 
                 mutation.mutate(
                   new GestionarJugadorDTO({
+                    id: jugador!.id,
                     jugadorEquipoId: Number(jugadorequipoid),
-                    dni: jugador!.dni,
                     estado:
                       EstadoJugador.FichajeRechazado as unknown as EstadoJugadorEnum,
-                    motivoRechazo: motivoRechazo
+                    motivoRechazo: motivoRechazo,
+                    dni: datosCabecera!.dni,
+                    nombre: datosCabecera!.nombre,
+                    apellido: datosCabecera!.apellido,
+                    fechaNacimiento: datosCabecera!.fechaNacimiento
                   })
                 )
               }}

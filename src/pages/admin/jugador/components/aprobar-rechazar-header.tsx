@@ -16,9 +16,14 @@ import { useEffect, useRef, useState } from 'react'
 interface IProps {
   jugador: JugadorDTO | undefined
   equipo: EquipoDelJugadorDTO | undefined
+  onChange: (jugador: JugadorDTO) => void
 }
 
-export default function AprobarRechazarHeader({ jugador, equipo }: IProps) {
+export default function AprobarRechazarHeader({
+  jugador,
+  equipo,
+  onChange
+}: IProps) {
   const [dni, setDni] = useState(jugador?.dni)
   const [nombre, setNombre] = useState(jugador?.nombre)
   const [apellido, setApellido] = useState(jugador?.apellido)
@@ -27,7 +32,14 @@ export default function AprobarRechazarHeader({ jugador, equipo }: IProps) {
   )
 
   useEffect(() => {
-    console.log({ dni, nombre, apellido, fechaNacimiento })
+    onChange(
+      new JugadorDTO({
+        dni: dni!,
+        nombre: nombre!,
+        apellido: apellido!,
+        fechaNacimiento: fechaNacimiento!
+      })
+    )
   }, [dni, nombre, apellido, fechaNacimiento])
 
   if (!jugador)

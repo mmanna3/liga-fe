@@ -1097,9 +1097,13 @@ export enum EstadoJugadorEnum {
 }
 
 export class GestionarJugadorDTO implements IGestionarJugadorDTO {
+    id?: number;
+    dni!: string;
+    nombre!: string;
+    apellido!: string;
+    fechaNacimiento!: Date;
     estado?: EstadoJugadorEnum;
     jugadorEquipoId?: number;
-    dni?: string | undefined;
     motivoRechazo?: string | undefined;
 
     constructor(data?: IGestionarJugadorDTO) {
@@ -1113,9 +1117,13 @@ export class GestionarJugadorDTO implements IGestionarJugadorDTO {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
+            this.dni = _data["dni"];
+            this.nombre = _data["nombre"];
+            this.apellido = _data["apellido"];
+            this.fechaNacimiento = _data["fechaNacimiento"] ? new Date(_data["fechaNacimiento"].toString()) : <any>undefined;
             this.estado = _data["estado"];
             this.jugadorEquipoId = _data["jugadorEquipoId"];
-            this.dni = _data["dni"];
             this.motivoRechazo = _data["motivoRechazo"];
         }
     }
@@ -1129,18 +1137,26 @@ export class GestionarJugadorDTO implements IGestionarJugadorDTO {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["dni"] = this.dni;
+        data["nombre"] = this.nombre;
+        data["apellido"] = this.apellido;
+        data["fechaNacimiento"] = this.fechaNacimiento ? this.fechaNacimiento.toISOString() : <any>undefined;
         data["estado"] = this.estado;
         data["jugadorEquipoId"] = this.jugadorEquipoId;
-        data["dni"] = this.dni;
         data["motivoRechazo"] = this.motivoRechazo;
         return data;
     }
 }
 
 export interface IGestionarJugadorDTO {
+    id?: number;
+    dni: string;
+    nombre: string;
+    apellido: string;
+    fechaNacimiento: Date;
     estado?: EstadoJugadorEnum;
     jugadorEquipoId?: number;
-    dni?: string | undefined;
     motivoRechazo?: string | undefined;
 }
 
