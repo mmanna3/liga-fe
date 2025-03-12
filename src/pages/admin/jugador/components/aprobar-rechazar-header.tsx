@@ -1,17 +1,10 @@
 import { EquipoDelJugadorDTO, JugadorDTO } from '@/api/clients'
-import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
 import { CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from '@radix-ui/react-popover'
-import { es } from 'date-fns/locale'
 import { Pencil } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import InputFecha from './fecha-input-editable'
 
 interface IProps {
   jugador: JugadorDTO | undefined
@@ -166,25 +159,12 @@ function ItemFechaEditable({ valor, setValor }: IItemFechaEditableProps) {
     )
   else
     return (
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant='outline'>
-            {valor ? valor.toLocaleDateString('es-AR') : 'Seleccionar fecha'}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className='w-auto p-2 bg-white shadow-lg border rounded-md'>
-          <Calendar
-            className='w-full'
-            mode='single'
-            selected={valor}
-            onSelect={(date) => {
-              setValor(date || undefined)
-              setEsEdicion(false)
-            }}
-            initialFocus
-            locale={es}
-          />
-        </PopoverContent>
-      </Popover>
+      <InputFecha
+        fechaInicial={valor!}
+        onChange={(date) => {
+          setValor(date || undefined)
+          setEsEdicion(false)
+        }}
+      />
     )
 }
