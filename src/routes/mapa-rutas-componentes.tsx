@@ -3,6 +3,7 @@ import CrearEquipo from '@/pages/admin/equipo/crear-equipo'
 import DetalleEquipo from '@/pages/admin/equipo/detalle-equipo'
 import Equipo from '@/pages/admin/equipo/equipo'
 import AprobarRechazarJugador from '@/pages/admin/jugador/aprobar-rechazar-jugador'
+import CambiarEstado from '@/pages/admin/jugador/cambiar-estado-jugador'
 import DetalleJugador from '@/pages/admin/jugador/detalle-jugador'
 import Jugador from '@/pages/admin/jugador/jugador'
 import ErrorPage from '@/pages/error'
@@ -49,6 +50,10 @@ export const mapaRutasComponentes = [
       {
         path: `${rutas.aprobarRechazarJugador}/:jugadorequipoid/:jugadorid`,
         element: <AprobarRechazarJugador />
+      },
+      {
+        path: `${rutas.cambiarEstadoJugador}/:jugadorequipoid/:jugadorid`,
+        element: <CambiarEstado />
       }
     ]
   },

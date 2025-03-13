@@ -22,8 +22,10 @@ import AprobarRechazarHeader from './components/aprobar-rechazar-header'
 
 const AprobarRechazarJugador: React.FC = () => {
   const navigate = useNavigate()
-  const { jugadorequipoid } = useParams<{ jugadorequipoid: string }>()
-  const { jugadorid } = useParams<{ jugadorid: string }>()
+  const { jugadorequipoid, jugadorid } = useParams<{
+    jugadorequipoid: string
+    jugadorid: string
+  }>()
   const [motivoRechazo, setMotivoRechazo] = useState('')
   const [datosCabecera, setDatosCabecera] = useState<JugadorDTO>()
 

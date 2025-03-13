@@ -10,5 +10,6 @@ export enum EstadoJugador {
   FichajeRechazado = 2,
   Activo = 3,
   Suspendido = 4,
-  Inhabilitado = 5
+  Inhabilitado = 5,
+  AprobadoPendienteDePago = 6
 }

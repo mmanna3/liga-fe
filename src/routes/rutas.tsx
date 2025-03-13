@@ -7,7 +7,8 @@ export const rutas = {
   detalleEquipo: 'equipos/detalle',
   jugadores: 'jugadores',
   detalleJugador: 'jugadores/detalle',
-  aprobarRechazarJugador: 'jugadores/aprobar-rechazar'
+  aprobarRechazarJugador: 'jugadores/aprobar-rechazar',
+  cambiarEstadoJugador: 'jugadores/cambiar-estado'
 }
 
 export const rutasNavegacion: { [K in keyof typeof rutas]: string } =

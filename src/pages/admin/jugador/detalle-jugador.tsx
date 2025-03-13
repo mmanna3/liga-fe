@@ -83,21 +83,28 @@ export default function DetalleJugador() {
               </div>
               <div className='flex items-center gap-4'>
                 <JugadorEquipoEstadoBadge estado={Number(equipo.estado)} />
-                {(Number(equipo.estado) ===
-                  EstadoJugador.FichajePendienteDeAprobacion ||
-                  Number(equipo.estado) === EstadoJugador.FichajeRechazado) && (
+                {
                   <Button
                     variant='ghost'
                     className='text-blue-600'
-                    onClick={() =>
-                      navigate(
-                        `${rutasNavegacion.aprobarRechazarJugador}/${equipo.id}/${jugador!.id}`
+                    onClick={() => {
+                      if (
+                        Number(equipo.estado) ===
+                          EstadoJugador.FichajePendienteDeAprobacion ||
+                        Number(equipo.estado) === EstadoJugador.FichajeRechazado
                       )
-                    }
+                        navigate(
+                          `${rutasNavegacion.aprobarRechazarJugador}/${equipo.id}/${jugador!.id}`
+                        )
+                      else
+                        navigate(
+                          `${rutasNavegacion.cambiarEstadoJugador}/${equipo.id}/${jugador!.id}`
+                        )
+                    }}
                   >
                     Gestionar
                   </Button>
-                )}
+                }
               </div>
             </li>
           ))}
