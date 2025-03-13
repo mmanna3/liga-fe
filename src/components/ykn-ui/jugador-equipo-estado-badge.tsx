@@ -21,6 +21,10 @@ const estadoConfig = {
   [EstadoJugador.Inhabilitado]: {
     texto: 'Inhabilitado',
     color: 'bg-gray-600 text-slate-200'
+  },
+  [EstadoJugador.AprobadoPendienteDePago]: {
+    texto: 'Aprobado pendiente de pago',
+    color: 'bg-teal-600 text-slate-200'
   }
 }
 
