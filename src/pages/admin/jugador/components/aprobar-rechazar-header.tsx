@@ -141,10 +141,6 @@ interface IItemFechaEditableProps {
 function ItemFechaEditable({ valor, setValor }: IItemFechaEditableProps) {
   const [esEdicion, setEsEdicion] = useState(false)
 
-  useEffect(() => {
-    console.log('fecha', valor)
-  }, [valor])
-
   if (!esEdicion)
     return (
       <div className='flex group'>
