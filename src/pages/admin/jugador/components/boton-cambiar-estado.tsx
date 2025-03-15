@@ -25,7 +25,7 @@ const BotonCambiarEstado = ({
   return (
     <div>
       <Boton
-        onClick={() => mutation.mutate({ ...jugador, motivo })}
+        onClick={() => mutation.mutate([{ ...jugador, motivo }])}
         estaCargando={mutation.isPending}
       >
         {label}

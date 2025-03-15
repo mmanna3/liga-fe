@@ -1,16 +1,16 @@
+import { CambiarEstadoDelJugadorDTO } from '@/api/clients'
 import useApiMutation from '@/api/custom-hooks/use-api-mutation'
-import { JugadorParaCambioDeEstadoDTO } from '@/lib/estado-jugador-lib'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useNavigate } from 'react-router-dom'
 
 export const useCambiarEstadoMutation = (
-  action: (dto: JugadorParaCambioDeEstadoDTO) => Promise<number>,
+  action: (dto: CambiarEstadoDelJugadorDTO[]) => Promise<number>,
   mensajeDeExito: string
 ) => {
   const navigate = useNavigate()
 
   return useApiMutation({
-    fn: async (dto: JugadorParaCambioDeEstadoDTO) => {
+    fn: async (dto: CambiarEstadoDelJugadorDTO[]) => {
       await action(dto)
     },
 

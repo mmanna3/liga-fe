@@ -1,41 +1,29 @@
 import { api } from '@/api/api'
-import {
-  ActivarJugadorDTO,
-  EquipoDelJugadorDTO,
-  InhabilitarJugadorDTO,
-  PagarFichajeJugadorDTO,
-  SuspenderJugadorDTO
-} from '@/api/clients'
+import { CambiarEstadoDelJugadorDTO, EquipoDelJugadorDTO } from '@/api/clients'
 import { EstadoJugador } from './utils'
 
-export type JugadorParaCambioDeEstadoDTO =
-  | PagarFichajeJugadorDTO
-  | SuspenderJugadorDTO
-  | InhabilitarJugadorDTO
-  | ActivarJugadorDTO
-
 export type AccionTipo = (
-  jugador: JugadorParaCambioDeEstadoDTO
+  jugador: CambiarEstadoDelJugadorDTO[]
 ) => Promise<number>
 
 const suspender = {
   label: 'Suspender',
-  action: (j: SuspenderJugadorDTO) => api.suspenderJugador(j),
+  action: (j: CambiarEstadoDelJugadorDTO[]) => api.suspenderJugador(j),
   mensajeExito: 'El jugador fue suspendido.'
 }
 const inhabilitar = {
   label: 'Inhabilitar',
-  action: (j: InhabilitarJugadorDTO) => api.inhabilitarJugador(j),
+  action: (j: CambiarEstadoDelJugadorDTO[]) => api.inhabilitarJugador(j),
   mensajeExito: 'El jugador fue inhabilitado.'
 }
 const activar = {
   label: 'Activar',
-  action: (j: ActivarJugadorDTO) => api.activarJugador(j),
+  action: (j: CambiarEstadoDelJugadorDTO[]) => api.activarJugador(j),
   mensajeExito: 'El jugador se marcó como "activo".'
 }
 const pagarFichaje = {
   label: 'Pagar fichaje',
-  action: (j: PagarFichajeJugadorDTO) => api.pagarFichajeDelJugador(j),
+  action: (j: CambiarEstadoDelJugadorDTO[]) => api.activarJugador(j),
   mensajeExito: 'El jugador se marcó como "activo".'
 }
 

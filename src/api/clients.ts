@@ -609,7 +609,7 @@ export class Client {
      * @param body (optional) 
      * @return Success
      */
-    activarJugador(body: CambiarEstadoDelJugadorDTO | undefined): Promise<number> {
+    activarJugador(body: CambiarEstadoDelJugadorDTO[] | undefined): Promise<number> {
         let url_ = this.baseUrl + "/api/Jugador/activar-jugador";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -695,7 +695,7 @@ export class Client {
      * @param body (optional) 
      * @return Success
      */
-    inhabilitarJugador(body: CambiarEstadoDelJugadorDTO | undefined): Promise<number> {
+    inhabilitarJugador(body: CambiarEstadoDelJugadorDTO[] | undefined): Promise<number> {
         let url_ = this.baseUrl + "/api/Jugador/inhabilitar-jugador";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -738,7 +738,7 @@ export class Client {
      * @param body (optional) 
      * @return Success
      */
-    suspenderJugador(body: CambiarEstadoDelJugadorDTO | undefined): Promise<number> {
+    suspenderJugador(body: CambiarEstadoDelJugadorDTO[] | undefined): Promise<number> {
         let url_ = this.baseUrl + "/api/Jugador/suspender-jugador";
         url_ = url_.replace(/[?&]$/, "");
 
