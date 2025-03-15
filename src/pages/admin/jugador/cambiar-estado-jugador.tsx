@@ -1,5 +1,5 @@
 import { api } from '@/api/api'
-import { EquipoDelJugadorDTO, InhabilitarJugadorDTO } from '@/api/clients'
+import { InhabilitarJugadorDTO } from '@/api/clients'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/components/cargando-y-error-contenedor'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -7,31 +7,13 @@ import DetalleItem from '@/components/ykn-ui/detalle-item'
 import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
 import {
   estadoTransiciones,
+  obtenerEstado,
   obtenerNombreEstado
 } from '@/lib/estado-jugador-lib'
 import { EstadoJugador } from '@/lib/utils'
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import BotonCambiarEstado from './components/boton-cambiar-estado'
-
-const conseguirEstado = (
-  equipos: EquipoDelJugadorDTO[],
-  jugadorEquipoId: number
-) => {
-  let equipo
-  if (equipos) {
-    equipo = equipos.find((equipo) => equipo.id === jugadorEquipoId)
-    if (equipo) {
-      const estadoConvertido = obtenerNombreEstado(equipo.estado!)
-      console.log('el estado convertido es', estadoConvertido)
-      if (estadoConvertido) {
-        return estadoConvertido
-      }
-    }
-  }
-
-  return null
-}
 
 export default function CambiarEstado() {
   const { jugadorequipoid, jugadorid } = useParams<{
@@ -49,7 +31,7 @@ export default function CambiarEstado() {
     fn: async () => await api.jugadorGET(Number(jugadorid)),
     onResultadoExitoso: async () => {
       if (jugador && jugador.equipos)
-        setEstado(conseguirEstado(jugador.equipos!, Number(jugadorequipoid)))
+        setEstado(obtenerEstado(jugador.equipos!, Number(jugadorequipoid)))
     },
     activado: estado == null
   })

@@ -1,6 +1,7 @@
 import { api } from '@/api/api'
 import {
   ActivarJugadorDTO,
+  EquipoDelJugadorDTO,
   InhabilitarJugadorDTO,
   PagarFichajeJugadorDTO,
   SuspenderJugadorDTO
@@ -58,4 +59,20 @@ export const obtenerNombreEstado = (
   return Object.values(EstadoJugador).includes(valor)
     ? (valor as EstadoJugador)
     : undefined
+}
+
+export const obtenerEstado = (
+  equipos: EquipoDelJugadorDTO[],
+  jugadorEquipoId: number
+): EstadoJugador | null => {
+  let equipo
+  if (equipos) {
+    equipo = equipos.find((equipo) => equipo.id === jugadorEquipoId)
+    if (equipo) {
+      const estado = obtenerNombreEstado(equipo.estado!)
+      return estado || null
+    }
+  }
+
+  return null
 }
