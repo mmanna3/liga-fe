@@ -26,7 +26,12 @@ export default function DetalleJugador() {
   // Función para formatear la fecha en formato dd-MM-yy
   const formatearFecha = (fecha: string | Date | undefined | null) => {
     if (!fecha) return null
+    
     const date = new Date(fecha)
+    
+    // Si la fecha es 01-01-01 (o cualquier fecha cercana al año 1), considerarla como null
+    if (date.getFullYear() < 1900) return null
+    
     return date.toLocaleDateString('es-AR', {
       day: '2-digit',
       month: '2-digit',
