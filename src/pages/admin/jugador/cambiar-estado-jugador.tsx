@@ -1,5 +1,5 @@
 import { api } from '@/api/api'
-import { CambiarEstadoDelJugadorDTO } from '@/api/clients'
+import { CambiarEstadoDelJugadorDTO, JugadorDTO } from '@/api/clients'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/components/cargando-y-error-contenedor'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -12,7 +12,7 @@ import {
   obtenerNombreEstado
 } from '@/lib/estado-jugador-lib'
 import { EstadoJugador } from '@/lib/utils'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import BotonCambiarEstado from './components/boton-cambiar-estado'
 
@@ -28,28 +28,28 @@ export default function CambiarEstado() {
     data: jugador,
     isError,
     isLoading
-  } = useApiQuery({
+  } = useApiQuery<JugadorDTO>({
     key: ['jugador', jugadorid],
     fn: async () => await api.jugadorGET(Number(jugadorid)),
-    activado: estado == null
-  })
+    activado: true,
+    transformarResultado: (jugador) => {
+      if (!jugador?.equipos) return jugador
 
-  useEffect(() => {
-    if (!jugador?.equipos) return
+      const equipo = jugador.equipos.find(
+        (equipo) => equipo.id === Number(jugadorequipoid)
+      )
 
-    const equipo = jugador.equipos.find(
-      (equipo) => equipo.id === Number(jugadorequipoid)
-    )
+      if (!equipo) return jugador
 
-    if (!equipo) return
+      const estadoConvertido = obtenerNombreEstado(equipo.estado!)
+      if (estadoConvertido && estado === null) {
+        setEstado(estadoConvertido)
+        setMotivo(equipo.motivo || '')
+      }
 
-    const estadoConvertido = obtenerNombreEstado(equipo.estado!)
-    if (estadoConvertido && estado === null) {
-      setEstado(estadoConvertido)
+      return jugador
     }
-
-    setMotivo(equipo.motivo || '')
-  }, [jugador, jugadorequipoid, estado])
+  })
 
   const equipo = useMemo(() => {
     if (jugador?.equipos)

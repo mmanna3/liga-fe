@@ -1,31 +1,23 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 
-interface IProps<T> {
-  fn: () => Promise<T>
+interface IProps<TData, TTransformed = TData> {
+  fn: () => Promise<TData>
   key: Array<string | number | null | undefined>
   activado?: boolean
-  onResultadoExitoso?: (data: T) => void
+  transformarResultado?: (data: TData) => TTransformed
   onError?: (error: unknown) => void
 }
 
-const useApiQuery = <T,>(props: IProps<T>) => {
-  const query = useQuery<T, Error>({
+const useApiQuery = <TData, TTransformed = TData>(
+  props: IProps<TData, TTransformed>
+) => {
+  return useQuery<TData, Error, TTransformed>({
     enabled: props.activado,
     queryKey: props.key,
     throwOnError: true,
-    queryFn: async () => {
-      // try {
-      return await props.fn()
-      // } catch (error) {
-      //   console.log('Error en Request', error)
-      //   throw new Error('Error en el servidor: ' + error)
-      // }
-    },
-    onSuccess: props.onResultadoExitoso,
-    onError: props.onError
-  })
-
-  return query
+    queryFn: async () => await props.fn(),
+    select: props.transformarResultado
+  } as UseQueryOptions<TData, Error, TTransformed>)
 }
 
 export default useApiQuery
