@@ -11,10 +11,13 @@ export const useCambiarEstadoMutation = (
 
   return useApiMutation({
     fn: async (dto: CambiarEstadoDelJugadorDTO[]) => {
-      await action(dto)
+      const resultado = await action(dto)
+      if (resultado <= 0) {
+        throw new Error('No se pudo realizar el cambio de estado')
+      }
+      return resultado
     },
-
-    antesDeMensajeExito: () => navigate(`${rutasNavegacion.jugadores}`),
+    antesDeMensajeExito: () => navigate(`${rutasNavegacion.equipos}`),
     mensajeDeExito
   })
 }

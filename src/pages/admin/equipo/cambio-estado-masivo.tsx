@@ -102,16 +102,21 @@ export default function CambioEstadoMasivo() {
   )
 
   const handleAction = (mutation: typeof suspenderMutation) => {
-    if (selectedJugadores.length === 0) return
+    if (selectedJugadores.length === 0 || !equipo?.jugadores) return
 
-    const dtos = selectedJugadores.map(
-      (jugadorId) =>
-        new CambiarEstadoDelJugadorDTO({
-          jugadorId,
-          jugadorEquipoId: Number(equipoid),
+    const jugadores = equipo.jugadores
+    const dtos = selectedJugadores
+      .map((jugadorEquipoId) => {
+        const jugador = jugadores.find((j) => j.id === jugadorEquipoId)
+        if (!jugador) return null
+
+        return new CambiarEstadoDelJugadorDTO({
+          jugadorId: jugador.id,
+          jugadorEquipoId: jugador.jugadorEquipoId,
           motivo
         })
-    )
+      })
+      .filter((dto): dto is CambiarEstadoDelJugadorDTO => dto !== null)
 
     mutation.mutate(dtos)
   }
