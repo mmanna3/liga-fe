@@ -1,4 +1,5 @@
 import DetalleClub from '@/pages/admin/club/detalle-club'
+import CambioEstadoMasivo from '@/pages/admin/equipo/cambio-estado-masivo'
 import CrearEquipo from '@/pages/admin/equipo/crear-equipo'
 import DetalleEquipo from '@/pages/admin/equipo/detalle-equipo'
 import Equipo from '@/pages/admin/equipo/equipo'
@@ -43,6 +44,10 @@ export const mapaRutasComponentes = [
       { path: rutas.crearClub, element: <CrearClub /> },
       { path: `${rutas.detalleClub}/:id`, element: <DetalleClub /> },
       { path: rutas.equipos, element: <Equipo /> },
+      {
+        path: `${rutas.cambioEstadoMasivoEquipo}/:equipoid`,
+        element: <CambioEstadoMasivo />
+      },
       { path: `${rutas.crearEquipo}/:clubid`, element: <CrearEquipo /> },
       { path: `${rutas.detalleEquipo}/:id`, element: <DetalleEquipo /> },
       { path: rutas.jugadores, element: <Jugador /> },
