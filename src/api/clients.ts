@@ -609,7 +609,7 @@ export class Client {
      * @param body (optional) 
      * @return Success
      */
-    activarJugador(body: ActivarJugadorDTO | undefined): Promise<number> {
+    activarJugador(body: CambiarEstadoDelJugadorDTO | undefined): Promise<number> {
         let url_ = this.baseUrl + "/api/Jugador/activar-jugador";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -652,7 +652,7 @@ export class Client {
      * @param body (optional) 
      * @return Success
      */
-    pagarFichajeDelJugador(body: PagarFichajeJugadorDTO | undefined): Promise<number> {
+    pagarFichajeDelJugador(body: CambiarEstadoDelJugadorDTO | undefined): Promise<number> {
         let url_ = this.baseUrl + "/api/Jugador/pagar-fichaje-del-jugador";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -695,7 +695,7 @@ export class Client {
      * @param body (optional) 
      * @return Success
      */
-    inhabilitarJugador(body: InhabilitarJugadorDTO | undefined): Promise<number> {
+    inhabilitarJugador(body: CambiarEstadoDelJugadorDTO | undefined): Promise<number> {
         let url_ = this.baseUrl + "/api/Jugador/inhabilitar-jugador";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -738,7 +738,7 @@ export class Client {
      * @param body (optional) 
      * @return Success
      */
-    suspenderJugador(body: SuspenderJugadorDTO | undefined): Promise<number> {
+    suspenderJugador(body: CambiarEstadoDelJugadorDTO | undefined): Promise<number> {
         let url_ = this.baseUrl + "/api/Jugador/suspender-jugador";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1079,46 +1079,6 @@ export class Client {
     }
 }
 
-export class ActivarJugadorDTO implements IActivarJugadorDTO {
-    jugadorId?: number;
-    jugadorEquipoId?: number;
-
-    constructor(data?: IActivarJugadorDTO) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.jugadorId = _data["jugadorId"];
-            this.jugadorEquipoId = _data["jugadorEquipoId"];
-        }
-    }
-
-    static fromJS(data: any): ActivarJugadorDTO {
-        data = typeof data === 'object' ? data : {};
-        let result = new ActivarJugadorDTO();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["jugadorId"] = this.jugadorId;
-        data["jugadorEquipoId"] = this.jugadorEquipoId;
-        return data;
-    }
-}
-
-export interface IActivarJugadorDTO {
-    jugadorId?: number;
-    jugadorEquipoId?: number;
-}
-
 export class AprobarJugadorDTO implements IAprobarJugadorDTO {
     id?: number;
     dni!: string;
@@ -1173,6 +1133,50 @@ export interface IAprobarJugadorDTO {
     apellido: string;
     fechaNacimiento: Date;
     jugadorEquipoId?: number;
+}
+
+export class CambiarEstadoDelJugadorDTO implements ICambiarEstadoDelJugadorDTO {
+    jugadorId?: number;
+    jugadorEquipoId?: number;
+    motivo?: string | undefined;
+
+    constructor(data?: ICambiarEstadoDelJugadorDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.jugadorId = _data["jugadorId"];
+            this.jugadorEquipoId = _data["jugadorEquipoId"];
+            this.motivo = _data["motivo"];
+        }
+    }
+
+    static fromJS(data: any): CambiarEstadoDelJugadorDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new CambiarEstadoDelJugadorDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["jugadorId"] = this.jugadorId;
+        data["jugadorEquipoId"] = this.jugadorEquipoId;
+        data["motivo"] = this.motivo;
+        return data;
+    }
+}
+
+export interface ICambiarEstadoDelJugadorDTO {
+    jugadorId?: number;
+    jugadorEquipoId?: number;
+    motivo?: string | undefined;
 }
 
 export class ClubDTO implements IClubDTO {
@@ -1352,7 +1356,7 @@ export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
     nombre?: string | undefined;
     club?: string | undefined;
     estado?: EstadoJugadorEnum;
-    motivoDeRechazo?: string | undefined;
+    motivo?: string | undefined;
 
     constructor(data?: IEquipoDelJugadorDTO) {
         if (data) {
@@ -1369,7 +1373,7 @@ export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
             this.nombre = _data["nombre"];
             this.club = _data["club"];
             this.estado = _data["estado"];
-            this.motivoDeRechazo = _data["motivoDeRechazo"];
+            this.motivo = _data["motivo"];
         }
     }
 
@@ -1386,7 +1390,7 @@ export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
         data["nombre"] = this.nombre;
         data["club"] = this.club;
         data["estado"] = this.estado;
-        data["motivoDeRechazo"] = this.motivoDeRechazo;
+        data["motivo"] = this.motivo;
         return data;
     }
 }
@@ -1396,7 +1400,7 @@ export interface IEquipoDelJugadorDTO {
     nombre?: string | undefined;
     club?: string | undefined;
     estado?: EstadoJugadorEnum;
-    motivoDeRechazo?: string | undefined;
+    motivo?: string | undefined;
 }
 
 export enum EstadoJugadorEnum {
@@ -1406,50 +1410,6 @@ export enum EstadoJugadorEnum {
     _4 = 4,
     _5 = 5,
     _6 = 6,
-}
-
-export class InhabilitarJugadorDTO implements IInhabilitarJugadorDTO {
-    jugadorId?: number;
-    jugadorEquipoId?: number;
-    motivo?: string | undefined;
-
-    constructor(data?: IInhabilitarJugadorDTO) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.jugadorId = _data["jugadorId"];
-            this.jugadorEquipoId = _data["jugadorEquipoId"];
-            this.motivo = _data["motivo"];
-        }
-    }
-
-    static fromJS(data: any): InhabilitarJugadorDTO {
-        data = typeof data === 'object' ? data : {};
-        let result = new InhabilitarJugadorDTO();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["jugadorId"] = this.jugadorId;
-        data["jugadorEquipoId"] = this.jugadorEquipoId;
-        data["motivo"] = this.motivo;
-        return data;
-    }
-}
-
-export interface IInhabilitarJugadorDTO {
-    jugadorId?: number;
-    jugadorEquipoId?: number;
-    motivo?: string | undefined;
 }
 
 export class JugadorDTO implements IJugadorDTO {
@@ -1632,46 +1592,6 @@ export interface IObtenerNombreEquipoDTO {
     respuesta?: string | undefined;
 }
 
-export class PagarFichajeJugadorDTO implements IPagarFichajeJugadorDTO {
-    jugadorId?: number;
-    jugadorEquipoId?: number;
-
-    constructor(data?: IPagarFichajeJugadorDTO) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.jugadorId = _data["jugadorId"];
-            this.jugadorEquipoId = _data["jugadorEquipoId"];
-        }
-    }
-
-    static fromJS(data: any): PagarFichajeJugadorDTO {
-        data = typeof data === 'object' ? data : {};
-        let result = new PagarFichajeJugadorDTO();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["jugadorId"] = this.jugadorId;
-        data["jugadorEquipoId"] = this.jugadorEquipoId;
-        return data;
-    }
-}
-
-export interface IPagarFichajeJugadorDTO {
-    jugadorId?: number;
-    jugadorEquipoId?: number;
-}
-
 export class RechazarJugadorDTO implements IRechazarJugadorDTO {
     id?: number;
     dni!: string;
@@ -1731,50 +1651,6 @@ export interface IRechazarJugadorDTO {
     nombre: string;
     apellido: string;
     fechaNacimiento: Date;
-    jugadorId?: number;
-    jugadorEquipoId?: number;
-    motivo?: string | undefined;
-}
-
-export class SuspenderJugadorDTO implements ISuspenderJugadorDTO {
-    jugadorId?: number;
-    jugadorEquipoId?: number;
-    motivo?: string | undefined;
-
-    constructor(data?: ISuspenderJugadorDTO) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.jugadorId = _data["jugadorId"];
-            this.jugadorEquipoId = _data["jugadorEquipoId"];
-            this.motivo = _data["motivo"];
-        }
-    }
-
-    static fromJS(data: any): SuspenderJugadorDTO {
-        data = typeof data === 'object' ? data : {};
-        let result = new SuspenderJugadorDTO();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["jugadorId"] = this.jugadorId;
-        data["jugadorEquipoId"] = this.jugadorEquipoId;
-        data["motivo"] = this.motivo;
-        return data;
-    }
-}
-
-export interface ISuspenderJugadorDTO {
     jugadorId?: number;
     jugadorEquipoId?: number;
     motivo?: string | undefined;

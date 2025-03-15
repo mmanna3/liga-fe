@@ -10,20 +10,22 @@ interface Props {
   label: string
   action: AccionTipo
   mensajeExito: string
+  motivo: string
 }
 
 const BotonCambiarEstado = ({
   jugador,
   label,
   action,
-  mensajeExito
+  mensajeExito,
+  motivo
 }: Props) => {
   const mutation = useCambiarEstadoMutation(action, mensajeExito)
 
   return (
     <div>
       <Boton
-        onClick={() => mutation.mutate(jugador)}
+        onClick={() => mutation.mutate({ ...jugador, motivo })}
         estaCargando={mutation.isPending}
       >
         {label}

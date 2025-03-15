@@ -1,8 +1,9 @@
 import { api } from '@/api/api'
-import { InhabilitarJugadorDTO } from '@/api/clients'
+import { CambiarEstadoDelJugadorDTO } from '@/api/clients'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/components/cargando-y-error-contenedor'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Textarea } from '@/components/ui/textarea'
 import DetalleItem from '@/components/ykn-ui/detalle-item'
 import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
 import {
@@ -21,6 +22,7 @@ export default function CambiarEstado() {
     jugadorid: string
   }>()
   const [estado, setEstado] = useState<EstadoJugador | null>(null)
+  const [motivo, setMotivo] = useState('')
 
   const {
     data: jugador,
@@ -30,8 +32,9 @@ export default function CambiarEstado() {
     key: ['jugador', jugadorid],
     fn: async () => await api.jugadorGET(Number(jugadorid)),
     onResultadoExitoso: async () => {
-      if (jugador && jugador.equipos)
+      if (jugador && jugador.equipos) {
         setEstado(obtenerEstado(jugador.equipos!, Number(jugadorequipoid)))
+      }
     },
     activado: estado == null
   })
@@ -58,6 +61,10 @@ export default function CambiarEstado() {
         (equipo) => equipo.id === Number(jugadorequipoid)
       )
   }, [jugador, jugadorequipoid])
+
+  useEffect(() => {
+    setMotivo(equipo?.motivo || '')
+  }, [equipo])
 
   return (
     <ContenedorCargandoYError hayError={isError} estaCargando={isLoading}>
@@ -97,6 +104,17 @@ export default function CambiarEstado() {
               </div>
             </div>
           )}
+
+          <div className='mt-8'>
+            {/* <h3 className='text-lg font-medium mb-2 text-gray-700'>Motivo</h3> */}
+            <Textarea
+              placeholder='Escribí el motivo de este cambio de estado...'
+              rows={6}
+              className='w-full h-28'
+              defaultValue={motivo}
+              onChange={(e) => setMotivo(e.target.value)}
+            />
+          </div>
           <div className='mt-16 flex gap-2 justify-center'>
             {estadoTransiciones[estado!]?.map(
               ({ label, action, mensajeExito }) => (
@@ -105,12 +123,11 @@ export default function CambiarEstado() {
                   label={label}
                   action={action}
                   mensajeExito={mensajeExito}
+                  motivo={motivo}
                   jugador={
-                    new InhabilitarJugadorDTO({
-                      // si esto anda renombra lo del back
+                    new CambiarEstadoDelJugadorDTO({
                       jugadorEquipoId: Number(jugadorequipoid),
-                      jugadorId: Number(jugadorid),
-                      motivo: ''
+                      jugadorId: Number(jugadorid)
                     })
                   }
                 />

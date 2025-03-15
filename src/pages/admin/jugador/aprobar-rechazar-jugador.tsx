@@ -159,7 +159,7 @@ const AprobarRechazarJugador: React.FC = () => {
                 placeholder='Escribe el motivo del rechazo...'
                 rows={4}
                 className='w-full'
-                defaultValue={equipo?.motivoDeRechazo}
+                defaultValue={equipo?.motivo}
                 onChange={(e) => setMotivoRechazo(e.target.value)}
               />
             </div>
