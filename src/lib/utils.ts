@@ -5,6 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+// Moverlo a estado-jugador
 export enum EstadoJugador {
   FichajePendienteDeAprobacion = 1,
   FichajeRechazado = 2,
