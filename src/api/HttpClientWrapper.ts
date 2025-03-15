@@ -1,4 +1,4 @@
-import { useAuth } from '@/hooks/useAuth'
+import { useAuth } from '@/hooks/use-auth'
 
 export class HttpClientWrapper {
   private publicRoutes = ['/api/Auth/login', '/api/Publico']

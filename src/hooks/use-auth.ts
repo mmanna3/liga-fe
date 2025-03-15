@@ -1,7 +1,7 @@
 import { api } from '@/api/api'
+import { LoginDTO } from '@/api/clients'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { LoginRequest } from '../api/clients'
 
 interface AuthState {
   token: string | null
@@ -17,7 +17,7 @@ export const useAuth = create<AuthState>()(
       isAuthenticated: false,
       login: async (usuario: string, password: string) => {
         try {
-          const loginRequest = new LoginRequest({
+          const loginRequest = new LoginDTO({
             usuario,
             password
           })

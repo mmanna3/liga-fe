@@ -18,6 +18,9 @@ import CrearClub from '../pages/admin/club/crear-club'
 import FichajeHome from '../pages/fichaje/home'
 import PaginaNoEncontrada from '../pages/pagina-no-encontrada'
 import { rutas } from './rutas'
+import Torneo from '@/pages/admin/torneo/torneo'
+import CrearTorneo from '@/pages/admin/torneo/crear-torneo'
+import DetalleTorneo from '@/pages/admin/torneo/detalle-torneo'
 
 export const mapaRutasComponentes = [
   {
@@ -73,7 +76,10 @@ export const mapaRutasComponentes = [
       {
         path: `${rutas.cambiarEstadoJugador}/:jugadorequipoid/:jugadorid`,
         element: <CambiarEstado />
-      }
+      },
+      { path: rutas.torneos, element: <Torneo /> },
+      { path: rutas.crearTorneo, element: <CrearTorneo /> },
+      { path: `${rutas.detalleTorneo}/:id`, element: <DetalleTorneo /> }
     ]
   },
   { path: '*', element: <PaginaNoEncontrada /> }

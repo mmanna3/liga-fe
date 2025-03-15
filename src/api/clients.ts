@@ -22,7 +22,7 @@ export class Client {
      * @param body (optional) 
      * @return Success
      */
-    login(body: LoginRequest | undefined): Promise<LoginResponse> {
+    login(body: LoginDTO | undefined): Promise<LoginResponseDTO> {
         let url_ = this.baseUrl + "/api/Auth/login";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -42,14 +42,14 @@ export class Client {
         });
     }
 
-    protected processLogin(response: Response): Promise<LoginResponse> {
+    protected processLogin(response: Response): Promise<LoginResponseDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = LoginResponse.fromJS(resultData200);
+            result200 = LoginResponseDTO.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -57,7 +57,7 @@ export class Client {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<LoginResponse>(null as any);
+        return Promise.resolve<LoginResponseDTO>(null as any);
     }
 
     /**
@@ -1119,6 +1119,173 @@ export class Client {
         }
         return Promise.resolve<ObtenerNombreEquipoDTO>(null as any);
     }
+
+    /**
+     * @return Success
+     */
+    torneoAll(): Promise<TorneoDTO[]> {
+        let url_ = this.baseUrl + "/api/Torneo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processTorneoAll(_response);
+        });
+    }
+
+    protected processTorneoAll(response: Response): Promise<TorneoDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(TorneoDTO.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TorneoDTO[]>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    torneoPOST(body: TorneoDTO | undefined): Promise<TorneoDTO> {
+        let url_ = this.baseUrl + "/api/Torneo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processTorneoPOST(_response);
+        });
+    }
+
+    protected processTorneoPOST(response: Response): Promise<TorneoDTO> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = TorneoDTO.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TorneoDTO>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    torneoGET(id: number): Promise<TorneoDTO> {
+        let url_ = this.baseUrl + "/api/Torneo/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processTorneoGET(_response);
+        });
+    }
+
+    protected processTorneoGET(response: Response): Promise<TorneoDTO> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = TorneoDTO.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TorneoDTO>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    torneoPUT(id: number, body: TorneoDTO | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/Torneo/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processTorneoPUT(_response);
+        });
+    }
+
+    protected processTorneoPUT(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
 }
 
 export class AprobarJugadorDTO implements IAprobarJugadorDTO {
@@ -1335,6 +1502,8 @@ export class EquipoDTO implements IEquipoDTO {
     clubId?: number;
     codigoAlfanumerico?: string | undefined;
     clubNombre?: string | undefined;
+    torneoId?: number | undefined;
+    torneoNombre?: string | undefined;
     jugadores?: JugadorDelEquipoDTO[] | undefined;
 
     constructor(data?: IEquipoDTO) {
@@ -1353,6 +1522,8 @@ export class EquipoDTO implements IEquipoDTO {
             this.clubId = _data["clubId"];
             this.codigoAlfanumerico = _data["codigoAlfanumerico"];
             this.clubNombre = _data["clubNombre"];
+            this.torneoId = _data["torneoId"];
+            this.torneoNombre = _data["torneoNombre"];
             if (Array.isArray(_data["jugadores"])) {
                 this.jugadores = [] as any;
                 for (let item of _data["jugadores"])
@@ -1375,6 +1546,8 @@ export class EquipoDTO implements IEquipoDTO {
         data["clubId"] = this.clubId;
         data["codigoAlfanumerico"] = this.codigoAlfanumerico;
         data["clubNombre"] = this.clubNombre;
+        data["torneoId"] = this.torneoId;
+        data["torneoNombre"] = this.torneoNombre;
         if (Array.isArray(this.jugadores)) {
             data["jugadores"] = [];
             for (let item of this.jugadores)
@@ -1390,6 +1563,8 @@ export interface IEquipoDTO {
     clubId?: number;
     codigoAlfanumerico?: string | undefined;
     clubNombre?: string | undefined;
+    torneoId?: number | undefined;
+    torneoNombre?: string | undefined;
     jugadores?: JugadorDelEquipoDTO[] | undefined;
 }
 
@@ -1594,11 +1769,11 @@ export interface IJugadorDelEquipoDTO {
     jugadorEquipoId?: number;
 }
 
-export class LoginRequest implements ILoginRequest {
+export class LoginDTO implements ILoginDTO {
     usuario!: string;
     password!: string;
 
-    constructor(data?: ILoginRequest) {
+    constructor(data?: ILoginDTO) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1614,9 +1789,9 @@ export class LoginRequest implements ILoginRequest {
         }
     }
 
-    static fromJS(data: any): LoginRequest {
+    static fromJS(data: any): LoginDTO {
         data = typeof data === 'object' ? data : {};
-        let result = new LoginRequest();
+        let result = new LoginDTO();
         result.init(data);
         return result;
     }
@@ -1629,17 +1804,17 @@ export class LoginRequest implements ILoginRequest {
     }
 }
 
-export interface ILoginRequest {
+export interface ILoginDTO {
     usuario: string;
     password: string;
 }
 
-export class LoginResponse implements ILoginResponse {
+export class LoginResponseDTO implements ILoginResponseDTO {
     exito?: boolean;
     token?: string | undefined;
     error?: string | undefined;
 
-    constructor(data?: ILoginResponse) {
+    constructor(data?: ILoginResponseDTO) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1656,9 +1831,9 @@ export class LoginResponse implements ILoginResponse {
         }
     }
 
-    static fromJS(data: any): LoginResponse {
+    static fromJS(data: any): LoginResponseDTO {
         data = typeof data === 'object' ? data : {};
-        let result = new LoginResponse();
+        let result = new LoginResponseDTO();
         result.init(data);
         return result;
     }
@@ -1672,7 +1847,7 @@ export class LoginResponse implements ILoginResponse {
     }
 }
 
-export interface ILoginResponse {
+export interface ILoginResponseDTO {
     exito?: boolean;
     token?: string | undefined;
     error?: string | undefined;
@@ -1784,6 +1959,58 @@ export interface IRechazarJugadorDTO {
     jugadorId?: number;
     jugadorEquipoId?: number;
     motivo?: string | undefined;
+}
+
+export class TorneoDTO implements ITorneoDTO {
+    id?: number;
+    nombre!: string;
+    equipos?: EquipoDTO[] | undefined;
+
+    constructor(data?: ITorneoDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.nombre = _data["nombre"];
+            if (Array.isArray(_data["equipos"])) {
+                this.equipos = [] as any;
+                for (let item of _data["equipos"])
+                    this.equipos!.push(EquipoDTO.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): TorneoDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new TorneoDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["nombre"] = this.nombre;
+        if (Array.isArray(this.equipos)) {
+            data["equipos"] = [];
+            for (let item of this.equipos)
+                data["equipos"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface ITorneoDTO {
+    id?: number;
+    nombre: string;
+    equipos?: EquipoDTO[] | undefined;
 }
 
 export class ApiException extends Error {

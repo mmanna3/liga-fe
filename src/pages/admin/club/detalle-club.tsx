@@ -65,7 +65,7 @@ export default function DetalleClub() {
         </ul>
       </CardContent>
       <Botonera>
-        <BotonVolver texto='Volver' />
+        <BotonVolver path={rutasNavegacion.clubs} />
       </Botonera>
     </Card>
   )

@@ -9,7 +9,10 @@ export const rutas = {
   jugadores: 'jugadores',
   detalleJugador: 'jugadores/detalle',
   aprobarRechazarJugador: 'jugadores/aprobar-rechazar',
-  cambiarEstadoJugador: 'jugadores/cambiar-estado'
+  cambiarEstadoJugador: 'jugadores/cambiar-estado',
+  torneos: 'torneos',
+  crearTorneo: 'torneos/crear',
+  detalleTorneo: 'torneos/detalle'
 }
 
 export const rutasNavegacion = {
@@ -23,5 +26,8 @@ export const rutasNavegacion = {
   jugadores: '/admin/jugadores',
   detalleJugador: '/admin/jugadores/detalle',
   aprobarRechazarJugador: '/admin/jugadores/aprobar-rechazar',
-  cambiarEstadoJugador: '/admin/jugadores/cambiar-estado'
+  cambiarEstadoJugador: '/admin/jugadores/cambiar-estado',
+  torneos: '/admin/torneos',
+  crearTorneo: '/admin/torneos/crear',
+  detalleTorneo: '/admin/torneos/detalle'
 }
