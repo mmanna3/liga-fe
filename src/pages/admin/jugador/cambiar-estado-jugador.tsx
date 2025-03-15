@@ -9,7 +9,6 @@ import DetalleItem from '@/components/ykn-ui/detalle-item'
 import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
 import {
   estadoTransiciones,
-  obtenerEstado,
   obtenerNombreEstado
 } from '@/lib/estado-jugador-lib'
 import { EstadoJugador } from '@/lib/utils'
@@ -32,29 +31,25 @@ export default function CambiarEstado() {
   } = useApiQuery({
     key: ['jugador', jugadorid],
     fn: async () => await api.jugadorGET(Number(jugadorid)),
-    onResultadoExitoso: async () => {
-      if (jugador && jugador.equipos) {
-        setEstado(obtenerEstado(jugador.equipos!, Number(jugadorequipoid)))
-      }
-    },
     activado: estado == null
   })
 
   useEffect(() => {
-    let equipo
-    if (jugador?.equipos) {
-      equipo = jugador.equipos.find(
-        (equipo) => equipo.id === Number(jugadorequipoid)
-      )
-      if (equipo) {
-        const estadoConvertido = obtenerNombreEstado(equipo.estado!)
-        console.log('el estado convertido es', estadoConvertido)
-        if (estadoConvertido) {
-          setEstado(estadoConvertido)
-        }
-      }
+    if (!jugador?.equipos) return
+
+    const equipo = jugador.equipos.find(
+      (equipo) => equipo.id === Number(jugadorequipoid)
+    )
+
+    if (!equipo) return
+
+    const estadoConvertido = obtenerNombreEstado(equipo.estado!)
+    if (estadoConvertido && estado === null) {
+      setEstado(estadoConvertido)
     }
-  }, [jugador, jugadorequipoid])
+
+    setMotivo(equipo.motivo || '')
+  }, [jugador, jugadorequipoid, estado])
 
   const equipo = useMemo(() => {
     if (jugador?.equipos)
@@ -62,10 +57,6 @@ export default function CambiarEstado() {
         (equipo) => equipo.id === Number(jugadorequipoid)
       )
   }, [jugador, jugadorequipoid])
-
-  useEffect(() => {
-    setMotivo(equipo?.motivo || '')
-  }, [equipo])
 
   return (
     <ContenedorCargandoYError hayError={isError} estaCargando={isLoading}>

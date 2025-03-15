@@ -9,7 +9,7 @@ interface IProps<T> {
 }
 
 const useApiQuery = <T,>(props: IProps<T>) => {
-  const query = useQuery({
+  const query = useQuery<T, Error>({
     enabled: props.activado,
     queryKey: props.key,
     throwOnError: true,
@@ -20,16 +20,10 @@ const useApiQuery = <T,>(props: IProps<T>) => {
       //   console.log('Error en Request', error)
       //   throw new Error('Error en el servidor: ' + error)
       // }
-    }
+    },
+    onSuccess: props.onResultadoExitoso,
+    onError: props.onError
   })
-
-  if (query.isSuccess && props.onResultadoExitoso) {
-    props.onResultadoExitoso(query.data)
-  }
-
-  if (query.isError && props.onError) {
-    props.onError(query.error)
-  }
 
   return query
 }
