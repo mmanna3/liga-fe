@@ -1,3 +1,4 @@
+import { RequiereAutenticacion } from '@/components/RequiereAutenticacion'
 import DetalleClub from '@/pages/admin/club/detalle-club'
 import CambioEstadoMasivo from '@/pages/admin/equipo/cambio-estado-masivo'
 import CrearEquipo from '@/pages/admin/equipo/crear-equipo'
@@ -10,6 +11,7 @@ import Jugador from '@/pages/admin/jugador/jugador'
 import ErrorPage from '@/pages/error'
 import FichajeError from '@/pages/fichaje/fichaje-error'
 import FichajeExitoso from '@/pages/fichaje/fichaje-exitoso'
+import Login from '@/pages/Login'
 import AdminLayout from '../pages/admin/admin-layout'
 import Club from '../pages/admin/club/club'
 import CrearClub from '../pages/admin/club/crear-club'
@@ -18,6 +20,14 @@ import PaginaNoEncontrada from '../pages/pagina-no-encontrada'
 import { rutas } from './rutas'
 
 export const mapaRutasComponentes = [
+  {
+    path: '/login',
+    element: (
+      <div className='flex justify-center w-screen bg-gray-100'>
+        <Login />
+      </div>
+    )
+  },
   {
     path: '/fichaje',
     element: (
@@ -37,7 +47,11 @@ export const mapaRutasComponentes = [
   {
     path: '/admin',
     errorElement: <ErrorPage />,
-    element: <AdminLayout />,
+    element: (
+      <RequiereAutenticacion>
+        <AdminLayout />
+      </RequiereAutenticacion>
+    ),
     children: [
       { path: '', element: <></> },
       { path: rutas.clubs, element: <Club /> },
