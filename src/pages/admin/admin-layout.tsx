@@ -8,10 +8,10 @@ import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 
 const menuItems = [
+  { name: 'Torneos', path: rutasNavegacion.torneos, icon: Trophy },
   { name: 'Clubes', path: rutasNavegacion.clubs, icon: LayoutDashboard },
   { name: 'Equipos', path: rutasNavegacion.equipos, icon: Shield },
-  { name: 'Jugadores', path: rutasNavegacion.jugadores, icon: Users },
-  { name: 'Torneos', path: rutasNavegacion.torneos, icon: Trophy }
+  { name: 'Jugadores', path: rutasNavegacion.jugadores, icon: Users }
 ]
 
 export default function AdminLayout() {
