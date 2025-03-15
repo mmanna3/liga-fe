@@ -29,6 +29,11 @@ export default function TablaEquipo({
       cell: ({ row }) => <span>{row.getValue('clubNombre')}</span>
     },
     {
+      accessorKey: 'torneoNombre',
+      header: 'Torneo',
+      cell: ({ row }) => <span>{row.getValue('torneoNombre') || '-'}</span>
+    },
+    {
       accessorKey: 'codigoAlfanumerico',
       header: 'Código',
       cell: ({ row }) => <span>{row.getValue('codigoAlfanumerico')}</span>

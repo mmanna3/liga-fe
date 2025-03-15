@@ -57,10 +57,27 @@ export default function DetalleClub() {
             Crear nuevo equipo
           </Button>
         </Botonera>
-        <h2 className='text-xl font-bold'>Equipos</h2>
-        <ul className='list-disc list-inside'>
+        <h2 className='text-xl font-bold mb-3'>Equipos</h2>
+        <ul className='space-y-2'>
           {club!.equipos!.map((equipo) => (
-            <li key={equipo.id}>{equipo.nombre}</li>
+            <li key={equipo.id} className='flex items-center'>
+              <Button 
+                variant="link" 
+                className="p-0 h-auto text-left font-normal hover:underline"
+                onClick={() => navigate(`${rutasNavegacion.detalleEquipo}/${equipo.id}`)}
+              >
+                {equipo.nombre}
+              </Button>
+              {equipo.torneoNombre ? (
+                <span className='ml-2 text-sm px-2 py-1 bg-blue-100 text-blue-800 rounded-full'>
+                  {equipo.torneoNombre}
+                </span>
+              ) : (
+                <span className='ml-2 text-sm px-2 py-1 bg-gray-100 text-gray-600 rounded-full'>
+                  Sin torneo
+                </span>
+              )}
+            </li>
           ))}
         </ul>
       </CardContent>

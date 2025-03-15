@@ -51,6 +51,7 @@ export default function DetalleEquipo() {
       <CardContent>
         <div className='mb-4 space-y-2'>
           <DetalleItem clave='Club' valor={equipo!.clubNombre!} />
+          <DetalleItem clave='Torneo' valor={equipo!.torneoNombre || 'No asignado'} />
           <DetalleItem clave='Código' valor={equipo!.codigoAlfanumerico!} />
         </div>
         <h2 className='text-md font-bold'>Jugadores</h2>
