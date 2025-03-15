@@ -12,7 +12,7 @@ interface IProps {
 }
 
 const PasoCodigoEquipo = ({ valorInicial }: IProps) => {
-  const [codigoEquipo, setCodigoEquipo] = useState<string>(valorInicial)
+  const [codigoEquipo, setCodigoEquipo] = useState<string>(valorInicial || '')
 
   const {
     register,

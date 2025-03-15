@@ -29,7 +29,7 @@ const FormularioFichaje = () => {
     mutation.mutate(jugadorDTO, {
       onSuccess: () => {
         navigate(
-          `/fichaje-exitoso?dni=${jugadorDTO.dni}&codigoEquipo=${codigoEquipo}`
+          `/fichaje-exitoso?dni=${jugadorDTO.dni}&codigoEquipo=${jugadorDTO.codigoAlfanumerico}`
         )
       },
       onError: (error) => {
@@ -63,7 +63,7 @@ const FormularioFichaje = () => {
             </div>
           )}
 
-          <PasoCodigoEquipo valorInicial={codigoEquipo!} />
+          <PasoCodigoEquipo valorInicial={codigoEquipo || ''} />
 
           <PasoInput
             longMaxima={10}
