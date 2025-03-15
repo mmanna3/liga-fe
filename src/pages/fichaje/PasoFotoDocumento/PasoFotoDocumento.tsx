@@ -39,7 +39,7 @@ const PasoFotoDocumento = ({ titulo, name, nombre }: IPasoFotoDocumento) => {
   }
 
   return (
-    <div className={'bg-blue-800 py-6 px-3'}>
+    <div className={'bg-blue-800 py-6 px-3 w-full'}>
       <div className=''>
         <div className={estilos.contenedorDeContenidoCentrado}>
           <Label

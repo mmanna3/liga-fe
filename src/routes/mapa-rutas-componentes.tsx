@@ -34,7 +34,7 @@ export const mapaRutasComponentes = [
   {
     path: '/fichaje',
     element: (
-      <div className='flex justify-center w-screen'>
+      <div className='w-screen'>
         <FichajeHome />
       </div>
     )

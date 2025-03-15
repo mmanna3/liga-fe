@@ -23,7 +23,7 @@ const PasoDNI = () => {
   }
 
   return (
-    <div className='bg-red-700 py-6 px-6'>
+    <div className='bg-red-700 py-6 px-6 w-full'>
       <div className='max-w-[360px] mx-auto'>
         <Label texto='Tu DNI' />
         <Input

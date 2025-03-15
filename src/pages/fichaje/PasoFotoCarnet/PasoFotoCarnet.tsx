@@ -75,8 +75,8 @@ const PasoFotoCarnet = () => {
   }
 
   return (
-    <div>
-      <div className='bg-green-700 py-6 px-3'>
+    <div className='w-full'>
+      <div className='bg-green-700 py-6 px-3 w-full'>
         <div className='mx-auto'>
           <div className={estilos.contenedorDeContenidoCentrado}>
             <Label

@@ -50,10 +50,10 @@ const FormularioFichaje = () => {
 
   return (
     <FormProvider {...methods}>
-      <div className='flex justify-center font-sans text-slate-100'>
-        <form onSubmit={hacerSubmit}>
+      <div className='font-sans text-slate-100 w-full'>
+        <form onSubmit={hacerSubmit} className='w-full'>
           {Object.keys(methods.formState.errors).length > 0 && (
-            <div className='bg-green-700 py-6 px-6'>
+            <div className='bg-green-700 py-6 px-6 w-full'>
               <div className='mb-2 max-w-[360px] mx-auto'>
                 <CartelMensaje type='error'>
                   ¡Ups! Hubo algún <strong>error</strong>. Revisá tus datos y
