@@ -1121,6 +1121,60 @@ export class Client {
     }
 
     /**
+     * @param mes (optional) 
+     * @param anio (optional) 
+     * @return Success
+     */
+    obtenerReportePagos(mes: number | undefined, anio: number | undefined): Promise<ReportePagosDTO[]> {
+        let url_ = this.baseUrl + "/api/Reporte/obtener-reporte-pagos?";
+        if (mes === null)
+            throw new Error("The parameter 'mes' cannot be null.");
+        else if (mes !== undefined)
+            url_ += "mes=" + encodeURIComponent("" + mes) + "&";
+        if (anio === null)
+            throw new Error("The parameter 'anio' cannot be null.");
+        else if (anio !== undefined)
+            url_ += "anio=" + encodeURIComponent("" + anio) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processObtenerReportePagos(_response);
+        });
+    }
+
+    protected processObtenerReportePagos(response: Response): Promise<ReportePagosDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(ReportePagosDTO.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ReportePagosDTO[]>(null as any);
+    }
+
+    /**
      * @return Success
      */
     torneoAll(): Promise<TorneoDTO[]> {
@@ -1959,6 +2013,54 @@ export interface IRechazarJugadorDTO {
     jugadorId?: number;
     jugadorEquipoId?: number;
     motivo?: string | undefined;
+}
+
+export class ReportePagosDTO implements IReportePagosDTO {
+    nombreEquipo?: string | undefined;
+    mes?: number;
+    anio?: number;
+    cantidadJugadoresPagados?: number;
+
+    constructor(data?: IReportePagosDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.nombreEquipo = _data["nombreEquipo"];
+            this.mes = _data["mes"];
+            this.anio = _data["anio"];
+            this.cantidadJugadoresPagados = _data["cantidadJugadoresPagados"];
+        }
+    }
+
+    static fromJS(data: any): ReportePagosDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new ReportePagosDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["nombreEquipo"] = this.nombreEquipo;
+        data["mes"] = this.mes;
+        data["anio"] = this.anio;
+        data["cantidadJugadoresPagados"] = this.cantidadJugadoresPagados;
+        return data;
+    }
+}
+
+export interface IReportePagosDTO {
+    nombreEquipo?: string | undefined;
+    mes?: number;
+    anio?: number;
+    cantidadJugadoresPagados?: number;
 }
 
 export class TorneoDTO implements ITorneoDTO {

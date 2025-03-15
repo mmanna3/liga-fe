@@ -21,6 +21,8 @@ import { rutas } from './rutas'
 import Torneo from '@/pages/admin/torneo/torneo'
 import CrearTorneo from '@/pages/admin/torneo/crear-torneo'
 import DetalleTorneo from '@/pages/admin/torneo/detalle-torneo'
+import ReportesPage from '@/pages/admin/reportes'
+import ReportePagosPage from '@/pages/admin/reportes/pagos'
 
 export const mapaRutasComponentes = [
   {
@@ -79,7 +81,9 @@ export const mapaRutasComponentes = [
       },
       { path: rutas.torneos, element: <Torneo /> },
       { path: rutas.crearTorneo, element: <CrearTorneo /> },
-      { path: `${rutas.detalleTorneo}/:id`, element: <DetalleTorneo /> }
+      { path: `${rutas.detalleTorneo}/:id`, element: <DetalleTorneo /> },
+      { path: rutas.reportes, element: <ReportesPage /> },
+      { path: rutas.reportePagos, element: <ReportePagosPage /> }
     ]
   },
   { path: '*', element: <PaginaNoEncontrada /> }

@@ -23,7 +23,7 @@ const activar = {
 }
 const pagarFichaje = {
   label: 'Pagar fichaje',
-  action: (j: CambiarEstadoDelJugadorDTO[]) => api.activarJugador(j),
+  action: (j: CambiarEstadoDelJugadorDTO[]) => api.pagarFichajeDelJugador(j[0]),
   mensajeExito: 'El jugador se marcó como "activo".'
 }
 
