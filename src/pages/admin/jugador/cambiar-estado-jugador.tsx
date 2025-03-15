@@ -4,6 +4,7 @@ import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/components/cargando-y-error-contenedor'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
+import BotonVolver from '@/components/ykn-ui/boton-volver'
 import DetalleItem from '@/components/ykn-ui/detalle-item'
 import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
 import {
@@ -106,7 +107,6 @@ export default function CambiarEstado() {
           )}
 
           <div className='mt-8'>
-            {/* <h3 className='text-lg font-medium mb-2 text-gray-700'>Motivo</h3> */}
             <Textarea
               placeholder='Escribí el motivo de este cambio de estado...'
               rows={6}
@@ -115,7 +115,7 @@ export default function CambiarEstado() {
               onChange={(e) => setMotivo(e.target.value)}
             />
           </div>
-          <div className='mt-16 flex gap-2 justify-center'>
+          <div className='mt-4 flex gap-2 justify-center'>
             {estadoTransiciones[estado!]?.map(
               ({ label, action, mensajeExito }) => (
                 <BotonCambiarEstado
@@ -133,6 +133,9 @@ export default function CambiarEstado() {
                 />
               )
             )}
+          </div>
+          <div className='flex justify-end mt-12'>
+            <BotonVolver texto='Volver' />
           </div>
         </CardContent>
       </Card>
