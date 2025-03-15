@@ -1628,6 +1628,7 @@ export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
     club?: string | undefined;
     estado?: EstadoJugadorEnum;
     motivo?: string | undefined;
+    fechaPagoDeFichaje?: Date;
 
     constructor(data?: IEquipoDelJugadorDTO) {
         if (data) {
@@ -1645,6 +1646,7 @@ export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
             this.club = _data["club"];
             this.estado = _data["estado"];
             this.motivo = _data["motivo"];
+            this.fechaPagoDeFichaje = _data["fechaPagoDeFichaje"] ? new Date(_data["fechaPagoDeFichaje"].toString()) : <any>undefined;
         }
     }
 
@@ -1662,6 +1664,7 @@ export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
         data["club"] = this.club;
         data["estado"] = this.estado;
         data["motivo"] = this.motivo;
+        data["fechaPagoDeFichaje"] = this.fechaPagoDeFichaje ? this.fechaPagoDeFichaje.toISOString() : <any>undefined;
         return data;
     }
 }
@@ -1672,6 +1675,7 @@ export interface IEquipoDelJugadorDTO {
     club?: string | undefined;
     estado?: EstadoJugadorEnum;
     motivo?: string | undefined;
+    fechaPagoDeFichaje?: Date;
 }
 
 export enum EstadoJugadorEnum {

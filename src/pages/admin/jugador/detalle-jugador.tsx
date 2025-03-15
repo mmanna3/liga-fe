@@ -23,6 +23,17 @@ export default function DetalleJugador() {
     fn: async () => await api.jugadorGET(Number(id))
   })
 
+  // Función para formatear la fecha en formato dd-MM-yy
+  const formatearFecha = (fecha: string | Date | undefined | null) => {
+    if (!fecha) return null
+    const date = new Date(fecha)
+    return date.toLocaleDateString('es-AR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit'
+    })
+  }
+
   return (
     <ContenedorCargandoYError
       estaCargando={isLoading}
@@ -58,39 +69,46 @@ export default function DetalleJugador() {
               {jugador.equipos!.map((equipo) => (
                 <li
                   key={equipo.id}
-                  className='py-3 flex justify-between items-center'
+                  className='py-3 flex flex-col'
                 >
-                  <div>
-                    <span className='text-lg font-medium text-gray-900'>
-                      {equipo.nombre}
-                    </span>
-                    <div className='text-sm text-gray-600'>{equipo.club}</div>
+                  <div className='flex justify-between items-center'>
+                    <div>
+                      <span className='text-lg font-medium text-gray-900'>
+                        {equipo.nombre}
+                      </span>
+                      <div className='text-sm text-gray-600'>{equipo.club}</div>
+                    </div>
+                    <div className='flex items-center gap-4'>
+                      <JugadorEquipoEstadoBadge estado={Number(equipo.estado)} />
+                      {
+                        <Button
+                          variant='ghost'
+                          className='text-blue-600'
+                          onClick={() => {
+                            if (
+                              Number(equipo.estado) ===
+                                EstadoJugador.FichajePendienteDeAprobacion ||
+                              Number(equipo.estado) ===
+                                EstadoJugador.FichajeRechazado
+                            )
+                              navigate(
+                                `${rutasNavegacion.aprobarRechazarJugador}/${equipo.id}/${jugador.id}`
+                              )
+                            else
+                              navigate(
+                                `${rutasNavegacion.cambiarEstadoJugador}/${equipo.id}/${jugador.id}`
+                              )
+                          }}
+                        >
+                          Gestionar
+                        </Button>
+                      }
+                    </div>
                   </div>
-                  <div className='flex items-center gap-4'>
-                    <JugadorEquipoEstadoBadge estado={Number(equipo.estado)} />
-                    {
-                      <Button
-                        variant='ghost'
-                        className='text-blue-600'
-                        onClick={() => {
-                          if (
-                            Number(equipo.estado) ===
-                              EstadoJugador.FichajePendienteDeAprobacion ||
-                            Number(equipo.estado) ===
-                              EstadoJugador.FichajeRechazado
-                          )
-                            navigate(
-                              `${rutasNavegacion.aprobarRechazarJugador}/${equipo.id}/${jugador.id}`
-                            )
-                          else
-                            navigate(
-                              `${rutasNavegacion.cambiarEstadoJugador}/${equipo.id}/${jugador.id}`
-                            )
-                        }}
-                      >
-                        Gestionar
-                      </Button>
-                    }
+                  <div className='text-sm text-gray-400 mt-1'>
+                    {equipo.fechaPagoDeFichaje 
+                      ? `Pago de fichaje: ${formatearFecha(equipo.fechaPagoDeFichaje)}`
+                      : 'Fichaje impago'}
                   </div>
                 </li>
               ))}
