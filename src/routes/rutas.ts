@@ -14,7 +14,10 @@ export const rutas = {
   crearTorneo: 'torneos/crear',
   detalleTorneo: 'torneos/detalle',
   reportes: 'reportes',
-  reportePagos: 'reportes/pagos'
+  reportePagos: 'reportes/pagos',
+  delegados: 'delegados',
+  crearDelegado: 'delegados/crear',
+  detalleDelegado: 'delegados/detalle'
 }
 
 export const rutasNavegacion = {
@@ -33,5 +36,8 @@ export const rutasNavegacion = {
   crearTorneo: '/admin/torneos/crear',
   detalleTorneo: '/admin/torneos/detalle',
   reportes: '/admin/reportes',
-  reportePagos: '/admin/reportes/pagos'
+  reportePagos: '/admin/reportes/pagos',
+  delegados: '/admin/delegados',
+  crearDelegado: '/admin/delegados/crear',
+  detalleDelegado: '/admin/delegados/detalle'
 }

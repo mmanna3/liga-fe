@@ -3,7 +3,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Toaster } from '@/components/ui/sonner'
 import { cn } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
-import { LayoutDashboard, Menu, Shield, Trophy, Users, BarChart } from 'lucide-react'
+import { LayoutDashboard, Menu, Shield, Trophy, Users, BarChart, UserCog } from 'lucide-react'
 import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 
@@ -12,6 +12,7 @@ const menuItems = [
   { name: 'Clubes', path: rutasNavegacion.clubs, icon: LayoutDashboard },
   { name: 'Equipos', path: rutasNavegacion.equipos, icon: Shield },
   { name: 'Jugadores', path: rutasNavegacion.jugadores, icon: Users },
+  { name: 'Delegados', path: rutasNavegacion.delegados, icon: UserCog },
   { name: 'Reportes', path: rutasNavegacion.reportes, icon: BarChart }
 ]
 

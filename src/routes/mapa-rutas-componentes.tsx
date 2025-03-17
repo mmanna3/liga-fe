@@ -23,6 +23,9 @@ import CrearTorneo from '@/pages/admin/torneo/crear-torneo'
 import DetalleTorneo from '@/pages/admin/torneo/detalle-torneo'
 import ReportesPage from '@/pages/admin/reportes'
 import ReportePagosPage from '@/pages/admin/reportes/pagos'
+import Delegados from '@/pages/admin/delegados/delegados'
+import CrearDelegado from '@/pages/admin/delegados/crear-delegado'
+import DetalleDelegado from '@/pages/admin/delegados/detalle-delegado'
 
 export const mapaRutasComponentes = [
   {
@@ -83,7 +86,10 @@ export const mapaRutasComponentes = [
       { path: rutas.crearTorneo, element: <CrearTorneo /> },
       { path: `${rutas.detalleTorneo}/:id`, element: <DetalleTorneo /> },
       { path: rutas.reportes, element: <ReportesPage /> },
-      { path: rutas.reportePagos, element: <ReportePagosPage /> }
+      { path: rutas.reportePagos, element: <ReportePagosPage /> },
+      { path: rutas.delegados, element: <Delegados /> },
+      { path: rutas.crearDelegado, element: <CrearDelegado /> },
+      { path: `${rutas.detalleDelegado}/:id`, element: <DetalleDelegado /> }
     ]
   },
   { path: '*', element: <PaginaNoEncontrada /> }

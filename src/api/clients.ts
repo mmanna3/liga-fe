@@ -1628,7 +1628,7 @@ export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
     club?: string | undefined;
     estado?: EstadoJugadorEnum;
     motivo?: string | undefined;
-    fechaPagoDeFichaje?: Date;
+    fechaPagoDeFichaje?: Date | undefined;
 
     constructor(data?: IEquipoDelJugadorDTO) {
         if (data) {
@@ -1675,7 +1675,7 @@ export interface IEquipoDelJugadorDTO {
     club?: string | undefined;
     estado?: EstadoJugadorEnum;
     motivo?: string | undefined;
-    fechaPagoDeFichaje?: Date;
+    fechaPagoDeFichaje?: Date | undefined;
 }
 
 export enum EstadoJugadorEnum {
