@@ -13,7 +13,6 @@ import { ComboboxClub } from './components/combobox-club'
 
 export default function CrearDelegado() {
   const navigate = useNavigate()
-  const [usuario, setUsuario] = useState('')
   const [nombre, setNombre] = useState('')
   const [apellido, setApellido] = useState('')
   const [clubId, setClubId] = useState<number | null>(null)
@@ -31,7 +30,6 @@ export default function CrearDelegado() {
     if (!clubId) return
     mutation.mutate(
       new DelegadoDTO({
-        usuario,
         nombre,
         apellido,
         clubId
@@ -48,13 +46,6 @@ export default function CrearDelegado() {
         <form onSubmit={handleSubmit} className='space-y-4'>
           <Input
             type='text'
-            placeholder='Usuario'
-            value={usuario}
-            onChange={(e) => setUsuario(e.target.value)}
-            required
-          />
-          <Input
-            type='text'
             placeholder='Nombre'
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
@@ -67,11 +58,7 @@ export default function CrearDelegado() {
             onChange={(e) => setApellido(e.target.value)}
             required
           />
-          <ComboboxClub
-            value={clubId}
-            onChange={setClubId}
-            required
-          />
+          <ComboboxClub value={clubId} onChange={setClubId} required />
           <Botonera>
             <BotonVolver texto='Cancelar' />
             <Button type='submit' disabled={mutation.isPending}>
@@ -82,4 +69,4 @@ export default function CrearDelegado() {
       </CardContent>
     </Card>
   )
-} 
+}

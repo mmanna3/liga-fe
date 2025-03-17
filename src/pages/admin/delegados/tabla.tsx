@@ -10,14 +10,18 @@ interface ITablaDelegados {
   isError: boolean
 }
 
-export default function TablaDelegados({ data, isLoading, isError }: ITablaDelegados) {
+export default function TablaDelegados({
+  data,
+  isLoading,
+  isError
+}: ITablaDelegados) {
   const navigate = useNavigate()
 
   const columnas: ColumnDef<DelegadoDTO>[] = [
     {
-      accessorKey: 'usuario',
+      accessorKey: 'nombreUsuario',
       header: 'Usuario',
-      cell: ({ row }) => <span>{row.getValue('usuario')}</span>
+      cell: ({ row }) => <span>{row.getValue('nombreUsuario')}</span>
     },
     {
       accessorKey: 'nombre',
@@ -38,7 +42,9 @@ export default function TablaDelegados({ data, isLoading, isError }: ITablaDeleg
             {
               texto: 'Editar',
               onClick: () =>
-                navigate(`${rutasNavegacion.detalleDelegado}/${row.original.id}`)
+                navigate(
+                  `${rutasNavegacion.detalleDelegado}/${row.original.id}`
+                )
             }
           ]}
         />
@@ -54,4 +60,4 @@ export default function TablaDelegados({ data, isLoading, isError }: ITablaDeleg
       hayError={isError}
     />
   )
-} 
+}

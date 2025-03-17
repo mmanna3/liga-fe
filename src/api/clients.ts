@@ -1508,10 +1508,9 @@ export interface IClubDTO {
 
 export class DelegadoDTO implements IDelegadoDTO {
     id?: number;
-    usuario?: string | undefined;
     nombre?: string | undefined;
     apellido?: string | undefined;
-    password?: string | undefined;
+    nombreUsuario?: string | undefined;
     clubId?: number;
 
     constructor(data?: IDelegadoDTO) {
@@ -1526,10 +1525,9 @@ export class DelegadoDTO implements IDelegadoDTO {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
-            this.usuario = _data["usuario"];
             this.nombre = _data["nombre"];
             this.apellido = _data["apellido"];
-            this.password = _data["password"];
+            this.nombreUsuario = _data["nombreUsuario"];
             this.clubId = _data["clubId"];
         }
     }
@@ -1544,10 +1542,9 @@ export class DelegadoDTO implements IDelegadoDTO {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["usuario"] = this.usuario;
         data["nombre"] = this.nombre;
         data["apellido"] = this.apellido;
-        data["password"] = this.password;
+        data["nombreUsuario"] = this.nombreUsuario;
         data["clubId"] = this.clubId;
         return data;
     }
@@ -1555,10 +1552,9 @@ export class DelegadoDTO implements IDelegadoDTO {
 
 export interface IDelegadoDTO {
     id?: number;
-    usuario?: string | undefined;
     nombre?: string | undefined;
     apellido?: string | undefined;
-    password?: string | undefined;
+    nombreUsuario?: string | undefined;
     clubId?: number;
 }
 
