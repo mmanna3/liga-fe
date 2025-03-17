@@ -22,16 +22,13 @@ export default function DetalleDelegado() {
   const [apellido, setApellido] = useState('')
   const [clubId, setClubId] = useState<number | null>(null)
 
-  const {
-    isError,
-    isLoading
-  } = useApiQuery({
+  const { isError, isLoading } = useApiQuery({
     key: ['delegado', id],
     fn: async () => {
       if (!id) return null
       const delegado = await api.delegadoGET(Number(id))
       if (delegado) {
-        setUsuario(delegado.usuario || '')
+        setUsuario(delegado.nombreUsuario || '')
         setNombre(delegado.nombre || '')
         setApellido(delegado.apellido || '')
         setClubId(delegado.clubId || null)
@@ -46,7 +43,7 @@ export default function DetalleDelegado() {
       await api.delegadoPUT(Number(id), delegadoActualizado)
     },
     antesDeMensajeExito: () => navigate(rutasNavegacion.delegados),
-    mensajeDeExito: `Delegado '${nombre}' actualizado correctamente`
+    mensajeDeExito: `Delegado '${usuario}' actualizado correctamente`
   })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -55,7 +52,6 @@ export default function DetalleDelegado() {
     mutation.mutate(
       new DelegadoDTO({
         id: Number(id),
-        usuario,
         nombre,
         apellido,
         clubId
@@ -96,8 +92,8 @@ export default function DetalleDelegado() {
             type='text'
             placeholder='Usuario'
             value={usuario}
-            onChange={(e) => setUsuario(e.target.value)}
             required
+            disabled
           />
           <Input
             type='text'
@@ -113,11 +109,7 @@ export default function DetalleDelegado() {
             onChange={(e) => setApellido(e.target.value)}
             required
           />
-          <ComboboxClub
-            value={clubId}
-            onChange={setClubId}
-            required
-          />
+          <ComboboxClub value={clubId} onChange={setClubId} required />
           <Botonera>
             <BotonVolver texto='Cancelar' />
             <Button type='submit' disabled={mutation.isPending}>
@@ -128,4 +120,4 @@ export default function DetalleDelegado() {
       </CardContent>
     </Card>
   )
-} 
+}
