@@ -1446,6 +1446,7 @@ export class ClubDTO implements IClubDTO {
     id?: number;
     nombre!: string;
     equipos?: EquipoDTO[] | undefined;
+    delegados?: DelegadoDTO[] | undefined;
 
     constructor(data?: IClubDTO) {
         if (data) {
@@ -1464,6 +1465,11 @@ export class ClubDTO implements IClubDTO {
                 this.equipos = [] as any;
                 for (let item of _data["equipos"])
                     this.equipos!.push(EquipoDTO.fromJS(item));
+            }
+            if (Array.isArray(_data["delegados"])) {
+                this.delegados = [] as any;
+                for (let item of _data["delegados"])
+                    this.delegados!.push(DelegadoDTO.fromJS(item));
             }
         }
     }
@@ -1484,6 +1490,11 @@ export class ClubDTO implements IClubDTO {
             for (let item of this.equipos)
                 data["equipos"].push(item.toJSON());
         }
+        if (Array.isArray(this.delegados)) {
+            data["delegados"] = [];
+            for (let item of this.delegados)
+                data["delegados"].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -1492,6 +1503,7 @@ export interface IClubDTO {
     id?: number;
     nombre: string;
     equipos?: EquipoDTO[] | undefined;
+    delegados?: DelegadoDTO[] | undefined;
 }
 
 export class DelegadoDTO implements IDelegadoDTO {
