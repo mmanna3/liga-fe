@@ -35,6 +35,11 @@ export class HttpClientWrapper {
         toast.error('Token vencido')
         window.location.href = '/login'
         throw new Error('Token vencido')
+      } else if (response.status === 403 && !isPublicRoute) {
+        useAuth.getState().logout()
+        toast.error('Usuario no tiene permisos')
+        window.location.href = '/login'
+        throw new Error('Usuario no tiene permisos')
       }
       return response
     })
