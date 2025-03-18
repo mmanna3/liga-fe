@@ -1,4 +1,5 @@
 import { useAuth } from '@/hooks/use-auth'
+import { toast } from 'sonner'
 
 export class HttpClientWrapper {
   private publicRoutes = ['/api/Auth/login', '/api/Publico']
@@ -28,7 +29,15 @@ export class HttpClientWrapper {
       }
     }
 
-    return window.fetch(url, init)
+    return window.fetch(url, init).then(async (response) => {
+      if (response.status === 401 && !isPublicRoute) {
+        useAuth.getState().logout()
+        toast.error('Token vencido')
+        window.location.href = '/login'
+        throw new Error('Token vencido')
+      }
+      return response
+    })
   }
 
   private isPublicRoute(url: string): boolean {
