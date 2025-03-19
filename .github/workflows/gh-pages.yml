@@ -25,8 +25,18 @@ jobs:
       - name: Buildear
         run: npm run build-con-ts
 
+      - name: Instala Playwright
+        run: npx playwright install --with-deps
+
       - name: Correr tests 2e2
-        run: npx playwright install && npm run e2e
+        run: npm run e2e
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
 
       - name: Deployar por FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
