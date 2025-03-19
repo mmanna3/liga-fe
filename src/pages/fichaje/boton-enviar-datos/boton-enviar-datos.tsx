@@ -22,7 +22,7 @@ const BotonEnviarDatos = ({ onEnviarClick, estaCargando }: Props) => {
           <button
             onClick={onEnviarClick}
             disabled={estaCargando}
-            className='bg-white text-red-700 font-bold py-2 px-4 rounded'
+            className='bg-green-700 text-white font-semibold py-6 px-12 rounded-xl'
             data-testid='boton-enviar-datos'
           >
             {estaCargando ? 'ENVIANDO...' : 'ENVIAR DATOS'}
