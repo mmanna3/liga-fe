@@ -67,7 +67,7 @@ const PasoFechaNacimiento = () => {
               type='number'
               onChange={actualizarDia}
               className='w-20'
-              data-testid='input-dia'
+              dataTestId='input-dia'
             />
           </div>
           <div className='w-1/3'>
@@ -76,7 +76,7 @@ const PasoFechaNacimiento = () => {
               type='number'
               onChange={actualizarMes}
               className='w-20'
-              data-testid='input-mes'
+              dataTestId='input-mes'
             />
           </div>
           <div className='w-1/3'>
@@ -85,7 +85,7 @@ const PasoFechaNacimiento = () => {
               type='number'
               onChange={actualizarAnio}
               className='w-20'
-              data-testid='input-anio'
+              dataTestId='input-anio'
             />
           </div>
         </div>

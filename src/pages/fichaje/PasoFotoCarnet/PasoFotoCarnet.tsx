@@ -94,7 +94,14 @@ const PasoFotoCarnet = () => {
             />
           </div>
 
-          <ImageUploader value={imagen} onChange={onSelectFile} />
+          <div className={estilos.contenedorDeContenidoCentrado}>
+            <div>
+              <ImageUploader
+                onChange={onSelectFile}
+                data-testid='input-foto-carnet'
+              />
+            </div>
+          </div>
           <input
             readOnly
             {...register('fotoCarnet', {

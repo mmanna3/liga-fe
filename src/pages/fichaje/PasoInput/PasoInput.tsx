@@ -43,7 +43,7 @@ const PasoInput = ({
               }
             })}
             name={name}
-            data-testid={`input-${name.toLowerCase()}`}
+            dataTestId={`input-${name.toLowerCase()}`}
           />
         </div>
       </div>

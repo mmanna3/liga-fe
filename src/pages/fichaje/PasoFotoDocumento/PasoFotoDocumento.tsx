@@ -68,7 +68,14 @@ const PasoFotoDocumento = ({ titulo, name, nombre }: IPasoFotoDocumento) => {
           value={imagenBase64}
         />
         <FormErrorHandler name={name} errors={errors} nombre={nombre} />
-        <ImageUploader onChange={onSelectFile} />
+        <div className={estilos.contenedorDeContenidoCentrado}>
+          <div>
+            <ImageUploader
+              onChange={onSelectFile}
+              data-testid={`input-${name}`}
+            />
+          </div>
+        </div>
       </div>
     </div>
   )

@@ -2,26 +2,28 @@ import estilos from './ImageUploader.module.css'
 
 interface IImageUploader {
   onChange?: React.ChangeEventHandler<HTMLInputElement>
+  'data-testid'?: string
 }
 
-const ImageUploader = ({ onChange }: IImageUploader) => (
-  <div style={{ width: '100%' }}>
-    <label style={{ width: '100%' }}>
-      <div className={estilos.contenedorDeContenidoCentrado}>
-        <span
-          className={`py-auto rounded-lg bg-red-700 text-center text-white ${estilos.botonImageUploader}`}
-        >
-          SUBILA
-        </span>
-      </div>
+const ImageUploader = ({
+  onChange,
+  'data-testid': dataTestId
+}: IImageUploader) => {
+  return (
+    <div className={estilos.contenedorBotonSubir}>
       <input
-        style={{ display: 'none' }}
         type='file'
+        id='fileInput'
         accept='image/*'
         onChange={onChange}
+        className={estilos.inputFile}
+        data-testid={dataTestId}
       />
-    </label>
-  </div>
-)
+      <label htmlFor='fileInput' className={estilos.labelInput}>
+        SUBIR FOTO
+      </label>
+    </div>
+  )
+}
 
 export default ImageUploader
