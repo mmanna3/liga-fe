@@ -45,6 +45,13 @@ export default function TablaDelegados({
                 navigate(
                   `${rutasNavegacion.detalleDelegado}/${row.original.id}`
                 )
+            },
+            {
+              texto: 'Blanquear clave',
+              onClick: () =>
+                navigate(
+                  `${rutasNavegacion.blanquearClaveDelegado}/${row.original.id}/${row.original.nombreUsuario}`
+                )
             }
           ]}
         />

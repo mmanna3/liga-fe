@@ -18,7 +18,8 @@ export const rutas = {
   reportePagos: 'reportes/pagos',
   delegados: 'delegados',
   crearDelegado: 'delegados/crear',
-  detalleDelegado: 'delegados/detalle'
+  detalleDelegado: 'delegados/detalle',
+  blanquearClaveDelegado: 'delegados/blanquear-clave'
 }
 
 export const rutasNavegacion: { [K in keyof typeof rutas]: string } =
