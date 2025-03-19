@@ -11,7 +11,6 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { Boton } from '@/components/ykn-ui/boton'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
-import { rutasNavegacion } from '@/routes/rutas'
 import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -39,8 +38,7 @@ const AprobarRechazarJugador: React.FC = () => {
     fn: async (dto: AprobarJugadorDTO) => {
       await api.aprobarJugador(dto)
     },
-    antesDeMensajeExito: () =>
-      navigate(`${rutasNavegacion.detalleJugador}/${jugadorid}`),
+    antesDeMensajeExito: () => navigate(-1),
     mensajeDeExito: `Jugador aprobado`
   })
 
@@ -48,8 +46,7 @@ const AprobarRechazarJugador: React.FC = () => {
     fn: async (dto: RechazarJugadorDTO) => {
       await api.rechazarJugador(dto)
     },
-    antesDeMensajeExito: () =>
-      navigate(`${rutasNavegacion.detalleJugador}/${jugadorid}`),
+    antesDeMensajeExito: () => navigate(-1),
     mensajeDeExito: `Jugador rechazado`
   })
 

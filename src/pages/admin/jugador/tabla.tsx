@@ -50,21 +50,32 @@ export default function TablaJugador({
     {
       accessorKey: 'equipos',
       header: 'Estado',
-      cell: ({ row }) => (
-        <span>
-          {/* Cuando los jugadores tengan más de un equipo, esto no va a funcionar bien */}
-          {(row.getValue('equipos') as EquipoDelJugadorDTO[]).length > 0 ? (
-            <JugadorEquipoEstadoBadge
-              estado={
-                (row.getValue('equipos') as EquipoDelJugadorDTO[])[0]
-                  .estado as unknown as EstadoJugador
+      cell: ({ row }) => {
+        if ((row.getValue('equipos') as EquipoDelJugadorDTO[]).length === 0) {
+          return ''
+        }
+
+        const equipo = (row.getValue('equipos') as EquipoDelJugadorDTO[])[0]
+        const estado = equipo.estado as unknown as EstadoJugador
+        const esPendienteORechazo =
+          estado === EstadoJugador.FichajePendienteDeAprobacion ||
+          estado === EstadoJugador.FichajeRechazado
+
+        return (
+          <div
+            className={esPendienteORechazo ? 'cursor-pointer' : ''}
+            onClick={() => {
+              if (esPendienteORechazo) {
+                navigate(
+                  `${rutasNavegacion.aprobarRechazarJugador}/${equipo.id}/${row.original.id}`
+                )
               }
-            />
-          ) : (
-            ''
-          )}
-        </span>
-      )
+            }}
+          >
+            <JugadorEquipoEstadoBadge estado={estado} />
+          </div>
+        )
+      }
     },
     {
       id: 'acciones',
