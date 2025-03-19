@@ -1,4 +1,3 @@
-import { Loader2 } from 'lucide-react'
 import estilos from './PasoBotonEnviar.module.css'
 
 interface Props {
@@ -21,18 +20,12 @@ const BotonEnviarDatos = ({ onEnviarClick, estaCargando }: Props) => {
 
         <div className={estilos.contenedorDeContenidoCentrado}>
           <button
-            disabled={estaCargando}
-            className={`py-auto py-auto rounded-lg bg-green-700 cursor-pointer text-white ${estilos.boton}`}
             onClick={onEnviarClick}
+            disabled={estaCargando}
+            className='bg-white text-red-700 font-bold py-2 px-4 rounded'
+            data-testid='boton-enviar-datos'
           >
-            {estaCargando ? (
-              <div className='flex text-center ml-22'>
-                Enviando...
-                <Loader2 className='ml-4 mt-1 h-6 w-6 animate-spin' />
-              </div>
-            ) : (
-              'ENVIAR MIS DATOS'
-            )}
+            {estaCargando ? 'ENVIANDO...' : 'ENVIAR DATOS'}
           </button>
         </div>
       </div>

@@ -37,6 +37,7 @@ const PasoDNI = () => {
             validate: validar
           })}
           name='dni'
+          dataTestId='input-dni'
         />
         <FormErrorHandler name='dni' errors={errors} nombre='DNI' />
       </div>

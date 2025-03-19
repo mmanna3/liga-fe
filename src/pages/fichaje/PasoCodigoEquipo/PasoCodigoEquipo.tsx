@@ -45,10 +45,16 @@ const PasoCodigoEquipo = ({ valorInicial }: IProps) => {
         <div className='flex'>
           <Input
             onChange={onCodigoEquipoChange}
-            type='string'
-            register={register('codigoAlfanumerico', { required: true })}
-            valorInicial={valorInicial}
+            type='text'
+            register={register('codigoAlfanumerico', {
+              required: true,
+              maxLength: {
+                value: 10,
+                message: '¡Ups! Como máximo son 10 letras'
+              }
+            })}
             name='codigoAlfanumerico'
+            dataTestId='input-codigo-equipo'
             className='w-1/2'
           />
           <div className='w-1/2'>
@@ -58,6 +64,7 @@ const PasoCodigoEquipo = ({ valorInicial }: IProps) => {
               style={{ width: '100%' }}
               onClick={onValidarClick}
               disabled={isLoading}
+              data-testid='boton-validar-codigo'
             >
               {isLoading ? 'Validando...' : 'Validar'}
             </button>

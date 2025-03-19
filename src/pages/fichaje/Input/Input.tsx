@@ -8,12 +8,14 @@ interface IInput {
   type: string
   className?: string
   valorInicial?: string
+  dataTestId?: string
 }
 
 const Input = ({
   onChange,
   name,
   register,
+  dataTestId,
   type = 'text',
   className,
   valorInicial = ''
@@ -27,6 +29,7 @@ const Input = ({
 
   return (
     <input
+      data-testid={dataTestId}
       {...register}
       name={name}
       className={'bg-white p-3 text-black h-9 rounded ' + className}

@@ -63,15 +63,30 @@ const PasoFechaNacimiento = () => {
         <div className='flex gap-2'>
           <div className='w-1/3'>
             <p className='font-bold'>Día</p>
-            <Input type='number' onChange={actualizarDia} className='w-20' />
+            <Input
+              type='number'
+              onChange={actualizarDia}
+              className='w-20'
+              data-testid='input-dia'
+            />
           </div>
           <div className='w-1/3'>
             <p className='font-bold'>Mes</p>
-            <Input type='number' onChange={actualizarMes} className='w-20' />
+            <Input
+              type='number'
+              onChange={actualizarMes}
+              className='w-20'
+              data-testid='input-mes'
+            />
           </div>
           <div className='w-1/3'>
             <p className='font-bold'>Año</p>
-            <Input type='number' onChange={actualizarAnio} className='w-20' />
+            <Input
+              type='number'
+              onChange={actualizarAnio}
+              className='w-20'
+              data-testid='input-anio'
+            />
           </div>
         </div>
         <input
