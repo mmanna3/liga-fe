@@ -40,7 +40,7 @@ test.describe('Formulario de Fichaje', () => {
     ).toBeVisible()
   })
 
-  test.skip('completa el formulario exitosamente', async ({ page }) => {
+  test('completa el formulario exitosamente', async ({ page }) => {
     await mockearEndpointElDniEstaFichado(page, false)
     await mockearEndpointObtenerEquipoConEquipoDePrueba(page)
     await mockearFicharJugador(page, 200)
@@ -57,12 +57,57 @@ test.describe('Formulario de Fichaje', () => {
     await page.fill('[data-testid="input-mes"]', '01')
     await page.fill('[data-testid="input-anio"]', '1990')
 
-    // Faltan las imágenes
+    // Usar evaluate para encontrar y disparar eventos de carga de archivos
+    await page.evaluate(() => {
+      // Función para crear y disparar un evento de cambio de archivo
+      const simulateFileUpload = (selector, dataUrl) => {
+        const input = document.querySelector(selector)
+        if (!input) return false
+
+        // Crear un objeto File
+        const byteString = atob(dataUrl.split(',')[1])
+        const ab = new ArrayBuffer(byteString.length)
+        const ia = new Uint8Array(ab)
+        for (let i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i)
+        }
+        const blob = new Blob([ab], { type: 'image/png' })
+        const file = new File([blob], 'image.png', { type: 'image/png' })
+
+        // Crear y disparar el evento
+        const dataTransfer = new DataTransfer()
+        dataTransfer.items.add(file)
+        input.files = dataTransfer.files
+
+        // Disparar evento change
+        input.dispatchEvent(new Event('change', { bubbles: true }))
+        return true
+      }
+
+      // Simulamos la carga para cada input de archivo
+      const dataUrl =
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
+
+      simulateFileUpload('[data-testid="input-foto-carnet"]', dataUrl)
+      simulateFileUpload('[data-testid="input-fotoDNIFrente"]', dataUrl)
+      simulateFileUpload('[data-testid="input-fotoDNIDorso"]', dataUrl)
+    })
+
+    // Esperar a que aparezca el cropper y hacer clic en Aceptar
+    await page.waitForSelector('button:has-text("ACEPTAR")', { timeout: 5000 })
+    await page.click('button:has-text("ACEPTAR")')
+
+    // Esperamos a que se procesen las imágenes
+    await page.waitForTimeout(500)
 
     await page.click('[data-testid="boton-enviar-datos"]')
 
     await expect(page).toHaveURL(/fichaje-exitoso/)
-    await expect(page.getByText(/registrado correctamente/)).toBeVisible()
+    await expect(
+      page.getByText(
+        '¡Jugador de DNI: 12345678 registrado correctamente! Gracias por ficharte.'
+      )
+    ).toBeVisible()
   })
 
   test('muestra error del servidor al enviar el formulario', async ({
