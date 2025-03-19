@@ -26,7 +26,7 @@ jobs:
         run: npm run build-con-ts
 
       - name: Correr tests 2e2
-        run: npm run e2e
+        run: npx playwright install && npm run e2e
 
       - name: Deployar por FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
