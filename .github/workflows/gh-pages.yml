@@ -10,35 +10,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkoutear repo
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Set de versión de Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Instalar dependencias
         run: npm ci --legacy-peer-deps
 
-      - name: Build project
+      - name: Buildear
         run: npm run build-con-ts
 
-      - name: Deploy to FTP
+      - name: Correr tests 2e2
+        run: npm run e2e
+
+      - name: Deployar por FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./dist/ # Cambiar a ./build/ si React genera la carpeta build
+          local-dir: ./dist/
           server-dir: ${{ secrets.LIGA_1_SERVER_DIR }}
 
-      - name: Deploy to FTP
+      - name: Deployar por FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./dist/ # Cambiar a ./build/ si React genera la carpeta build
+          local-dir: ./dist/
           server-dir: ${{ secrets.LIGA_2_SERVER_DIR }}
