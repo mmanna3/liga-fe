@@ -1,4 +1,13 @@
 import { expect, test } from '@playwright/test'
+import {
+  TESTID,
+  TEST_IMAGE_BASE64,
+  mockearEndpointElDniEstaFichado,
+  mockearEndpointObtenerEquipoConEquipoDePrueba,
+  mockearEndpointObtenerEquipoConEquipoInvalido,
+  mockearFicharJugador,
+  setupImageUploader
+} from './utils/fichaje-utils'
 
 // Extender el tipo Window para incluir cargarImagen
 declare global {
@@ -7,59 +16,31 @@ declare global {
   }
 }
 
-const TEST_IMAGE_BASE64 =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
-
 test.describe('Formulario de Fichaje', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/fichaje')
     await page.waitForLoadState('networkidle')
-
-    // Define cargarImagen function in page context
-    await page.addScriptTag({
-      content: `
-        window.cargarImagen = function(selector, dataUrl) {
-          const input = document.querySelector(selector);
-          if (!input) return false;
-
-          const byteString = atob(dataUrl.split(',')[1]);
-          const ab = new ArrayBuffer(byteString.length);
-          const ia = new Uint8Array(ab);
-          for (let i = 0; i < byteString.length; i++) {
-            ia[i] = byteString.charCodeAt(i);
-          }
-          const blob = new Blob([ab], { type: 'image/png' });
-          const file = new File([blob], 'image.png', { type: 'image/png' });
-
-          const dataTransfer = new DataTransfer();
-          dataTransfer.items.add(file);
-          input.files = dataTransfer.files;
-
-          input.dispatchEvent(new Event('change', { bubbles: true }));
-          return true;
-        }
-      `
-    })
+    await setupImageUploader(page)
   })
 
-  test('Código equipo incorrecto -> muestra error', async ({ page }) => {
+  test('código equipo incorrecto -> muestra error', async ({ page }) => {
     const mockPromise = page.waitForResponse(
       '**/api/publico/obtener-nombre-equipo**'
     )
     await mockearEndpointObtenerEquipoConEquipoInvalido(page)
 
-    await page.fill('[data-testid="input-codigo-equipo"]', 'CODIGO')
-    await page.click('[data-testid="boton-validar-codigo"]')
+    await page.fill(TESTID.INPUTS.CODIGO_EQUIPO, 'CODIGO')
+    await page.click(TESTID.BOTONES.VALIDAR_CODIGO)
 
     await mockPromise
 
     await expect(page.getByText('El código es incorrecto')).toBeVisible()
   })
 
-  test('Código equipo correcto -> muestra su nombre', async ({ page }) => {
+  test('código equipo correcto -> muestra su nombre', async ({ page }) => {
     await mockearEndpointObtenerEquipoConEquipoDePrueba(page)
-    await page.fill('[data-testid="input-codigo-equipo"]', 'CODIGO123')
-    await page.click('[data-testid="boton-validar-codigo"]')
+    await page.fill(TESTID.INPUTS.CODIGO_EQUIPO, 'CODIGO123')
+    await page.click(TESTID.BOTONES.VALIDAR_CODIGO)
 
     await expect(page.getByText('Tu equipo es: Equipo de Prueba')).toBeVisible()
   })
@@ -67,7 +48,7 @@ test.describe('Formulario de Fichaje', () => {
   test('DNI ya está fichado -> muestra error', async ({ page }) => {
     await mockearEndpointElDniEstaFichado(page, true)
 
-    await page.fill('[data-testid="input-dni"]', '12345678')
+    await page.fill(TESTID.INPUTS.DNI, '12345678')
     await page.getByTestId('input-dni').blur()
 
     await expect(
@@ -75,28 +56,28 @@ test.describe('Formulario de Fichaje', () => {
     ).toBeVisible()
   })
 
-  test('Servidor devuelve 200 -> redirige a fichaje exitoso', async ({
+  test('Servidor devuelve 200 -> redirige a fichaje-exitoso', async ({
     page
   }) => {
     await mockearEndpointElDniEstaFichado(page, false)
     await mockearEndpointObtenerEquipoConEquipoDePrueba(page)
     await mockearFicharJugador(page, 200)
 
-    await page.fill('[data-testid="input-codigo-equipo"]', 'CODIGO123')
-    await page.click('[data-testid="boton-validar-codigo"]')
+    await page.fill(TESTID.INPUTS.CODIGO_EQUIPO, 'CODIGO123')
+    await page.click(TESTID.BOTONES.VALIDAR_CODIGO)
     await expect(page.getByText('Tu equipo es: Equipo de Prueba')).toBeVisible()
 
-    await page.fill('[data-testid="input-nombre"]', 'Juan')
-    await page.fill('[data-testid="input-apellido"]', 'Pérez')
-    await page.fill('[data-testid="input-dni"]', '12345678')
+    await page.fill(TESTID.INPUTS.NOMBRE, 'Juan')
+    await page.fill(TESTID.INPUTS.APELLIDO, 'Pérez')
+    await page.fill(TESTID.INPUTS.DNI, '12345678')
 
-    await page.fill('[data-testid="input-dia"]', '01')
-    await page.fill('[data-testid="input-mes"]', '01')
-    await page.fill('[data-testid="input-anio"]', '1990')
+    await page.fill(TESTID.INPUTS.DIA, '01')
+    await page.fill(TESTID.INPUTS.MES, '01')
+    await page.fill(TESTID.INPUTS.ANIO, '1990')
 
     await page.evaluate(
       ([selector, dataUrl]) => window.cargarImagen(selector, dataUrl),
-      ['[data-testid="input-foto-carnet"]', TEST_IMAGE_BASE64]
+      [TESTID.INPUTS.FOTO_CARNET, TEST_IMAGE_BASE64]
     )
 
     await page.waitForSelector('button:has-text("ACEPTAR")', { timeout: 5000 })
@@ -106,19 +87,19 @@ test.describe('Formulario de Fichaje', () => {
 
     await page.evaluate(
       ([selector, dataUrl]) => window.cargarImagen(selector, dataUrl),
-      ['[data-testid="input-fotoDNIFrente"]', TEST_IMAGE_BASE64]
+      [TESTID.INPUTS.FOTO_DNI_FRENTE, TEST_IMAGE_BASE64]
     )
 
     await page.waitForTimeout(500)
 
     await page.evaluate(
       ([selector, dataUrl]) => window.cargarImagen(selector, dataUrl),
-      ['[data-testid="input-fotoDNIDorso"]', TEST_IMAGE_BASE64]
+      [TESTID.INPUTS.FOTO_DNI_DORSO, TEST_IMAGE_BASE64]
     )
 
     await page.waitForTimeout(500)
 
-    await page.click('[data-testid="boton-enviar-datos"]')
+    await page.click(TESTID.BOTONES.ENVIAR_DATOS)
 
     await expect(page).toHaveURL(/fichaje-exitoso/)
     await expect(
@@ -128,7 +109,7 @@ test.describe('Formulario de Fichaje', () => {
     ).toBeVisible()
   })
 
-  test('Servidor devuelve 500 -> redirige a página de error', async ({
+  test('Servidor devuelve 500 -> redirige a fichaje-error', async ({
     page
   }) => {
     await mockearEndpointElDniEstaFichado(page, false)
@@ -137,21 +118,21 @@ test.describe('Formulario de Fichaje', () => {
 
     const mockPromise = page.waitForResponse('**/api/Jugador')
 
-    await page.fill('[data-testid="input-codigo-equipo"]', 'CODIGO123')
-    await page.click('[data-testid="boton-validar-codigo"]')
+    await page.fill(TESTID.INPUTS.CODIGO_EQUIPO, 'CODIGO123')
+    await page.click(TESTID.BOTONES.VALIDAR_CODIGO)
     await expect(page.getByText('Tu equipo es: Equipo de Prueba')).toBeVisible()
 
-    await page.fill('[data-testid="input-nombre"]', 'Juan')
-    await page.fill('[data-testid="input-apellido"]', 'Pérez')
-    await page.fill('[data-testid="input-dni"]', '12345678')
+    await page.fill(TESTID.INPUTS.NOMBRE, 'Juan')
+    await page.fill(TESTID.INPUTS.APELLIDO, 'Pérez')
+    await page.fill(TESTID.INPUTS.DNI, '12345678')
 
-    await page.fill('[data-testid="input-dia"]', '01')
-    await page.fill('[data-testid="input-mes"]', '01')
-    await page.fill('[data-testid="input-anio"]', '1990')
+    await page.fill(TESTID.INPUTS.DIA, '01')
+    await page.fill(TESTID.INPUTS.MES, '01')
+    await page.fill(TESTID.INPUTS.ANIO, '1990')
 
     await page.evaluate(
       ([selector, dataUrl]) => window.cargarImagen(selector, dataUrl),
-      ['[data-testid="input-foto-carnet"]', TEST_IMAGE_BASE64]
+      [TESTID.INPUTS.FOTO_CARNET, TEST_IMAGE_BASE64]
     )
 
     await page.waitForSelector('button:has-text("ACEPTAR")', { timeout: 5000 })
@@ -161,19 +142,19 @@ test.describe('Formulario de Fichaje', () => {
 
     await page.evaluate(
       ([selector, dataUrl]) => window.cargarImagen(selector, dataUrl),
-      ['[data-testid="input-fotoDNIFrente"]', TEST_IMAGE_BASE64]
+      [TESTID.INPUTS.FOTO_DNI_FRENTE, TEST_IMAGE_BASE64]
     )
 
     await page.waitForTimeout(500)
 
     await page.evaluate(
       ([selector, dataUrl]) => window.cargarImagen(selector, dataUrl),
-      ['[data-testid="input-fotoDNIDorso"]', TEST_IMAGE_BASE64]
+      [TESTID.INPUTS.FOTO_DNI_DORSO, TEST_IMAGE_BASE64]
     )
 
     await page.waitForTimeout(500)
 
-    await page.click('[data-testid="boton-enviar-datos"]')
+    await page.click(TESTID.BOTONES.ENVIAR_DATOS)
 
     await mockPromise
 
@@ -183,39 +164,3 @@ test.describe('Formulario de Fichaje', () => {
     ).toBeVisible()
   })
 })
-
-async function mockearFicharJugador(page, status: number) {
-  await page.route('**/api/Jugador', async (route) => {
-    await route.fulfill({ status: status })
-  })
-}
-
-async function mockearEndpointObtenerEquipoConEquipoDePrueba(page) {
-  await page.route('**/api/publico/obtener-nombre-equipo**', async (route) => {
-    await route.fulfill({
-      json: {
-        hayError: false,
-        mensajeError: null,
-        respuesta: 'Equipo de Prueba'
-      }
-    })
-  })
-}
-
-async function mockearEndpointObtenerEquipoConEquipoInvalido(page) {
-  await page.route('**/api/publico/obtener-nombre-equipo**', async (route) => {
-    await route.fulfill({
-      json: {
-        hayError: true,
-        mensajeError: 'El código es incorrecto',
-        respuesta: null
-      }
-    })
-  })
-}
-
-async function mockearEndpointElDniEstaFichado(page, valor: boolean) {
-  await page.route('**/api/publico/el-dni-esta-fichado**', async (route) => {
-    await route.fulfill({ json: valor })
-  })
-}
