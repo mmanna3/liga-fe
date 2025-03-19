@@ -1,6 +1,6 @@
 import { api } from '@/api/api'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import FormErrorHandler from '../Error/FormErrorHandler'
 import Input from '../Input/Input'
@@ -16,8 +16,17 @@ const PasoCodigoEquipo = ({ valorInicial }: IProps) => {
 
   const {
     register,
+    setValue,
     formState: { errors }
   } = useFormContext()
+
+  // Sincronizar el valorInicial con el formulario cuando el componente se monta
+  useEffect(() => {
+    if (valorInicial) {
+      setCodigoEquipo(valorInicial)
+      setValue('codigoAlfanumerico', valorInicial)
+    }
+  }, [valorInicial, setValue])
 
   const onCodigoEquipoChange = (id: string) => {
     setCodigoEquipo(id)
@@ -56,6 +65,7 @@ const PasoCodigoEquipo = ({ valorInicial }: IProps) => {
             name='codigoAlfanumerico'
             dataTestId='input-codigo-equipo'
             className='w-1/2'
+            valorInicial={codigoEquipo}
           />
           <div className='w-1/2'>
             <button
@@ -80,8 +90,8 @@ const PasoCodigoEquipo = ({ valorInicial }: IProps) => {
         )}
       </div>
       <FormErrorHandler
-        errors={errors}
         name='codigoAlfanumerico'
+        errors={errors}
         nombre='código de equipo'
       />
     </div>
