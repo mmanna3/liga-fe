@@ -1,4 +1,5 @@
 import { DelegadoDTO } from '@/api/clients'
+import { Badge } from '@/components/ui/badge'
 import Tabla from '@/components/ykn-ui/tabla'
 import { rutasNavegacion } from '@/routes/rutas'
 import { ColumnDef } from '@tanstack/react-table'
@@ -32,6 +33,19 @@ export default function TablaDelegados({
       accessorKey: 'apellido',
       header: 'Apellido',
       cell: ({ row }) => <span>{row.getValue('apellido')}</span>
+    },
+    {
+      accessorKey: 'blanqueoPendiente',
+      header: '',
+      cell: ({ row }) => (
+        <span>
+          {(row.getValue('blanqueoPendiente') as boolean) == true && (
+            <Badge className='px-3 py-1 rounded-md bg-blue-700'>
+              Blanqueo pendiente
+            </Badge>
+          )}
+        </span>
+      )
     },
     {
       id: 'acciones',

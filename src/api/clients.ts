@@ -1554,6 +1554,7 @@ export class DelegadoDTO implements IDelegadoDTO {
     nombre?: string | undefined;
     apellido?: string | undefined;
     nombreUsuario?: string | undefined;
+    blanqueoPendiente?: boolean;
     clubId?: number;
 
     constructor(data?: IDelegadoDTO) {
@@ -1571,6 +1572,7 @@ export class DelegadoDTO implements IDelegadoDTO {
             this.nombre = _data["nombre"];
             this.apellido = _data["apellido"];
             this.nombreUsuario = _data["nombreUsuario"];
+            this.blanqueoPendiente = _data["blanqueoPendiente"];
             this.clubId = _data["clubId"];
         }
     }
@@ -1588,6 +1590,7 @@ export class DelegadoDTO implements IDelegadoDTO {
         data["nombre"] = this.nombre;
         data["apellido"] = this.apellido;
         data["nombreUsuario"] = this.nombreUsuario;
+        data["blanqueoPendiente"] = this.blanqueoPendiente;
         data["clubId"] = this.clubId;
         return data;
     }
@@ -1598,6 +1601,7 @@ export interface IDelegadoDTO {
     nombre?: string | undefined;
     apellido?: string | undefined;
     nombreUsuario?: string | undefined;
+    blanqueoPendiente?: boolean;
     clubId?: number;
 }
 
