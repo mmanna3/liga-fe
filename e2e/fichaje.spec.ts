@@ -1,13 +1,48 @@
 import { expect, test } from '@playwright/test'
 
+// Extender el tipo Window para incluir cargarImagen
+declare global {
+  interface Window {
+    cargarImagen: (selector: string, dataUrl: string) => boolean
+  }
+}
+
+const TEST_IMAGE_BASE64 =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
+
 test.describe('Formulario de Fichaje', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/fichaje')
-
     await page.waitForLoadState('networkidle')
+
+    // Define cargarImagen function in page context
+    await page.addScriptTag({
+      content: `
+        window.cargarImagen = function(selector, dataUrl) {
+          const input = document.querySelector(selector);
+          if (!input) return false;
+
+          const byteString = atob(dataUrl.split(',')[1]);
+          const ab = new ArrayBuffer(byteString.length);
+          const ia = new Uint8Array(ab);
+          for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+          }
+          const blob = new Blob([ab], { type: 'image/png' });
+          const file = new File([blob], 'image.png', { type: 'image/png' });
+
+          const dataTransfer = new DataTransfer();
+          dataTransfer.items.add(file);
+          input.files = dataTransfer.files;
+
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+          return true;
+        }
+      `
+    })
   })
 
-  test('código equipo incorrecto -> muestra error', async ({ page }) => {
+  test('Código equipo incorrecto -> muestra error', async ({ page }) => {
     const mockPromise = page.waitForResponse(
       '**/api/publico/obtener-nombre-equipo**'
     )
@@ -21,7 +56,7 @@ test.describe('Formulario de Fichaje', () => {
     await expect(page.getByText('El código es incorrecto')).toBeVisible()
   })
 
-  test('código equipo correcto -> muestra su nombre', async ({ page }) => {
+  test('Código equipo correcto -> muestra su nombre', async ({ page }) => {
     await mockearEndpointObtenerEquipoConEquipoDePrueba(page)
     await page.fill('[data-testid="input-codigo-equipo"]', 'CODIGO123')
     await page.click('[data-testid="boton-validar-codigo"]')
@@ -40,7 +75,9 @@ test.describe('Formulario de Fichaje', () => {
     ).toBeVisible()
   })
 
-  test('completa el formulario exitosamente', async ({ page }) => {
+  test('Servidor devuelve 200 -> redirige a fichaje exitoso', async ({
+    page
+  }) => {
     await mockearEndpointElDniEstaFichado(page, false)
     await mockearEndpointObtenerEquipoConEquipoDePrueba(page)
     await mockearFicharJugador(page, 200)
@@ -57,47 +94,28 @@ test.describe('Formulario de Fichaje', () => {
     await page.fill('[data-testid="input-mes"]', '01')
     await page.fill('[data-testid="input-anio"]', '1990')
 
-    // Usar evaluate para encontrar y disparar eventos de carga de archivos
-    await page.evaluate(() => {
-      // Función para crear y disparar un evento de cambio de archivo
-      const simulateFileUpload = (selector, dataUrl) => {
-        const input = document.querySelector(selector)
-        if (!input) return false
+    await page.evaluate(
+      ([selector, dataUrl]) => window.cargarImagen(selector, dataUrl),
+      ['[data-testid="input-foto-carnet"]', TEST_IMAGE_BASE64]
+    )
 
-        // Crear un objeto File
-        const byteString = atob(dataUrl.split(',')[1])
-        const ab = new ArrayBuffer(byteString.length)
-        const ia = new Uint8Array(ab)
-        for (let i = 0; i < byteString.length; i++) {
-          ia[i] = byteString.charCodeAt(i)
-        }
-        const blob = new Blob([ab], { type: 'image/png' })
-        const file = new File([blob], 'image.png', { type: 'image/png' })
-
-        // Crear y disparar el evento
-        const dataTransfer = new DataTransfer()
-        dataTransfer.items.add(file)
-        input.files = dataTransfer.files
-
-        // Disparar evento change
-        input.dispatchEvent(new Event('change', { bubbles: true }))
-        return true
-      }
-
-      // Simulamos la carga para cada input de archivo
-      const dataUrl =
-        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
-
-      simulateFileUpload('[data-testid="input-foto-carnet"]', dataUrl)
-      simulateFileUpload('[data-testid="input-fotoDNIFrente"]', dataUrl)
-      simulateFileUpload('[data-testid="input-fotoDNIDorso"]', dataUrl)
-    })
-
-    // Esperar a que aparezca el cropper y hacer clic en Aceptar
     await page.waitForSelector('button:has-text("ACEPTAR")', { timeout: 5000 })
     await page.click('button:has-text("ACEPTAR")')
 
-    // Esperamos a que se procesen las imágenes
+    await page.waitForTimeout(500)
+
+    await page.evaluate(
+      ([selector, dataUrl]) => window.cargarImagen(selector, dataUrl),
+      ['[data-testid="input-fotoDNIFrente"]', TEST_IMAGE_BASE64]
+    )
+
+    await page.waitForTimeout(500)
+
+    await page.evaluate(
+      ([selector, dataUrl]) => window.cargarImagen(selector, dataUrl),
+      ['[data-testid="input-fotoDNIDorso"]', TEST_IMAGE_BASE64]
+    )
+
     await page.waitForTimeout(500)
 
     await page.click('[data-testid="boton-enviar-datos"]')
@@ -110,7 +128,7 @@ test.describe('Formulario de Fichaje', () => {
     ).toBeVisible()
   })
 
-  test('muestra error del servidor al enviar el formulario', async ({
+  test('Servidor devuelve 500 -> redirige a página de error', async ({
     page
   }) => {
     await mockearEndpointElDniEstaFichado(page, false)
@@ -131,47 +149,28 @@ test.describe('Formulario de Fichaje', () => {
     await page.fill('[data-testid="input-mes"]', '01')
     await page.fill('[data-testid="input-anio"]', '1990')
 
-    // Usar evaluate para encontrar y disparar eventos de carga de archivos
-    await page.evaluate(() => {
-      // Función para crear y disparar un evento de cambio de archivo
-      const simulateFileUpload = (selector, dataUrl) => {
-        const input = document.querySelector(selector)
-        if (!input) return false
+    await page.evaluate(
+      ([selector, dataUrl]) => window.cargarImagen(selector, dataUrl),
+      ['[data-testid="input-foto-carnet"]', TEST_IMAGE_BASE64]
+    )
 
-        // Crear un objeto File
-        const byteString = atob(dataUrl.split(',')[1])
-        const ab = new ArrayBuffer(byteString.length)
-        const ia = new Uint8Array(ab)
-        for (let i = 0; i < byteString.length; i++) {
-          ia[i] = byteString.charCodeAt(i)
-        }
-        const blob = new Blob([ab], { type: 'image/png' })
-        const file = new File([blob], 'image.png', { type: 'image/png' })
-
-        // Crear y disparar el evento
-        const dataTransfer = new DataTransfer()
-        dataTransfer.items.add(file)
-        input.files = dataTransfer.files
-
-        // Disparar evento change
-        input.dispatchEvent(new Event('change', { bubbles: true }))
-        return true
-      }
-
-      // Simulamos la carga para cada input de archivo
-      const dataUrl =
-        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
-
-      simulateFileUpload('[data-testid="input-foto-carnet"]', dataUrl)
-      simulateFileUpload('[data-testid="input-fotoDNIFrente"]', dataUrl)
-      simulateFileUpload('[data-testid="input-fotoDNIDorso"]', dataUrl)
-    })
-
-    // Esperar a que aparezca el cropper y hacer clic en Aceptar
     await page.waitForSelector('button:has-text("ACEPTAR")', { timeout: 5000 })
     await page.click('button:has-text("ACEPTAR")')
 
-    // Esperamos a que se procesen las imágenes
+    await page.waitForTimeout(500)
+
+    await page.evaluate(
+      ([selector, dataUrl]) => window.cargarImagen(selector, dataUrl),
+      ['[data-testid="input-fotoDNIFrente"]', TEST_IMAGE_BASE64]
+    )
+
+    await page.waitForTimeout(500)
+
+    await page.evaluate(
+      ([selector, dataUrl]) => window.cargarImagen(selector, dataUrl),
+      ['[data-testid="input-fotoDNIDorso"]', TEST_IMAGE_BASE64]
+    )
+
     await page.waitForTimeout(500)
 
     await page.click('[data-testid="boton-enviar-datos"]')
