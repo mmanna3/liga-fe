@@ -59,11 +59,9 @@ export default function TablaEquipo({
                 navigate(`${rutasNavegacion.detalleEquipo}/${row.original.id}`)
             },
             {
-              texto: 'Cambio de estado masivo',
+              texto: 'Editar',
               onClick: () =>
-                navigate(
-                  `${rutasNavegacion.cambioEstadoMasivoEquipo}/${row.original.id}`
-                )
+                navigate(`${rutasNavegacion.editarEquipo}/${row.original.id}`)
             }
           ]}
         />

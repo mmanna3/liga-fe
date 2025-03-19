@@ -4,6 +4,7 @@ export const rutas = {
   detalleClub: 'clubs/detalle',
   equipos: 'equipos',
   crearEquipo: 'equipos/crear',
+  editarEquipo: 'equipos/editar',
   detalleEquipo: 'equipos/detalle',
   cambioEstadoMasivoEquipo: 'equipos/cambio-estado-masivo',
   jugadores: 'jugadores',
@@ -20,24 +21,7 @@ export const rutas = {
   detalleDelegado: 'delegados/detalle'
 }
 
-export const rutasNavegacion = {
-  clubs: '/admin/clubs',
-  crearClub: '/admin/clubs/crear',
-  detalleClub: '/admin/clubs/detalle',
-  equipos: '/admin/equipos',
-  crearEquipo: '/admin/equipos/crear',
-  detalleEquipo: '/admin/equipos/detalle',
-  cambioEstadoMasivoEquipo: '/admin/equipos/cambio-estado-masivo',
-  jugadores: '/admin/jugadores',
-  detalleJugador: '/admin/jugadores/detalle',
-  aprobarRechazarJugador: '/admin/jugadores/aprobar-rechazar',
-  cambiarEstadoJugador: '/admin/jugadores/cambiar-estado',
-  torneos: '/admin/torneos',
-  crearTorneo: '/admin/torneos/crear',
-  detalleTorneo: '/admin/torneos/detalle',
-  reportes: '/admin/reportes',
-  reportePagos: '/admin/reportes/pagos',
-  delegados: '/admin/delegados',
-  crearDelegado: '/admin/delegados/crear',
-  detalleDelegado: '/admin/delegados/detalle'
-}
+export const rutasNavegacion: { [K in keyof typeof rutas]: string } =
+  Object.fromEntries(
+    Object.entries(rutas).map(([key, value]) => [key, `/admin/${value}`])
+  ) as { [K in keyof typeof rutas]: string }
