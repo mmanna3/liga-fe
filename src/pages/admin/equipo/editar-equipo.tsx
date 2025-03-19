@@ -32,7 +32,6 @@ export default function EditarEquipo() {
   const [torneoId, setTorneoId] = useState<string>('')
   const [clubId, setClubId] = useState<number | null>(null)
 
-  // Cargar datos actuales del equipo
   const {
     data: equipo,
     isLoading: isLoadingEquipo,
@@ -42,7 +41,6 @@ export default function EditarEquipo() {
     fn: async () => await api.equipoGET(Number(id))
   })
 
-  // Cargar torneos disponibles
   const {
     data: torneos,
     isLoading: isLoadingTorneos,
@@ -55,16 +53,15 @@ export default function EditarEquipo() {
     }
   })
 
-  // Inicializar el formulario con los datos actuales
   useEffect(() => {
-    if (equipo) {
+    if (equipo && torneos) {
       setNombre(equipo.nombre || '')
-      setTorneoId(equipo.torneoId?.toString() || '')
+      const torneoIdString = equipo.torneoId?.toString() || ''
+      setTorneoId(torneoIdString)
       setClubId(equipo.clubId || null)
     }
-  }, [equipo])
+  }, [equipo, torneos])
 
-  // Configurar la mutación para actualizar el equipo
   const mutation = useApiMutation({
     fn: async (equipoActualizado: EquipoDTO) => {
       await api.equipoPUT(Number(id), equipoActualizado)
@@ -78,12 +75,6 @@ export default function EditarEquipo() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    // Validar campos
-    if (!nombre || !torneoId) {
-      return
-    }
-
-    // Actualizar el equipo
     mutation.mutate(
       new EquipoDTO({
         id: Number(id),
@@ -124,8 +115,11 @@ export default function EditarEquipo() {
                   Torneo
                 </label>
                 <Select
-                  value={torneoId}
-                  onValueChange={(value) => setTorneoId(value)}
+                  key={`torneo-select-${torneoId}`}
+                  value={torneoId || undefined}
+                  onValueChange={(value) => {
+                    setTorneoId(value)
+                  }}
                 >
                   <SelectTrigger id='torneo'>
                     <SelectValue placeholder='Selecciona un torneo' />
