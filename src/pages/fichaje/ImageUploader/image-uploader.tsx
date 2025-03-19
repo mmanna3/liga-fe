@@ -8,22 +8,25 @@ interface IImageUploader {
 const ImageUploader = ({
   onChange,
   'data-testid': dataTestId
-}: IImageUploader) => {
-  return (
-    <div className={estilos.contenedorBotonSubir}>
+}: IImageUploader) => (
+  <div style={{ width: '100%' }}>
+    <label style={{ width: '100%' }}>
+      <div className={estilos.contenedorDeContenidoCentrado}>
+        <span
+          className={`py-auto rounded-lg bg-red-700 text-center text-white ${estilos.botonImageUploader}`}
+        >
+          SUBILA
+        </span>
+      </div>
       <input
+        style={{ display: 'none' }}
         type='file'
-        id='fileInput'
         accept='image/*'
         onChange={onChange}
-        className={estilos.inputFile}
         data-testid={dataTestId}
       />
-      <label htmlFor='fileInput' className={estilos.labelInput}>
-        SUBIR FOTO
-      </label>
-    </div>
-  )
-}
+    </label>
+  </div>
+)
 
 export default ImageUploader
