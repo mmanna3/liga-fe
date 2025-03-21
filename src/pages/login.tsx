@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/hooks/use-auth'
+import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -9,6 +10,7 @@ export default function Login() {
   const [usuario, setUsuario] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
   const { login } = useAuth()
@@ -18,6 +20,7 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setIsLoading(true)
 
     try {
       const success = await login(usuario, password)
@@ -26,8 +29,10 @@ export default function Login() {
       } else {
         setError('Usuario o contraseña incorrectos')
       }
-    } catch (err) {
+    } catch {
       setError('Error al intentar iniciar sesión')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -51,6 +56,7 @@ export default function Login() {
                 value={usuario}
                 onChange={(e) => setUsuario(e.target.value)}
                 required
+                disabled={isLoading}
               />
             </div>
             <div className='space-y-2'>
@@ -63,13 +69,21 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                disabled={isLoading}
               />
             </div>
             {error && (
               <div className='text-sm text-red-500 text-center'>{error}</div>
             )}
-            <Button type='submit' className='w-full'>
-              Ingresar
+            <Button type='submit' className='w-full' disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 className='animate-spin' />
+                  Ingresando...
+                </>
+              ) : (
+                'Ingresar'
+              )}
             </Button>
           </form>
         </CardContent>
