@@ -2372,6 +2372,7 @@ export class JugadorDelEquipoDTO implements IJugadorDelEquipoDTO {
     apellido?: string | undefined;
     estado?: EstadoJugadorEnum;
     jugadorEquipoId?: number;
+    motivo?: string | undefined;
 
     constructor(data?: IJugadorDelEquipoDTO) {
         if (data) {
@@ -2390,6 +2391,7 @@ export class JugadorDelEquipoDTO implements IJugadorDelEquipoDTO {
             this.apellido = _data["apellido"];
             this.estado = _data["estado"];
             this.jugadorEquipoId = _data["jugadorEquipoId"];
+            this.motivo = _data["motivo"];
         }
     }
 
@@ -2408,6 +2410,7 @@ export class JugadorDelEquipoDTO implements IJugadorDelEquipoDTO {
         data["apellido"] = this.apellido;
         data["estado"] = this.estado;
         data["jugadorEquipoId"] = this.jugadorEquipoId;
+        data["motivo"] = this.motivo;
         return data;
     }
 }
@@ -2419,6 +2422,7 @@ export interface IJugadorDelEquipoDTO {
     apellido?: string | undefined;
     estado?: EstadoJugadorEnum;
     jugadorEquipoId?: number;
+    motivo?: string | undefined;
 }
 
 export class LoginDTO implements ILoginDTO {

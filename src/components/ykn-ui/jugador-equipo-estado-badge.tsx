@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge'
 import { EstadoJugador } from '@/lib/utils'
 
-const estadoConfig = {
+export const estadoConfig = {
   [EstadoJugador.FichajePendienteDeAprobacion]: {
     texto: 'Pendiente de aprobación',
     color: 'bg-sky-600 text-slate-200'
