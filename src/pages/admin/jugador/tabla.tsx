@@ -87,6 +87,13 @@ export default function TablaJugador({
               texto: 'Detalle',
               onClick: () =>
                 navigate(`${rutasNavegacion.detalleJugador}/${row.original.id}`)
+            },
+            {
+              texto: 'Eliminar',
+              onClick: () =>
+                navigate(
+                  `${rutasNavegacion.eliminarJugador}/${row.original.id}/${row.original.dni}`
+                )
             }
           ]}
         />

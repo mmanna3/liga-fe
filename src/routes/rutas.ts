@@ -9,6 +9,7 @@ export const rutas = {
   cambioEstadoMasivoEquipo: 'equipos/cambio-estado-masivo',
   jugadores: 'jugadores',
   detalleJugador: 'jugadores/detalle',
+  eliminarJugador: 'jugadores/eliminar',
   aprobarRechazarJugador: 'jugadores/aprobar-rechazar',
   cambiarEstadoJugador: 'jugadores/cambiar-estado',
   torneos: 'torneos',

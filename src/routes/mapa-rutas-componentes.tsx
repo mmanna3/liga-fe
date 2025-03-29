@@ -12,6 +12,7 @@ import Equipo from '@/pages/admin/equipo/equipo'
 import AprobarRechazarJugador from '@/pages/admin/jugador/aprobar-rechazar-jugador'
 import CambiarEstado from '@/pages/admin/jugador/cambiar-estado-jugador'
 import DetalleJugador from '@/pages/admin/jugador/detalle-jugador'
+import EliminarJugador from '@/pages/admin/jugador/eliminar-jugador'
 import Jugador from '@/pages/admin/jugador/jugador'
 import ReportesPage from '@/pages/admin/reportes'
 import ReportePagosPage from '@/pages/admin/reportes/pagos'
@@ -77,6 +78,10 @@ export const mapaRutasComponentes = [
       { path: `${rutas.editarEquipo}/:id`, element: <EditarEquipo /> },
       { path: rutas.jugadores, element: <Jugador /> },
       { path: `${rutas.detalleJugador}/:id`, element: <DetalleJugador /> },
+      {
+        path: `${rutas.eliminarJugador}/:id/:dni`,
+        element: <EliminarJugador />
+      },
       {
         path: `${rutas.aprobarRechazarJugador}/:jugadorequipoid/:jugadorid`,
         element: <AprobarRechazarJugador />
