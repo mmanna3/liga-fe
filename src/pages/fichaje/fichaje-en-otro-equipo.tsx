@@ -38,7 +38,7 @@ const FichajeEnOtroEquipo = () => {
 
   return (
     <FormProvider {...methods}>
-      <div className='min-h-screen bg-red-700'>
+      <div className='min-h-screen bg-green-700'>
         <div className='font-sans text-slate-100 w-full bg-green-700'>
           <div className='py-6 w-full'>
             <div className='max-w-[360px] mx-auto text-left'>
