@@ -113,8 +113,8 @@ export default function PoliticaDePrivacidad() {
         </li>
       </ul>
       <p className='mb-6'>
-        Para ejercer estos derechos, pueden contactarnos a través de [correo de
-        contacto].
+        Para ejercer estos derechos, pueden contactarnos a través de
+        blueservant.software@gmail.com.
       </p>
 
       <h2 className='text-2xl font-semibold mt-8 mb-4'>
