@@ -23,6 +23,7 @@ import ErrorPage from '@/pages/error'
 import FichajeError from '@/pages/fichaje/fichaje-error'
 import FichajeExitoso from '@/pages/fichaje/fichaje-exitoso'
 import Login from '@/pages/login'
+import PoliticaDePrivacidad from '@/pages/politica-de-privacidad'
 import AdminLayout from '../pages/admin/admin-layout'
 import Club from '../pages/admin/club/club'
 import CrearClub from '../pages/admin/club/crear-club'
@@ -54,6 +55,10 @@ export const mapaRutasComponentes = [
   {
     path: '/fichaje-error',
     element: <FichajeError />
+  },
+  {
+    path: '/politica-de-privacidad',
+    element: <PoliticaDePrivacidad />
   },
   {
     path: '/admin',
