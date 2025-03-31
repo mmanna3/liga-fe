@@ -79,10 +79,8 @@ const FichajeEnOtroEquipo = () => {
             )}
             <PasoDNI validar={validarDNI} />
             <PasoCodigoEquipo valorInicial='' />
-            <BotonEnviarDatos
-              onEnviarClick={hacerSubmit}
-              estaCargando={mutation.isPending}
-            />
+            {/* Acordate de arreglar el estaCargando */}
+            <BotonEnviarDatos onEnviarClick={hacerSubmit} estaCargando={true} />
           </form>
         </div>
       </div>
