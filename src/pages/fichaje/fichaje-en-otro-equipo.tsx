@@ -36,6 +36,21 @@ const FichajeEnOtroEquipo = () => {
     })
   })
 
+  const validarDNI = async (dni: string) => {
+    if (!dni || dni.length < 7) return 'El DNI debe tener al menos 7 números.'
+
+    try {
+      const yaFichado = await api.elDniEstaFichado(dni)
+      return (
+        yaFichado ||
+        '¡Ups! No estás fichado en ningún otro equipo. Fichate en uno cargando todos los datos y después en otro solo con el DNI.'
+      )
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      return 'Error al verificar el DNI. Intente nuevamente.'
+    }
+  }
+
   return (
     <FormProvider {...methods}>
       <div className='min-h-screen bg-green-700'>
@@ -45,7 +60,7 @@ const FichajeEnOtroEquipo = () => {
               <h1 className='text-2xl! font-bold mb-2 text-white'>
                 Fichate en otro equipo
               </h1>
-              <p className='text-sm text-green-300 hover:text-green-100! transition-colors'>
+              <p className='text-sm text-green-300'>
                 Si ya estás fichado en algún equipo de la liga, podés ficharte
                 en otro.
               </p>
@@ -53,7 +68,7 @@ const FichajeEnOtroEquipo = () => {
           </div>
           <form onSubmit={hacerSubmit} className='w-full'>
             {Object.keys(methods.formState.errors).length > 0 && (
-              <div className='py-6 px-6 w-full'>
+              <div className='pb-6 pt-2 px-6 w-full'>
                 <div className='mb-2 max-w-[360px] mx-auto'>
                   <CartelMensaje type='error'>
                     ¡Ups! Hubo algún <strong>error</strong>. Revisá tus datos y
@@ -62,7 +77,7 @@ const FichajeEnOtroEquipo = () => {
                 </div>
               </div>
             )}
-            <PasoDNI />
+            <PasoDNI validar={validarDNI} />
             <PasoCodigoEquipo valorInicial='' />
             <BotonEnviarDatos
               onEnviarClick={hacerSubmit}

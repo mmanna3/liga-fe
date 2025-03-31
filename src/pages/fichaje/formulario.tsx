@@ -25,6 +25,18 @@ const FormularioFichaje = () => {
     }
   })
 
+  const validarDNI = async (dni: string) => {
+    if (!dni || dni.length < 7) return 'El DNI debe tener al menos 7 números.'
+
+    try {
+      const yaFichado = await api.elDniEstaFichado(dni)
+      return !yaFichado || '¡Ups! Ya estás fichado. Consultá con tu delegado.'
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      return 'Error al verificar el DNI. Intente nuevamente.'
+    }
+  }
+
   const hacerSubmit = methods.handleSubmit((jugadorDTO: JugadorDTO) => {
     mutation.mutate(jugadorDTO, {
       onSuccess: () => {
@@ -67,7 +79,7 @@ const FormularioFichaje = () => {
         </div>
         <form onSubmit={hacerSubmit} className='w-full'>
           {Object.keys(methods.formState.errors).length > 0 && (
-            <div className='bg-green-700 py-6 px-6 w-full'>
+            <div className='bg-green-700 pb-6 pt-2 px-6 w-full'>
               <div className='mb-2 max-w-[360px] mx-auto'>
                 <CartelMensaje type='error'>
                   ¡Ups! Hubo algún <strong>error</strong>. Revisá tus datos y
@@ -93,7 +105,7 @@ const FormularioFichaje = () => {
             titulo='Tu apellido'
           />
 
-          <PasoDNI />
+          <PasoDNI validar={validarDNI} />
 
           <PasoFechaNacimiento />
 

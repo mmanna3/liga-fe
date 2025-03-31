@@ -1,26 +1,17 @@
-import { api } from '@/api/api'
 import { useFormContext } from 'react-hook-form'
 import FormErrorHandler from '../Error/FormErrorHandler'
 import Input from '../Input/Input'
 import Label from '../Label/Label'
 
-const PasoDNI = () => {
+interface IProps {
+  validar: (dni: string) => Promise<boolean | string>
+}
+
+const PasoDNI = ({ validar }: IProps) => {
   const {
     register,
     formState: { errors }
   } = useFormContext()
-
-  const validar = async (dni: string) => {
-    if (!dni || dni.length < 7) return 'El DNI debe tener al menos 7 números.'
-
-    try {
-      const yaFichado = await api.elDniEstaFichado(dni)
-      return !yaFichado || '¡Ups! Ya estás fichado. Consultá con tu delegado.'
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
-      return 'Error al verificar el DNI. Intente nuevamente.'
-    }
-  }
 
   return (
     <div className='bg-red-700 py-6 px-6 w-full'>
