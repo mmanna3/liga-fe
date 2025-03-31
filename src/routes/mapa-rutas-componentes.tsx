@@ -20,6 +20,7 @@ import CrearTorneo from '@/pages/admin/torneo/crear-torneo'
 import DetalleTorneo from '@/pages/admin/torneo/detalle-torneo'
 import Torneo from '@/pages/admin/torneo/torneo'
 import ErrorPage from '@/pages/error'
+import FichajeEnOtroEquipo from '@/pages/fichaje/fichaje-en-otro-equipo'
 import FichajeError from '@/pages/fichaje/fichaje-error'
 import FichajeExitoso from '@/pages/fichaje/fichaje-exitoso'
 import Login from '@/pages/login'
@@ -45,6 +46,14 @@ export const mapaRutasComponentes = [
     element: (
       <div className='w-screen'>
         <FichajeHome />
+      </div>
+    )
+  },
+  {
+    path: '/fichaje-en-otro-equipo',
+    element: (
+      <div className='w-screen'>
+        <FichajeEnOtroEquipo />
       </div>
     )
   },
