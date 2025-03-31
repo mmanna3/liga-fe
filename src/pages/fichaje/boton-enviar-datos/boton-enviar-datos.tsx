@@ -7,7 +7,7 @@ interface Props {
 
 const BotonEnviarDatos = ({ onEnviarClick, estaCargando }: Props) => {
   return (
-    <div className={'bg-red-700 py-6 px-6 w-full'}>
+    <div className='bg-red-700 py-6 px-6 w-full'>
       <div className='max-w-[600px] mx-auto'>
         <div className={estilos.contenedorDeContenidoCentrado}>
           <p className={estilos.declaracion}>

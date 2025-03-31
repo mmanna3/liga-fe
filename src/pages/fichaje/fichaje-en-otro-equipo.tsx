@@ -38,36 +38,38 @@ const FichajeEnOtroEquipo = () => {
 
   return (
     <FormProvider {...methods}>
-      <div className='font-sans text-slate-100 w-full'>
-        <div className='bg-green-700 py-6 w-full'>
-          <div className='max-w-[360px] mx-auto text-left'>
-            <h1 className='text-2xl! font-bold mb-2 text-white'>
-              Fichate en otro equipo
-            </h1>
-            <p className='text-sm text-green-300 hover:text-green-100! transition-colors'>
-              Si ya estás fichado en algún equipo de la liga, podés ficharte en
-              otro.
-            </p>
-          </div>
-        </div>
-        <form onSubmit={hacerSubmit} className='w-full'>
-          {Object.keys(methods.formState.errors).length > 0 && (
-            <div className='bg-green-700 py-6 px-6 w-full'>
-              <div className='mb-2 max-w-[360px] mx-auto'>
-                <CartelMensaje type='error'>
-                  ¡Ups! Hubo algún <strong>error</strong>. Revisá tus datos y
-                  volvé a enviarlos.
-                </CartelMensaje>
-              </div>
+      <div className='min-h-screen bg-red-700'>
+        <div className='font-sans text-slate-100 w-full bg-green-700'>
+          <div className='py-6 w-full'>
+            <div className='max-w-[360px] mx-auto text-left'>
+              <h1 className='text-2xl! font-bold mb-2 text-white'>
+                Fichate en otro equipo
+              </h1>
+              <p className='text-sm text-green-300 hover:text-green-100! transition-colors'>
+                Si ya estás fichado en algún equipo de la liga, podés ficharte
+                en otro.
+              </p>
             </div>
-          )}
-          <PasoDNI /> {/* tiene que recibir el "validar" */}
-          <PasoCodigoEquipo valorInicial='' />
-          <BotonEnviarDatos
-            onEnviarClick={hacerSubmit}
-            estaCargando={mutation.isPending}
-          />
-        </form>
+          </div>
+          <form onSubmit={hacerSubmit} className='w-full'>
+            {Object.keys(methods.formState.errors).length > 0 && (
+              <div className='py-6 px-6 w-full'>
+                <div className='mb-2 max-w-[360px] mx-auto'>
+                  <CartelMensaje type='error'>
+                    ¡Ups! Hubo algún <strong>error</strong>. Revisá tus datos y
+                    volvé a enviarlos.
+                  </CartelMensaje>
+                </div>
+              </div>
+            )}
+            <PasoDNI />
+            <PasoCodigoEquipo valorInicial='' />
+            <BotonEnviarDatos
+              onEnviarClick={hacerSubmit}
+              estaCargando={mutation.isPending}
+            />
+          </form>
+        </div>
       </div>
     </FormProvider>
   )
