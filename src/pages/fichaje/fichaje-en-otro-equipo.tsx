@@ -1,5 +1,5 @@
 import { api } from '@/api/api'
-import { JugadorDTO } from '@/api/clients'
+import { FicharEnOtroEquipoDTO } from '@/api/clients'
 import useApiMutation from '@/api/custom-hooks/use-api-mutation'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
@@ -9,32 +9,34 @@ import PasoCodigoEquipo from './PasoCodigoEquipo/PasoCodigoEquipo'
 import PasoDNI from './PasoDNI/PasoDNI'
 
 const FichajeEnOtroEquipo = () => {
-  const methods = useForm<JugadorDTO>({ mode: 'onBlur' })
+  const methods = useForm<FicharEnOtroEquipoDTO>({ mode: 'onBlur' })
   const navigate = useNavigate()
 
   const mutation = useApiMutation({
-    fn: async (jug: JugadorDTO) => {
-      await api.jugadorPOST(jug)
+    fn: async (dto: FicharEnOtroEquipoDTO) => {
+      await api.ficharEnOtroEquipo(dto)
     }
   })
 
-  const hacerSubmit = methods.handleSubmit((jugadorDTO: JugadorDTO) => {
-    mutation.mutate(jugadorDTO, {
-      onSuccess: () => {
-        navigate(
-          `/fichaje-exitoso?dni=${jugadorDTO.dni}&codigoEquipo=${jugadorDTO.codigoAlfanumerico}`
-        )
-      },
-      onError: (error) => {
-        console.log('Error del servidor', error)
-        const mensajeError =
-          error instanceof Error ? error.message : 'Error desconocido'
-        const mensajeCodificado = encodeURIComponent(mensajeError)
+  const hacerSubmit = methods.handleSubmit(
+    (jugadorDTO: FicharEnOtroEquipoDTO) => {
+      mutation.mutate(jugadorDTO, {
+        onSuccess: () => {
+          navigate(
+            `/fichaje-exitoso?dni=${jugadorDTO.dni}&codigoEquipo=${jugadorDTO.codigoAlfanumerico}`
+          )
+        },
+        onError: (error) => {
+          console.log('Error del servidor', error)
+          const mensajeError =
+            error instanceof Error ? error.message : 'Error desconocido'
+          const mensajeCodificado = encodeURIComponent(mensajeError)
 
-        navigate(`/fichaje-error?mensaje=${mensajeCodificado}`)
-      }
-    })
-  })
+          navigate(`/fichaje-error?mensaje=${mensajeCodificado}`)
+        }
+      })
+    }
+  )
 
   const validarDNI = async (dni: string) => {
     if (!dni || dni.length < 7) return 'El DNI debe tener al menos 7 números.'
@@ -79,8 +81,10 @@ const FichajeEnOtroEquipo = () => {
             )}
             <PasoDNI validar={validarDNI} />
             <PasoCodigoEquipo valorInicial='' />
-            {/* Acordate de arreglar el estaCargando */}
-            <BotonEnviarDatos onEnviarClick={hacerSubmit} estaCargando={true} />
+            <BotonEnviarDatos
+              onEnviarClick={hacerSubmit}
+              estaCargando={mutation.isPending}
+            />
           </form>
         </div>
       </div>

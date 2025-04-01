@@ -1431,6 +1431,49 @@ export class Client {
     }
 
     /**
+     * @param body (optional) 
+     * @return Success
+     */
+    ficharEnOtroEquipo(body: FicharEnOtroEquipoDTO | undefined): Promise<number> {
+        let url_ = this.baseUrl + "/api/publico/fichar-en-otro-equipo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processFicharEnOtroEquipo(_response);
+        });
+    }
+
+    protected processFicharEnOtroEquipo(response: Response): Promise<number> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<number>(null as any);
+    }
+
+    /**
      * @param mes (optional) 
      * @param anio (optional) 
      * @return Success
@@ -2279,6 +2322,50 @@ export enum EstadoJugadorEnum {
     _4 = 4,
     _5 = 5,
     _6 = 6,
+}
+
+export class FicharEnOtroEquipoDTO implements IFicharEnOtroEquipoDTO {
+    id?: number;
+    dni!: string;
+    codigoAlfanumerico!: string;
+
+    constructor(data?: IFicharEnOtroEquipoDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.dni = _data["dni"];
+            this.codigoAlfanumerico = _data["codigoAlfanumerico"];
+        }
+    }
+
+    static fromJS(data: any): FicharEnOtroEquipoDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new FicharEnOtroEquipoDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["dni"] = this.dni;
+        data["codigoAlfanumerico"] = this.codigoAlfanumerico;
+        return data;
+    }
+}
+
+export interface IFicharEnOtroEquipoDTO {
+    id?: number;
+    dni: string;
+    codigoAlfanumerico: string;
 }
 
 export class JugadorDTO implements IJugadorDTO {
