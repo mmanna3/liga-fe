@@ -30,7 +30,10 @@ export default function EliminarJugador() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className='space-y-4'>
-          <p>Al eliminar el jugador, no quedará ningún registro.</p>
+          <p>
+            Al eliminar el jugador, se lo desvinculará también de todos los
+            equipos.
+          </p>
           <Botonera>
             <BotonVolver texto='Cancelar' />
             <Button type='submit' disabled={mutation.isPending}>
