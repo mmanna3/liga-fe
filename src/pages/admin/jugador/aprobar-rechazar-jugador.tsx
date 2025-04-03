@@ -70,29 +70,31 @@ const AprobarRechazarJugador: React.FC = () => {
           </CardHeader>
 
           <CardContent>
-            <div className='mb-6'>
-              <h2 className='text-xl font-semibold mb-6 text-gray-700'>
-                Documentación
-              </h2>
-              <div className='flex flex-col gap-9'>
-                <div className='flex flex-col items-center w-full'>
-                  <img
-                    src={jugador!.fotoDNIFrente}
-                    alt={`${jugador!.nombre} DNI Frente`}
-                    className='w-full object-cover rounded-lg mb-2'
-                  />
-                  <span className='text-sm text-gray-500'>DNI Frente</span>
-                </div>
-                <div className='flex flex-col items-center w-full'>
-                  <img
-                    src={jugador!.fotoDNIDorso}
-                    alt={`${jugador!.nombre} DNI Dorso`}
-                    className='w-full object-cover rounded-lg mb-2'
-                  />
-                  <span className='text-sm text-gray-500'>DNI Dorso</span>
+            {jugador.fotoDNIDorso && jugador.fotoDNIFrente && (
+              <div className='mb-6'>
+                <h2 className='text-xl font-semibold mb-6 text-gray-700'>
+                  Documentación
+                </h2>
+                <div className='flex flex-col gap-9'>
+                  <div className='flex flex-col items-center w-full'>
+                    <img
+                      src={jugador!.fotoDNIFrente}
+                      alt={`${jugador!.nombre} DNI Frente`}
+                      className='w-full object-cover rounded-lg mb-2'
+                    />
+                    <span className='text-sm text-gray-500'>DNI Frente</span>
+                  </div>
+                  <div className='flex flex-col items-center w-full'>
+                    <img
+                      src={jugador!.fotoDNIDorso}
+                      alt={`${jugador!.nombre} DNI Dorso`}
+                      className='w-full object-cover rounded-lg mb-2'
+                    />
+                    <span className='text-sm text-gray-500'>DNI Dorso</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             <div className='mt-8 mb-6'>
               <div className='flex gap-6'>

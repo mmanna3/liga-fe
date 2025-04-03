@@ -83,8 +83,7 @@ const FichajeEnOtroEquipo = () => {
             <PasoCodigoEquipo valorInicial='' />
             <BotonEnviarDatos
               onEnviarClick={hacerSubmit}
-              // estaCargando={mutation.isPending}
-              estaCargando={true}
+              estaCargando={mutation.isPending}
             />
           </form>
         </div>
