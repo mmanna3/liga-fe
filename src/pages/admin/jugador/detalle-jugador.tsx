@@ -26,12 +26,12 @@ export default function DetalleJugador() {
   // Función para formatear la fecha en formato dd-MM-yy
   const formatearFecha = (fecha: string | Date | undefined | null) => {
     if (!fecha) return null
-    
+
     const date = new Date(fecha)
-    
+
     // Si la fecha es 01-01-01 (o cualquier fecha cercana al año 1), considerarla como null
     if (date.getFullYear() < 1900) return null
-    
+
     return date.toLocaleDateString('es-AR', {
       day: '2-digit',
       month: '2-digit',
@@ -72,19 +72,20 @@ export default function DetalleJugador() {
             </h2>
             <ul className='divide-y divide-gray-200'>
               {jugador.equipos!.map((equipo) => (
-                <li
-                  key={equipo.id}
-                  className='py-3 flex flex-col'
-                >
+                <li key={equipo.id} className='py-3 flex flex-col'>
                   <div className='flex justify-between items-center'>
                     <div>
                       <span className='text-lg font-medium text-gray-900'>
                         {equipo.nombre}
                       </span>
-                      <div className='text-sm text-gray-600'>{equipo.club}</div>
+                      <div className='text-sm text-gray-600'>
+                        {equipo.torneo}
+                      </div>
                     </div>
                     <div className='flex items-center gap-4'>
-                      <JugadorEquipoEstadoBadge estado={Number(equipo.estado)} />
+                      <JugadorEquipoEstadoBadge
+                        estado={Number(equipo.estado)}
+                      />
                       {
                         <Button
                           variant='ghost'
@@ -111,7 +112,7 @@ export default function DetalleJugador() {
                     </div>
                   </div>
                   <div className='text-sm text-gray-400 mt-1'>
-                    {equipo.fechaPagoDeFichaje 
+                    {equipo.fechaPagoDeFichaje
                       ? `Pago de fichaje: ${formatearFecha(equipo.fechaPagoDeFichaje)}`
                       : 'Fichaje impago'}
                   </div>
