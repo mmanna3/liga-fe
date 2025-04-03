@@ -37,12 +37,24 @@ export default function TablaJugador({
     },
     {
       accessorKey: 'equipos',
-      header: 'Equipos',
+      header: 'Equipo',
       cell: ({ row }) => (
         <span>
-          {/* Cuando los jugadores tengan más de un equipo, esto no va a funcionar bien */}
+          {/* El mapeo de este request deja a todos los jugadores con un array de 1 equipo */}
           {(row.getValue('equipos') as EquipoDelJugadorDTO[]).length > 0
             ? (row.getValue('equipos') as EquipoDelJugadorDTO[])[0].nombre
+            : ''}
+        </span>
+      )
+    },
+    {
+      accessorKey: 'torneo',
+      header: 'Torneo',
+      cell: ({ row }) => (
+        <span>
+          {/* El mapeo de este request deja a todos los jugadores con un array de 1 equipo */}
+          {(row.getValue('equipos') as EquipoDelJugadorDTO[]).length > 0
+            ? (row.getValue('equipos') as EquipoDelJugadorDTO[])[0].torneo
             : ''}
         </span>
       )

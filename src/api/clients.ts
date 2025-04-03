@@ -2215,6 +2215,7 @@ export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
     id?: number;
     nombre?: string | undefined;
     club?: string | undefined;
+    torneo?: string | undefined;
     estado?: EstadoJugadorEnum;
     motivo?: string | undefined;
     fechaPagoDeFichaje?: Date | undefined;
@@ -2233,6 +2234,7 @@ export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
             this.id = _data["id"];
             this.nombre = _data["nombre"];
             this.club = _data["club"];
+            this.torneo = _data["torneo"];
             this.estado = _data["estado"];
             this.motivo = _data["motivo"];
             this.fechaPagoDeFichaje = _data["fechaPagoDeFichaje"] ? new Date(_data["fechaPagoDeFichaje"].toString()) : <any>undefined;
@@ -2251,6 +2253,7 @@ export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
         data["id"] = this.id;
         data["nombre"] = this.nombre;
         data["club"] = this.club;
+        data["torneo"] = this.torneo;
         data["estado"] = this.estado;
         data["motivo"] = this.motivo;
         data["fechaPagoDeFichaje"] = this.fechaPagoDeFichaje ? this.fechaPagoDeFichaje.toISOString() : <any>undefined;
@@ -2262,6 +2265,7 @@ export interface IEquipoDelJugadorDTO {
     id?: number;
     nombre?: string | undefined;
     club?: string | undefined;
+    torneo?: string | undefined;
     estado?: EstadoJugadorEnum;
     motivo?: string | undefined;
     fechaPagoDeFichaje?: Date | undefined;
