@@ -45,9 +45,11 @@ const FormularioFichaje = () => {
         )
       },
       onError: (error) => {
-        console.log('Error del servidor', error)
         const mensajeError =
-          error instanceof Error ? error.message : 'Error desconocido'
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          JSON.parse((error as any)?.response)?.title || 'Error desconocido'
+        console.log('El error:', mensajeError)
+
         const mensajeCodificado = encodeURIComponent(mensajeError)
 
         navigate(`/fichaje-error?mensaje=${mensajeCodificado}`)
