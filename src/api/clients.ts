@@ -499,37 +499,34 @@ export class Client {
     /**
      * @return Success
      */
-    delegadoAll(): Promise<DelegadoDTO[]> {
-        let url_ = this.baseUrl + "/api/Delegado";
+    delegadoDELETE(id: number): Promise<number> {
+        let url_ = this.baseUrl + "/api/Delegado/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: RequestInit = {
-            method: "GET",
+            method: "DELETE",
             headers: {
                 "Accept": "text/plain"
             }
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processDelegadoAll(_response);
+            return this.processDelegadoDELETE(_response);
         });
     }
 
-    protected processDelegadoAll(response: Response): Promise<DelegadoDTO[]> {
+    protected processDelegadoDELETE(response: Response): Promise<number> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(DelegadoDTO.fromJS(item));
-            }
-            else {
-                result200 = <any>null;
-            }
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -537,49 +534,7 @@ export class Client {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<DelegadoDTO[]>(null as any);
-    }
-
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
-    delegadoPOST(body: DelegadoDTO | undefined): Promise<DelegadoDTO> {
-        let url_ = this.baseUrl + "/api/Delegado";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_: RequestInit = {
-            body: content_,
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processDelegadoPOST(_response);
-        });
-    }
-
-    protected processDelegadoPOST(response: Response): Promise<DelegadoDTO> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = DelegadoDTO.fromJS(resultData200);
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<DelegadoDTO>(null as any);
+        return Promise.resolve<number>(null as any);
     }
 
     /**
@@ -661,6 +616,92 @@ export class Client {
             });
         }
         return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    delegadoAll(): Promise<DelegadoDTO[]> {
+        let url_ = this.baseUrl + "/api/Delegado";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDelegadoAll(_response);
+        });
+    }
+
+    protected processDelegadoAll(response: Response): Promise<DelegadoDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(DelegadoDTO.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<DelegadoDTO[]>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    delegadoPOST(body: DelegadoDTO | undefined): Promise<DelegadoDTO> {
+        let url_ = this.baseUrl + "/api/Delegado";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDelegadoPOST(_response);
+        });
+    }
+
+    protected processDelegadoPOST(response: Response): Promise<DelegadoDTO> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = DelegadoDTO.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<DelegadoDTO>(null as any);
     }
 
     /**

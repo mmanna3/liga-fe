@@ -4,6 +4,7 @@ import BlanquearClaveDelegado from '@/pages/admin/delegados/blanquear-clave-dele
 import CrearDelegado from '@/pages/admin/delegados/crear-delegado'
 import Delegados from '@/pages/admin/delegados/delegados'
 import DetalleDelegado from '@/pages/admin/delegados/detalle-delegado'
+import EliminarDelegado from '@/pages/admin/delegados/eliminar-delegado'
 import CambioEstadoMasivo from '@/pages/admin/equipo/cambio-estado-masivo'
 import CrearEquipo from '@/pages/admin/equipo/crear-equipo'
 import DetalleEquipo from '@/pages/admin/equipo/detalle-equipo'
@@ -115,6 +116,10 @@ export const mapaRutasComponentes = [
       {
         path: `${rutas.blanquearClaveDelegado}/:id/:usuario`,
         element: <BlanquearClaveDelegado />
+      },
+      {
+        path: `${rutas.eliminarDelegado}/:id/:usuario`,
+        element: <EliminarDelegado />
       }
     ]
   },
