@@ -1,9 +1,9 @@
 import { EquipoDTO, JugadorDelEquipoDTO } from '@/api/clients'
 import Tabla from '@/components/ykn-ui/tabla'
+import { useAuth } from '@/hooks/use-auth'
 import { rutasNavegacion } from '@/routes/rutas'
 import { ColumnDef } from '@tanstack/react-table'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '@/hooks/use-auth'
 
 interface ITablaEquipo {
   data: EquipoDTO[]
@@ -60,7 +60,7 @@ export default function TablaEquipo({
               navigate(`${rutasNavegacion.detalleEquipo}/${row.original.id}`)
           }
         ]
-        
+
         // Solo agregar el botón de Editar si el usuario es admin
         if (esAdmin()) {
           menuItems.push({
@@ -68,8 +68,16 @@ export default function TablaEquipo({
             onClick: () =>
               navigate(`${rutasNavegacion.editarEquipo}/${row.original.id}`)
           })
+
+          menuItems.push({
+            texto: 'Cambio estado masivo',
+            onClick: () =>
+              navigate(
+                `${rutasNavegacion.cambioEstadoMasivoEquipo}/${row.original.id}`
+              )
+          })
         }
-        
+
         return <Tabla.MenuContextual items={menuItems} />
       }
     }
