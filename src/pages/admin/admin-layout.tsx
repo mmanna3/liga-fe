@@ -68,7 +68,7 @@ export default function AdminLayout() {
 
         {/* Información del usuario y botón de cerrar sesión */}
         <div className='mt-auto pt-4 border-t border-gray-700'>
-          <div className='flex items-center gap-3 px-3 py-2'>
+          <div className='flex items-center gap-3 px-3 py-2 group'>
             <div className='w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center'>
               <User className='w-5 h-5 text-gray-300' />
             </div>
@@ -76,16 +76,15 @@ export default function AdminLayout() {
               <div className='font-medium text-sm text-white truncate'>{userName}</div>
               <div className='text-xs text-gray-400 truncate'>{userRole}</div>
             </div>
+            <Button
+              variant='ghost'
+              size='icon'
+              className='h-8 w-8 text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-full'
+              onClick={handleLogout}
+            >
+              <LogOut className='w-4 h-4' />
+            </Button>
           </div>
-          <Button
-            variant='ghost'
-            size='sm'
-            className='w-full justify-start text-gray-300 hover:text-white hover:bg-gray-800 mt-2'
-            onClick={handleLogout}
-          >
-            <LogOut className='w-4 h-4 mr-2' />
-            Cerrar sesión
-          </Button>
         </div>
       </aside>
 
@@ -121,7 +120,7 @@ export default function AdminLayout() {
 
           {/* Información del usuario y botón de cerrar sesión (versión móvil) */}
           <div className='mt-auto pt-4 border-t border-gray-700'>
-            <div className='flex items-center gap-3 px-3 py-2'>
+            <div className='flex items-center gap-3 px-3 py-2 group'>
               <div className='w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center'>
                 <User className='w-5 h-5 text-gray-300' />
               </div>
@@ -129,16 +128,15 @@ export default function AdminLayout() {
                 <div className='font-medium text-sm text-white truncate'>{userName}</div>
                 <div className='text-xs text-gray-400 truncate'>{userRole}</div>
               </div>
+              <Button
+                variant='ghost'
+                size='icon'
+                className='h-8 w-8 text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-full'
+                onClick={handleLogout}
+              >
+                <LogOut className='w-4 h-4' />
+              </Button>
             </div>
-            <Button
-              variant='ghost'
-              size='sm'
-              className='w-full justify-start text-gray-300 hover:text-white hover:bg-gray-800 mt-2'
-              onClick={handleLogout}
-            >
-              <LogOut className='w-4 h-4 mr-2' />
-              Cerrar sesión
-            </Button>
           </div>
         </SheetContent>
       </Sheet>
