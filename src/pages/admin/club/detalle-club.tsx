@@ -4,6 +4,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { VisibleSoloParaAdmin } from '@/components/VisibleSoloParaAdmin'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
 import { rutasNavegacion } from '@/routes/rutas'
 import { PlusCircle, Shield, UserCog } from 'lucide-react'
@@ -62,17 +63,19 @@ export default function DetalleClub() {
               <UserCog className='h-5 w-5' />
               Delegados
             </CardTitle>
-            <Button
-              onClick={() =>
-                navigate(`${rutasNavegacion.crearDelegado}?clubId=${id}`)
-              }
-              variant='outline'
-              size='sm'
-              className='flex items-center gap-1'
-            >
-              <PlusCircle className='h-4 w-4' />
-              Nuevo
-            </Button>
+            <VisibleSoloParaAdmin>
+              <Button
+                onClick={() =>
+                  navigate(`${rutasNavegacion.crearDelegado}?clubId=${id}`)
+                }
+                variant='outline'
+                size='sm'
+                className='flex items-center gap-1'
+              >
+                <PlusCircle className='h-4 w-4' />
+                Nuevo
+              </Button>
+            </VisibleSoloParaAdmin>
           </CardHeader>
           <CardContent>
             {club!.delegados && club!.delegados.length > 0 ? (
@@ -107,15 +110,17 @@ export default function DetalleClub() {
               <Shield className='h-5 w-5' />
               Equipos
             </CardTitle>
-            <Button
-              onClick={() => navigate(`${rutasNavegacion.crearEquipo}/${id}`)}
-              variant='outline'
-              size='sm'
-              className='flex items-center gap-1'
-            >
-              <PlusCircle className='h-4 w-4' />
-              Nuevo
-            </Button>
+            <VisibleSoloParaAdmin>
+              <Button
+                onClick={() => navigate(`${rutasNavegacion.crearEquipo}/${id}`)}
+                variant='outline'
+                size='sm'
+                className='flex items-center gap-1'
+              >
+                <PlusCircle className='h-4 w-4' />
+                Nuevo
+              </Button>
+            </VisibleSoloParaAdmin>
           </CardHeader>
           <CardContent>
             {club!.equipos && club!.equipos.length > 0 ? (

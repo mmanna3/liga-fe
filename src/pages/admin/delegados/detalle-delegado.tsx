@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
+import { VisibleSoloParaAdmin } from '@/components/VisibleSoloParaAdmin'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
 import Botonera from '@/components/ykn-ui/botonera'
 import { rutasNavegacion } from '@/routes/rutas'
@@ -112,9 +113,11 @@ export default function DetalleDelegado() {
           <ComboboxClub value={clubId} onChange={setClubId} required />
           <Botonera>
             <BotonVolver texto='Cancelar' />
-            <Button type='submit' disabled={mutation.isPending}>
-              {mutation.isPending ? 'Guardando...' : 'Guardar'}
-            </Button>
+            <VisibleSoloParaAdmin>
+              <Button type='submit' disabled={mutation.isPending}>
+                {mutation.isPending ? 'Guardando...' : 'Guardar'}
+              </Button>
+            </VisibleSoloParaAdmin>
           </Botonera>
         </form>
       </CardContent>
