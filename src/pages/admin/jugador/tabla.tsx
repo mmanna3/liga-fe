@@ -1,11 +1,11 @@
 import { EquipoDelJugadorDTO, JugadorDTO } from '@/api/clients'
 import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
 import Tabla from '@/components/ykn-ui/tabla'
+import { useAuth } from '@/hooks/use-auth'
 import { EstadoJugador } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
 import { ColumnDef } from '@tanstack/react-table'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '@/hooks/use-auth'
 
 interface ITablaJugador {
   data: JugadorDTO[]
@@ -77,9 +77,9 @@ export default function TablaJugador({
 
         return (
           <div
-            className={esPendienteORechazo ? 'cursor-pointer' : ''}
+            className={esPendienteORechazo && esAdmin() ? 'cursor-pointer' : ''}
             onClick={() => {
-              if (esPendienteORechazo) {
+              if (esPendienteORechazo && esAdmin()) {
                 navigate(
                   `${rutasNavegacion.aprobarRechazarJugador}/${equipo.id}/${row.original.id}`
                 )
@@ -102,7 +102,7 @@ export default function TablaJugador({
               navigate(`${rutasNavegacion.detalleJugador}/${row.original.id}`)
           }
         ]
-        
+
         // Solo agregar el botón de Eliminar si el usuario es admin
         if (esAdmin()) {
           menuItems.push({
@@ -113,7 +113,7 @@ export default function TablaJugador({
               )
           })
         }
-        
+
         return <Tabla.MenuContextual items={menuItems} />
       }
     }
