@@ -3,6 +3,7 @@ import Tabla from '@/components/ykn-ui/tabla'
 import { rutasNavegacion } from '@/routes/rutas'
 import { ColumnDef } from '@tanstack/react-table'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@/hooks/use-auth'
 
 interface ITablaEquipo {
   data: EquipoDTO[]
@@ -16,6 +17,7 @@ export default function TablaEquipo({
   isError
 }: ITablaEquipo) {
   const navigate = useNavigate()
+  const esAdmin = useAuth((state) => state.esAdmin)
 
   const columnas: ColumnDef<EquipoDTO>[] = [
     {
@@ -50,22 +52,26 @@ export default function TablaEquipo({
     {
       id: 'acciones',
       header: '',
-      cell: ({ row }) => (
-        <Tabla.MenuContextual
-          items={[
-            {
-              texto: 'Detalle',
-              onClick: () =>
-                navigate(`${rutasNavegacion.detalleEquipo}/${row.original.id}`)
-            },
-            {
-              texto: 'Editar',
-              onClick: () =>
-                navigate(`${rutasNavegacion.editarEquipo}/${row.original.id}`)
-            }
-          ]}
-        />
-      )
+      cell: ({ row }) => {
+        const menuItems = [
+          {
+            texto: 'Detalle',
+            onClick: () =>
+              navigate(`${rutasNavegacion.detalleEquipo}/${row.original.id}`)
+          }
+        ]
+        
+        // Solo agregar el botón de Editar si el usuario es admin
+        if (esAdmin()) {
+          menuItems.push({
+            texto: 'Editar',
+            onClick: () =>
+              navigate(`${rutasNavegacion.editarEquipo}/${row.original.id}`)
+          })
+        }
+        
+        return <Tabla.MenuContextual items={menuItems} />
+      }
     }
   ]
 
