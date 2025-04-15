@@ -1,5 +1,6 @@
 import { DelegadoDTO } from '@/api/clients'
 import { Badge } from '@/components/ui/badge'
+import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import Tabla from '@/components/ykn-ui/tabla'
 import { rutasNavegacion } from '@/routes/rutas'
 import { ColumnDef } from '@tanstack/react-table'
@@ -51,31 +52,33 @@ export default function TablaDelegados({
       id: 'acciones',
       header: '',
       cell: ({ row }) => (
-        <Tabla.MenuContextual
-          items={[
-            {
-              texto: 'Editar',
-              onClick: () =>
-                navigate(
-                  `${rutasNavegacion.detalleDelegado}/${row.original.id}`
-                )
-            },
-            {
-              texto: 'Blanquear clave',
-              onClick: () =>
-                navigate(
-                  `${rutasNavegacion.blanquearClaveDelegado}/${row.original.id}/${row.original.nombreUsuario}`
-                )
-            },
-            {
-              texto: 'Eliminar',
-              onClick: () =>
-                navigate(
-                  `${rutasNavegacion.eliminarDelegado}/${row.original.id}/${row.original.nombreUsuario}`
-                )
-            }
-          ]}
-        />
+        <VisibleSoloParaAdmin>
+          <Tabla.MenuContextual
+            items={[
+              {
+                texto: 'Editar',
+                onClick: () =>
+                  navigate(
+                    `${rutasNavegacion.detalleDelegado}/${row.original.id}`
+                  )
+              },
+              {
+                texto: 'Blanquear clave',
+                onClick: () =>
+                  navigate(
+                    `${rutasNavegacion.blanquearClaveDelegado}/${row.original.id}/${row.original.nombreUsuario}`
+                  )
+              },
+              {
+                texto: 'Eliminar',
+                onClick: () =>
+                  navigate(
+                    `${rutasNavegacion.eliminarDelegado}/${row.original.id}/${row.original.nombreUsuario}`
+                  )
+              }
+            ]}
+          />
+        </VisibleSoloParaAdmin>
       )
     }
   ]
