@@ -1,7 +1,7 @@
 import { api } from '@/api/api'
-import { VisibleSoloParaAdmin } from '@/components/VisibleSoloParaAdmin'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'

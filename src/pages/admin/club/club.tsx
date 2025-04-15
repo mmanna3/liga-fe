@@ -1,7 +1,7 @@
 import { api } from '@/api/api'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
-import { VisibleSoloParaAdmin } from '@/components/VisibleSoloParaAdmin'
 import { Button } from '@/components/ui/button'
+import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import Botonera from '@/components/ykn-ui/botonera'
 import Titulo from '@/components/ykn-ui/titulo'
 import { rutasNavegacion } from '@/routes/rutas'
