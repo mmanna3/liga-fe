@@ -5,6 +5,7 @@ import { EstadoJugador } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
 import { ColumnDef } from '@tanstack/react-table'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@/hooks/use-auth'
 
 interface ITablaJugador {
   data: JugadorDTO[]
@@ -18,6 +19,7 @@ export default function TablaJugador({
   isError
 }: ITablaJugador) {
   const navigate = useNavigate()
+  const esAdmin = useAuth((state) => state.esAdmin)
 
   const columnas: ColumnDef<JugadorDTO>[] = [
     {
@@ -92,24 +94,28 @@ export default function TablaJugador({
     {
       id: 'acciones',
       header: '',
-      cell: ({ row }) => (
-        <Tabla.MenuContextual
-          items={[
-            {
-              texto: 'Detalle',
-              onClick: () =>
-                navigate(`${rutasNavegacion.detalleJugador}/${row.original.id}`)
-            },
-            {
-              texto: 'Eliminar',
-              onClick: () =>
-                navigate(
-                  `${rutasNavegacion.eliminarJugador}/${row.original.id}/${row.original.dni}`
-                )
-            }
-          ]}
-        />
-      )
+      cell: ({ row }) => {
+        const menuItems = [
+          {
+            texto: 'Detalle',
+            onClick: () =>
+              navigate(`${rutasNavegacion.detalleJugador}/${row.original.id}`)
+          }
+        ]
+        
+        // Solo agregar el botón de Eliminar si el usuario es admin
+        if (esAdmin()) {
+          menuItems.push({
+            texto: 'Eliminar',
+            onClick: () =>
+              navigate(
+                `${rutasNavegacion.eliminarJugador}/${row.original.id}/${row.original.dni}`
+              )
+          })
+        }
+        
+        return <Tabla.MenuContextual items={menuItems} />
+      }
     }
   ]
 

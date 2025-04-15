@@ -3,6 +3,7 @@ import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/components/cargando-y-error-contenedor'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
 import DetalleItem from '@/components/ykn-ui/detalle-item'
 import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
@@ -87,27 +88,29 @@ export default function DetalleJugador() {
                         estado={Number(equipo.estado)}
                       />
                       {
-                        <Button
-                          variant='ghost'
-                          className='text-blue-600'
-                          onClick={() => {
-                            if (
-                              Number(equipo.estado) ===
-                                EstadoJugador.FichajePendienteDeAprobacion ||
-                              Number(equipo.estado) ===
-                                EstadoJugador.FichajeRechazado
-                            )
-                              navigate(
-                                `${rutasNavegacion.aprobarRechazarJugador}/${equipo.id}/${jugador.id}`
+                        <VisibleSoloParaAdmin>
+                          <Button
+                            variant='ghost'
+                            className='text-blue-600'
+                            onClick={() => {
+                              if (
+                                Number(equipo.estado) ===
+                                  EstadoJugador.FichajePendienteDeAprobacion ||
+                                Number(equipo.estado) ===
+                                  EstadoJugador.FichajeRechazado
                               )
-                            else
-                              navigate(
-                                `${rutasNavegacion.cambiarEstadoJugador}/${equipo.id}/${jugador.id}`
-                              )
-                          }}
-                        >
-                          Gestionar
-                        </Button>
+                                navigate(
+                                  `${rutasNavegacion.aprobarRechazarJugador}/${equipo.id}/${jugador.id}`
+                                )
+                              else
+                                navigate(
+                                  `${rutasNavegacion.cambiarEstadoJugador}/${equipo.id}/${jugador.id}`
+                                )
+                            }}
+                          >
+                            Gestionar
+                          </Button>
+                        </VisibleSoloParaAdmin>
                       }
                     </div>
                   </div>
