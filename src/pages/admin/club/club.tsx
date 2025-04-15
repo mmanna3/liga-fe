@@ -1,5 +1,6 @@
 import { api } from '@/api/api'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
+import { VisibleSoloParaAdmin } from '@/components/VisibleSoloParaAdmin'
 import { Button } from '@/components/ui/button'
 import Botonera from '@/components/ykn-ui/botonera'
 import Titulo from '@/components/ykn-ui/titulo'
@@ -19,9 +20,11 @@ export default function Club() {
     <>
       <Titulo>Clubes</Titulo>
       <Botonera>
-        <Button onClick={() => navigate(rutasNavegacion.crearClub)}>
-          Crear nuevo club
-        </Button>
+        <VisibleSoloParaAdmin>
+          <Button onClick={() => navigate(rutasNavegacion.crearClub)}>
+            Crear nuevo club
+          </Button>
+        </VisibleSoloParaAdmin>
       </Botonera>
       <Tabla data={data || []} isLoading={isLoading} isError={isError} />
     </>

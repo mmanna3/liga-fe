@@ -1,5 +1,6 @@
 import { api } from '@/api/api'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
+import { VisibleSoloParaAdmin } from '@/components/VisibleSoloParaAdmin'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { rutasNavegacion } from '@/routes/rutas'
@@ -22,9 +23,11 @@ export default function Delegados() {
     <Card>
       <CardHeader className='flex flex-row items-center justify-between'>
         <CardTitle>Delegados</CardTitle>
-        <Button onClick={() => navigate(rutasNavegacion.crearDelegado)}>
-          Crear Delegado
-        </Button>
+        <VisibleSoloParaAdmin>
+          <Button onClick={() => navigate(rutasNavegacion.crearDelegado)}>
+            Crear Delegado
+          </Button>
+        </VisibleSoloParaAdmin>
       </CardHeader>
       <CardContent>
         <TablaDelegados
@@ -35,4 +38,4 @@ export default function Delegados() {
       </CardContent>
     </Card>
   )
-} 
+}

@@ -1,20 +1,29 @@
 import { api } from '@/api/api'
 import { LoginDTO } from '@/api/clients'
+import { jwtDecode } from 'jwt-decode'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 interface AuthState {
   token: string | null
   isAuthenticated: boolean
+  userRole: string | null
   login: (usuario: string, password: string) => Promise<boolean>
   logout: () => void
+  esAdmin: () => boolean
+}
+
+interface DecodedToken {
+  role: string
+  [key: string]: any
 }
 
 export const useAuth = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       token: null,
       isAuthenticated: false,
+      userRole: null,
       login: async (usuario: string, password: string) => {
         try {
           const loginRequest = new LoginDTO({
@@ -23,8 +32,13 @@ export const useAuth = create<AuthState>()(
           })
           const response = await api.login(loginRequest)
 
-          if (response.exito) {
-            set({ token: response.token, isAuthenticated: true })
+          if (response.exito && response.token) {
+            const decodedToken = jwtDecode<DecodedToken>(response.token)
+            set({
+              token: response.token,
+              isAuthenticated: true,
+              userRole: decodedToken.role
+            })
             return true
           }
 
@@ -35,7 +49,11 @@ export const useAuth = create<AuthState>()(
         }
       },
       logout: () => {
-        set({ token: null, isAuthenticated: false })
+        set({ token: null, isAuthenticated: false, userRole: null })
+      },
+      esAdmin: () => {
+        const { userRole } = get()
+        return userRole === 'Administrador'
       }
     }),
     {
