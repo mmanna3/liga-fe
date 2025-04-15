@@ -1,23 +1,38 @@
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Toaster } from '@/components/ui/sonner'
+import { useAuth } from '@/hooks/use-auth'
 import { cn } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
-import { LayoutDashboard, Menu, Shield, Trophy, Users, BarChart, UserCog } from 'lucide-react'
+import {
+  BarChart,
+  LayoutDashboard,
+  Menu,
+  Shield,
+  Trophy,
+  UserCog,
+  Users
+} from 'lucide-react'
 import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 
-const menuItems = [
+const baseMenuItems = [
   { name: 'Torneos', path: rutasNavegacion.torneos, icon: Trophy },
   { name: 'Clubes', path: rutasNavegacion.clubs, icon: LayoutDashboard },
   { name: 'Equipos', path: rutasNavegacion.equipos, icon: Shield },
   { name: 'Jugadores', path: rutasNavegacion.jugadores, icon: Users },
-  { name: 'Delegados', path: rutasNavegacion.delegados, icon: UserCog },
+  { name: 'Delegados', path: rutasNavegacion.delegados, icon: UserCog }
+]
+
+const adminMenuItems = [
   { name: 'Reportes', path: rutasNavegacion.reportes, icon: BarChart }
 ]
 
 export default function AdminLayout() {
   const [open, setOpen] = useState(false)
+  const esAdmin = useAuth((state) => state.esAdmin)
+
+  const menuItems = [...baseMenuItems, ...(esAdmin() ? adminMenuItems : [])]
 
   return (
     <div className='flex h-screen w-screen'>
