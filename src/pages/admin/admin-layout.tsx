@@ -7,14 +7,16 @@ import { rutasNavegacion } from '@/routes/rutas'
 import {
   BarChart,
   LayoutDashboard,
+  LogOut,
   Menu,
   Shield,
   Trophy,
   UserCog,
-  Users
+  Users,
+  User
 } from 'lucide-react'
 import { useState } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 
 const baseMenuItems = [
   { name: 'Torneos', path: rutasNavegacion.torneos, icon: Trophy },
@@ -31,16 +33,22 @@ const adminMenuItems = [
 export default function AdminLayout() {
   const [open, setOpen] = useState(false)
   const esAdmin = useAuth((state) => state.esAdmin)
+  const { userRole, userName, logout } = useAuth()
+  const navigate = useNavigate()
 
   const menuItems = [...baseMenuItems, ...(esAdmin() ? adminMenuItems : [])]
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
+  }
 
   return (
     <div className='flex h-screen w-screen'>
       <Toaster />
       {/* Menú lateral */}
-      <aside className='hidden md:flex flex-col w-64 bg-gray-900 text-white p-4 space-y-4'>
-        {/* <h1 className='text-xl font-bold'>Admin</h1> ACÁ PONER EL NOMBRE DE LA LIGA */}
-        <nav className='space-y-2'>
+      <aside className='hidden md:flex flex-col w-64 bg-gray-900 text-white p-4'>
+        <nav className='space-y-2 flex-1'>
           {menuItems.map(({ name, path, icon: Icon }) => (
             <NavLink
               key={path}
@@ -57,6 +65,28 @@ export default function AdminLayout() {
             </NavLink>
           ))}
         </nav>
+
+        {/* Información del usuario y botón de cerrar sesión */}
+        <div className='mt-auto pt-4 border-t border-gray-700'>
+          <div className='flex items-center gap-3 px-3 py-2'>
+            <div className='w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center'>
+              <User className='w-5 h-5 text-gray-300' />
+            </div>
+            <div className='flex-1 min-w-0'>
+              <div className='font-medium text-sm text-white truncate'>{userName}</div>
+              <div className='text-xs text-gray-400 truncate'>{userRole}</div>
+            </div>
+          </div>
+          <Button
+            variant='ghost'
+            size='sm'
+            className='w-full justify-start text-gray-300 hover:text-white hover:bg-gray-800 mt-2'
+            onClick={handleLogout}
+          >
+            <LogOut className='w-4 h-4 mr-2' />
+            Cerrar sesión
+          </Button>
+        </div>
       </aside>
 
       {/* Menú lateral responsive */}
@@ -70,8 +100,7 @@ export default function AdminLayout() {
           </Button>
         </SheetTrigger>
         <SheetContent side='left' className='w-64 bg-gray-900 text-white p-4'>
-          {/* <h1 className='text-xl font-bold'>Panel Admin</h1> */}
-          <nav className='space-y-2 mt-4'>
+          <nav className='space-y-2'>
             {menuItems.map(({ name, path, icon: Icon }) => (
               <NavLink
                 key={path}
@@ -89,6 +118,28 @@ export default function AdminLayout() {
               </NavLink>
             ))}
           </nav>
+
+          {/* Información del usuario y botón de cerrar sesión (versión móvil) */}
+          <div className='mt-auto pt-4 border-t border-gray-700'>
+            <div className='flex items-center gap-3 px-3 py-2'>
+              <div className='w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center'>
+                <User className='w-5 h-5 text-gray-300' />
+              </div>
+              <div className='flex-1 min-w-0'>
+                <div className='font-medium text-sm text-white truncate'>{userName}</div>
+                <div className='text-xs text-gray-400 truncate'>{userRole}</div>
+              </div>
+            </div>
+            <Button
+              variant='ghost'
+              size='sm'
+              className='w-full justify-start text-gray-300 hover:text-white hover:bg-gray-800 mt-2'
+              onClick={handleLogout}
+            >
+              <LogOut className='w-4 h-4 mr-2' />
+              Cerrar sesión
+            </Button>
+          </div>
         </SheetContent>
       </Sheet>
 

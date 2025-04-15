@@ -8,6 +8,7 @@ interface AuthState {
   token: string | null
   isAuthenticated: boolean
   userRole: string | null
+  userName: string | null
   login: (usuario: string, password: string) => Promise<boolean>
   logout: () => void
   esAdmin: () => boolean
@@ -15,6 +16,7 @@ interface AuthState {
 
 interface DecodedToken {
   role: string
+  name?: string
   [key: string]: any
 }
 
@@ -24,6 +26,7 @@ export const useAuth = create<AuthState>()(
       token: null,
       isAuthenticated: false,
       userRole: null,
+      userName: null,
       login: async (usuario: string, password: string) => {
         try {
           const loginRequest = new LoginDTO({
@@ -37,7 +40,8 @@ export const useAuth = create<AuthState>()(
             set({
               token: response.token,
               isAuthenticated: true,
-              userRole: decodedToken.role
+              userRole: decodedToken.role,
+              userName: decodedToken.name || usuario
             })
             return true
           }
@@ -49,7 +53,7 @@ export const useAuth = create<AuthState>()(
         }
       },
       logout: () => {
-        set({ token: null, isAuthenticated: false, userRole: null })
+        set({ token: null, isAuthenticated: false, userRole: null, userName: null })
       },
       esAdmin: () => {
         const { userRole } = get()
