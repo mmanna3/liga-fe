@@ -33,6 +33,7 @@ import FichajeHome from '../pages/fichaje/home'
 import PaginaNoEncontrada from '../pages/pagina-no-encontrada'
 import { rutas } from './rutas'
 import DesvincularJugadorDelEquipo from '@/pages/admin/jugador/desvincular-jugador-del-equipo'
+import SuspenderActivar from '@/pages/admin/jugador/suspender-activar'
 
 export const mapaRutasComponentes = [
   {
@@ -105,6 +106,10 @@ export const mapaRutasComponentes = [
       {
         path: `${rutas.aprobarRechazarJugador}/:jugadorequipoid/:jugadorid`,
         element: <AprobarRechazarJugador />
+      },
+      {
+        path: `${rutas.suspenderActivar}/:jugadorequipoid/:jugadorid`,
+        element: <SuspenderActivar />
       },
       {
         path: `${rutas.cambiarEstadoJugador}/:jugadorequipoid/:jugadorid`,

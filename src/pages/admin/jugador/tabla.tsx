@@ -103,6 +103,25 @@ export default function TablaJugador({
           }
         ]
 
+        // Solo agregar el botón de Suspender/Activar si el usuario no es admin
+        if (!esAdmin()) {
+          const equipo = (row.getValue('equipos') as EquipoDelJugadorDTO[])[0]
+          const estado = equipo.estado as unknown as EstadoJugador
+          const estaActivoOSuspendido =
+            estado === EstadoJugador.Activo ||
+            estado === EstadoJugador.Suspendido
+          
+          if (estaActivoOSuspendido) {
+            menuItems.push({
+              texto: 'Suspender/Activar',
+              onClick: () =>
+                navigate(
+                  `${rutasNavegacion.suspenderActivar}/${equipo.id}/${row.original.id}`
+                )
+            })
+          }
+        }
+
         // Solo agregar el botón de Eliminar si el usuario es admin
         if (esAdmin()) {
           menuItems.push({

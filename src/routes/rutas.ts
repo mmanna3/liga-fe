@@ -10,6 +10,7 @@ export const rutas = {
   jugadores: 'jugadores',
   detalleJugador: 'jugadores/detalle',
   eliminarJugador: 'jugadores/eliminar',
+  suspenderActivar: 'jugadores/suspender-activar',
   desvincularJugadorDelEquipo: 'jugadores/desvincular-del-equipo',
   aprobarRechazarJugador: 'jugadores/aprobar-rechazar',
   cambiarEstadoJugador: 'jugadores/cambiar-estado',
