@@ -1,0 +1,48 @@
+import { api } from '@/api/api'
+import useApiMutation from '@/api/custom-hooks/use-api-mutation'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import BotonVolver from '@/components/ykn-ui/boton-volver'
+import Botonera from '@/components/ykn-ui/botonera'
+import { rutasNavegacion } from '@/routes/rutas'
+import { useNavigate, useParams } from 'react-router-dom'
+
+export default function DesvincularJugadorDelEquipo() {
+  const { id, dni, equipoId, equipoNombre } = useParams<{ id: string; dni: string; equipoId: string; equipoNombre: string }>()
+  const navigate = useNavigate()
+  const mutation = useApiMutation({
+    fn: async (id: number) => {
+      // await api.jugadorDELETE(id)
+    },
+    antesDeMensajeExito: () => navigate(rutasNavegacion.jugadores),
+    mensajeDeExito: `El jugador de DNI '${dni}' fue desvinculado del equipo '${equipoNombre}' (${equipoId}).`
+  })
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    mutation.mutate(Number(id))
+  }
+
+  return (
+    <Card className='max-w-md mx-auto mt-10 p-4'>
+      <CardHeader>
+        <CardTitle>Desvincular jugador</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className='space-y-4'>
+        <p>
+            ¿Desvincular al jugador del equipo <strong>{equipoNombre}</strong>?
+          </p>
+          <div className='mt-8'>
+          <Botonera>
+            <BotonVolver texto='Cancelar' />
+            <Button type='submit' disabled={mutation.isPending}>
+              {mutation.isPending ? 'Desvinculando...' : 'Desvincular jugador del equipo'}
+            </Button>
+          </Botonera>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  )
+}

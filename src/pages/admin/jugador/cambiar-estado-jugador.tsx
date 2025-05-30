@@ -13,10 +13,14 @@ import {
 } from '@/lib/estado-jugador-lib'
 import { EstadoJugador } from '@/lib/utils'
 import { useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import BotonCambiarEstado from './components/boton-cambiar-estado'
+import Botonera from '@/components/ykn-ui/botonera'
+import { Boton } from '@/components/ykn-ui/boton'
+import { rutasNavegacion } from '@/routes/rutas'
 
 export default function CambiarEstado() {
+  const navigate = useNavigate()
   const { jugadorequipoid, jugadorid } = useParams<{
     jugadorequipoid: string
     jugadorid: string
@@ -125,8 +129,13 @@ export default function CambiarEstado() {
               )
             )}
           </div>
-          <div className='flex justify-end mt-12'>
-            <BotonVolver texto='Volver' />
+          <div className='mt-12'>
+            <Botonera>              
+              <div className='flex justify-between w-full'>
+                <Boton variant='destructive' onClick={() => navigate(`${rutasNavegacion.desvincularJugadorDelEquipo}/${jugadorid}/${jugador?.dni}/${jugadorequipoid}/${equipo?.nombre}`)}>Desvincular jugador del equipo</Boton>
+                <BotonVolver texto='Cancelar' />
+              </div>
+            </Botonera>
           </div>
         </CardContent>
       </Card>

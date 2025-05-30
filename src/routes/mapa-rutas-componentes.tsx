@@ -32,6 +32,7 @@ import CrearClub from '../pages/admin/club/crear-club'
 import FichajeHome from '../pages/fichaje/home'
 import PaginaNoEncontrada from '../pages/pagina-no-encontrada'
 import { rutas } from './rutas'
+import DesvincularJugadorDelEquipo from '@/pages/admin/jugador/desvincular-jugador-del-equipo'
 
 export const mapaRutasComponentes = [
   {
@@ -96,6 +97,10 @@ export const mapaRutasComponentes = [
       {
         path: `${rutas.eliminarJugador}/:id/:dni`,
         element: <EliminarJugador />
+      },
+      {
+        path: `${rutas.desvincularJugadorDelEquipo}/:id/:dni/:equipoId/:equipoNombre`,
+        element: <DesvincularJugadorDelEquipo />
       },
       {
         path: `${rutas.aprobarRechazarJugador}/:jugadorequipoid/:jugadorid`,
