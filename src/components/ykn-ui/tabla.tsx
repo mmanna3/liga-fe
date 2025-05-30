@@ -36,6 +36,7 @@ type TablaProps<T> = {
   hayError: boolean
   rowSelection?: RowSelectionState
   onRowSelectionChange?: OnChangeFn<RowSelectionState>
+  pageSizeDefault?: number
 }
 
 export default function Tabla<T>({
@@ -44,7 +45,8 @@ export default function Tabla<T>({
   estaCargando,
   hayError,
   rowSelection,
-  onRowSelectionChange
+  onRowSelectionChange,
+  pageSizeDefault = 10
 }: TablaProps<T>) {
   const [globalFilter, setGlobalFilter] = useState('')
   const [sorting, setSorting] = useState<SortingState>([])
@@ -58,7 +60,7 @@ export default function Tabla<T>({
     getFilteredRowModel: getFilteredRowModel(),
     initialState: {
       pagination: {
-        pageSize: 100
+        pageSize: pageSizeDefault
       }
     },
     state: {

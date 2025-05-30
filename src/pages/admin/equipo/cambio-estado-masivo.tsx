@@ -146,6 +146,7 @@ export default function CambioEstadoMasivo() {
             hayError={isError}
             rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
+            pageSizeDefault={100}
           />
 
           <div className='mt-8'>
