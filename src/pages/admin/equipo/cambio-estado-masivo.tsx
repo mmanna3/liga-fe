@@ -14,8 +14,8 @@ import BotonVolver from '@/components/ykn-ui/boton-volver'
 import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
 import Tabla from '@/components/ykn-ui/tabla'
 import { EstadoJugador } from '@/lib/utils'
-import { ColumnDef } from '@tanstack/react-table'
-import { useState } from 'react'
+import { ColumnDef, Row, Table, RowSelectionState } from '@tanstack/react-table'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useCambiarEstadoMutation } from '../jugador/hooks/use-cambiar-estado'
 
@@ -23,6 +23,7 @@ export default function CambioEstadoMasivo() {
   const { equipoid } = useParams<{ equipoid: string }>()
   const [selectedJugadores, setSelectedJugadores] = useState<number[]>([])
   const [motivo, setMotivo] = useState('')
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
 
   const {
     data: equipo,
@@ -33,32 +34,40 @@ export default function CambioEstadoMasivo() {
     fn: async () => await api.equipoGET(Number(equipoid))
   })
 
+  useEffect(() => {
+    if (!equipo?.jugadores) return
+    // Actualiza selectedJugadores cada vez que cambia rowSelection
+    const selectedIds = Object.keys(rowSelection)
+      .filter((key) => (rowSelection as Record<string, boolean>)[key])
+      .map((key) => equipo.jugadores && equipo.jugadores[parseInt(key)]?.id)
+      .filter((id) => id !== undefined)
+    setSelectedJugadores(selectedIds as number[])
+    console.log(selectedIds)
+  }, [rowSelection, equipo?.jugadores])
+
   const columnas: ColumnDef<JugadorDelEquipoDTO>[] = [
     {
       id: 'select',
       header: ({ table }) => (
         <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value: boolean | 'indeterminate') => {
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={(value) => {
             table.toggleAllPageRowsSelected(!!value)
-            setSelectedJugadores(
-              value && equipo?.jugadores
-                ? equipo.jugadores.map((j) => j.id!)
-                : []
-            )
+            const selectedRows = table.getSelectedRowModel().rows
+            setSelectedJugadores(selectedRows.map(row => row.original.id!))
           }}
         />
       ),
-      cell: ({ row }) => (
+      cell: ({ row, table }: { row: Row<JugadorDelEquipoDTO>; table: Table<JugadorDelEquipoDTO> }) => (
         <Checkbox
           checked={row.getIsSelected()}
-          onCheckedChange={(value: boolean | 'indeterminate') => {
+          onCheckedChange={(value) => {
             row.toggleSelected(!!value)
-            setSelectedJugadores((prev) =>
-              value && row.original.id
-                ? [...prev, row.original.id]
-                : prev.filter((id) => id !== row.original.id)
-            )
+            const selectedRows = table.getSelectedRowModel().rows
+            setSelectedJugadores(selectedRows.map((r) => r.original.id!))
           }}
         />
       )
@@ -135,6 +144,8 @@ export default function CambioEstadoMasivo() {
             data={equipo?.jugadores || []}
             estaCargando={isLoading}
             hayError={isError}
+            rowSelection={rowSelection}
+            onRowSelectionChange={setRowSelection}
           />
 
           <div className='mt-8'>

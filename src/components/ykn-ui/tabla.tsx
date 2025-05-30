@@ -22,7 +22,9 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   SortingState,
-  useReactTable
+  useReactTable,
+  RowSelectionState,
+  OnChangeFn
 } from '@tanstack/react-table'
 import { ChevronLeft, ChevronRight, MoreVertical } from 'lucide-react'
 import { useState } from 'react'
@@ -32,13 +34,17 @@ type TablaProps<T> = {
   columnas: ColumnDef<T>[]
   estaCargando: boolean
   hayError: boolean
+  rowSelection?: RowSelectionState
+  onRowSelectionChange?: OnChangeFn<RowSelectionState>
 }
 
 export default function Tabla<T>({
   data,
   columnas,
   estaCargando,
-  hayError
+  hayError,
+  rowSelection,
+  onRowSelectionChange
 }: TablaProps<T>) {
   const [globalFilter, setGlobalFilter] = useState('')
   const [sorting, setSorting] = useState<SortingState>([])
@@ -52,10 +58,13 @@ export default function Tabla<T>({
     getFilteredRowModel: getFilteredRowModel(),
     state: {
       globalFilter,
-      sorting
+      sorting,
+      rowSelection: rowSelection || {}
     },
     onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter
+    onGlobalFilterChange: setGlobalFilter,
+    onRowSelectionChange,
+    enableRowSelection: true
   })
 
   return (
