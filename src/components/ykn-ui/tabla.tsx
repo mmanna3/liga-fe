@@ -56,6 +56,11 @@ export default function Tabla<T>({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 100
+      }
+    },
     state: {
       globalFilter,
       sorting,
