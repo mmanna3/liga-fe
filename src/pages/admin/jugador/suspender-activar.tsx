@@ -8,19 +8,14 @@ import BotonVolver from '@/components/ykn-ui/boton-volver'
 import DetalleItem from '@/components/ykn-ui/detalle-item'
 import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
 import {
-  estadoTransiciones,
   obtenerNombreEstado
 } from '@/lib/estado-jugador-lib'
 import { EstadoJugador } from '@/lib/utils'
 import { useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import BotonCambiarEstado from './components/boton-cambiar-estado'
-import Botonera from '@/components/ykn-ui/botonera'
-import { Boton } from '@/components/ykn-ui/boton'
-import { rutasNavegacion } from '@/routes/rutas'
 
 export default function SuspenderActivar() {
-  const navigate = useNavigate()
   const { jugadorequipoid, jugadorid } = useParams<{
     jugadorequipoid: string
     jugadorid: string
