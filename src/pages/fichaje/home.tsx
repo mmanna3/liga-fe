@@ -1,5 +1,4 @@
 import FichajeDeshabilitado from './fichaje-deshabilitado'
-import FormularioFichaje from './formulario'
 
 export const estaLaSeccionHabilitada = () => {
   const IS_DEV = import.meta.env.VITE_IS_DEV
@@ -19,8 +18,9 @@ export const estaLaSeccionHabilitada = () => {
 }
 
 const SeccionPrincipalFichaje = () => {
-  if (!estaLaSeccionHabilitada()) return <FichajeDeshabilitado />
-  else return <FormularioFichaje />
+  return <FichajeDeshabilitado />
+  // if (!estaLaSeccionHabilitada()) return <FichajeDeshabilitado />
+  // else return <FormularioFichaje />
 }
 
 export default SeccionPrincipalFichaje
