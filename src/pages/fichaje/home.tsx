@@ -18,6 +18,7 @@ export const estaLaSeccionHabilitada = () => {
 }
 
 const SeccionPrincipalFichaje = () => {
+  // Cuando descomentes esto, también deseskipeá fichaje.spec.ts
   return <FichajeDeshabilitado />
   // if (!estaLaSeccionHabilitada()) return <FichajeDeshabilitado />
   // else return <FormularioFichaje />

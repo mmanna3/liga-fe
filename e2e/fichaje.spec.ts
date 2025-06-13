@@ -16,7 +16,7 @@ declare global {
   }
 }
 
-test.describe('Formulario de Fichaje', () => {
+test.skip('Formulario de Fichaje', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/fichaje')
     await page.waitForLoadState('networkidle')
