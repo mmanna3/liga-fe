@@ -1,4 +1,5 @@
 import FichajeDeshabilitado from './fichaje-deshabilitado'
+import FormularioFichaje from './formulario'
 
 export const estaLaSeccionHabilitada = () => {
   const IS_DEV = import.meta.env.VITE_IS_DEV
@@ -18,10 +19,10 @@ export const estaLaSeccionHabilitada = () => {
 }
 
 const SeccionPrincipalFichaje = () => {
-  // Cuando descomentes esto, también deseskipeá fichaje.spec.ts
-  return <FichajeDeshabilitado />
-  // if (!estaLaSeccionHabilitada()) return <FichajeDeshabilitado />
-  // else return <FormularioFichaje />
+  // Cuando el fichaje esté habilitado, deseskipeá fichaje.spec.ts
+  // return <FichajeDeshabilitado />
+  if (!estaLaSeccionHabilitada()) return <FichajeDeshabilitado />
+  else return <FormularioFichaje />
 }
 
 export default SeccionPrincipalFichaje
