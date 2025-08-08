@@ -1090,6 +1090,49 @@ export class Client {
      * @param body (optional) 
      * @return Success
      */
+    efectuarPases(body: EfectuarPaseDTO[] | undefined): Promise<number> {
+        let url_ = this.baseUrl + "/api/Jugador/efectuar-pases";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processEfectuarPases(_response);
+        });
+    }
+
+    protected processEfectuarPases(response: Response): Promise<number> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<number>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
     pagarFichajeDelJugador(body: CambiarEstadoDelJugadorDTO | undefined): Promise<number> {
         let url_ = this.baseUrl + "/api/Jugador/pagar-fichaje-del-jugador";
         url_ = url_.replace(/[?&]$/, "");
@@ -2217,6 +2260,50 @@ export class DesvincularJugadorDelEquipoDTO implements IDesvincularJugadorDelEqu
 export interface IDesvincularJugadorDelEquipoDTO {
     jugadorId?: number;
     equipoId?: number;
+}
+
+export class EfectuarPaseDTO implements IEfectuarPaseDTO {
+    jugadorId?: number;
+    equipoOrigenId?: number;
+    equipoDestinoId?: number;
+
+    constructor(data?: IEfectuarPaseDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.jugadorId = _data["jugadorId"];
+            this.equipoOrigenId = _data["equipoOrigenId"];
+            this.equipoDestinoId = _data["equipoDestinoId"];
+        }
+    }
+
+    static fromJS(data: any): EfectuarPaseDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new EfectuarPaseDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["jugadorId"] = this.jugadorId;
+        data["equipoOrigenId"] = this.equipoOrigenId;
+        data["equipoDestinoId"] = this.equipoDestinoId;
+        return data;
+    }
+}
+
+export interface IEfectuarPaseDTO {
+    jugadorId?: number;
+    equipoOrigenId?: number;
+    equipoDestinoId?: number;
 }
 
 export class EquipoBaseDTO implements IEquipoBaseDTO {

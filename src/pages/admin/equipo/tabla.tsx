@@ -76,6 +76,14 @@ export default function TablaEquipo({
                 `${rutasNavegacion.cambioEstadoMasivoEquipo}/${row.original.id}`
               )
           })
+
+          menuItems.push({
+            texto: 'Pases',
+            onClick: () =>
+              navigate(
+                `${rutasNavegacion.pases}/${row.original.id}`
+              )
+          })
         }
 
         return <Tabla.MenuContextual items={menuItems} />

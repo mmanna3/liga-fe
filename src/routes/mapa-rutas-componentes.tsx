@@ -34,6 +34,7 @@ import PaginaNoEncontrada from '../pages/pagina-no-encontrada'
 import { rutas } from './rutas'
 import DesvincularJugadorDelEquipo from '@/pages/admin/jugador/desvincular-jugador-del-equipo'
 import SuspenderActivar from '@/pages/admin/jugador/suspender-activar'
+import Pases from '@/pages/admin/equipo/pases'
 
 export const mapaRutasComponentes = [
   {
@@ -89,6 +90,10 @@ export const mapaRutasComponentes = [
       {
         path: `${rutas.cambioEstadoMasivoEquipo}/:equipoid`,
         element: <CambioEstadoMasivo />
+      },
+      {
+        path: `${rutas.pases}/:equipoid`,
+        element: <Pases />
       },
       { path: `${rutas.crearEquipo}/:clubid`, element: <CrearEquipo /> },
       { path: `${rutas.detalleEquipo}/:id`, element: <DetalleEquipo /> },
