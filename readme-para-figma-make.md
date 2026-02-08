@@ -40,7 +40,6 @@ Si algo de lo que se solicita **SE CONTRADICE CON ESTE DOCUMENTO**, **antes de h
 
 ```tsx
 import { cn } from '@/lib/utils'
-
 ;<div
   className={cn(
     'text-lg font-bold',
@@ -152,7 +151,6 @@ Nunca escribas strings directos en el atributo `to` o `href`. Usa siempre el obj
 
 ```tsx
 import { rutasNavegacion } from '@/routes/rutas'
-
 ;<Link to={rutasNavegacion.crearClub}>Crear Club</Link>
 ```
 
@@ -268,9 +266,11 @@ export default function MiFeature() {
 
 ## 📐 Límite de Líneas por Archivo
 
-- ✅ **Ideal:** < 100 líneas
-- ⚠️ **Tolerable:** 100–200 líneas
-- 🚨 **Refactor inmediato:** > 200 líneas (requiere justificación)
+- ✅ **Ideal:** < 150 líneas
+- ⚠️ **Tolerable:** 150–250 líneas
+- 🚨 **Refactor inmediato:** > 250 líneas (requiere justificación)
+
+**Principio fundamental:** Cada componente debe tener una **única responsabilidad**. Si un componente crece mucho, considera dividirlo en componentes más pequeños y reutilizables.
 
 ---
 
