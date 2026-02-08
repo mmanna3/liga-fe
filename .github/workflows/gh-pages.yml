@@ -11,10 +11,10 @@ jobs:
 
     steps:
       - name: Checkoutear repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set de versión de Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 20
           cache: 'npm'
@@ -31,7 +31,7 @@ jobs:
       - name: Correr tests 2e2
         run: npm run e2e
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
