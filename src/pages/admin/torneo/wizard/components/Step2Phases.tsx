@@ -1,19 +1,19 @@
-import {
-  Plus,
-  GripVertical,
-  Trash2,
-  ChevronDown,
-  ChevronRight,
-  Pencil
-} from 'lucide-react'
-import { useState, useEffect } from 'react'
-import { useFormContext } from 'react-hook-form'
-import type { TournamentWizardData, Phase } from '../types'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
+import {
+  ChevronDown,
+  ChevronRight,
+  GripVertical,
+  Pencil,
+  Plus,
+  Trash2
+} from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
+import type { Phase, TournamentWizardData } from '../types'
 
 export function Step2Phases() {
   const { watch, setValue } = useFormContext<TournamentWizardData>()
@@ -180,17 +180,17 @@ export function Step2Phases() {
 
       <div className='p-3 bg-amber-50 rounded-lg border border-amber-200'>
         <p className='text-sm text-foreground'>
-          <strong>Importante:</strong> Los equipos, zonas y fixture que
-          configures en los siguientes pasos corresponden solo a la fase actual,
-          no a todo el torneo.
+          <strong>Importante:</strong> Durante la creación de este torneo, se
+          podrán cargar los "datos generales" de todas las fases, pero solo se
+          permitirá configurar las zonas, equipos y fixture de la primera. Luego
+          de creado el torneo, vas a poder editar estos mismos datos en las
+          fases siguientes.
         </p>
       </div>
 
       <div className='space-y-2'>
         {data.phases.map((phase, phaseIndex) => {
           const editable = isPhaseEditable(phaseIndex)
-          const previousPhaseCompleted =
-            phaseIndex === 0 || data.phases[phaseIndex - 1]?.completed
 
           return (
             <div
@@ -216,7 +216,7 @@ export function Step2Phases() {
                   ) : (
                     <ChevronRight className='w-4 h-4 text-muted-foreground' />
                   )}
-                  <span className='w-6 h-6 bg-primary text-primary-foreground rounded-md flex items-center justify-center font-bold text-sm'>
+                  <span className='w-8 h-8 bg-primary text-primary-foreground rounded-md flex items-center justify-center font-bold text-md'>
                     {phaseIndex + 1}
                   </span>
                   {editingPhaseName === phase.id && editable ? (
@@ -232,10 +232,10 @@ export function Step2Phases() {
                       }}
                       autoFocus
                       onClick={(e) => e.stopPropagation()}
-                      className='w-48'
+                      className='w-48 text-sm'
                     />
                   ) : (
-                    <span className='font-semibold text-foreground'>
+                    <span className='font-semibold text-foreground text-lg'>
                       {phase.name}
                     </span>
                   )}
@@ -379,9 +379,7 @@ export function Step2Phases() {
                             editable && handleDragStart(phase.id, index)
                           }
                           onDragOver={handleDragOver}
-                          onDrop={() =>
-                            editable && handleDrop(phase.id, index)
-                          }
+                          onDrop={() => editable && handleDrop(phase.id, index)}
                           className={cn(
                             'flex items-center gap-2 p-2 bg-muted rounded-lg border transition-colors',
                             editable
@@ -397,40 +395,6 @@ export function Step2Phases() {
                         </div>
                       ))}
                     </div>
-                  </div>
-
-                  <div
-                    className={cn(
-                      'p-4 rounded-xl border',
-                      phaseIndex >= 1 && previousPhaseCompleted
-                        ? 'bg-background'
-                        : 'bg-muted'
-                    )}
-                  >
-                    <h4
-                      className={cn(
-                        'font-semibold mb-1',
-                        phaseIndex >= 1 && previousPhaseCompleted
-                          ? 'text-foreground'
-                          : 'text-muted-foreground'
-                      )}
-                    >
-                      Reglas de clasificación y avance
-                    </h4>
-                    {phaseIndex >= 1 && previousPhaseCompleted ? (
-                      <p className='text-sm text-muted-foreground'>
-                        Configuración disponible para definir los equipos
-                        clasificados de la fase anterior
-                      </p>
-                    ) : (
-                      <div className='flex items-center justify-center py-6'>
-                        <span className='text-sm font-medium text-muted-foreground'>
-                          {phaseIndex === 0
-                            ? 'Disponible a partir de la segunda fase'
-                            : 'Completa la fase anterior primero'}
-                        </span>
-                      </div>
-                    )}
                   </div>
                 </div>
               )}
