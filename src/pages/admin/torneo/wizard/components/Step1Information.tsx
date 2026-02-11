@@ -1,66 +1,20 @@
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
-import { CalendarRange, Globe, Plus, Settings, X, Zap } from 'lucide-react'
-import { useState } from 'react'
+import { CalendarRange, Globe, Settings, Zap } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
-import type { Category, TournamentWizardData } from '../types'
+import type { TournamentWizardData } from '../types'
+import { Categorias } from './Categorias'
 
 export function Step1Information() {
   const { watch, setValue } = useFormContext<TournamentWizardData>()
-  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
-    null
-  )
 
   const data = {
     name: watch('name'),
     season: watch('season'),
     type: watch('type'),
-    categories: watch('categories'),
     format: watch('format')
   }
-
-  const addCategory = () => {
-    const newCategory: Category = {
-      id: Date.now().toString(),
-      name: '',
-      yearFrom: '',
-      yearTo: ''
-    }
-    setValue('categories', [...data.categories, newCategory])
-    setEditingCategoryId(newCategory.id)
-  }
-
-  const removeCategory = (id: string) => {
-    setValue(
-      'categories',
-      data.categories.filter((c) => c.id !== id)
-    )
-    if (editingCategoryId === id) {
-      setEditingCategoryId(null)
-    }
-  }
-
-  const updateCategory = (id: string, field: Partial<Category>) => {
-    setValue(
-      'categories',
-      data.categories.map((c) => (c.id === id ? { ...c, ...field } : c))
-    )
-  }
-
-  const handleCategoryClick = (id: string) => {
-    setEditingCategoryId(id)
-  }
-
-  const handleCategorySave = () => {
-    setEditingCategoryId(null)
-  }
-
-  const editingCategory = editingCategoryId
-    ? data.categories.find((c) => c.id === editingCategoryId)
-    : null
 
   return (
     <div className='space-y-4'>
@@ -108,95 +62,7 @@ export function Step1Information() {
         </div>
       </div>
 
-      <div>
-        <Label className='mb-2'>Categorías *</Label>
-
-        {data.categories.length > 0 && data.categories.some((c) => c.name) && (
-          <div className='flex flex-wrap gap-2 mb-3'>
-            {data.categories
-              .filter((c) => c.name)
-              .map((category) => (
-                <Badge
-                  key={category.id}
-                  variant='secondary'
-                  className='pl-3 pr-1.5 py-1.5 text-sm cursor-pointer hover:bg-secondary/80 transition-colors'
-                  onClick={() => handleCategoryClick(category.id)}
-                >
-                  {category.name}
-                  {(category.yearFrom || category.yearTo) && (
-                    <span className='ml-1'>
-                      ({category.yearFrom || '—'}/{category.yearTo || '—'})
-                    </span>
-                  )}
-                  <button
-                    type='button'
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      removeCategory(category.id)
-                    }}
-                    className='ml-1.5 hover:bg-muted rounded-full p-0.5'
-                  >
-                    <X className='w-3 h-3' />
-                  </button>
-                </Badge>
-              ))}
-          </div>
-        )}
-
-        {editingCategory && (
-          <div className='p-3 bg-muted rounded-lg mb-2'>
-            <div className='flex items-center gap-2'>
-              <Input
-                type='text'
-                value={editingCategory.name}
-                onChange={(e) =>
-                  updateCategory(editingCategory.id, { name: e.target.value })
-                }
-                placeholder='Ej: +40, Sub 15, Mayores'
-                className='flex-1'
-                autoFocus
-              />
-              <Input
-                type='text'
-                value={editingCategory.yearFrom}
-                onChange={(e) =>
-                  updateCategory(editingCategory.id, {
-                    yearFrom: e.target.value
-                  })
-                }
-                placeholder='Desde'
-                className='w-20 text-center'
-              />
-              <span className='text-muted-foreground'>-</span>
-              <Input
-                type='text'
-                value={editingCategory.yearTo}
-                onChange={(e) =>
-                  updateCategory(editingCategory.id, {
-                    yearTo: e.target.value
-                  })
-                }
-                placeholder='Hasta'
-                className='w-20 text-center'
-              />
-              <Button type='button' size='sm' onClick={handleCategorySave}>
-                Guardar
-              </Button>
-            </div>
-          </div>
-        )}
-
-        <Button
-          type='button'
-          variant='outline'
-          size='sm'
-          onClick={addCategory}
-          className='mt-2'
-        >
-          <Plus className='w-4 h-4' />
-          Agregar
-        </Button>
-      </div>
+      <Categorias />
 
       <div>
         <Label className='mb-2'>Formato *</Label>
