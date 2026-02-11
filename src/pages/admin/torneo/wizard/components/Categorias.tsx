@@ -1,7 +1,7 @@
+import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Plus, X } from 'lucide-react'
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -57,7 +57,7 @@ export function Categorias() {
 
   return (
     <div>
-      <Label className='mb-2'>Categorías *</Label>
+      <TituloDeInput>Categorías *</TituloDeInput>
 
       {categories.length > 0 && categories.some((c) => c.name) && (
         <div className='flex flex-wrap gap-2 mb-3'>

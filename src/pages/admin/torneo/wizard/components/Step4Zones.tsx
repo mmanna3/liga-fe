@@ -3,10 +3,10 @@ import { Shuffle, Edit2, Check } from 'lucide-react'
 import { toast } from 'sonner'
 import { useFormContext } from 'react-hook-form'
 import type { TournamentWizardData, Zone, WizardTeam } from '../types'
+import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 
 export function Step4Zones() {
   const {
@@ -202,9 +202,12 @@ export function Step4Zones() {
                 setValue('preventSameClub', checked === true)
               }
             />
-            <Label htmlFor='prevent-same-club' className='cursor-pointer'>
+            <TituloDeInput
+              htmlFor='prevent-same-club'
+              className='mb-0 cursor-pointer'
+            >
               Evitar mismo club en misma zona
-            </Label>
+            </TituloDeInput>
           </div>
         </div>
 

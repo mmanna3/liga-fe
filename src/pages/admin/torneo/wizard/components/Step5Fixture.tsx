@@ -9,10 +9,10 @@ import {
   PopoverTrigger
 } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
+import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -305,7 +305,7 @@ export function Step5Fixture() {
         <div className='space-y-3 mb-4'>
           {isAllVsAll && (
             <div>
-              <Label className='mb-1.5'>Cantidad de fechas</Label>
+              <TituloDeInput className='mb-1.5'>Cantidad de fechas</TituloDeInput>
               <Input
                 type='number'
                 value={data.numberOfDates}
@@ -327,9 +327,9 @@ export function Step5Fixture() {
                   setValue('hasFreeBye', checked === true)
                 }
               />
-              <Label htmlFor='free-bye' className='cursor-pointer'>
+              <TituloDeInput htmlFor='free-bye' className='mb-0 cursor-pointer'>
                 Hay equipo libre
-              </Label>
+              </TituloDeInput>
             </div>
 
             {isAllVsAll && (
@@ -343,15 +343,15 @@ export function Step5Fixture() {
                     }
                     disabled={data.zonesCount <= 1}
                   />
-                  <Label
+                  <TituloDeInput
                     htmlFor='interzonal'
                     className={cn(
-                      'cursor-pointer',
+                      'mb-0 cursor-pointer',
                       data.zonesCount <= 1 && 'text-muted-foreground'
                     )}
                   >
                     Hay interzonal
-                  </Label>
+                  </TituloDeInput>
                   {data.zonesCount <= 1 && (
                     <span className='text-xs text-muted-foreground'>
                       (requiere 2+ zonas)
@@ -367,12 +367,12 @@ export function Step5Fixture() {
                       setValue('preventClubClash', checked === true)
                     }
                   />
-                  <Label
+                  <TituloDeInput
                     htmlFor='prevent-club-clash'
-                    className='cursor-pointer'
+                    className='mb-0 cursor-pointer'
                   >
                     Dos equipos del mismo club no pueden jugar juntos
-                  </Label>
+                  </TituloDeInput>
                 </div>
               </>
             )}

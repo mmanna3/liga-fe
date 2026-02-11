@@ -3,10 +3,10 @@ import { Search, X } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
 import type { TournamentWizardData, WizardTeam } from '../types'
 import { mockTeams } from '../data/mock-teams'
+import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 
 export function Step3Teams() {
@@ -117,7 +117,7 @@ export function Step3Teams() {
 
       <div className='flex items-start justify-between gap-4 flex-wrap'>
         <div className='w-32'>
-          <Label className='mb-1'>Cantidad equipos</Label>
+          <TituloDeInput className='mb-1'>Cantidad equipos</TituloDeInput>
           <Input
             type='number'
             value={data.teamCount}
@@ -134,7 +134,7 @@ export function Step3Teams() {
           )}
         </div>
         <div className='w-32'>
-          <Label className='mb-1'>Cantidad zonas</Label>
+          <TituloDeInput className='mb-1'>Cantidad zonas</TituloDeInput>
           <Input
             type='number'
             value={data.zonesCount}
@@ -206,7 +206,7 @@ export function Step3Teams() {
       )}
 
       <div>
-        <Label className='mb-3'>Búsqueda de equipo</Label>
+        <TituloDeInput>Búsqueda de equipo</TituloDeInput>
         <div className='flex gap-3 mb-4'>
           <Button
             type='button'
@@ -246,7 +246,7 @@ export function Step3Teams() {
         {data.searchMode === 'tournament' && (
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-4'>
             <div>
-              <Label className='mb-2'>Torneo</Label>
+              <TituloDeInput className='mb-2'>Torneo</TituloDeInput>
               <select
                 value={data.filterTournament}
                 onChange={(e) =>
@@ -264,7 +264,7 @@ export function Step3Teams() {
             </div>
 
             <div>
-              <Label className='mb-2'>Zona</Label>
+              <TituloDeInput className='mb-2'>Zona</TituloDeInput>
               <select
                 value={data.filterZone}
                 onChange={(e) =>
@@ -295,9 +295,9 @@ export function Step3Teams() {
                   checked={selectAll}
                   onCheckedChange={() => handleSelectAll()}
                 />
-                <Label htmlFor='select-all' className='text-xs cursor-pointer'>
+                <TituloDeInput htmlFor='select-all' className='mb-0 text-xs cursor-pointer'>
                   {selectAll ? 'Deseleccionar todos' : 'Seleccionar todos'}
-                </Label>
+                </TituloDeInput>
               </div>
             )}
         </div>

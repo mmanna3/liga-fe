@@ -1,7 +1,7 @@
+import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import { ChevronDown, ChevronRight, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -272,9 +272,7 @@ export function Step2Phases() {
                   <div className='flex gap-8 my-3'>
                     {/* Formato de la fase */}
                     <div className='flex-1'>
-                      <Label className='block mb-3 text-md font-semibold'>
-                        Formato de la fase
-                      </Label>
+                      <TituloDeInput>Formato de la fase</TituloDeInput>
                       <div className='flex gap-2'>
                         <Button
                           type='button'
@@ -313,9 +311,7 @@ export function Step2Phases() {
 
                     {/* Tipo de vuelta */}
                     <div className='flex-1'>
-                      <Label className='text-md font-semibold block mb-3'>
-                        Tipo de vuelta
-                      </Label>
+                      <TituloDeInput>Tipo de vuelta</TituloDeInput>
                       <div className='flex gap-2'>
                         <Button
                           type='button'

@@ -1,5 +1,5 @@
+import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import { CalendarRange, Globe, Settings, Zap } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
@@ -24,7 +24,7 @@ export function Step1Information() {
     <div className='space-y-4'>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
         <div>
-          <Label className='block mb-2.5'>Nombre del torneo *</Label>
+          <TituloDeInput>Nombre del torneo *</TituloDeInput>
           <Input
             type='text'
             value={data.name}
@@ -39,7 +39,7 @@ export function Step1Information() {
           )}
         </div>
         <div>
-          <Label className='block mb-2.5'>Temporada/Año *</Label>
+          <TituloDeInput>Temporada/Año *</TituloDeInput>
           <Input
             type='number'
             value={data.season}
@@ -56,7 +56,7 @@ export function Step1Information() {
       </div>
 
       <div>
-        <Label className='mb-2'>Tipo *</Label>
+        <TituloDeInput>Tipo *</TituloDeInput>
         <div className='grid grid-cols-2 md:grid-cols-4 gap-2'>
           {['FUTSAL', 'BABY', 'FUTBOL 11', 'FEMENINO'].map((type) => (
             <button
@@ -86,7 +86,7 @@ export function Step1Information() {
       <Categorias />
 
       <div>
-        <Label className='mb-2'>Formato *</Label>
+        <TituloDeInput>Formato *</TituloDeInput>
         <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
           {[
             { id: 'ANUAL', label: 'Apertura/Clausura', icon: CalendarRange },

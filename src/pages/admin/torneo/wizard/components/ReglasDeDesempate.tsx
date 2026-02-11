@@ -1,4 +1,4 @@
-import { Label } from '@/components/ui/label'
+import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
 import { cn } from '@/lib/utils'
 import { GripVertical } from 'lucide-react'
 
@@ -39,9 +39,7 @@ export function ReglasDeDesempate({
 
   return (
     <div className='my-3'>
-      <Label className='block mb-2 text-md font-semibold'>
-        Reglas de desempate
-      </Label>
+      <TituloDeInput className='mb-2'>Reglas de desempate</TituloDeInput>
       <p className='text-xs text-muted-foreground mb-2'>
         Arrastra para ordenar por prioridad
       </p>
