@@ -26,8 +26,7 @@ export function Step3Teams() {
     selectedTeams: watch('selectedTeams'),
     searchMode: watch('searchMode'),
     filterTournament: watch('filterTournament'),
-    filterZone: watch('filterZone'),
-    zonesCount: watch('zonesCount')
+    filterZone: watch('filterZone')
   }
 
   const currentPhase = data.phases[0]
@@ -114,34 +113,19 @@ export function Step3Teams() {
         </p>
       </div>
 
-      <div className='flex items-start gap-4'>
-        <div>
-          <TituloDeInput className='mb-1'>Equipos</TituloDeInput>
-          <Input
-            type='number'
-            value={data.teamCount}
-            onChange={(e) => {
-              const count = parseInt(e.target.value, 10) || 0
-              setValue('teamCount', count)
-              setValue('selectedTeams', data.selectedTeams.slice(0, count))
-            }}
-            min={2}
-            className='font-semibold w-20 h-11'
-          />
-        </div>
-        <div className='w-32'>
-          <TituloDeInput className='mb-1'>Zonas</TituloDeInput>
-          <Input
-            type='number'
-            value={data.zonesCount}
-            onChange={(e) => {
-              const count = Math.max(1, parseInt(e.target.value, 10) || 1)
-              setValue('zonesCount', count)
-            }}
-            min={1}
-            className='font-semibold w-20 h-11'
-          />
-        </div>
+      <div>
+        <TituloDeInput className='mb-1'>Equipos</TituloDeInput>
+        <Input
+          type='number'
+          value={data.teamCount}
+          onChange={(e) => {
+            const count = parseInt(e.target.value, 10) || 0
+            setValue('teamCount', count)
+            setValue('selectedTeams', data.selectedTeams.slice(0, count))
+          }}
+          min={2}
+          className='font-semibold w-20 h-11'
+        />
       </div>
 
       <div className='flex items-center gap-2'>

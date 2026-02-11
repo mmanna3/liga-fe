@@ -121,8 +121,11 @@ export const step3Schema = tournamentWizardSchema
 export const step4Schema = tournamentWizardSchema
   .pick({
     zones: true,
-    zonesCount: true,
     selectedTeams: true
+  })
+  .refine((data) => data.zones.length >= 1, {
+    message: 'Debe haber al menos una zona',
+    path: ['zones']
   })
   .refine(
     (data) => {

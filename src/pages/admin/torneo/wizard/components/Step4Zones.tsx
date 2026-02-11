@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react'
-import { Shuffle, Edit2, Check } from 'lucide-react'
-import { toast } from 'sonner'
-import { useFormContext } from 'react-hook-form'
-import type { TournamentWizardData, Zone, WizardTeam } from '../types'
-import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
+import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
+import { Pencil, Plus, Shuffle, Trash2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
+import { toast } from 'sonner'
+import type { TournamentWizardData, WizardTeam, Zone } from '../types'
 
 export function Step4Zones() {
   const {
@@ -15,7 +15,6 @@ export function Step4Zones() {
     formState: { errors }
   } = useFormContext<TournamentWizardData>()
   const [editingZoneId, setEditingZoneId] = useState<string | null>(null)
-  const [editingName, setEditingName] = useState('')
   const [draggedTeam, setDraggedTeam] = useState<{
     team: WizardTeam
     fromZoneId: string
@@ -26,40 +25,56 @@ export function Step4Zones() {
     phases: watch('phases'),
     currentPhaseIndex: watch('currentPhaseIndex'),
     selectedTeams: watch('selectedTeams'),
-    zonesCount: watch('zonesCount'),
     zones: watch('zones'),
     preventSameClub: watch('preventSameClub')
   }
 
+  const zonesCount = data.zones.length
+
   const currentPhase = data.phases[data.currentPhaseIndex]
 
   useEffect(() => {
-    if (data.zones.length === 0 && data.selectedTeams.length > 0) {
-      initializeZones()
+    if (data.zones.length === 0) {
+      setValue('zones', [
+        {
+          id: `zone-${Date.now()}`,
+          name: 'Zona A',
+          teams: [],
+          phaseId: currentPhase?.id || ''
+        }
+      ])
     }
-  }, [data.selectedTeams.length])
+  }, [data.zones.length, currentPhase?.id, setValue])
 
-  const initializeZones = () => {
-    const zones: Zone[] = []
+  useEffect(() => {
+    setValue('zonesCount', data.zones.length)
+  }, [data.zones.length, setValue])
+
+  const addZone = () => {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-
-    for (let i = 0; i < data.zonesCount; i++) {
-      zones.push({
-        id: `zone-${i}`,
-        name: `Zona ${letters[i] || String(i + 1)}`,
-        teams: [],
-        phaseId: currentPhase?.id || ''
-      })
+    const newZone: Zone = {
+      id: `zone-${Date.now()}`,
+      name: `Zona ${letters[zonesCount] || String(zonesCount + 1)}`,
+      teams: [],
+      phaseId: currentPhase?.id || ''
     }
+    setValue('zones', [...data.zones, newZone])
+  }
 
-    setValue('zones', zones)
+  const removeZone = (zoneId: string) => {
+    if (zonesCount <= 1) return
+    setValue(
+      'zones',
+      data.zones.filter((z) => z.id !== zoneId)
+    )
+    if (editingZoneId === zoneId) setEditingZoneId(null)
   }
 
   const randomizeTeams = () => {
     if (data.zones.length === 0) return
 
     const shuffled = [...data.selectedTeams].sort(() => Math.random() - 0.5)
-    const teamsPerZone = Math.ceil(shuffled.length / data.zonesCount)
+    const teamsPerZone = Math.ceil(shuffled.length / zonesCount)
 
     const newZones = data.zones.map((zone, index) => {
       const startIdx = index * teamsPerZone
@@ -121,36 +136,23 @@ export function Step4Zones() {
     setDraggedTeam(null)
   }
 
-  const startEditingZone = (zoneId: string, currentName: string) => {
-    setEditingZoneId(zoneId)
-    setEditingName(currentName)
-  }
-
-  const saveZoneName = () => {
-    if (editingZoneId) {
-      const newZones = data.zones.map((zone) =>
-        zone.id === editingZoneId ? { ...zone, name: editingName } : zone
-      )
-      setValue('zones', newZones)
-      setEditingZoneId(null)
-    }
+  const updateZone = (zoneId: string, field: Partial<Zone>) => {
+    setValue(
+      'zones',
+      data.zones.map((z) => (z.id === zoneId ? { ...z, ...field } : z))
+    )
   }
 
   const distributeEvenly = () => {
     if (data.zones.length === 0) return
 
-    const teamsPerZone = Math.floor(
-      data.selectedTeams.length / data.zonesCount
-    )
-    const remainder = data.selectedTeams.length % data.zonesCount
+    const teamsPerZone = Math.floor(data.selectedTeams.length / zonesCount)
+    const remainder = data.selectedTeams.length % zonesCount
 
     let teamIndex = 0
     const newZones = data.zones.map((zone, zoneIndex) => {
       const count = teamsPerZone + (zoneIndex < remainder ? 1 : 0)
-      const zoneTeams = data.selectedTeams.slice(
-        teamIndex,
-        teamIndex + count
-      )
+      const zoneTeams = data.selectedTeams.slice(teamIndex, teamIndex + count)
       teamIndex += count
       return { ...zone, teams: zoneTeams }
     })
@@ -186,6 +188,10 @@ export function Step4Zones() {
         </p>
 
         <div className='flex flex-wrap gap-3 mb-6'>
+          <Button type='button' variant='outline' onClick={addZone}>
+            <Plus className='w-4 h-4' />
+            Agregar zona
+          </Button>
           <Button type='button' variant='outline' onClick={distributeEvenly}>
             Distribuir equitativamente
           </Button>
@@ -206,7 +212,7 @@ export function Step4Zones() {
               htmlFor='prevent-same-club'
               className='mb-0 cursor-pointer'
             >
-              Evitar mismo club en misma zona
+              Evitar equipos del mismo club en la misma zona
             </TituloDeInput>
           </div>
         </div>
@@ -225,42 +231,59 @@ export function Step4Zones() {
               onDrop={() => handleDrop(zone.id)}
               className='bg-muted rounded-xl p-4 border-2 border-dashed min-h-[300px]'
             >
-              <div className='flex items-center justify-between mb-4'>
+              <div className='flex items-center justify-between mb-4 gap-2'>
                 {editingZoneId === zone.id ? (
-                  <div className='flex items-center gap-2 flex-1'>
-                    <Input
-                      type='text'
-                      value={editingName}
-                      onChange={(e) => setEditingName(e.target.value)}
-                      onKeyDown={(e) =>
-                        e.key === 'Enter' && saveZoneName()
-                      }
-                      className='flex-1'
-                      autoFocus
-                    />
-                    <Button
-                      type='button'
-                      size='icon'
-                      className='h-8 w-8'
-                      onClick={saveZoneName}
-                    >
-                      <Check className='w-4 h-4' />
-                    </Button>
-                  </div>
+                  <Input
+                    type='text'
+                    value={zone.name}
+                    onChange={(e) =>
+                      updateZone(zone.id, { name: e.target.value })
+                    }
+                    onBlur={() => setEditingZoneId(null)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') setEditingZoneId(null)
+                    }}
+                    autoFocus
+                    onClick={(e) => e.stopPropagation()}
+                    className='flex-1 min-w-0'
+                  />
                 ) : (
                   <>
-                    <h4 className='font-bold'>{zone.name}</h4>
-                    <Button
-                      type='button'
-                      variant='ghost'
-                      size='icon'
-                      className='h-8 w-8'
-                      onClick={() => startEditingZone(zone.id, zone.name)}
+                    <h4
+                      className='font-bold cursor-pointer hover:text-primary transition-colors flex-1 min-w-0'
+                      onClick={() => setEditingZoneId(zone.id)}
                     >
-                      <Edit2 className='w-4 h-4' />
-                    </Button>
+                      {zone.name}
+                    </h4>
+                    <span
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setEditingZoneId(zone.id)
+                      }}
+                      role='button'
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') setEditingZoneId(zone.id)
+                      }}
+                      className='p-1 hover:bg-accent rounded transition-colors cursor-pointer'
+                    >
+                      <Pencil className='w-3 h-3 text-muted-foreground' />
+                    </span>
                   </>
                 )}
+                <Button
+                  type='button'
+                  variant='ghost'
+                  size='icon'
+                  className='h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0'
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    removeZone(zone.id)
+                  }}
+                  disabled={zonesCount <= 1}
+                >
+                  <Trash2 className='w-4 h-4' />
+                </Button>
               </div>
 
               <div className='text-xs text-muted-foreground mb-3'>

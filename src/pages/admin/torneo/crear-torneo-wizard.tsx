@@ -110,7 +110,6 @@ export default function CrearTorneoWizard() {
         case 4:
           await step4Schema.parseAsync({
             zones: formData.zones,
-            zonesCount: formData.zonesCount,
             selectedTeams: formData.selectedTeams
           })
           break
@@ -135,16 +134,10 @@ export default function CrearTorneoWizard() {
 
   const handleNext = async () => {
     const isValid = await validateCurrentStep()
-    if (isValid) {
-      const zonesCount = methods.watch('zonesCount')
-      nextStep(zonesCount)
-    }
+    if (isValid) nextStep()
   }
 
-  const handlePrev = () => {
-    const zonesCount = methods.watch('zonesCount')
-    prevStep(zonesCount)
-  }
+  const handlePrev = () => prevStep()
 
   const handleStepClick = async (targetStep: number) => {
     if (targetStep === currentStep) return
