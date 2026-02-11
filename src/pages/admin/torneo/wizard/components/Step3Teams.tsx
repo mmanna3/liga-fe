@@ -1,7 +1,7 @@
-import SelectorSimple from '@/components/ykn-ui/selector-simple'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
+import SelectorSimple from '@/components/ykn-ui/selector-simple'
 import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
 import { cn } from '@/lib/utils'
 import { Search, X } from 'lucide-react'
@@ -113,37 +113,38 @@ export function Step3Teams() {
         </p>
       </div>
 
-      <div>
-        <TituloDeInput className='mb-1'>Equipos</TituloDeInput>
-        <Input
-          type='number'
-          value={data.teamCount}
-          onChange={(e) => {
-            const count = parseInt(e.target.value, 10) || 0
-            setValue('teamCount', count)
-            setValue('selectedTeams', data.selectedTeams.slice(0, count))
-          }}
-          min={2}
-          className='font-semibold w-20 h-11'
-        />
-      </div>
-
-      <div className='flex items-center gap-2'>
-        <span className='text-sm font-medium'>
-          Seleccionados: {data.selectedTeams.length} / {data.teamCount}
-        </span>
-        <div className='flex-1 h-2 bg-muted rounded-full overflow-hidden'>
-          <div
-            className={cn(
-              'h-full transition-all duration-300',
-              data.selectedTeams.length === data.teamCount
-                ? 'bg-primary'
-                : 'bg-amber-500'
-            )}
-            style={{
-              width: `${(data.selectedTeams.length / data.teamCount) * 100}%`
+      <div className='flex items-center gap-4'>
+        <div>
+          <TituloDeInput className='mb-1'>Equipos</TituloDeInput>
+          <Input
+            type='number'
+            value={data.teamCount}
+            onChange={(e) => {
+              const count = parseInt(e.target.value, 10) || 0
+              setValue('teamCount', count)
+              setValue('selectedTeams', data.selectedTeams.slice(0, count))
             }}
+            min={2}
+            className='font-semibold w-20 h-11'
           />
+        </div>
+        <div className='flex items-center gap-2 flex-1 min-w-0 mt-6'>
+          <span className='text-sm font-medium'>
+            Seleccionados: {data.selectedTeams.length} / {data.teamCount}
+          </span>
+          <div className='flex-1 h-2 bg-muted rounded-full overflow-hidden'>
+            <div
+              className={cn(
+                'h-full transition-all duration-300',
+                data.selectedTeams.length === data.teamCount
+                  ? 'bg-primary'
+                  : 'bg-amber-500'
+              )}
+              style={{
+                width: `${(data.selectedTeams.length / data.teamCount) * 100}%`
+              }}
+            />
+          </div>
         </div>
       </div>
 
