@@ -14,9 +14,18 @@ import type { TournamentWizardData } from '../types'
 import { useWizardStore } from '../use-wizard-store'
 import { BracketView } from './BracketView'
 
-export function Step6Summary() {
+interface Step6SummaryProps {
+  onEditStep?: (step: number) => void
+}
+
+export function Step6Summary({ onEditStep }: Step6SummaryProps) {
   const { watch, setValue } = useFormContext<TournamentWizardData>()
   const { goToStep } = useWizardStore()
+
+  const handleEditStep = (step: number) => {
+    if (onEditStep) onEditStep(step)
+    else goToStep(step)
+  }
 
   const data = {
     name: watch('name'),
@@ -82,7 +91,7 @@ export function Step6Summary() {
             variant='ghost'
             size='icon'
             className='h-8 w-8'
-            onClick={() => goToStep(1)}
+            onClick={() => handleEditStep(1)}
           >
             <Edit className='w-4 h-4' />
           </Button>
@@ -135,7 +144,7 @@ export function Step6Summary() {
               variant='ghost'
               size='icon'
               className='h-8 w-8'
-              onClick={() => goToStep(2)}
+              onClick={() => handleEditStep(2)}
             >
               <Edit className='w-4 h-4' />
             </Button>
@@ -177,7 +186,7 @@ export function Step6Summary() {
             variant='ghost'
             size='icon'
             className='h-8 w-8'
-            onClick={() => goToStep(3)}
+            onClick={() => handleEditStep(3)}
           >
             <Edit className='w-4 h-4' />
           </Button>
@@ -229,7 +238,7 @@ export function Step6Summary() {
               variant='ghost'
               size='icon'
               className='h-8 w-8'
-              onClick={() => goToStep(4)}
+              onClick={() => handleEditStep(4)}
             >
               <Edit className='w-4 h-4' />
             </Button>
@@ -282,7 +291,7 @@ export function Step6Summary() {
             variant='ghost'
             size='icon'
             className='h-8 w-8'
-            onClick={() => goToStep(5)}
+            onClick={() => handleEditStep(5)}
           >
             <Edit className='w-4 h-4' />
           </Button>
@@ -327,7 +336,7 @@ export function Step6Summary() {
                   <p className='text-xs text-muted-foreground mb-2'>
                     Es necesario generar el fixture antes de crear el torneo.
                   </p>
-                  <Button type='button' size='sm' onClick={() => goToStep(5)}>
+                  <Button type='button' size='sm' onClick={() => handleEditStep(5)}>
                     <Target className='w-3 h-3' />
                     Ir al paso 5 para generar fixture
                   </Button>

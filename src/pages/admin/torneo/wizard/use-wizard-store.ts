@@ -3,16 +3,20 @@ import { create } from 'zustand'
 interface WizardStore {
   currentStep: number
   maxStepReached: number
+  /** Paso al que se navegó desde el resumen (6) para editar. null si no viene del resumen. */
+  editingFromSummaryStep: number | null
   setCurrentStep: (step: number) => void
   nextStep: () => void
   prevStep: () => void
   goToStep: (step: number) => void
+  setEditingFromSummaryStep: (step: number | null) => void
   resetWizard: () => void
 }
 
 export const useWizardStore = create<WizardStore>((set, get) => ({
   currentStep: 1,
   maxStepReached: 1,
+  editingFromSummaryStep: null,
 
   setCurrentStep: (step: number) => {
     set({ currentStep: step })
@@ -39,7 +43,11 @@ export const useWizardStore = create<WizardStore>((set, get) => ({
     set({ currentStep: step })
   },
 
+  setEditingFromSummaryStep: (step: number | null) => {
+    set({ editingFromSummaryStep: step })
+  },
+
   resetWizard: () => {
-    set({ currentStep: 1, maxStepReached: 1 })
+    set({ currentStep: 1, maxStepReached: 1, editingFromSummaryStep: null })
   }
 }))

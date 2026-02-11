@@ -1,6 +1,16 @@
 import { api } from '@/api/api'
 import { TorneoDTO } from '@/api/clients'
 import useApiMutation from '@/api/custom-hooks/use-api-mutation'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -13,6 +23,7 @@ import { Boton } from '@/components/ykn-ui/boton'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
 import { rutasNavegacion } from '@/routes/rutas'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -60,10 +71,88 @@ const initialData: TournamentWizardData = {
   status: 'draft'
 }
 
+/** Extrae los datos relevantes de un paso para comparación/snapshot */
+function getStepData(data: TournamentWizardData, step: number): unknown {
+  switch (step) {
+    case 1:
+      return {
+        name: data.name,
+        season: data.season,
+        type: data.type,
+        categories: data.categories,
+        format: data.format
+      }
+    case 2:
+      return { phases: data.phases }
+    case 3:
+      return {
+        teamCount: data.teamCount,
+        selectedTeams: data.selectedTeams,
+        searchMode: data.searchMode,
+        filterTournament: data.filterTournament,
+        filterZone: data.filterZone
+      }
+    case 4:
+      return { zones: data.zones, preventSameClub: data.preventSameClub }
+    case 5:
+      return {
+        hasFreeBye: data.hasFreeBye,
+        hasInterzonal: data.hasInterzonal,
+        fixtureGenerated: data.fixtureGenerated,
+        numberOfDates: data.numberOfDates,
+        preventClubClash: data.preventClubClash
+      }
+    default:
+      return null
+  }
+}
+
+/** Valores por defecto para limpiar los pasos posteriores a `step` */
+function getDefaultsForStepsAfter(step: number): Partial<TournamentWizardData> {
+  const base = {
+    currentPhaseIndex: 0,
+    teamCount: 16,
+    selectedTeams: [] as TournamentWizardData['selectedTeams'],
+    searchMode: 'name' as const,
+    filterTournament: '',
+    filterZone: '',
+    zones: [] as TournamentWizardData['zones'],
+    zonesCount: 1,
+    preventSameClub: false,
+    hasFreeBye: false,
+    hasInterzonal: false,
+    fixtureGenerated: false,
+    numberOfDates: 0,
+    preventClubClash: false
+  }
+  if (step <= 1) return { ...base, phases: [] }
+  if (step <= 2) return base
+  if (step <= 3) return { zones: base.zones, zonesCount: base.zonesCount, preventSameClub: base.preventSameClub, hasFreeBye: base.hasFreeBye, hasInterzonal: base.hasInterzonal, fixtureGenerated: base.fixtureGenerated, numberOfDates: base.numberOfDates, preventClubClash: base.preventClubClash }
+  if (step <= 4) return { hasFreeBye: base.hasFreeBye, hasInterzonal: base.hasInterzonal, fixtureGenerated: base.fixtureGenerated, numberOfDates: base.numberOfDates, preventClubClash: base.preventClubClash }
+  return {}
+}
+
 export default function CrearTorneoWizard() {
   const navigate = useNavigate()
-  const { currentStep, maxStepReached, nextStep, prevStep, goToStep } =
-    useWizardStore()
+  const [confirmacionLimpiarAbierta, setConfirmacionLimpiarAbierta] =
+    useState(false)
+  const pendienteAccionRef = useRef<
+    | { tipo: 'next' }
+    | { tipo: 'step'; targetStep: number }
+    | null
+  >(null)
+
+  const {
+    currentStep,
+    maxStepReached,
+    nextStep,
+    prevStep,
+    goToStep,
+    editingFromSummaryStep,
+    setEditingFromSummaryStep
+  } = useWizardStore()
+
+  const stepSnapshotRef = useRef<unknown>(null)
 
   const methods = useForm<TournamentWizardData>({
     defaultValues: initialData,
@@ -147,9 +236,62 @@ export default function CrearTorneoWizard() {
     }
   }
 
+  const onEditStep = (step: number) => {
+    const formData = methods.getValues()
+    stepSnapshotRef.current = getStepData(formData, step)
+    setEditingFromSummaryStep(step)
+    goToStep(step)
+  }
+
+  const debeMostrarConfirmacionLimpiar = () => {
+    if (editingFromSummaryStep === null || editingFromSummaryStep !== currentStep)
+      return false
+    const formData = methods.getValues()
+    const actual = getStepData(formData, currentStep)
+    const snapshot = stepSnapshotRef.current
+    return JSON.stringify(actual) !== JSON.stringify(snapshot)
+  }
+
+  const aplicarRevertirCambios = () => {
+    const snapshot = stepSnapshotRef.current as Record<string, unknown>
+    if (!snapshot) return
+    const current = methods.getValues()
+    const nuevosValores = { ...current }
+    if (currentStep === 1) {
+      Object.assign(nuevosValores, snapshot)
+    } else if (currentStep === 2) {
+      nuevosValores.phases = snapshot.phases as TournamentWizardData['phases']
+    } else if (currentStep === 3) {
+      Object.assign(nuevosValores, snapshot)
+    } else if (currentStep === 4) {
+      nuevosValores.zones = snapshot.zones as TournamentWizardData['zones']
+      nuevosValores.preventSameClub = snapshot.preventSameClub as boolean
+    } else if (currentStep === 5) {
+      Object.assign(nuevosValores, snapshot)
+    }
+    methods.reset(nuevosValores)
+    setEditingFromSummaryStep(null)
+    stepSnapshotRef.current = null
+  }
+
+  const aplicarConfirmarYLimpiar = () => {
+    const defaults = getDefaultsForStepsAfter(currentStep)
+    const current = methods.getValues()
+    methods.reset({ ...current, ...defaults })
+    setEditingFromSummaryStep(null)
+    stepSnapshotRef.current = null
+  }
+
   const handleNext = async () => {
     const isValid = await validateCurrentStep()
-    if (isValid) nextStep()
+    if (!isValid) return
+
+    if (debeMostrarConfirmacionLimpiar()) {
+      pendienteAccionRef.current = { tipo: 'next' }
+      setConfirmacionLimpiarAbierta(true)
+      return
+    }
+    nextStep()
   }
 
   const handlePrev = () => prevStep()
@@ -168,7 +310,29 @@ export default function CrearTorneoWizard() {
       )
       return
     }
+
+    if (debeMostrarConfirmacionLimpiar()) {
+      pendienteAccionRef.current = { tipo: 'step', targetStep }
+      setConfirmacionLimpiarAbierta(true)
+      return
+    }
     goToStep(targetStep)
+  }
+
+  const handleRevertirCambios = () => {
+    aplicarRevertirCambios()
+    setConfirmacionLimpiarAbierta(false)
+    pendienteAccionRef.current = null
+  }
+
+  const handleConfirmarYLimpiar = () => {
+    aplicarConfirmarYLimpiar()
+    setConfirmacionLimpiarAbierta(false)
+    const pendiente = pendienteAccionRef.current
+    pendienteAccionRef.current = null
+    if (pendiente?.tipo === 'next') nextStep()
+    else if (pendiente?.tipo === 'step')
+      goToStep(pendiente.targetStep)
   }
 
   const handleSubmit = methods.handleSubmit((data) => {
@@ -211,8 +375,36 @@ export default function CrearTorneoWizard() {
             {currentStep === 3 && <Step3Teams />}
             {currentStep === 4 && <Step4Zones />}
             {currentStep === 5 && <Step5Fixture />}
-            {currentStep === 6 && <Step6Summary />}
+            {currentStep === 6 && (
+              <Step6Summary onEditStep={onEditStep} />
+            )}
           </div>
+
+          <AlertDialog
+            open={confirmacionLimpiarAbierta}
+            onOpenChange={(open) => {
+              if (!open) pendienteAccionRef.current = null
+              setConfirmacionLimpiarAbierta(open)
+            }}
+          >
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Cambios detectados</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Realizaste cambios en este paso y por lo tanto todos los
+                  pasos siguientes se limpiarán.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={handleRevertirCambios}>
+                  Revertir cambios
+                </AlertDialogCancel>
+                <AlertDialogAction onClick={handleConfirmarYLimpiar}>
+                  Confirmar cambios y limpiar pasos siguientes
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
 
           <div className='flex justify-between pt-4 border-t'>
             {currentStep === 1 ? (
