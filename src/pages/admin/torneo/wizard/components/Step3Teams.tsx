@@ -1,13 +1,14 @@
-import { useState } from 'react'
-import { Search, X } from 'lucide-react'
-import { useFormContext } from 'react-hook-form'
-import type { TournamentWizardData, WizardTeam } from '../types'
-import { mockTeams } from '../data/mock-teams'
-import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
+import SelectorSimple from '@/components/ykn-ui/selector-simple'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
+import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
 import { cn } from '@/lib/utils'
+import { Search, X } from 'lucide-react'
+import { useState } from 'react'
+import { useFormContext } from 'react-hook-form'
+import { mockTeams } from '../data/mock-teams'
+import type { TournamentWizardData, WizardTeam } from '../types'
 
 export function Step3Teams() {
   const {
@@ -95,8 +96,6 @@ export function Step3Teams() {
     }
   }
 
-  const isOdd = data.teamCount % 2 !== 0
-
   return (
     <div className='space-y-4'>
       <div className='bg-muted rounded-lg p-4'>
@@ -115,9 +114,9 @@ export function Step3Teams() {
         </p>
       </div>
 
-      <div className='flex items-start justify-between gap-4 flex-wrap'>
-        <div className='w-32'>
-          <TituloDeInput className='mb-1'>Cantidad equipos</TituloDeInput>
+      <div className='flex items-start gap-4'>
+        <div>
+          <TituloDeInput className='mb-1'>Equipos</TituloDeInput>
           <Input
             type='number'
             value={data.teamCount}
@@ -127,14 +126,11 @@ export function Step3Teams() {
               setValue('selectedTeams', data.selectedTeams.slice(0, count))
             }}
             min={2}
-            className='text-center font-semibold'
+            className='font-semibold w-20 h-11'
           />
-          {isOdd && (
-            <p className='text-xs text-amber-600 mt-1'>Impar</p>
-          )}
         </div>
         <div className='w-32'>
-          <TituloDeInput className='mb-1'>Cantidad zonas</TituloDeInput>
+          <TituloDeInput className='mb-1'>Zonas</TituloDeInput>
           <Input
             type='number'
             value={data.zonesCount}
@@ -143,15 +139,8 @@ export function Step3Teams() {
               setValue('zonesCount', count)
             }}
             min={1}
-            className='text-center font-semibold'
+            className='font-semibold w-20 h-11'
           />
-        </div>
-
-        <div className='flex-1'>
-          <h3 className='text-base font-semibold mb-1'>Equipos</h3>
-          <p className='text-muted-foreground text-sm mb-3'>
-            Selecciona los equipos que participarán en el torneo
-          </p>
         </div>
       </div>
 
@@ -207,26 +196,17 @@ export function Step3Teams() {
 
       <div>
         <TituloDeInput>Búsqueda de equipo</TituloDeInput>
-        <div className='flex gap-3 mb-4'>
-          <Button
-            type='button'
-            variant={data.searchMode === 'name' ? 'default' : 'secondary'}
-            className='flex-1'
-            onClick={() => setValue('searchMode', 'name')}
-          >
-            Por Nombre/Código
-          </Button>
-          <Button
-            type='button'
-            variant={
-              data.searchMode === 'tournament' ? 'default' : 'secondary'
-            }
-            className='flex-1'
-            onClick={() => setValue('searchMode', 'tournament')}
-          >
-            Desde otro torneo
-          </Button>
-        </div>
+        <SelectorSimple
+          opciones={[
+            { id: 'name', texto: 'Por Nombre/Código' },
+            { id: 'tournament', texto: 'Desde otro torneo' }
+          ]}
+          valorActual={data.searchMode}
+          alElegirOpcion={(id) =>
+            setValue('searchMode', id as TournamentWizardData['searchMode'])
+          }
+          className='mb-4'
+        />
 
         <div className='relative mb-4'>
           <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground' />
@@ -295,7 +275,10 @@ export function Step3Teams() {
                   checked={selectAll}
                   onCheckedChange={() => handleSelectAll()}
                 />
-                <TituloDeInput htmlFor='select-all' className='mb-0 text-xs cursor-pointer'>
+                <TituloDeInput
+                  htmlFor='select-all'
+                  className='mb-0 text-xs cursor-pointer'
+                >
                   {selectAll ? 'Deseleccionar todos' : 'Seleccionar todos'}
                 </TituloDeInput>
               </div>
@@ -364,9 +347,7 @@ export function Step3Teams() {
                         type='button'
                         size='sm'
                         onClick={() => handleSelectTeam(team)}
-                        disabled={
-                          data.selectedTeams.length >= data.teamCount
-                        }
+                        disabled={data.selectedTeams.length >= data.teamCount}
                       >
                         Seleccionar
                       </Button>

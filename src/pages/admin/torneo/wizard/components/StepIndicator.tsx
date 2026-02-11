@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils'
 
 interface StepIndicatorProps {
   currentStep: number
+  maxStepReached?: number
   totalSteps: number
   onStepClick?: (step: number) => void
 }
@@ -18,6 +19,7 @@ const steps = [
 
 export function StepIndicator({
   currentStep,
+  maxStepReached = 6,
   totalSteps,
   onStepClick
 }: StepIndicatorProps) {
@@ -30,7 +32,10 @@ export function StepIndicator({
               <button
                 type='button'
                 onClick={() => onStepClick?.(step.number)}
-                disabled={!onStepClick}
+                disabled={
+                  !onStepClick ||
+                  (step.number > currentStep && step.number > maxStepReached)
+                }
                 className={cn(
                   'w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all',
                   currentStep > step.number &&
@@ -39,6 +44,11 @@ export function StepIndicator({
                     'bg-primary text-primary-foreground ring-2 ring-primary/20',
                   currentStep < step.number &&
                     'bg-muted text-muted-foreground hover:bg-muted/80 cursor-pointer',
+                  step.number > currentStep &&
+                    step.number <= maxStepReached &&
+                    'bg-muted text-muted-foreground hover:bg-muted/80 cursor-pointer',
+                  step.number > maxStepReached &&
+                    'bg-muted text-muted-foreground cursor-not-allowed opacity-60',
                   !onStepClick && 'cursor-default',
                   'disabled:cursor-not-allowed'
                 )}

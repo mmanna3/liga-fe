@@ -61,7 +61,8 @@ const initialData: TournamentWizardData = {
 
 export default function CrearTorneoWizard() {
   const navigate = useNavigate()
-  const { currentStep, nextStep, prevStep, goToStep } = useWizardStore()
+  const { currentStep, maxStepReached, nextStep, prevStep, goToStep } =
+    useWizardStore()
 
   const methods = useForm<TournamentWizardData>({
     defaultValues: initialData,
@@ -145,6 +146,23 @@ export default function CrearTorneoWizard() {
     prevStep(zonesCount)
   }
 
+  const handleStepClick = async (targetStep: number) => {
+    if (targetStep === currentStep) return
+    if (targetStep < currentStep) {
+      goToStep(targetStep)
+      return
+    }
+    const isValid = await validateCurrentStep()
+    if (!isValid) return
+    if (targetStep > maxStepReached) {
+      toast.error(
+        'Completa el paso actual y avanza con "Siguiente" para desbloquear más pasos'
+      )
+      return
+    }
+    goToStep(targetStep)
+  }
+
   const handleSubmit = methods.handleSubmit((data) => {
     const nombre =
       data.name || `Torneo ${data.season} - ${data.type || 'General'}`
@@ -166,8 +184,9 @@ export default function CrearTorneoWizard() {
         <CardContent className='space-y-6'>
           <StepIndicator
             currentStep={currentStep}
+            maxStepReached={maxStepReached}
             totalSteps={6}
-            onStepClick={goToStep}
+            onStepClick={handleStepClick}
           />
 
           <div>
