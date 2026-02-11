@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Wand2, Calendar as CalendarIcon, GripVertical } from 'lucide-react'
+import { useFormContext } from 'react-hook-form'
 import type { TournamentWizardData, WizardTeam } from '../types'
 import { BracketView } from './BracketView'
 import {
@@ -32,15 +33,25 @@ interface DateConfig {
   realDate?: Date
 }
 
-interface Step5FixtureProps {
-  data: TournamentWizardData
-  updateData: (field: Partial<TournamentWizardData>) => void
-}
-
-export function Step5Fixture({ data, updateData }: Step5FixtureProps) {
+export function Step5Fixture() {
+  const { watch, setValue } = useFormContext<TournamentWizardData>()
   const [matches, setMatches] = useState<Match[]>([])
   const [dateConfigs, setDateConfigs] = useState<DateConfig[]>([])
   const [draggedMatch, setDraggedMatch] = useState<Match | null>(null)
+
+  const data = {
+    name: watch('name'),
+    phases: watch('phases'),
+    currentPhaseIndex: watch('currentPhaseIndex'),
+    selectedTeams: watch('selectedTeams'),
+    numberOfDates: watch('numberOfDates'),
+    hasFreeBye: watch('hasFreeBye'),
+    hasInterzonal: watch('hasInterzonal'),
+    zonesCount: watch('zonesCount'),
+    preventClubClash: watch('preventClubClash'),
+    fixtureGenerated: watch('fixtureGenerated'),
+    zones: watch('zones')
+  }
 
   const currentPhase = data.phases[data.currentPhaseIndex]
   const isElimination = currentPhase?.format === 'elimination'
@@ -48,7 +59,7 @@ export function Step5Fixture({ data, updateData }: Step5FixtureProps) {
 
   useEffect(() => {
     if (data.numberOfDates === 0 && isAllVsAll) {
-      updateData({ numberOfDates: 14 })
+      setValue('numberOfDates', 14)
     }
   }, [isAllVsAll])
 
@@ -58,7 +69,7 @@ export function Step5Fixture({ data, updateData }: Step5FixtureProps) {
     } else {
       autogenerateAllVsAll()
     }
-    updateData({ fixtureGenerated: true })
+    setValue('fixtureGenerated', true)
   }
 
   const autogenerateElimination = () => {
@@ -295,9 +306,7 @@ export function Step5Fixture({ data, updateData }: Step5FixtureProps) {
                 type='number'
                 value={data.numberOfDates}
                 onChange={(e) =>
-                  updateData({
-                    numberOfDates: parseInt(e.target.value, 10) || 0
-                  })
+                  setValue('numberOfDates', parseInt(e.target.value, 10) || 0)
                 }
                 min={1}
                 placeholder='Ej: 14'
@@ -311,7 +320,7 @@ export function Step5Fixture({ data, updateData }: Step5FixtureProps) {
                 id='free-bye'
                 checked={data.hasFreeBye}
                 onCheckedChange={(checked) =>
-                  updateData({ hasFreeBye: checked === true })
+                  setValue('hasFreeBye', checked === true)
                 }
               />
               <Label htmlFor='free-bye' className='cursor-pointer'>
@@ -326,7 +335,7 @@ export function Step5Fixture({ data, updateData }: Step5FixtureProps) {
                     id='interzonal'
                     checked={data.hasInterzonal}
                     onCheckedChange={(checked) =>
-                      updateData({ hasInterzonal: checked === true })
+                      setValue('hasInterzonal', checked === true)
                     }
                     disabled={data.zonesCount <= 1}
                   />
@@ -351,7 +360,7 @@ export function Step5Fixture({ data, updateData }: Step5FixtureProps) {
                     id='prevent-club-clash'
                     checked={data.preventClubClash}
                     onCheckedChange={(checked) =>
-                      updateData({ preventClubClash: checked === true })
+                      setValue('preventClubClash', checked === true)
                     }
                   />
                   <Label

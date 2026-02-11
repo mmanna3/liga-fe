@@ -7,24 +7,34 @@ import {
   Target,
   Edit
 } from 'lucide-react'
+import { useFormContext } from 'react-hook-form'
+import { useWizardStore } from '../use-wizard-store'
 import type { TournamentWizardData } from '../types'
 import { BracketView } from './BracketView'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
-interface Step6SummaryProps {
-  data: TournamentWizardData
-  updateData: (field: Partial<TournamentWizardData>) => void
-  goToStep: (step: number) => void
-}
+export function Step6Summary() {
+  const { watch, setValue } = useFormContext<TournamentWizardData>()
+  const { goToStep } = useWizardStore()
 
-export function Step6Summary({
-  data,
-  updateData,
-  goToStep
-}: Step6SummaryProps) {
-  const currentPhase =
-    data.phases[data.currentPhaseIndex] ?? data.phases[0]
+  const data = {
+    name: watch('name'),
+    season: watch('season'),
+    type: watch('type'),
+    categories: watch('categories'),
+    phases: watch('phases'),
+    currentPhaseIndex: watch('currentPhaseIndex'),
+    selectedTeams: watch('selectedTeams'),
+    zones: watch('zones'),
+    preventSameClub: watch('preventSameClub'),
+    fixtureGenerated: watch('fixtureGenerated'),
+    hasFreeBye: watch('hasFreeBye'),
+    hasInterzonal: watch('hasInterzonal'),
+    status: watch('status')
+  }
+
+  const currentPhase = data.phases[data.currentPhaseIndex] ?? data.phases[0]
   const phaseName = currentPhase?.name ?? 'Fase 1'
 
   const typeLabels: Record<string, string> = {
@@ -350,7 +360,7 @@ export function Step6Summary({
         <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
           <button
             type='button'
-            onClick={() => updateData({ status: 'draft' })}
+            onClick={() => setValue('status', 'draft')}
             className={cn(
               'px-6 py-4 rounded-xl font-semibold transition-all text-center',
               data.status === 'draft'
@@ -365,7 +375,7 @@ export function Step6Summary({
           </button>
           <button
             type='button'
-            onClick={() => updateData({ status: 'published' })}
+            onClick={() => setValue('status', 'published')}
             className={cn(
               'px-6 py-4 rounded-xl font-semibold transition-all text-center',
               data.status === 'published'

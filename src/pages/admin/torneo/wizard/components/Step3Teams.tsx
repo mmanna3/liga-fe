@@ -1,19 +1,28 @@
 import { useState } from 'react'
 import { Search, X } from 'lucide-react'
+import { useFormContext } from 'react-hook-form'
 import type { TournamentWizardData, WizardTeam } from '../types'
 import { mockTeams } from '../data/mock-teams'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-interface Step3TeamsProps {
-  data: TournamentWizardData
-  updateData: (field: Partial<TournamentWizardData>) => void
-}
 
-export function Step3Teams({ data, updateData }: Step3TeamsProps) {
+export function Step3Teams() {
+  const { watch, setValue } = useFormContext<TournamentWizardData>()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectAll, setSelectAll] = useState(false)
+
+  const data = {
+    name: watch('name'),
+    phases: watch('phases'),
+    teamCount: watch('teamCount'),
+    selectedTeams: watch('selectedTeams'),
+    searchMode: watch('searchMode'),
+    filterTournament: watch('filterTournament'),
+    filterZone: watch('filterZone'),
+    zonesCount: watch('zonesCount')
+  }
 
   const currentPhase = data.phases[0]
 
@@ -23,7 +32,9 @@ export function Step3Teams({ data, updateData }: Step3TeamsProps) {
   }
 
   const handleFilterChange = (field: Partial<TournamentWizardData>) => {
-    updateData(field)
+    Object.entries(field).forEach(([key, value]) => {
+      setValue(key as keyof TournamentWizardData, value)
+    })
     setSelectAll(false)
   }
 
@@ -57,14 +68,15 @@ export function Step3Teams({ data, updateData }: Step3TeamsProps) {
 
   const handleSelectTeam = (team: WizardTeam) => {
     if (data.selectedTeams.length < data.teamCount) {
-      updateData({ selectedTeams: [...data.selectedTeams, team] })
+      setValue('selectedTeams', [...data.selectedTeams, team])
     }
   }
 
   const handleRemoveTeam = (teamId: number) => {
-    updateData({
-      selectedTeams: data.selectedTeams.filter((t) => t.id !== teamId)
-    })
+    setValue(
+      'selectedTeams',
+      data.selectedTeams.filter((t) => t.id !== teamId)
+    )
   }
 
   const handleSelectAll = () => {
@@ -73,7 +85,7 @@ export function Step3Teams({ data, updateData }: Step3TeamsProps) {
     } else {
       const remaining = data.teamCount - data.selectedTeams.length
       const teamsToAdd = filteredTeams.slice(0, remaining)
-      updateData({ selectedTeams: [...data.selectedTeams, ...teamsToAdd] })
+      setValue('selectedTeams', [...data.selectedTeams, ...teamsToAdd])
       setSelectAll(true)
     }
   }
@@ -106,10 +118,8 @@ export function Step3Teams({ data, updateData }: Step3TeamsProps) {
             value={data.teamCount}
             onChange={(e) => {
               const count = parseInt(e.target.value, 10) || 0
-              updateData({
-                teamCount: count,
-                selectedTeams: data.selectedTeams.slice(0, count)
-              })
+              setValue('teamCount', count)
+              setValue('selectedTeams', data.selectedTeams.slice(0, count))
             }}
             min={2}
             className='text-center font-semibold'
@@ -125,7 +135,7 @@ export function Step3Teams({ data, updateData }: Step3TeamsProps) {
             value={data.zonesCount}
             onChange={(e) => {
               const count = Math.max(1, parseInt(e.target.value, 10) || 1)
-              updateData({ zonesCount: count })
+              setValue('zonesCount', count)
             }}
             min={1}
             className='text-center font-semibold'
@@ -184,7 +194,7 @@ export function Step3Teams({ data, updateData }: Step3TeamsProps) {
             type='button'
             variant={data.searchMode === 'name' ? 'default' : 'secondary'}
             className='flex-1'
-            onClick={() => updateData({ searchMode: 'name' })}
+            onClick={() => setValue('searchMode', 'name')}
           >
             Por Nombre/Código
           </Button>
@@ -194,7 +204,7 @@ export function Step3Teams({ data, updateData }: Step3TeamsProps) {
               data.searchMode === 'tournament' ? 'default' : 'secondary'
             }
             className='flex-1'
-            onClick={() => updateData({ searchMode: 'tournament' })}
+            onClick={() => setValue('searchMode', 'tournament')}
           >
             Desde otro torneo
           </Button>

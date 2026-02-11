@@ -5,17 +5,22 @@ import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import { CalendarRange, Globe, Plus, Settings, X, Zap } from 'lucide-react'
 import { useState } from 'react'
+import { useFormContext } from 'react-hook-form'
 import type { Category, TournamentWizardData } from '../types'
 
-interface Step1InformationProps {
-  data: TournamentWizardData
-  updateData: (field: Partial<TournamentWizardData>) => void
-}
-
-export function Step1Information({ data, updateData }: Step1InformationProps) {
+export function Step1Information() {
+  const { watch, setValue } = useFormContext<TournamentWizardData>()
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
     null
   )
+
+  const data = {
+    name: watch('name'),
+    season: watch('season'),
+    type: watch('type'),
+    categories: watch('categories'),
+    format: watch('format')
+  }
 
   const addCategory = () => {
     const newCategory: Category = {
@@ -24,23 +29,25 @@ export function Step1Information({ data, updateData }: Step1InformationProps) {
       yearFrom: '',
       yearTo: ''
     }
-    updateData({ categories: [...data.categories, newCategory] })
+    setValue('categories', [...data.categories, newCategory])
     setEditingCategoryId(newCategory.id)
   }
 
   const removeCategory = (id: string) => {
-    updateData({ categories: data.categories.filter((c) => c.id !== id) })
+    setValue(
+      'categories',
+      data.categories.filter((c) => c.id !== id)
+    )
     if (editingCategoryId === id) {
       setEditingCategoryId(null)
     }
   }
 
   const updateCategory = (id: string, field: Partial<Category>) => {
-    updateData({
-      categories: data.categories.map((c) =>
-        c.id === id ? { ...c, ...field } : c
-      )
-    })
+    setValue(
+      'categories',
+      data.categories.map((c) => (c.id === id ? { ...c, ...field } : c))
+    )
   }
 
   const handleCategoryClick = (id: string) => {
@@ -63,7 +70,7 @@ export function Step1Information({ data, updateData }: Step1InformationProps) {
           <Input
             type='text'
             value={data.name}
-            onChange={(e) => updateData({ name: e.target.value })}
+            onChange={(e) => setValue('name', e.target.value)}
             placeholder='Ej: Torneo Clausura 2026'
           />
         </div>
@@ -72,7 +79,7 @@ export function Step1Information({ data, updateData }: Step1InformationProps) {
           <Input
             type='number'
             value={data.season}
-            onChange={(e) => updateData({ season: e.target.value })}
+            onChange={(e) => setValue('season', e.target.value)}
             placeholder='2026'
           />
         </div>
@@ -86,7 +93,7 @@ export function Step1Information({ data, updateData }: Step1InformationProps) {
               key={type}
               type='button'
               onClick={() =>
-                updateData({ type: type as TournamentWizardData['type'] })
+                setValue('type', type as TournamentWizardData['type'])
               }
               className={cn(
                 'rounded-lg transition-all border-2 flex items-center justify-center py-2 px-3',
@@ -204,9 +211,7 @@ export function Step1Information({ data, updateData }: Step1InformationProps) {
               key={format.id}
               type='button'
               onClick={() =>
-                updateData({
-                  format: format.id as TournamentWizardData['format']
-                })
+                setValue('format', format.id as TournamentWizardData['format'])
               }
               className={cn(
                 'aspect-square rounded-lg transition-all border-2 flex flex-col items-center justify-center gap-2 p-3',

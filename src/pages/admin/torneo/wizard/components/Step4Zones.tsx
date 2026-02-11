@@ -1,23 +1,31 @@
 import { useState, useEffect } from 'react'
 import { Shuffle, Edit2, Check } from 'lucide-react'
 import { toast } from 'sonner'
+import { useFormContext } from 'react-hook-form'
 import type { TournamentWizardData, Zone, WizardTeam } from '../types'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-interface Step4ZonesProps {
-  data: TournamentWizardData
-  updateData: (field: Partial<TournamentWizardData>) => void
-}
 
-export function Step4Zones({ data, updateData }: Step4ZonesProps) {
+export function Step4Zones() {
+  const { watch, setValue } = useFormContext<TournamentWizardData>()
   const [editingZoneId, setEditingZoneId] = useState<string | null>(null)
   const [editingName, setEditingName] = useState('')
   const [draggedTeam, setDraggedTeam] = useState<{
     team: WizardTeam
     fromZoneId: string
   } | null>(null)
+
+  const data = {
+    name: watch('name'),
+    phases: watch('phases'),
+    currentPhaseIndex: watch('currentPhaseIndex'),
+    selectedTeams: watch('selectedTeams'),
+    zonesCount: watch('zonesCount'),
+    zones: watch('zones'),
+    preventSameClub: watch('preventSameClub')
+  }
 
   const currentPhase = data.phases[data.currentPhaseIndex]
 
@@ -40,7 +48,7 @@ export function Step4Zones({ data, updateData }: Step4ZonesProps) {
       })
     }
 
-    updateData({ zones })
+    setValue('zones', zones)
   }
 
   const randomizeTeams = () => {
@@ -66,7 +74,7 @@ export function Step4Zones({ data, updateData }: Step4ZonesProps) {
       return { ...zone, teams: zoneTeams }
     })
 
-    updateData({ zones: newZones })
+    setValue('zones', newZones)
   }
 
   const handleDragStart = (team: WizardTeam, zoneId: string) => {
@@ -105,7 +113,7 @@ export function Step4Zones({ data, updateData }: Step4ZonesProps) {
       return zone
     })
 
-    updateData({ zones: newZones })
+    setValue('zones', newZones)
     setDraggedTeam(null)
   }
 
@@ -119,7 +127,7 @@ export function Step4Zones({ data, updateData }: Step4ZonesProps) {
       const newZones = data.zones.map((zone) =>
         zone.id === editingZoneId ? { ...zone, name: editingName } : zone
       )
-      updateData({ zones: newZones })
+      setValue('zones', newZones)
       setEditingZoneId(null)
     }
   }
@@ -143,7 +151,7 @@ export function Step4Zones({ data, updateData }: Step4ZonesProps) {
       return { ...zone, teams: zoneTeams }
     })
 
-    updateData({ zones: newZones })
+    setValue('zones', newZones)
   }
 
   return (
@@ -187,7 +195,7 @@ export function Step4Zones({ data, updateData }: Step4ZonesProps) {
               id='prevent-same-club'
               checked={data.preventSameClub}
               onCheckedChange={(checked) =>
-                updateData({ preventSameClub: checked === true })
+                setValue('preventSameClub', checked === true)
               }
             />
             <Label htmlFor='prevent-same-club' className='cursor-pointer'>

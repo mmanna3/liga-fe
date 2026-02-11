@@ -7,6 +7,7 @@ import {
   Pencil
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { useFormContext } from 'react-hook-form'
 import type { TournamentWizardData, Phase } from '../types'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -14,18 +15,21 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 
-interface Step2PhasesProps {
-  data: TournamentWizardData
-  updateData: (field: Partial<TournamentWizardData>) => void
-}
-
-export function Step2Phases({ data, updateData }: Step2PhasesProps) {
+export function Step2Phases() {
+  const { watch, setValue } = useFormContext<TournamentWizardData>()
   const [expandedPhase, setExpandedPhase] = useState<string | null>(null)
   const [editingPhaseName, setEditingPhaseName] = useState<string | null>(null)
   const [draggedTiebreaker, setDraggedTiebreaker] = useState<{
     phaseId: string
     index: number
   } | null>(null)
+
+  const data = {
+    format: watch('format'),
+    name: watch('name'),
+    categories: watch('categories'),
+    phases: watch('phases')
+  }
 
   useEffect(() => {
     if (data.format && data.phases.length === 0) {
@@ -81,7 +85,7 @@ export function Step2Phases({ data, updateData }: Step2PhasesProps) {
     }
 
     if (newPhases.length > 0) {
-      updateData({ phases: newPhases })
+      setValue('phases', newPhases)
       setExpandedPhase(newPhases[0].id)
     }
   }
@@ -89,13 +93,16 @@ export function Step2Phases({ data, updateData }: Step2PhasesProps) {
   const addPhase = () => {
     const phaseNumber = data.phases.length + 1
     const newPhase = createPhase(`Fase ${phaseNumber}`, 'all-vs-all')
-    updateData({ phases: [...data.phases, newPhase] })
+    setValue('phases', [...data.phases, newPhase])
     setExpandedPhase(newPhase.id)
   }
 
   const removePhase = (id: string) => {
     if (data.phases.length > 1) {
-      updateData({ phases: data.phases.filter((p) => p.id !== id) })
+      setValue(
+        'phases',
+        data.phases.filter((p) => p.id !== id)
+      )
       if (expandedPhase === id) {
         setExpandedPhase(null)
       }
@@ -103,9 +110,10 @@ export function Step2Phases({ data, updateData }: Step2PhasesProps) {
   }
 
   const updatePhase = (id: string, field: Partial<Phase>) => {
-    updateData({
-      phases: data.phases.map((p) => (p.id === id ? { ...p, ...field } : p))
-    })
+    setValue(
+      'phases',
+      data.phases.map((p) => (p.id === id ? { ...p, ...field } : p))
+    )
   }
 
   const handleDragTiebreaker = (
