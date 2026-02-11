@@ -17,7 +17,7 @@ import EliminarJugador from '@/pages/admin/jugador/eliminar-jugador'
 import Jugador from '@/pages/admin/jugador/jugador'
 import ReportesPage from '@/pages/admin/reportes'
 import ReportePagosPage from '@/pages/admin/reportes/pagos'
-import CrearTorneo from '@/pages/admin/torneo/crear-torneo'
+import CrearTorneoWizard from '@/pages/admin/torneo/crear-torneo-wizard'
 import DetalleTorneo from '@/pages/admin/torneo/detalle-torneo'
 import Torneo from '@/pages/admin/torneo/torneo'
 import ErrorPage from '@/pages/error'
@@ -121,7 +121,7 @@ export const mapaRutasComponentes = [
         element: <CambiarEstado />
       },
       { path: rutas.torneos, element: <Torneo /> },
-      { path: rutas.crearTorneo, element: <CrearTorneo /> },
+      { path: rutas.crearTorneo, element: <CrearTorneoWizard /> },
       { path: `${rutas.detalleTorneo}/:id`, element: <DetalleTorneo /> },
       { path: rutas.reportes, element: <ReportesPage /> },
       { path: rutas.reportePagos, element: <ReportePagosPage /> },

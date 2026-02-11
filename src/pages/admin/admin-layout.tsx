@@ -143,7 +143,7 @@ export default function AdminLayout() {
 
       {/* Contenido de la página */}
       <main className='flex-1 w-full p-6 bg-slate-100 flex justify-center'>
-        <div className='w-full max-w-4xl mx-auto'>
+        <div className='w-full max-w-7xl mx-auto'>
           <Outlet />
         </div>
       </main>
