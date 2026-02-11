@@ -1,21 +1,21 @@
-import { useState, useEffect } from 'react'
-import { Wand2, Calendar as CalendarIcon, GripVertical } from 'lucide-react'
-import { useFormContext } from 'react-hook-form'
-import type { TournamentWizardData, WizardTeam } from '../types'
-import { BracketView } from './BracketView'
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
+import { Input } from '@/components/ui/input'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover'
-import { Calendar } from '@/components/ui/calendar'
+import CajitaConTick from '@/components/ykn-ui/cajita-con-tick'
 import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { Calendar as CalendarIcon, GripVertical, Wand2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
+import type { TournamentWizardData, WizardTeam } from '../types'
+import { BracketView } from './BracketView'
 
 interface Match {
   id: string
@@ -252,11 +252,7 @@ export function Step5Fixture() {
       const homeGames = isDouble ? opponents : Math.floor(opponents / 2)
       const awayGames = isDouble ? opponents : Math.ceil(opponents / 2)
       const freeCount =
-        data.hasFreeBye && teamCount % 2 !== 0
-          ? isDouble
-            ? 2
-            : 1
-          : 0
+        data.hasFreeBye && teamCount % 2 !== 0 ? (isDouble ? 2 : 1) : 0
       const interzonalCount =
         data.hasInterzonal && data.zonesCount > 1 ? data.zonesCount - 1 : 0
 
@@ -283,9 +279,7 @@ export function Step5Fixture() {
               </span>
               {' - '}
               <span>
-                {isElimination
-                  ? 'Eliminación directa'
-                  : 'Todos contra todos'}
+                {isElimination ? 'Eliminación directa' : 'Todos contra todos'}
               </span>
               {' - '}
               <span className='font-semibold'>
@@ -297,83 +291,60 @@ export function Step5Fixture() {
       </div>
 
       <div>
-        <h3 className='text-base font-semibold mb-1'>Fixture</h3>
-        <p className='text-muted-foreground text-sm mb-4'>
-          Genera y visualiza el fixture del torneo
-        </p>
-
         <div className='space-y-3 mb-4'>
-          {isAllVsAll && (
-            <div>
-              <TituloDeInput className='mb-1.5'>Cantidad de fechas</TituloDeInput>
-              <Input
-                type='number'
-                value={data.numberOfDates}
-                onChange={(e) =>
-                  setValue('numberOfDates', parseInt(e.target.value, 10) || 0)
-                }
-                min={1}
-                placeholder='Ej: 14'
-              />
-            </div>
-          )}
-
-          <div className='flex flex-wrap gap-3'>
-            <div className='flex items-center gap-2 px-3 py-2 bg-muted rounded-lg'>
-              <Checkbox
-                id='free-bye'
-                checked={data.hasFreeBye}
-                onCheckedChange={(checked) =>
-                  setValue('hasFreeBye', checked === true)
-                }
-              />
-              <TituloDeInput htmlFor='free-bye' className='mb-0 cursor-pointer'>
-                Hay equipo libre
-              </TituloDeInput>
-            </div>
+          <div className='flex flex-wrap items-end gap-3'>
+            {isAllVsAll && (
+              <div>
+                <TituloDeInput className='mb-1.5'>Fechas</TituloDeInput>
+                <Input
+                  type='number'
+                  value={data.numberOfDates}
+                  onChange={(e) =>
+                    setValue('numberOfDates', parseInt(e.target.value, 10) || 0)
+                  }
+                  min={1}
+                  placeholder='Ej: 14'
+                  className='h-9 w-20'
+                />
+              </div>
+            )}
+            <CajitaConTick
+              id='free-bye'
+              checked={data.hasFreeBye}
+              onCheckedChange={(checked) => setValue('hasFreeBye', checked)}
+              label='Hay equipo libre'
+              className='bg-muted border-transparent'
+            />
 
             {isAllVsAll && (
               <>
-                <div className='flex items-center gap-2 px-3 py-2 bg-muted rounded-lg'>
-                  <Checkbox
-                    id='interzonal'
-                    checked={data.hasInterzonal}
-                    onCheckedChange={(checked) =>
-                      setValue('hasInterzonal', checked === true)
-                    }
-                    disabled={data.zonesCount <= 1}
-                  />
-                  <TituloDeInput
-                    htmlFor='interzonal'
-                    className={cn(
-                      'mb-0 cursor-pointer',
-                      data.zonesCount <= 1 && 'text-muted-foreground'
-                    )}
-                  >
-                    Hay interzonal
-                  </TituloDeInput>
-                  {data.zonesCount <= 1 && (
-                    <span className='text-xs text-muted-foreground'>
-                      (requiere 2+ zonas)
-                    </span>
+                <CajitaConTick
+                  id='interzonal'
+                  checked={data.hasInterzonal}
+                  onCheckedChange={(checked) =>
+                    setValue('hasInterzonal', checked)
+                  }
+                  label={
+                    data.zonesCount <= 1
+                      ? 'Hay interzonal (requiere 2+ zonas)'
+                      : 'Hay interzonal'
+                  }
+                  disabled={data.zonesCount <= 1}
+                  className={cn(
+                    'bg-muted border-transparent',
+                    data.zonesCount <= 1 && 'text-muted-foreground'
                   )}
-                </div>
+                />
 
-                <div className='flex items-center gap-2 px-3 py-2 bg-muted rounded-lg'>
-                  <Checkbox
-                    id='prevent-club-clash'
-                    checked={data.preventClubClash}
-                    onCheckedChange={(checked) =>
-                      setValue('preventClubClash', checked === true)
-                    }
-                  />
-                  <TituloDeInput
-                    htmlFor='prevent-club-clash'
-                    className='mb-0 cursor-pointer'
-                  >
-                    Dos equipos del mismo club no pueden jugar juntos
-                  </TituloDeInput>
-                </div>
+                <CajitaConTick
+                  id='prevent-club-clash'
+                  checked={data.preventClubClash}
+                  onCheckedChange={(checked) =>
+                    setValue('preventClubClash', checked)
+                  }
+                  label='Dos equipos del mismo club no pueden jugar juntos'
+                  className='bg-muted border-transparent'
+                />
               </>
             )}
           </div>
@@ -381,7 +352,7 @@ export function Step5Fixture() {
           <Button
             type='button'
             onClick={handleAutogenerate}
-            className='w-full'
+            className='w-full mt-4'
           >
             <Wand2 className='w-5 h-5' />
             {data.fixtureGenerated ? 'Regenerar fixture' : 'Generar fixture'}
@@ -454,9 +425,7 @@ export function Step5Fixture() {
                 .filter((d): d is number => d != null)
                 .sort((a, b) => a - b)
                 .map((dateNum) => {
-                  const dateMatches = matches.filter(
-                    (m) => m.date === dateNum
-                  )
+                  const dateMatches = matches.filter((m) => m.date === dateNum)
                   const dateConfig = dateConfigs.find(
                     (dc) => dc.dateNumber === dateNum
                   )
@@ -481,10 +450,7 @@ export function Step5Fixture() {
                                 : 'Asignar fecha'}
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent
-                            className='w-auto p-0'
-                            align='end'
-                          >
+                          <PopoverContent className='w-auto p-0' align='end'>
                             <Calendar
                               mode='single'
                               selected={dateConfig?.realDate}
@@ -556,8 +522,8 @@ export function Step5Fixture() {
             <div className='text-center py-8 text-muted-foreground'>
               <CalendarIcon className='w-12 h-12 mx-auto mb-3 opacity-50' />
               <p className='text-sm'>
-                Haz clic en &quot;Generar fixture&quot; para crear el
-                calendario de partidos
+                Haz clic en &quot;Generar fixture&quot; para crear el calendario
+                de partidos
               </p>
             </div>
           )}

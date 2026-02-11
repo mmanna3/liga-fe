@@ -1,5 +1,5 @@
+import CajitaConTick from '@/components/ykn-ui/cajita-con-tick'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Pencil, Plus, Shuffle, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -176,22 +176,14 @@ export function Step4Zones() {
             <Shuffle className='w-4 h-4' />
             Sortear
           </Button>
-          <label
-            htmlFor='prevent-same-club'
-            className='flex items-center gap-2 h-9 px-3 rounded-md border border-input bg-background cursor-pointer hover:bg-accent/50 transition-colors text-sm text-foreground'
-          >
-            <Checkbox
-              id='prevent-same-club'
-              checked={data.preventSameClub}
-              onCheckedChange={(checked) =>
-                setValue('preventSameClub', checked === true)
-              }
-              className='h-4 w-4 shrink-0'
-            />
-            <span className='text-sm'>
-              Evitar equipos del mismo club en la misma zona
-            </span>
-          </label>
+          <CajitaConTick
+            id='prevent-same-club'
+            checked={data.preventSameClub}
+            onCheckedChange={(checked) =>
+              setValue('preventSameClub', checked)
+            }
+            label='Evitar equipos del mismo club en la misma zona'
+          />
         </div>
 
         {errors.zones && (
