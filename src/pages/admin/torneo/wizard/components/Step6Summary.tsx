@@ -1,18 +1,18 @@
-import {
-  CheckCircle,
-  Trophy,
-  Calendar,
-  Users,
-  MapPin,
-  Target,
-  Edit
-} from 'lucide-react'
-import { useFormContext } from 'react-hook-form'
-import { useWizardStore } from '../use-wizard-store'
-import type { TournamentWizardData } from '../types'
-import { BracketView } from './BracketView'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import {
+  Calendar,
+  CheckCircle,
+  Edit,
+  MapPin,
+  Target,
+  Trophy,
+  Users
+} from 'lucide-react'
+import { useFormContext } from 'react-hook-form'
+import type { TournamentWizardData } from '../types'
+import { useWizardStore } from '../use-wizard-store'
+import { BracketView } from './BracketView'
 
 export function Step6Summary() {
   const { watch, setValue } = useFormContext<TournamentWizardData>()
@@ -35,7 +35,7 @@ export function Step6Summary() {
   }
 
   const currentPhase = data.phases[data.currentPhaseIndex] ?? data.phases[0]
-  const phaseName = currentPhase?.name ?? 'Fase 1'
+  const firstPhaseName = data.phases[0]?.name ?? 'Fase 1'
 
   const typeLabels: Record<string, string> = {
     FUTSAL: 'Futsal',
@@ -44,15 +44,15 @@ export function Step6Summary() {
     FEMENINO: 'Femenino'
   }
 
-  const getFormatDisplay = () => {
-    if (!currentPhase) return ''
+  const getFormatDisplay = (phase: (typeof data.phases)[number]) => {
+    if (!phase) return ''
 
     const formatText =
-      currentPhase.format === 'all-vs-all'
+      phase.format === 'all-vs-all'
         ? 'Todos contra todos'
         : 'Eliminación directa'
     const roundsText =
-      currentPhase.rounds === 'double' ? 'Ida y vuelta' : 'Solo ida'
+      phase.rounds === 'double' ? 'Ida y vuelta' : 'Solo ida'
 
     return `${formatText} - ${roundsText}`
   }
@@ -63,9 +63,7 @@ export function Step6Summary() {
         <div className='w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3'>
           <CheckCircle className='w-10 h-10 text-primary' />
         </div>
-        <h3 className='text-lg font-semibold mb-1'>
-          Resumen de {phaseName}
-        </h3>
+        <h3 className='text-lg font-semibold mb-1'>Resumen de {data.name}</h3>
         <p className='text-muted-foreground text-sm'>
           Revisa la configuración antes de crear el torneo
         </p>
@@ -91,9 +89,7 @@ export function Step6Summary() {
         </div>
         <div className='grid grid-cols-2 gap-3 text-sm'>
           <div>
-            <p className='text-xs text-muted-foreground mb-0.5'>
-              Nombre - Año
-            </p>
+            <p className='text-xs text-muted-foreground mb-0.5'>Nombre - Año</p>
             <p className='font-medium'>
               {data.name || '-'} - {data.season}
             </p>
@@ -125,16 +121,14 @@ export function Step6Summary() {
         </div>
       </div>
 
-      {currentPhase && (
+      {data.phases.length > 0 && (
         <div className='bg-muted rounded-xl p-4'>
           <div className='flex items-center justify-between mb-3'>
             <div className='flex items-center gap-2'>
               <div className='w-8 h-8 bg-primary rounded-lg flex items-center justify-center'>
                 <Calendar className='w-4 h-4 text-primary-foreground' />
               </div>
-              <h4 className='font-semibold text-sm'>
-                Fase del torneo (solo {phaseName})
-              </h4>
+              <h4 className='font-semibold text-sm'>Fases del torneo</h4>
             </div>
             <Button
               type='button'
@@ -146,26 +140,25 @@ export function Step6Summary() {
               <Edit className='w-4 h-4' />
             </Button>
           </div>
-          <div className='bg-background rounded-lg p-3'>
-            <div className='flex items-center gap-2 mb-2'>
-              <span className='w-6 h-6 bg-primary text-primary-foreground rounded-md flex items-center justify-center text-xs font-bold'>
-                1
-              </span>
-              <span className='font-semibold text-sm'>{phaseName}</span>
-            </div>
-            <div className='text-xs text-muted-foreground'>
-              <span className='font-medium'>Formato:</span>{' '}
-              {getFormatDisplay()}
-            </div>
+          <div className='space-y-2'>
+            {data.phases.map((phase, idx) => (
+              <div
+                key={phase.id}
+                className='bg-background rounded-lg p-3'
+              >
+                <div className='flex items-center gap-2 mb-2'>
+                  <span className='w-6 h-6 bg-primary text-primary-foreground rounded-md flex items-center justify-center text-xs font-bold'>
+                    {idx + 1}
+                  </span>
+                  <span className='font-semibold text-sm'>{phase.name}</span>
+                </div>
+                <div className='text-xs text-muted-foreground'>
+                  <span className='font-medium'>Formato:</span>{' '}
+                  {getFormatDisplay(phase)}
+                </div>
+              </div>
+            ))}
           </div>
-          {data.zones.length > 0 && (
-            <div className='mt-2'>
-              <p className='text-xs text-muted-foreground'>
-                <span className='font-medium'>Zonas:</span>{' '}
-                {data.zones.length}
-              </p>
-            </div>
-          )}
         </div>
       )}
 
@@ -176,7 +169,7 @@ export function Step6Summary() {
               <Users className='w-4 h-4 text-primary-foreground' />
             </div>
             <h4 className='font-semibold text-sm'>
-              Equipos participantes de {phaseName}
+              Equipos participantes de la fase {firstPhaseName}
             </h4>
           </div>
           <Button
@@ -228,7 +221,7 @@ export function Step6Summary() {
                 <MapPin className='w-4 h-4 text-primary-foreground' />
               </div>
               <h4 className='font-semibold text-sm'>
-                Zonas de {phaseName}
+                Zonas de la fase {firstPhaseName}
               </h4>
             </div>
             <Button
@@ -281,7 +274,7 @@ export function Step6Summary() {
               <Target className='w-4 h-4 text-primary-foreground' />
             </div>
             <h4 className='font-semibold text-sm'>
-              Fixture de {phaseName}
+              Fixture de la fase {firstPhaseName}
             </h4>
           </div>
           <Button
@@ -334,11 +327,7 @@ export function Step6Summary() {
                   <p className='text-xs text-muted-foreground mb-2'>
                     Es necesario generar el fixture antes de crear el torneo.
                   </p>
-                  <Button
-                    type='button'
-                    size='sm'
-                    onClick={() => goToStep(5)}
-                  >
+                  <Button type='button' size='sm' onClick={() => goToStep(5)}>
                     <Target className='w-3 h-3' />
                     Ir al paso 5 para generar fixture
                   </Button>
@@ -371,9 +360,7 @@ export function Step6Summary() {
             )}
           >
             <div className='text-sm'>Guardar como borrador</div>
-            <p className='text-xs mt-1 opacity-80'>
-              Podrás editarlo más tarde
-            </p>
+            <p className='text-xs mt-1 opacity-80'>Podrás editarlo más tarde</p>
           </button>
           <button
             type='button'
@@ -387,7 +374,8 @@ export function Step6Summary() {
           >
             <div className='text-sm'>Publicar</div>
             <p className='text-xs mt-1 opacity-80'>
-              Estará visible para todos
+              La fase {firstPhaseName} estará visible en la app y en la web. Las
+              demás permanecerán ocultas hasta que se las marque como visibles.
             </p>
           </button>
         </div>
