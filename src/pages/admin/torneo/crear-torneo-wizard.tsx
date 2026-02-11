@@ -1,7 +1,3 @@
-import { useNavigate } from 'react-router-dom'
-import { useForm, FormProvider } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'sonner'
 import { api } from '@/api/api'
 import { TorneoDTO } from '@/api/clients'
 import useApiMutation from '@/api/custom-hooks/use-api-mutation'
@@ -16,24 +12,28 @@ import {
 import { Boton } from '@/components/ykn-ui/boton'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
 import { rutasNavegacion } from '@/routes/rutas'
-import { StepIndicator } from './wizard/components/StepIndicator'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { FormProvider, useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
+import { z } from 'zod'
 import { Step1Information } from './wizard/components/Step1Information'
 import { Step2Phases } from './wizard/components/Step2Phases'
 import { Step3Teams } from './wizard/components/Step3Teams'
 import { Step4Zones } from './wizard/components/Step4Zones'
 import { Step5Fixture } from './wizard/components/Step5Fixture'
 import { Step6Summary } from './wizard/components/Step6Summary'
+import { StepIndicator } from './wizard/components/StepIndicator'
+import type { TournamentWizardData } from './wizard/types'
 import { useWizardStore } from './wizard/use-wizard-store'
-import { z } from 'zod'
 import {
-  tournamentWizardSchema,
   step1Schema,
   step2Schema,
   step3Schema,
   step4Schema,
-  step5Schema
+  step5Schema,
+  tournamentWizardSchema
 } from './wizard/validation-schema'
-import type { TournamentWizardData } from './wizard/types'
 
 const initialData: TournamentWizardData = {
   name: '',
@@ -187,7 +187,10 @@ export default function CrearTorneoWizard() {
               Completa los siguientes pasos para configurar tu torneo
             </CardDescription>
           </div>
-          <BotonVolver path={rutasNavegacion.torneos} />
+          <BotonVolver
+            path={rutasNavegacion.torneos}
+            texto='Volver a torneos'
+          />
         </CardHeader>
         <CardContent className='space-y-6'>
           <StepIndicator
