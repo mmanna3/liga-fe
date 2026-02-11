@@ -59,7 +59,7 @@ export function Step1Information({ data, updateData }: Step1InformationProps) {
     <div className='space-y-4'>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
         <div>
-          <Label className='mb-1.5'>Nombre del torneo *</Label>
+          <Label className='block mb-2.5'>Nombre del torneo *</Label>
           <Input
             type='text'
             value={data.name}
@@ -68,7 +68,7 @@ export function Step1Information({ data, updateData }: Step1InformationProps) {
           />
         </div>
         <div>
-          <Label className='mb-1.5'>Temporada/Año *</Label>
+          <Label className='block mb-2.5'>Temporada/Año *</Label>
           <Input
             type='number'
             value={data.season}
