@@ -3,26 +3,16 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
-import {
-  ChevronDown,
-  ChevronRight,
-  GripVertical,
-  Pencil,
-  Plus,
-  Trash2
-} from 'lucide-react'
+import { ChevronDown, ChevronRight, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import type { Phase, TournamentWizardData } from '../types'
+import { ReglasDeDesempate } from './ReglasDeDesempate'
 
 export function Step2Phases() {
   const { watch, setValue } = useFormContext<TournamentWizardData>()
   const [expandedPhase, setExpandedPhase] = useState<string | null>(null)
   const [editingPhaseName, setEditingPhaseName] = useState<string | null>(null)
-  const [draggedTiebreaker, setDraggedTiebreaker] = useState<{
-    phaseId: string
-    index: number
-  } | null>(null)
 
   const data = {
     format: watch('format'),
@@ -116,7 +106,7 @@ export function Step2Phases() {
     )
   }
 
-  const handleDragTiebreaker = (
+  const handleReorderTiebreakers = (
     phaseId: string,
     fromIndex: number,
     toIndex: number
@@ -129,20 +119,6 @@ export function Step2Phases() {
     newTiebreakers.splice(toIndex, 0, moved)
 
     updatePhase(phaseId, { tiebreakers: newTiebreakers })
-  }
-
-  const handleDragStart = (phaseId: string, index: number) => {
-    setDraggedTiebreaker({ phaseId, index })
-  }
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
-  }
-
-  const handleDrop = (phaseId: string, dropIndex: number) => {
-    if (!draggedTiebreaker || draggedTiebreaker.phaseId !== phaseId) return
-    handleDragTiebreaker(phaseId, draggedTiebreaker.index, dropIndex)
-    setDraggedTiebreaker(null)
   }
 
   const getFormatLabel = (format: 'all-vs-all' | 'elimination') =>
@@ -283,7 +259,7 @@ export function Step2Phases() {
               </div>
 
               {expandedPhase === phase.id && (
-                <div className='p-4 space-y-4'>
+                <div className='p-4 space-y-6'>
                   {!editable && (
                     <div className='p-3 bg-amber-50 rounded-lg border border-amber-200'>
                       <p className='text-sm text-foreground'>
@@ -293,108 +269,95 @@ export function Step2Phases() {
                     </div>
                   )}
 
-                  <div>
-                    <Label className='mb-2'>Formato de la fase</Label>
-                    <div className='flex gap-2'>
-                      <Button
-                        type='button'
-                        variant={
-                          phase.format === 'all-vs-all'
-                            ? 'default'
-                            : 'secondary'
-                        }
-                        className='flex-1'
-                        onClick={() =>
-                          editable &&
-                          updatePhase(phase.id, { format: 'all-vs-all' })
-                        }
-                        disabled={!editable}
-                      >
-                        Todos contra todos
-                      </Button>
-                      <Button
-                        type='button'
-                        variant={
-                          phase.format === 'elimination'
-                            ? 'default'
-                            : 'secondary'
-                        }
-                        className='flex-1'
-                        onClick={() =>
-                          editable &&
-                          updatePhase(phase.id, { format: 'elimination' })
-                        }
-                        disabled={!editable}
-                      >
-                        Eliminación directa
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className='flex items-center justify-between p-3 bg-muted rounded-lg'>
-                    <p className='text-sm font-medium'>Tipo de vuelta</p>
-                    <div className='flex gap-2'>
-                      <Button
-                        type='button'
-                        size='sm'
-                        variant={
-                          phase.rounds === 'single' ? 'default' : 'outline'
-                        }
-                        onClick={() =>
-                          editable &&
-                          updatePhase(phase.id, { rounds: 'single' })
-                        }
-                        disabled={!editable}
-                      >
-                        Solo ida
-                      </Button>
-                      <Button
-                        type='button'
-                        size='sm'
-                        variant={
-                          phase.rounds === 'double' ? 'default' : 'outline'
-                        }
-                        onClick={() =>
-                          editable &&
-                          updatePhase(phase.id, { rounds: 'double' })
-                        }
-                        disabled={!editable}
-                      >
-                        Ida y vuelta
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label className='mb-2'>Reglas de desempate</Label>
-                    <p className='text-xs text-muted-foreground mb-2'>
-                      Arrastra para ordenar por prioridad
-                    </p>
-                    <div className='space-y-1.5'>
-                      {phase.tiebreakers.map((rule, index) => (
-                        <div
-                          key={index}
-                          draggable={editable}
-                          onDragStart={() =>
-                            editable && handleDragStart(phase.id, index)
+                  <div className='flex gap-8 my-3'>
+                    {/* Formato de la fase */}
+                    <div className='flex-1'>
+                      <Label className='block mb-3 text-md font-semibold'>
+                        Formato de la fase
+                      </Label>
+                      <div className='flex gap-2'>
+                        <Button
+                          type='button'
+                          variant={
+                            phase.format === 'all-vs-all'
+                              ? 'default'
+                              : 'secondary'
                           }
-                          onDragOver={handleDragOver}
-                          onDrop={() => editable && handleDrop(phase.id, index)}
-                          className={cn(
-                            'flex items-center gap-2 p-2 bg-muted rounded-lg border transition-colors',
-                            editable
-                              ? 'cursor-move hover:bg-accent'
-                              : 'cursor-not-allowed'
-                          )}
+                          className='flex-1'
+                          onClick={() =>
+                            editable &&
+                            updatePhase(phase.id, { format: 'all-vs-all' })
+                          }
+                          disabled={!editable}
                         >
-                          <GripVertical className='w-4 h-4 text-muted-foreground' />
-                          <span className='w-5 h-5 bg-primary text-primary-foreground rounded flex items-center justify-center text-xs font-bold'>
-                            {index + 1}
-                          </span>
-                          <span className='text-sm font-medium'>{rule}</span>
-                        </div>
-                      ))}
+                          Todos contra todos
+                        </Button>
+                        <Button
+                          type='button'
+                          variant={
+                            phase.format === 'elimination'
+                              ? 'default'
+                              : 'secondary'
+                          }
+                          className='flex-1'
+                          onClick={() =>
+                            editable &&
+                            updatePhase(phase.id, { format: 'elimination' })
+                          }
+                          disabled={!editable}
+                        >
+                          Eliminación directa
+                        </Button>
+                      </div>
                     </div>
+
+                    {/* Tipo de vuelta */}
+                    <div className='flex-1'>
+                      <Label className='text-md font-semibold block mb-3'>
+                        Tipo de vuelta
+                      </Label>
+                      <div className='flex gap-2'>
+                        <Button
+                          type='button'
+                          size='sm'
+                          variant={
+                            phase.rounds === 'single' ? 'default' : 'secondary'
+                          }
+                          className='flex-1'
+                          onClick={() =>
+                            editable &&
+                            updatePhase(phase.id, { rounds: 'single' })
+                          }
+                          disabled={!editable}
+                        >
+                          Solo ida
+                        </Button>
+                        <Button
+                          type='button'
+                          size='sm'
+                          variant={
+                            phase.rounds === 'double' ? 'default' : 'secondary'
+                          }
+                          className='flex-1'
+                          onClick={() =>
+                            editable &&
+                            updatePhase(phase.id, { rounds: 'double' })
+                          }
+                          disabled={!editable}
+                        >
+                          Ida y vuelta
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='mt-8'>
+                    <ReglasDeDesempate
+                      tiebreakers={phase.tiebreakers}
+                      editable={editable}
+                      onReorder={(fromIndex: number, toIndex: number) =>
+                        handleReorderTiebreakers(phase.id, fromIndex, toIndex)
+                      }
+                    />
                   </div>
                 </div>
               )}
