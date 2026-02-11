@@ -158,6 +158,12 @@ export function Step4Zones() {
               </span>
             </>
           )}
+          <span className='mx-2'>·</span>
+          <>
+            <span className='font-semibold text-foreground'>
+              {data.selectedTeams.length} equipos
+            </span>
+          </>{' '}
         </p>
         <p className='text-xs text-muted-foreground mt-2'>
           Las zonas son específicas de esta fase
