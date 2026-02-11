@@ -305,16 +305,6 @@ export function Step5Fixture() {
                     data.zonesCount <= 1 && 'text-muted-foreground'
                   )}
                 />
-
-                <CajitaConTick
-                  id='prevent-club-clash'
-                  checked={data.preventClubClash}
-                  onCheckedChange={(checked) =>
-                    setValue('preventClubClash', checked)
-                  }
-                  label='Dos equipos del mismo club no pueden jugar juntos'
-                  className='bg-muted border-transparent'
-                />
               </>
             )}
           </div>
