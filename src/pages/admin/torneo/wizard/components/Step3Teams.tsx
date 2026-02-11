@@ -7,9 +7,14 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { cn } from '@/lib/utils'
 
 export function Step3Teams() {
-  const { watch, setValue } = useFormContext<TournamentWizardData>()
+  const {
+    watch,
+    setValue,
+    formState: { errors }
+  } = useFormContext<TournamentWizardData>()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectAll, setSelectAll] = useState(false)
 
@@ -156,13 +161,26 @@ export function Step3Teams() {
         </span>
         <div className='flex-1 h-2 bg-muted rounded-full overflow-hidden'>
           <div
-            className='h-full bg-primary transition-all duration-300'
+            className={cn(
+              'h-full transition-all duration-300',
+              data.selectedTeams.length === data.teamCount
+                ? 'bg-primary'
+                : 'bg-amber-500'
+            )}
             style={{
               width: `${(data.selectedTeams.length / data.teamCount) * 100}%`
             }}
           />
         </div>
       </div>
+
+      {errors.selectedTeams && (
+        <div className='p-3 bg-destructive/10 border border-destructive/30 rounded-lg'>
+          <p className='text-sm text-destructive'>
+            {errors.selectedTeams.message}
+          </p>
+        </div>
+      )}
 
       {data.selectedTeams.length > 0 && (
         <div className='bg-muted rounded-xl p-4'>

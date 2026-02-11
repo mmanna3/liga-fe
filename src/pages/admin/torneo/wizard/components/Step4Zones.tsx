@@ -9,7 +9,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
 export function Step4Zones() {
-  const { watch, setValue } = useFormContext<TournamentWizardData>()
+  const {
+    watch,
+    setValue,
+    formState: { errors }
+  } = useFormContext<TournamentWizardData>()
   const [editingZoneId, setEditingZoneId] = useState<string | null>(null)
   const [editingName, setEditingName] = useState('')
   const [draggedTeam, setDraggedTeam] = useState<{
@@ -203,6 +207,12 @@ export function Step4Zones() {
             </Label>
           </div>
         </div>
+
+        {errors.zones && (
+          <div className='p-3 bg-destructive/10 border border-destructive/30 rounded-lg mb-4'>
+            <p className='text-sm text-destructive'>{errors.zones.message}</p>
+          </div>
+        )}
 
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
           {data.zones.map((zone) => (

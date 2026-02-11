@@ -34,7 +34,11 @@ interface DateConfig {
 }
 
 export function Step5Fixture() {
-  const { watch, setValue } = useFormContext<TournamentWizardData>()
+  const {
+    watch,
+    setValue,
+    formState: { errors }
+  } = useFormContext<TournamentWizardData>()
   const [matches, setMatches] = useState<Match[]>([])
   const [dateConfigs, setDateConfigs] = useState<DateConfig[]>([])
   const [draggedMatch, setDraggedMatch] = useState<Match | null>(null)
@@ -382,6 +386,14 @@ export function Step5Fixture() {
             <Wand2 className='w-5 h-5' />
             {data.fixtureGenerated ? 'Regenerar fixture' : 'Generar fixture'}
           </Button>
+
+          {errors.fixtureGenerated && (
+            <div className='p-3 bg-destructive/10 border border-destructive/30 rounded-lg'>
+              <p className='text-sm text-destructive'>
+                {errors.fixtureGenerated.message}
+              </p>
+            </div>
+          )}
 
           {data.selectedTeams.length > 0 && isAllVsAll && (
             <div className='p-3 bg-muted rounded-lg'>

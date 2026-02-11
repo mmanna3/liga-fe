@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useForm, FormProvider } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
 import { api } from '@/api/api'
 import { TorneoDTO } from '@/api/clients'
 import useApiMutation from '@/api/custom-hooks/use-api-mutation'
@@ -22,6 +24,14 @@ import { Step4Zones } from './wizard/components/Step4Zones'
 import { Step5Fixture } from './wizard/components/Step5Fixture'
 import { Step6Summary } from './wizard/components/Step6Summary'
 import { useWizardStore } from './wizard/use-wizard-store'
+import {
+  tournamentWizardSchema,
+  step1Schema,
+  step2Schema,
+  step3Schema,
+  step4Schema,
+  step5Schema
+} from './wizard/validation-schema'
 import type { TournamentWizardData } from './wizard/types'
 
 const initialData: TournamentWizardData = {
@@ -55,7 +65,8 @@ export default function CrearTorneoWizard() {
 
   const methods = useForm<TournamentWizardData>({
     defaultValues: initialData,
-    mode: 'onChange'
+    mode: 'onChange',
+    resolver: zodResolver(tournamentWizardSchema)
   })
 
   const mutation = useApiMutation({
@@ -66,9 +77,67 @@ export default function CrearTorneoWizard() {
     mensajeDeExito: 'Torneo creado correctamente'
   })
 
-  const handleNext = () => {
-    const zonesCount = methods.watch('zonesCount')
-    nextStep(zonesCount)
+  // Validar el paso actual antes de avanzar
+  const validateCurrentStep = async () => {
+    const formData = methods.getValues()
+
+    try {
+      switch (currentStep) {
+        case 1:
+          await step1Schema.parseAsync({
+            name: formData.name,
+            season: formData.season,
+            type: formData.type,
+            categories: formData.categories,
+            format: formData.format
+          })
+          break
+
+        case 2:
+          await step2Schema.parseAsync({
+            phases: formData.phases
+          })
+          break
+
+        case 3:
+          await step3Schema.parseAsync({
+            teamCount: formData.teamCount,
+            selectedTeams: formData.selectedTeams
+          })
+          break
+
+        case 4:
+          await step4Schema.parseAsync({
+            zones: formData.zones,
+            zonesCount: formData.zonesCount,
+            selectedTeams: formData.selectedTeams
+          })
+          break
+
+        case 5:
+          await step5Schema.parseAsync({
+            fixtureGenerated: formData.fixtureGenerated
+          })
+          break
+      }
+      return true
+    } catch (error) {
+      if (error instanceof Error) {
+        const zodError = error as { errors?: Array<{ message: string }> }
+        const errorMessage =
+          zodError.errors?.[0]?.message || 'Por favor, completa todos los campos requeridos'
+        toast.error(errorMessage)
+      }
+      return false
+    }
+  }
+
+  const handleNext = async () => {
+    const isValid = await validateCurrentStep()
+    if (isValid) {
+      const zonesCount = methods.watch('zonesCount')
+      nextStep(zonesCount)
+    }
   }
 
   const handlePrev = () => {

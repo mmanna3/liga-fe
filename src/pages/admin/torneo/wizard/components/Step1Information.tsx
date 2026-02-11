@@ -7,7 +7,11 @@ import type { TournamentWizardData } from '../types'
 import { Categorias } from './Categorias'
 
 export function Step1Information() {
-  const { watch, setValue } = useFormContext<TournamentWizardData>()
+  const {
+    watch,
+    setValue,
+    formState: { errors }
+  } = useFormContext<TournamentWizardData>()
 
   const data = {
     name: watch('name'),
@@ -26,7 +30,13 @@ export function Step1Information() {
             value={data.name}
             onChange={(e) => setValue('name', e.target.value)}
             placeholder='Ej: Torneo Clausura 2026'
+            className={cn(errors.name && 'border-destructive')}
           />
+          {errors.name && (
+            <p className='text-sm text-destructive mt-1'>
+              {errors.name.message}
+            </p>
+          )}
         </div>
         <div>
           <Label className='block mb-2.5'>Temporada/Año *</Label>
@@ -35,7 +45,13 @@ export function Step1Information() {
             value={data.season}
             onChange={(e) => setValue('season', e.target.value)}
             placeholder='2026'
+            className={cn(errors.season && 'border-destructive')}
           />
+          {errors.season && (
+            <p className='text-sm text-destructive mt-1'>
+              {errors.season.message}
+            </p>
+          )}
         </div>
       </div>
 
@@ -60,6 +76,11 @@ export function Step1Information() {
             </button>
           ))}
         </div>
+        {errors.type && (
+          <p className='text-sm text-destructive mt-2'>
+            {errors.type.message}
+          </p>
+        )}
       </div>
 
       <Categorias />
@@ -107,6 +128,11 @@ export function Step1Information() {
             </button>
           ))}
         </div>
+        {errors.format && (
+          <p className='text-sm text-destructive mt-2'>
+            {errors.format.message}
+          </p>
+        )}
       </div>
     </div>
   )
