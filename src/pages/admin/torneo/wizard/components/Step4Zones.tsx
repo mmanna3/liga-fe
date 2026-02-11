@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
-import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
 import { Pencil, Plus, Shuffle, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -14,6 +13,7 @@ export function Step4Zones() {
     setValue,
     formState: { errors }
   } = useFormContext<TournamentWizardData>()
+  const UNSIGNED_ZONE_ID = '__unassigned__'
   const [editingZoneId, setEditingZoneId] = useState<string | null>(null)
   const [draggedTeam, setDraggedTeam] = useState<{
     team: WizardTeam
@@ -143,23 +143,6 @@ export function Step4Zones() {
     )
   }
 
-  const distributeEvenly = () => {
-    if (data.zones.length === 0) return
-
-    const teamsPerZone = Math.floor(data.selectedTeams.length / zonesCount)
-    const remainder = data.selectedTeams.length % zonesCount
-
-    let teamIndex = 0
-    const newZones = data.zones.map((zone, zoneIndex) => {
-      const count = teamsPerZone + (zoneIndex < remainder ? 1 : 0)
-      const zoneTeams = data.selectedTeams.slice(teamIndex, teamIndex + count)
-      teamIndex += count
-      return { ...zone, teams: zoneTeams }
-    })
-
-    setValue('zones', newZones)
-  }
-
   return (
     <div className='space-y-6'>
       <div className='bg-muted rounded-lg p-4'>
@@ -182,39 +165,27 @@ export function Step4Zones() {
       </div>
 
       <div>
-        <h3 className='text-lg font-semibold mb-4'>Zonas</h3>
-        <p className='text-muted-foreground text-sm mb-6'>
-          Organiza los equipos seleccionados en las zonas de tu torneo
-        </p>
-
-        <div className='flex flex-wrap gap-3 mb-6'>
-          <Button type='button' variant='outline' onClick={addZone}>
-            <Plus className='w-4 h-4' />
-            Agregar zona
-          </Button>
-          <Button type='button' variant='outline' onClick={distributeEvenly}>
-            Distribuir equitativamente
-          </Button>
+        <div className='flex flex-wrap items-center gap-3 mb-6'>
           <Button type='button' onClick={randomizeTeams}>
             <Shuffle className='w-4 h-4' />
-            Sortear aleatoriamente
+            Sortear
           </Button>
-
-          <div className='flex items-center gap-2 ml-auto px-4 py-2 bg-muted rounded-lg'>
+          <label
+            htmlFor='prevent-same-club'
+            className='flex items-center gap-2 h-9 px-3 rounded-md border border-input bg-background cursor-pointer hover:bg-accent/50 transition-colors text-sm text-foreground'
+          >
             <Checkbox
               id='prevent-same-club'
               checked={data.preventSameClub}
               onCheckedChange={(checked) =>
                 setValue('preventSameClub', checked === true)
               }
+              className='h-4 w-4 shrink-0'
             />
-            <TituloDeInput
-              htmlFor='prevent-same-club'
-              className='mb-0 cursor-pointer'
-            >
+            <span className='text-sm'>
               Evitar equipos del mismo club en la misma zona
-            </TituloDeInput>
-          </div>
+            </span>
+          </label>
         </div>
 
         {errors.zones && (
@@ -223,6 +194,18 @@ export function Step4Zones() {
           </div>
         )}
 
+        <div className='flex justify-end mb-3'>
+          <Button
+            type='button'
+            variant='ghost'
+            size='sm'
+            onClick={addZone}
+            className='text-muted-foreground hover:text-foreground'
+          >
+            <Plus className='w-4 h-4' />
+            Agregar zona
+          </Button>
+        </div>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
           {data.zones.map((zone) => (
             <div
@@ -332,7 +315,11 @@ export function Step4Zones() {
                   .map((team) => (
                     <div
                       key={team.id}
-                      className='bg-background p-2 rounded-lg shadow-sm border text-sm'
+                      draggable
+                      onDragStart={() =>
+                        handleDragStart(team, UNSIGNED_ZONE_ID)
+                      }
+                      className='bg-background p-2 rounded-lg shadow-sm border text-sm cursor-move hover:shadow-md hover:border-primary/30 transition-all'
                     >
                       <div className='font-medium'>{team.name}</div>
                       <div className='text-xs text-muted-foreground'>
