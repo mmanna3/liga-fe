@@ -1,10 +1,18 @@
-import { Input } from '@/components/ui/input'
 import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
+import SelectorSimple from '@/components/ykn-ui/selector-simple'
+import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { CalendarRange, Globe, Settings, Zap } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
 import type { TournamentWizardData } from '../types'
 import { Categorias } from './Categorias'
+
+const OPCIONES_TIPO: { id: TournamentWizardData['type']; texto: string }[] = [
+  { id: 'FUTSAL', texto: 'Futsal' },
+  { id: 'BABY', texto: 'Baby' },
+  { id: 'FUTBOL 11', texto: 'Fútbol 11' },
+  { id: 'FEMENINO', texto: 'Femenino' }
+]
 
 export function Step1Information() {
   const {
@@ -57,25 +65,13 @@ export function Step1Information() {
 
       <div>
         <TituloDeInput>Tipo *</TituloDeInput>
-        <div className='grid grid-cols-2 md:grid-cols-4 gap-2'>
-          {['Futsal', 'Baby', 'Fútbol 11', 'Femenino'].map((type) => (
-            <button
-              key={type}
-              type='button'
-              onClick={() =>
-                setValue('type', type as TournamentWizardData['type'])
-              }
-              className={cn(
-                'rounded-lg transition-all border-2 flex items-center justify-center py-2 px-3 text-sm font-medium leading-tight',
-                data.type === type
-                  ? 'bg-primary/10 border-primary text-primary'
-                  : 'bg-muted border-transparent text-muted-foreground hover:border-border'
-              )}
-            >
-              {type}
-            </button>
-          ))}
-        </div>
+        <SelectorSimple
+          opciones={OPCIONES_TIPO}
+          valorActual={data.type}
+          alElegirOpcion={(id) =>
+            setValue('type', id as TournamentWizardData['type'])
+          }
+        />
         {errors.type && (
           <p className='text-sm text-destructive mt-2'>{errors.type.message}</p>
         )}

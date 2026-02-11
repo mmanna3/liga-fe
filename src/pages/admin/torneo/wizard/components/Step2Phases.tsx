@@ -1,7 +1,8 @@
-import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import SelectorSimple from '@/components/ykn-ui/selector-simple'
+import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
 import { cn } from '@/lib/utils'
 import { ChevronDown, ChevronRight, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -273,77 +274,37 @@ export function Step2Phases() {
                     {/* Formato de la fase */}
                     <div className='flex-1'>
                       <TituloDeInput>Formato de la fase</TituloDeInput>
-                      <div className='flex gap-2'>
-                        <Button
-                          type='button'
-                          variant={
-                            phase.format === 'all-vs-all'
-                              ? 'default'
-                              : 'secondary'
-                          }
-                          className='flex-1'
-                          onClick={() =>
-                            editable &&
-                            updatePhase(phase.id, { format: 'all-vs-all' })
-                          }
-                          disabled={!editable}
-                        >
-                          Todos contra todos
-                        </Button>
-                        <Button
-                          type='button'
-                          variant={
-                            phase.format === 'elimination'
-                              ? 'default'
-                              : 'secondary'
-                          }
-                          className='flex-1'
-                          onClick={() =>
-                            editable &&
-                            updatePhase(phase.id, { format: 'elimination' })
-                          }
-                          disabled={!editable}
-                        >
-                          Eliminación directa
-                        </Button>
-                      </div>
+                      <SelectorSimple
+                        opciones={[
+                          { id: 'all-vs-all', texto: 'Todos contra todos' },
+                          { id: 'elimination', texto: 'Eliminación directa' }
+                        ]}
+                        valorActual={phase.format}
+                        alElegirOpcion={(id) =>
+                          updatePhase(phase.id, {
+                            format: id as Phase['format']
+                          })
+                        }
+                        deshabilitado={!editable}
+                      />
                     </div>
 
                     {/* Tipo de vuelta */}
                     <div className='flex-1'>
                       <TituloDeInput>Tipo de vuelta</TituloDeInput>
-                      <div className='flex gap-2'>
-                        <Button
-                          type='button'
-                          size='sm'
-                          variant={
-                            phase.rounds === 'single' ? 'default' : 'secondary'
-                          }
-                          className='flex-1'
-                          onClick={() =>
-                            editable &&
-                            updatePhase(phase.id, { rounds: 'single' })
-                          }
-                          disabled={!editable}
-                        >
-                          Solo ida
-                        </Button>
-                        <Button
-                          type='button'
-                          size='sm'
-                          variant={
-                            phase.rounds === 'double' ? 'default' : 'secondary'
-                          }
-                          className='flex-1'
-                          onClick={() =>
-                            editable &&
-                            updatePhase(phase.id, { rounds: 'double' })
-                          }
-                          disabled={!editable}
-                        >
-                          Ida y vuelta
-                        </Button>
-                      </div>
+                      <SelectorSimple
+                        opciones={[
+                          { id: 'single', texto: 'Solo ida' },
+                          { id: 'double', texto: 'Ida y vuelta' }
+                        ]}
+                        valorActual={phase.rounds}
+                        alElegirOpcion={(id) =>
+                          updatePhase(phase.id, {
+                            rounds: id as Phase['rounds']
+                          })
+                        }
+                        deshabilitado={!editable}
+                      />
                     </div>
                   </div>
                   <div className='mt-8'>
