@@ -21,6 +21,7 @@ import CrearTorneoWizard from '@/pages/admin/torneo/crear-torneo-wizard'
 import DetalleTorneo from '@/pages/admin/torneo/detalle-torneo'
 import Torneo from '@/pages/admin/torneo/torneo'
 import Configuracion from '@/pages/admin/configuracion/configuracion'
+import Home from '@/pages/admin/home/home'
 import ErrorPage from '@/pages/error'
 import FichajeEnOtroEquipo from '@/pages/fichaje/fichaje-en-otro-equipo'
 import FichajeError from '@/pages/fichaje/fichaje-error'
@@ -83,7 +84,7 @@ export const mapaRutasComponentes = [
       </RequiereAutenticacion>
     ),
     children: [
-      { path: '', element: <></> },
+      { path: '', element: <Home /> },
       { path: rutas.clubs, element: <Club /> },
       { path: rutas.crearClub, element: <CrearClub /> },
       { path: `${rutas.detalleClub}/:id`, element: <DetalleClub /> },
