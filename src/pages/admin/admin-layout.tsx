@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Toaster } from '@/components/ui/sonner'
 import { useAuth } from '@/hooks/use-auth'
+import { usePaletaColores } from '@/hooks/use-paleta-colores'
 import { cn } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
 import {
@@ -9,11 +10,12 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  Settings,
   Shield,
   Trophy,
+  User,
   UserCog,
-  Users,
-  User
+  Users
 } from 'lucide-react'
 import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
@@ -23,7 +25,8 @@ const baseMenuItems = [
   { name: 'Clubes', path: rutasNavegacion.clubs, icon: LayoutDashboard },
   { name: 'Equipos', path: rutasNavegacion.equipos, icon: Shield },
   { name: 'Jugadores', path: rutasNavegacion.jugadores, icon: Users },
-  { name: 'Delegados', path: rutasNavegacion.delegados, icon: UserCog }
+  { name: 'Delegados', path: rutasNavegacion.delegados, icon: UserCog },
+  { name: 'Configuración', path: rutasNavegacion.configuracion, icon: Settings }
 ]
 
 const adminMenuItems = [
@@ -37,6 +40,7 @@ export default function AdminLayout() {
   const navigate = useNavigate()
 
   const menuItems = [...baseMenuItems, ...(esAdmin() ? adminMenuItems : [])]
+  usePaletaColores()
 
   const handleLogout = () => {
     logout()
@@ -47,7 +51,7 @@ export default function AdminLayout() {
     <div className='flex h-screen w-screen'>
       <Toaster />
       {/* Menú lateral */}
-      <aside className='hidden md:flex flex-col w-64 bg-gray-900 text-white p-4'>
+      <aside className='hidden md:flex flex-col w-64 bg-primary/90 text-white p-4'>
         <nav className='space-y-2 flex-1'>
           {menuItems.map(({ name, path, icon: Icon }) => (
             <NavLink
@@ -73,7 +77,9 @@ export default function AdminLayout() {
               <User className='w-5 h-5 text-gray-300' />
             </div>
             <div className='flex-1 min-w-0'>
-              <div className='font-medium text-sm text-white truncate'>{userName}</div>
+              <div className='font-medium text-sm text-white truncate'>
+                {userName}
+              </div>
               <div className='text-xs text-gray-400 truncate'>{userRole}</div>
             </div>
             <Button
@@ -125,7 +131,9 @@ export default function AdminLayout() {
                 <User className='w-5 h-5 text-gray-300' />
               </div>
               <div className='flex-1 min-w-0'>
-                <div className='font-medium text-sm text-white truncate'>{userName}</div>
+                <div className='font-medium text-sm text-white truncate'>
+                  {userName}
+                </div>
                 <div className='text-xs text-gray-400 truncate'>{userRole}</div>
               </div>
               <Button

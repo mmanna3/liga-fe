@@ -311,16 +311,18 @@ export function Step6Summary() {
                 </p>
               )}
 
-              <div className='mt-3 bg-background rounded-lg p-3'>
-                <h5 className='font-semibold text-xs mb-2'>
-                  Vista de llaves
-                </h5>
-                <BracketView
-                  teamSlots={data.selectedTeams.length}
-                  teams={data.selectedTeams}
-                  zones={data.zones}
-                />
-              </div>
+              {currentPhase?.format === 'elimination' && (
+                <div className='mt-3 bg-background rounded-lg p-3'>
+                  <h5 className='font-semibold text-xs mb-2'>
+                    Vista de llaves
+                  </h5>
+                  <BracketView
+                    teamSlots={data.selectedTeams.length}
+                    teams={data.selectedTeams}
+                    zones={data.zones}
+                  />
+                </div>
+              )}
             </>
           ) : (
             <div className='bg-amber-50 border border-amber-200 rounded-xl p-3'>

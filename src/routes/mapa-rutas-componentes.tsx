@@ -20,6 +20,7 @@ import ReportePagosPage from '@/pages/admin/reportes/pagos'
 import CrearTorneoWizard from '@/pages/admin/torneo/crear-torneo-wizard'
 import DetalleTorneo from '@/pages/admin/torneo/detalle-torneo'
 import Torneo from '@/pages/admin/torneo/torneo'
+import Configuracion from '@/pages/admin/configuracion/configuracion'
 import ErrorPage from '@/pages/error'
 import FichajeEnOtroEquipo from '@/pages/fichaje/fichaje-en-otro-equipo'
 import FichajeError from '@/pages/fichaje/fichaje-error'
@@ -125,6 +126,7 @@ export const mapaRutasComponentes = [
       { path: `${rutas.detalleTorneo}/:id`, element: <DetalleTorneo /> },
       { path: rutas.reportes, element: <ReportesPage /> },
       { path: rutas.reportePagos, element: <ReportePagosPage /> },
+      { path: rutas.configuracion, element: <Configuracion /> },
       { path: rutas.delegados, element: <Delegados /> },
       { path: rutas.crearDelegado, element: <CrearDelegado /> },
       { path: `${rutas.detalleDelegado}/:id`, element: <DetalleDelegado /> },

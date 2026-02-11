@@ -16,7 +16,7 @@ export function MiniResumen({ children }: MiniResumenProps) {
   const selectedTeams = watch('selectedTeams')
 
   const currentPhase =
-    phases.length > 0 ? phases[currentPhaseIndex] ?? phases[0] : null
+    phases.length > 0 ? (phases[currentPhaseIndex] ?? phases[0]) : null
   const isElimination = currentPhase?.format === 'elimination'
   const categoriesWithName = categories.filter((c) => c.name)
 
@@ -24,7 +24,7 @@ export function MiniResumen({ children }: MiniResumenProps) {
   const hasTeamsCount = selectedTeams.length > 0
 
   return (
-    <div className='bg-muted rounded-lg p-4'>
+    <div className='bg-primary/10 rounded-lg p-4'>
       <h3 className='font-semibold text-foreground mb-1'>
         {name || 'Nombre del torneo'}
       </h3>

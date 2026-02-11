@@ -1,14 +1,11 @@
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
-import { Input } from '@/components/ui/input'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover'
 import CajitaConTick from '@/components/ykn-ui/cajita-con-tick'
-import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
-import { MiniResumen } from './MiniResumen'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -17,6 +14,7 @@ import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import type { TournamentWizardData, WizardTeam } from '../types'
 import { BracketView } from './BracketView'
+import { MiniResumen } from './MiniResumen'
 
 interface Match {
   id: string
@@ -241,7 +239,8 @@ export function Step5Fixture() {
         homeGames: 0,
         awayGames: 0,
         freeCount: 0,
-        interzonalCount: 0
+        interzonalCount: 0,
+        totalDates: 0
       }
     }
 
@@ -255,12 +254,19 @@ export function Step5Fixture() {
       const freeCount =
         data.hasFreeBye && teamCount % 2 !== 0 ? (isDouble ? 2 : 1) : 0
       const interzonalCount =
-        data.hasInterzonal && data.zonesCount > 1 ? data.zonesCount - 1 : 0
+        data.hasInterzonal && data.zonesCount > 1 ? (isDouble ? 2 : 1) : 0
+      const totalDates = opponents * (isDouble ? 2 : 1)
 
-      return { homeGames, awayGames, freeCount, interzonalCount }
+      return { homeGames, awayGames, freeCount, interzonalCount, totalDates }
     }
 
-    return { homeGames: 0, awayGames: 0, freeCount: 0, interzonalCount: 0 }
+    return {
+      homeGames: 0,
+      awayGames: 0,
+      freeCount: 0,
+      interzonalCount: 0,
+      totalDates: 0
+    }
   }
 
   const stats = calculateStats()
@@ -272,21 +278,6 @@ export function Step5Fixture() {
       <div>
         <div className='space-y-3 mb-4'>
           <div className='flex flex-wrap items-end gap-3'>
-            {isAllVsAll && (
-              <div>
-                <TituloDeInput className='mb-1.5'>Fechas</TituloDeInput>
-                <Input
-                  type='number'
-                  value={data.numberOfDates}
-                  onChange={(e) =>
-                    setValue('numberOfDates', parseInt(e.target.value, 10) || 0)
-                  }
-                  min={1}
-                  placeholder='Ej: 14'
-                  className='h-9 w-20'
-                />
-              </div>
-            )}
             <CajitaConTick
               id='free-bye'
               checked={data.hasFreeBye}
@@ -346,11 +337,18 @@ export function Step5Fixture() {
           )}
 
           {data.selectedTeams.length > 0 && isAllVsAll && (
-            <div className='p-3 bg-muted rounded-lg'>
+            <div className='p-3 bg-muted rounded-lg space-y-1'>
+              <p className='text-sm text-muted-foreground'>
+                <strong className='text-foreground'>
+                  El torneo tiene {stats.totalDates} fechas
+                </strong>
+                .
+              </p>
               <p className='text-sm text-muted-foreground'>
                 Cada equipo va a jugar{' '}
                 <strong className='text-foreground'>
-                  {stats.homeGames} partidos de local
+                  {stats.homeGames} jornada{stats.homeGames !== 1 ? 's' : ''} de
+                  local
                 </strong>{' '}
                 y{' '}
                 <strong className='text-foreground'>
@@ -358,25 +356,40 @@ export function Step5Fixture() {
                 </strong>
                 {stats.freeCount > 0 && (
                   <>
-                    . Además, va a quedar libre{' '}
+                    .{' '}
                     <strong className='text-foreground'>
-                      {stats.freeCount}{' '}
+                      Queda libre {stats.freeCount}{' '}
                       {stats.freeCount === 1 ? 'fecha' : 'fechas'}
                     </strong>
+                    {currentPhase?.rounds === 'double'
+                      ? ' (1 por rueda en Ida y vuelta)'
+                      : ''}
                   </>
                 )}
                 {stats.interzonalCount > 0 && (
                   <>
-                    {' '}
-                    y va a jugar un partido interzonal{' '}
+                    .{' '}
                     <strong className='text-foreground'>
-                      {stats.interzonalCount}{' '}
+                      Juega interzonal {stats.interzonalCount}{' '}
                       {stats.interzonalCount === 1 ? 'fecha' : 'fechas'}
                     </strong>
+                    {currentPhase?.rounds === 'double'
+                      ? ' (1 por rueda en Ida y vuelta)'
+                      : ''}
                   </>
                 )}
                 .
               </p>
+              {stats.freeCount > 0 && (
+                <p className='text-xs text-muted-foreground'>
+                  Cuando un equipo queda libre, esa fecha no juega.
+                </p>
+              )}
+              {stats.interzonalCount > 0 && (
+                <p className='text-xs text-muted-foreground'>
+                  La jornada interzonal enfrenta equipos de distintas zonas.
+                </p>
+              )}
             </div>
           )}
         </div>
@@ -485,17 +498,6 @@ export function Step5Fixture() {
                     </div>
                   )
                 })}
-
-              {currentPhase?.format === 'all-vs-all' && (
-                <div className='mt-6 pt-6 border-t'>
-                  <h4 className='font-semibold mb-4'>Vista de llaves</h4>
-                  <BracketView
-                    teamSlots={data.selectedTeams.length}
-                    teams={data.selectedTeams}
-                    zones={data.zones}
-                  />
-                </div>
-              )}
             </div>
           ) : (
             <div className='text-center py-8 text-muted-foreground'>
