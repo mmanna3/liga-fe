@@ -1,11 +1,11 @@
-import { Plus, X } from 'lucide-react'
-import { useState } from 'react'
-import type { TournamentWizardData, Category } from '../types'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
+import { CalendarRange, Globe, Plus, Settings, X, Zap } from 'lucide-react'
+import { useState } from 'react'
+import type { Category, TournamentWizardData } from '../types'
 
 interface Step1InformationProps {
   data: TournamentWizardData
@@ -82,16 +82,21 @@ export function Step1Information({ data, updateData }: Step1InformationProps) {
         <Label className='mb-2'>Tipo *</Label>
         <div className='grid grid-cols-2 md:grid-cols-4 gap-2'>
           {['FUTSAL', 'BABY', 'FUTBOL 11', 'FEMENINO'].map((type) => (
-            <Button
+            <button
               key={type}
               type='button'
-              variant={data.type === type ? 'default' : 'secondary'}
               onClick={() =>
                 updateData({ type: type as TournamentWizardData['type'] })
               }
+              className={cn(
+                'rounded-lg transition-all border-2 flex items-center justify-center py-2 px-3',
+                data.type === type
+                  ? 'bg-primary/10 border-primary text-primary'
+                  : 'bg-muted border-transparent text-muted-foreground hover:border-border'
+              )}
             >
               {type}
-            </Button>
+            </button>
           ))}
         </div>
       </div>
@@ -99,38 +104,37 @@ export function Step1Information({ data, updateData }: Step1InformationProps) {
       <div>
         <Label className='mb-2'>Categorías *</Label>
 
-        {data.categories.length > 0 &&
-          data.categories.some((c) => c.name) && (
-            <div className='flex flex-wrap gap-2 mb-3'>
-              {data.categories
-                .filter((c) => c.name)
-                .map((category) => (
-                  <Badge
-                    key={category.id}
-                    variant='secondary'
-                    className='pl-3 pr-1.5 py-1.5 text-sm cursor-pointer hover:bg-secondary/80 transition-colors'
-                    onClick={() => handleCategoryClick(category.id)}
+        {data.categories.length > 0 && data.categories.some((c) => c.name) && (
+          <div className='flex flex-wrap gap-2 mb-3'>
+            {data.categories
+              .filter((c) => c.name)
+              .map((category) => (
+                <Badge
+                  key={category.id}
+                  variant='secondary'
+                  className='pl-3 pr-1.5 py-1.5 text-sm cursor-pointer hover:bg-secondary/80 transition-colors'
+                  onClick={() => handleCategoryClick(category.id)}
+                >
+                  {category.name}
+                  {(category.yearFrom || category.yearTo) && (
+                    <span className='ml-1'>
+                      ({category.yearFrom || '—'}/{category.yearTo || '—'})
+                    </span>
+                  )}
+                  <button
+                    type='button'
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      removeCategory(category.id)
+                    }}
+                    className='ml-1.5 hover:bg-muted rounded-full p-0.5'
                   >
-                    {category.name}
-                    {(category.yearFrom || category.yearTo) && (
-                      <span className='ml-1'>
-                        ({category.yearFrom || '—'}/{category.yearTo || '—'})
-                      </span>
-                    )}
-                    <button
-                      type='button'
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        removeCategory(category.id)
-                      }}
-                      className='ml-1.5 hover:bg-muted rounded-full p-0.5'
-                    >
-                      <X className='w-3 h-3' />
-                    </button>
-                  </Badge>
-                ))}
-            </div>
-          )}
+                    <X className='w-3 h-3' />
+                  </button>
+                </Badge>
+              ))}
+          </div>
+        )}
 
         {editingCategory && (
           <div className='p-3 bg-muted rounded-lg mb-2'>
@@ -189,12 +193,12 @@ export function Step1Information({ data, updateData }: Step1InformationProps) {
 
       <div>
         <Label className='mb-2'>Formato *</Label>
-        <div className='grid grid-cols-2 md:grid-cols-4 gap-2'>
+        <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
           {[
-            { id: 'ANUAL', label: 'Apertura/Clausura' },
-            { id: 'MUNDIAL', label: 'Mundial' },
-            { id: 'RELAMPAGO', label: 'Eliminación directa' },
-            { id: 'PERSONALIZADO', label: 'Personalizado' }
+            { id: 'ANUAL', label: 'Apertura/Clausura', icon: CalendarRange },
+            { id: 'MUNDIAL', label: 'Mundial', icon: Globe },
+            { id: 'RELAMPAGO', label: 'Eliminación directa', icon: Zap },
+            { id: 'PERSONALIZADO', label: 'Personalizado', icon: Settings }
           ].map((format) => (
             <button
               key={format.id}
@@ -205,15 +209,23 @@ export function Step1Information({ data, updateData }: Step1InformationProps) {
                 })
               }
               className={cn(
-                'p-3 rounded-lg text-center transition-all border-2',
+                'aspect-square rounded-lg transition-all border-2 flex flex-col items-center justify-center gap-2 p-3',
                 data.format === format.id
                   ? 'bg-primary/10 border-primary'
                   : 'bg-muted border-transparent hover:border-border'
               )}
             >
+              <format.icon
+                className={cn(
+                  'w-10 h-10',
+                  data.format === format.id
+                    ? 'text-primary'
+                    : 'text-muted-foreground'
+                )}
+              />
               <p
                 className={cn(
-                  'text-xs font-medium leading-tight',
+                  'text-sm font-medium leading-tight',
                   data.format === format.id
                     ? 'text-primary'
                     : 'text-muted-foreground'
