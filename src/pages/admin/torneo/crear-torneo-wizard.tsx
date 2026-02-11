@@ -190,6 +190,11 @@ export default function CrearTorneoWizard() {
           <BotonVolver
             path={rutasNavegacion.torneos}
             texto='Volver a torneos'
+            onBeforeNavigate={() =>
+              window.confirm(
+                'Los cambios de este torneo se van a perder. ¿Estás seguro de que deseas salir?'
+              )
+            }
           />
         </CardHeader>
         <CardContent className='space-y-6'>
