@@ -1,5 +1,5 @@
-import { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
+import { ReactNode } from 'react'
 import { Label } from '../ui/label'
 
 interface TituloDeInputProps {
@@ -16,7 +16,7 @@ export default function TituloDeInput({
   return (
     <Label
       htmlFor={htmlFor}
-      className={cn('block mb-3 text-md font-semibold', className)}
+      className={cn('block mb-2 text-md font-semibold', className)}
     >
       {children}
     </Label>

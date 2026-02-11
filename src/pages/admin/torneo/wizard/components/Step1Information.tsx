@@ -1,5 +1,5 @@
-import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
 import { Input } from '@/components/ui/input'
+import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
 import { cn } from '@/lib/utils'
 import { CalendarRange, Globe, Settings, Zap } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
@@ -30,7 +30,7 @@ export function Step1Information() {
             value={data.name}
             onChange={(e) => setValue('name', e.target.value)}
             placeholder='Ej: Torneo Clausura 2026'
-            className={cn(errors.name && 'border-destructive')}
+            className={cn('h-11', errors.name && 'border-destructive')}
           />
           {errors.name && (
             <p className='text-sm text-destructive mt-1'>
@@ -45,7 +45,7 @@ export function Step1Information() {
             value={data.season}
             onChange={(e) => setValue('season', e.target.value)}
             placeholder='2026'
-            className={cn(errors.season && 'border-destructive')}
+            className={cn('h-11', errors.season && 'border-destructive')}
           />
           {errors.season && (
             <p className='text-sm text-destructive mt-1'>
@@ -58,7 +58,7 @@ export function Step1Information() {
       <div>
         <TituloDeInput>Tipo *</TituloDeInput>
         <div className='grid grid-cols-2 md:grid-cols-4 gap-2'>
-          {['FUTSAL', 'BABY', 'FUTBOL 11', 'FEMENINO'].map((type) => (
+          {['Futsal', 'Baby', 'Fútbol 11', 'Femenino'].map((type) => (
             <button
               key={type}
               type='button'
@@ -66,7 +66,7 @@ export function Step1Information() {
                 setValue('type', type as TournamentWizardData['type'])
               }
               className={cn(
-                'rounded-lg transition-all border-2 flex items-center justify-center py-2 px-3',
+                'rounded-lg transition-all border-2 flex items-center justify-center py-2 px-3 text-sm font-medium leading-tight',
                 data.type === type
                   ? 'bg-primary/10 border-primary text-primary'
                   : 'bg-muted border-transparent text-muted-foreground hover:border-border'
@@ -77,9 +77,7 @@ export function Step1Information() {
           ))}
         </div>
         {errors.type && (
-          <p className='text-sm text-destructive mt-2'>
-            {errors.type.message}
-          </p>
+          <p className='text-sm text-destructive mt-2'>{errors.type.message}</p>
         )}
       </div>
 

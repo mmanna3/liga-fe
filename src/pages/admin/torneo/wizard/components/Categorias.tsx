@@ -1,7 +1,7 @@
-import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
 import { Plus, X } from 'lucide-react'
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -139,7 +139,7 @@ export function Categorias() {
         variant='outline'
         size='sm'
         onClick={addCategory}
-        className='ml-4 mt-3'
+        className='my-2'
       >
         <Plus className='w-3 h-3' />
         Agregar
