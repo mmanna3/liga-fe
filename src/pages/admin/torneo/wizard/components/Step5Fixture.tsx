@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/popover'
 import CajitaConTick from '@/components/ykn-ui/cajita-con-tick'
 import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
+import { MiniResumen } from './MiniResumen'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -266,29 +267,7 @@ export function Step5Fixture() {
 
   return (
     <div className='space-y-4'>
-      <div className='bg-muted rounded-lg p-4'>
-        <h3 className='font-semibold text-foreground mb-1'>
-          {data.name || 'Nombre del torneo'}
-        </h3>
-        <p className='text-sm text-muted-foreground'>
-          {currentPhase && (
-            <>
-              Fase:{' '}
-              <span className='font-semibold text-foreground'>
-                {currentPhase.name}
-              </span>
-              {' - '}
-              <span>
-                {isElimination ? 'Eliminación directa' : 'Todos contra todos'}
-              </span>
-              {' - '}
-              <span className='font-semibold'>
-                {data.selectedTeams.length} equipos
-              </span>
-            </>
-          )}
-        </p>
-      </div>
+      <MiniResumen />
 
       <div>
         <div className='space-y-3 mb-4'>

@@ -1,4 +1,3 @@
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import SelectorSimple from '@/components/ykn-ui/selector-simple'
@@ -8,6 +7,7 @@ import { ChevronDown, ChevronRight, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import type { Phase, TournamentWizardData } from '../types'
+import { MiniResumen } from './MiniResumen'
 import { ReglasDeDesempate } from './ReglasDeDesempate'
 
 export function Step2Phases() {
@@ -130,25 +130,7 @@ export function Step2Phases() {
 
   return (
     <div className='space-y-4'>
-      <div className='bg-muted rounded-lg p-4'>
-        <h3 className='font-semibold text-foreground mb-1'>
-          {data.name || 'Nombre del torneo'}
-        </h3>
-        <div className='flex flex-wrap gap-1.5'>
-          {data.categories
-            .filter((c) => c.name)
-            .map((category) => (
-              <Badge key={category.id} variant='secondary' className='text-xs'>
-                {category.name}
-                {(category.yearFrom || category.yearTo) && (
-                  <span className='ml-1'>
-                    ({category.yearFrom || '—'}/{category.yearTo || '—'})
-                  </span>
-                )}
-              </Badge>
-            ))}
-        </div>
-      </div>
+      <MiniResumen />
 
       <div className='p-3 bg-amber-50 rounded-lg border border-amber-200'>
         <p className='text-sm text-foreground'>

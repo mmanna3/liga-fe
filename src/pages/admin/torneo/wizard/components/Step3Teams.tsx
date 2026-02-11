@@ -9,6 +9,7 @@ import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { mockTeams } from '../data/mock-teams'
 import type { TournamentWizardData, WizardTeam } from '../types'
+import { MiniResumen } from './MiniResumen'
 
 export function Step3Teams() {
   const {
@@ -28,8 +29,6 @@ export function Step3Teams() {
     filterTournament: watch('filterTournament'),
     filterZone: watch('filterZone')
   }
-
-  const currentPhase = data.phases[0]
 
   const handleSearchChange = (value: string) => {
     setSearchTerm(value)
@@ -97,21 +96,7 @@ export function Step3Teams() {
 
   return (
     <div className='space-y-4'>
-      <div className='bg-muted rounded-lg p-4'>
-        <h3 className='font-semibold text-foreground mb-1'>
-          {data.name || 'Nombre del torneo'}
-        </h3>
-        <p className='text-sm text-muted-foreground'>
-          {currentPhase && (
-            <>
-              Fase:{' '}
-              <span className='font-semibold text-foreground'>
-                {currentPhase.name}
-              </span>
-            </>
-          )}
-        </p>
-      </div>
+      <MiniResumen />
 
       <div className='flex items-center gap-4'>
         <div>

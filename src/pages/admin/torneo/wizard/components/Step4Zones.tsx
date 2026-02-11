@@ -1,4 +1,5 @@
 import CajitaConTick from '@/components/ykn-ui/cajita-con-tick'
+import { MiniResumen } from './MiniResumen'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Pencil, Plus, Shuffle, Trash2 } from 'lucide-react'
@@ -145,30 +146,11 @@ export function Step4Zones() {
 
   return (
     <div className='space-y-6'>
-      <div className='bg-muted rounded-lg p-4'>
-        <h3 className='font-semibold text-foreground mb-1'>
-          {data.name || 'Nombre del torneo'}
-        </h3>
-        <p className='text-sm text-muted-foreground'>
-          {currentPhase && (
-            <>
-              Fase:{' '}
-              <span className='font-semibold text-foreground'>
-                {currentPhase.name}
-              </span>
-            </>
-          )}
-          <span className='mx-2'>·</span>
-          <>
-            <span className='font-semibold text-foreground'>
-              {data.selectedTeams.length} equipos
-            </span>
-          </>{' '}
-        </p>
+      <MiniResumen>
         <p className='text-xs text-muted-foreground mt-2'>
           Las zonas son específicas de esta fase
         </p>
-      </div>
+      </MiniResumen>
 
       <div>
         <div className='flex flex-wrap items-center gap-3 mb-6'>
