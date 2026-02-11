@@ -24,6 +24,7 @@ import { Step4Zones } from './wizard/components/Step4Zones'
 import { Step5Fixture } from './wizard/components/Step5Fixture'
 import { Step6Summary } from './wizard/components/Step6Summary'
 import { useWizardStore } from './wizard/use-wizard-store'
+import { z } from 'zod'
 import {
   tournamentWizardSchema,
   step1Schema,
@@ -122,11 +123,25 @@ export default function CrearTorneoWizard() {
       }
       return true
     } catch (error) {
-      if (error instanceof Error) {
-        const zodError = error as { errors?: Array<{ message: string }> }
-        const errorMessage =
-          zodError.errors?.[0]?.message || 'Por favor, completa todos los campos requeridos'
-        toast.error(errorMessage)
+      if (error instanceof z.ZodError) {
+        const mensajes = [
+          ...new Set(error.issues.map((issue) => issue.message))
+        ]
+        toast.error(
+          mensajes.length === 1 ? (
+            mensajes[0]
+          ) : (
+            <span className='block'>
+              {mensajes.map((msg, i) => (
+                <span key={i} className='block'>
+                  • {msg}
+                </span>
+              ))}
+            </span>
+          )
+        )
+      } else {
+        toast.error('Por favor, completa todos los campos requeridos')
       }
       return false
     }
