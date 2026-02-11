@@ -128,11 +128,6 @@ export function Step2Phases() {
   const getRoundsLabel = (rounds: 'single' | 'double') =>
     rounds === 'single' ? 'Solo ida' : 'Ida y vuelta'
 
-  const isPhaseEditable = (phaseIndex: number) => {
-    if (phaseIndex === 0) return true
-    return data.phases[phaseIndex - 1]?.completed || false
-  }
-
   return (
     <div className='space-y-4'>
       <div className='bg-muted rounded-lg p-4'>
@@ -157,17 +152,15 @@ export function Step2Phases() {
 
       <div className='p-3 bg-amber-50 rounded-lg border border-amber-200'>
         <p className='text-sm text-foreground'>
-          <strong>Importante:</strong> Durante la creación de este torneo, se
-          podrán cargar los "datos generales" de todas las fases, pero solo se
-          permitirá configurar las zonas, equipos y fixture de la primera. Luego
-          de creado el torneo, vas a poder editar estos mismos datos en las
-          fases siguientes.
+          <strong>Importante:</strong> Durante la creación del torneo podés
+          configurar todas las fases. Luego de creado, vas a poder editar la
+          información de zonas, equipos y fixture en cada fase.
         </p>
       </div>
 
       <div className='space-y-2'>
         {data.phases.map((phase, phaseIndex) => {
-          const editable = isPhaseEditable(phaseIndex)
+          const editable = true
 
           return (
             <div
@@ -235,11 +228,9 @@ export function Step2Phases() {
                   <span className='text-sm text-muted-foreground'>
                     • {getFormatLabel(phase.format)}
                   </span>
-                  {phase.format === 'all-vs-all' && (
-                    <span className='text-sm text-muted-foreground'>
-                      • {getRoundsLabel(phase.rounds)}
-                    </span>
-                  )}
+                  <span className='text-sm text-muted-foreground'>
+                    • {getRoundsLabel(phase.rounds)}
+                  </span>
                 </button>
                 <div className='flex items-center gap-2'>
                   {data.phases.length > 1 && editable && (
@@ -261,15 +252,6 @@ export function Step2Phases() {
 
               {expandedPhase === phase.id && (
                 <div className='p-4 space-y-6'>
-                  {!editable && (
-                    <div className='p-3 bg-amber-50 rounded-lg border border-amber-200'>
-                      <p className='text-sm text-foreground'>
-                        La edición de esta fase se habilitará una vez finalizada
-                        la anterior
-                      </p>
-                    </div>
-                  )}
-
                   <div className='flex gap-8 my-3'>
                     {/* Formato de la fase */}
                     <div className='flex-1'>
