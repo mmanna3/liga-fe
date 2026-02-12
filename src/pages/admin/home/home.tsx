@@ -91,7 +91,7 @@ export default function Home() {
               key={path}
               type='button'
               onClick={() => navigate(path)}
-              className='group rounded-2xl p-6 bg-white/95 backdrop-blur-sm border border-white/40 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all flex flex-col items-center text-center'
+              className='group rounded-2xl p-6 bg-white/95 backdrop-blur-sm border border-white/40 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all flex flex-col items-center text-center hover:cursor-pointer'
             >
               <div className='rounded-xl w-14 h-14 flex items-center justify-center mb-4 bg-primary/10 group-hover:bg-primary/20 transition-colors'>
                 <Icon className='w-7 h-7 text-primary' />

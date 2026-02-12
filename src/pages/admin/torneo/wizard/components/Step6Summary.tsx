@@ -38,8 +38,8 @@ export function Step6Summary({ onEditStep }: Step6SummaryProps) {
     zones: watch('zones'),
     preventSameClub: watch('preventSameClub'),
     fixtureGenerated: watch('fixtureGenerated'),
-    hasFreeBye: watch('hasFreeBye'),
-    hasInterzonal: watch('hasInterzonal'),
+    freeDates: watch('freeDates'),
+    interzonalDates: watch('interzonalDates'),
     status: watch('status')
   }
 
@@ -60,8 +60,7 @@ export function Step6Summary({ onEditStep }: Step6SummaryProps) {
       phase.format === 'all-vs-all'
         ? 'Todos contra todos'
         : 'Eliminación directa'
-    const roundsText =
-      phase.rounds === 'double' ? 'Ida y vuelta' : 'Solo ida'
+    const roundsText = phase.rounds === 'double' ? 'Ida y vuelta' : 'Solo ida'
 
     return `${formatText} - ${roundsText}`
   }
@@ -151,10 +150,7 @@ export function Step6Summary({ onEditStep }: Step6SummaryProps) {
           </div>
           <div className='space-y-2'>
             {data.phases.map((phase, idx) => (
-              <div
-                key={phase.id}
-                className='bg-background rounded-lg p-3'
-              >
+              <div key={phase.id} className='bg-background rounded-lg p-3'>
                 <div className='flex items-center gap-2 mb-2'>
                   <span className='w-6 h-6 bg-primary text-primary-foreground rounded-md flex items-center justify-center text-xs font-bold'>
                     {idx + 1}
@@ -302,15 +298,38 @@ export function Step6Summary({ onEditStep }: Step6SummaryProps) {
               <p className='text-sm text-muted-foreground'>
                 Fixture generado exitosamente
               </p>
-              {data.hasFreeBye && (
+              {data.zones.some((z) => (z.freeDates ?? 0) > 0) ? (
                 <p className='text-sm text-muted-foreground'>
-                  • Incluye equipos libres
+                  • Libre por zona:{' '}
+                  {data.zones
+                    .filter((z) => (z.freeDates ?? 0) > 0)
+                    .map((z) => `${z.name} (${z.freeDates})`)
+                    .join(', ')}
                 </p>
+              ) : (
+                data.freeDates > 0 && (
+                  <p className='text-sm text-muted-foreground'>
+                    • {data.freeDates} jornada
+                    {data.freeDates !== 1 ? 's' : ''} libre por equipo
+                  </p>
+                )
               )}
-              {data.hasInterzonal && (
+              {data.zones.some((z) => (z.interzonalDates ?? 0) > 0) ? (
                 <p className='text-sm text-muted-foreground'>
-                  • Incluye fechas interzonales
+                  • Interzonal por zona:{' '}
+                  {data.zones
+                    .filter((z) => (z.interzonalDates ?? 0) > 0)
+                    .map((z) => `${z.name} (${z.interzonalDates})`)
+                    .join(', ')}
                 </p>
+              ) : (
+                data.interzonalDates > 0 && (
+                  <p className='text-sm text-muted-foreground'>
+                    • {data.interzonalDates} jornada
+                    {data.interzonalDates !== 1 ? 's' : ''} interzonal por
+                    equipo
+                  </p>
+                )
               )}
 
               {currentPhase?.format === 'elimination' && (
@@ -336,7 +355,11 @@ export function Step6Summary({ onEditStep }: Step6SummaryProps) {
                   <p className='text-xs text-muted-foreground mb-2'>
                     Es necesario generar el fixture antes de crear el torneo.
                   </p>
-                  <Button type='button' size='sm' onClick={() => handleEditStep(5)}>
+                  <Button
+                    type='button'
+                    size='sm'
+                    onClick={() => handleEditStep(5)}
+                  >
                     <Target className='w-3 h-3' />
                     Ir al paso 5 para generar fixture
                   </Button>

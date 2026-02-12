@@ -41,7 +41,9 @@ export function Step4Zones() {
           id: `zone-${Date.now()}`,
           name: 'Zona A',
           teams: [],
-          phaseId: currentPhase?.id || ''
+          phaseId: currentPhase?.id || '',
+          freeDates: 0,
+          interzonalDates: 0
         }
       ])
     }
@@ -51,13 +53,36 @@ export function Step4Zones() {
     setValue('zonesCount', data.zones.length)
   }, [data.zones.length, setValue])
 
+  useEffect(() => {
+    const needsMigration = data.zones.some(
+      (z) =>
+        (z as Zone & { freeDates?: number; interzonalDates?: number })
+          .freeDates === undefined ||
+        (z as Zone & { freeDates?: number; interzonalDates?: number })
+          .interzonalDates === undefined
+    )
+    if (needsMigration) {
+      setValue(
+        'zones',
+        data.zones.map((z) => ({
+          ...z,
+          freeDates: (z as Zone & { freeDates?: number }).freeDates ?? 0,
+          interzonalDates:
+            (z as Zone & { interzonalDates?: number }).interzonalDates ?? 0
+        }))
+      )
+    }
+  }, [data.zones])
+
   const addZone = () => {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     const newZone: Zone = {
       id: `zone-${Date.now()}`,
       name: `Zona ${letters[zonesCount] || String(zonesCount + 1)}`,
       teams: [],
-      phaseId: currentPhase?.id || ''
+      phaseId: currentPhase?.id || '',
+      freeDates: 0,
+      interzonalDates: 0
     }
     setValue('zones', [...data.zones, newZone])
   }

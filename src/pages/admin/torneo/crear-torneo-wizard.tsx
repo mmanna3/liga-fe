@@ -63,10 +63,9 @@ const initialData: TournamentWizardData = {
   zones: [],
   zonesCount: 1,
   preventSameClub: false,
-  hasFreeBye: false,
-  hasInterzonal: false,
+  freeDates: 0,
+  interzonalDates: 0,
   fixtureGenerated: false,
-  numberOfDates: 0,
   preventClubClash: false,
   status: 'draft'
 }
@@ -96,10 +95,9 @@ function getStepData(data: TournamentWizardData, step: number): unknown {
       return { zones: data.zones, preventSameClub: data.preventSameClub }
     case 5:
       return {
-        hasFreeBye: data.hasFreeBye,
-        hasInterzonal: data.hasInterzonal,
+        freeDates: data.freeDates,
+        interzonalDates: data.interzonalDates,
         fixtureGenerated: data.fixtureGenerated,
-        numberOfDates: data.numberOfDates,
         preventClubClash: data.preventClubClash
       }
     default:
@@ -119,16 +117,15 @@ function getDefaultsForStepsAfter(step: number): Partial<TournamentWizardData> {
     zones: [] as TournamentWizardData['zones'],
     zonesCount: 1,
     preventSameClub: false,
-    hasFreeBye: false,
-    hasInterzonal: false,
+    freeDates: 0,
+    interzonalDates: 0,
     fixtureGenerated: false,
-    numberOfDates: 0,
     preventClubClash: false
   }
   if (step <= 1) return { ...base, phases: [] }
   if (step <= 2) return base
-  if (step <= 3) return { zones: base.zones, zonesCount: base.zonesCount, preventSameClub: base.preventSameClub, hasFreeBye: base.hasFreeBye, hasInterzonal: base.hasInterzonal, fixtureGenerated: base.fixtureGenerated, numberOfDates: base.numberOfDates, preventClubClash: base.preventClubClash }
-  if (step <= 4) return { hasFreeBye: base.hasFreeBye, hasInterzonal: base.hasInterzonal, fixtureGenerated: base.fixtureGenerated, numberOfDates: base.numberOfDates, preventClubClash: base.preventClubClash }
+  if (step <= 3) return { zones: base.zones, zonesCount: base.zonesCount, preventSameClub: base.preventSameClub, freeDates: base.freeDates, interzonalDates: base.interzonalDates, fixtureGenerated: base.fixtureGenerated, preventClubClash: base.preventClubClash }
+  if (step <= 4) return { freeDates: base.freeDates, interzonalDates: base.interzonalDates, fixtureGenerated: base.fixtureGenerated, preventClubClash: base.preventClubClash }
   return {}
 }
 

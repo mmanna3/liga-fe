@@ -42,7 +42,9 @@ const zoneSchema = z.object({
   id: z.string(),
   name: z.string(),
   teams: z.array(wizardTeamSchema),
-  phaseId: z.string()
+  phaseId: z.string(),
+  freeDates: z.number().min(0),
+  interzonalDates: z.number().min(0)
 })
 
 // Schema completo del wizard
@@ -82,10 +84,9 @@ export const tournamentWizardSchema = z.object({
   preventSameClub: z.boolean(),
 
   // Step 5: Fixture
-  hasFreeBye: z.boolean(),
-  hasInterzonal: z.boolean(),
+  freeDates: z.number().min(0),
+  interzonalDates: z.number().min(0),
   fixtureGenerated: z.boolean(),
-  numberOfDates: z.number().min(0),
   preventClubClash: z.boolean(),
 
   // Step 6: Estado

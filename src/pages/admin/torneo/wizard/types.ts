@@ -37,6 +37,10 @@ export interface Zone {
   name: string
   teams: WizardTeam[]
   phaseId: string
+  /** Cantidad de fechas en que cada equipo de esta zona queda libre (por zona) */
+  freeDates: number
+  /** Cantidad de fechas interzonales por equipo en esta zona. Todas las zonas deben tener el mismo valor para poder emparejar. */
+  interzonalDates: number
 }
 
 export interface TournamentWizardData {
@@ -60,10 +64,9 @@ export interface TournamentWizardData {
   zonesCount: number
   preventSameClub: boolean
 
-  hasFreeBye: boolean
-  hasInterzonal: boolean
+  freeDates: number
+  interzonalDates: number
   fixtureGenerated: boolean
-  numberOfDates: number
   preventClubClash: boolean
 
   status: 'draft' | 'published'
