@@ -25,6 +25,7 @@ import {
   generateAllFixtures,
   generateFixture,
   isValidConfiguration,
+  isValidForElimination,
   mergeAndResolveInterzonal,
   validateInterzonalPairing,
   validateZones,
@@ -52,6 +53,7 @@ export function Step5Fixture() {
   const [selectedZoneId, setSelectedZoneId] = useState<string>('')
   const [selectedEliminationZoneId, setSelectedEliminationZoneId] =
     useState<string>('')
+  const [generationKey, setGenerationKey] = useState(0)
 
   const data = {
     phases: watch('phases'),
@@ -72,7 +74,8 @@ export function Step5Fixture() {
   const teamCount = data.selectedTeams.length
 
   const zonesWithTeams = data.zones.filter((z) => z.teams.length > 0)
-  const useZoneMode = isAllVsAll && zonesWithTeams.length > 0
+  const useZoneMode =
+    (isAllVsAll || isElimination) && zonesWithTeams.length > 0
   const hasMultipleZones = zonesWithTeams.length > 1
 
   const zoneInputs = zonesWithTeams.map((z) => ({
@@ -83,14 +86,18 @@ export function Step5Fixture() {
     interzonalDates: z.interzonalDates ?? 0
   }))
 
-  const zoneValidations = useZoneMode ? validateZones(zoneInputs) : []
+  const zoneValidations = useZoneMode
+    ? validateZones(zoneInputs, isElimination ? 'elimination' : 'all-vs-all')
+    : []
   const interzonalPairing = useZoneMode
     ? validateInterzonalPairing(zoneInputs)
     : { isValid: true, message: '' }
 
   const validConfig = useZoneMode
     ? zoneValidations.every((v) => v.isValid) && interzonalPairing.isValid
-    : isValidConfiguration(teamCount, data.freeDates, data.interzonalDates)
+    : isElimination
+      ? isValidForElimination(teamCount, data.freeDates, data.interzonalDates)
+      : isValidConfiguration(teamCount, data.freeDates, data.interzonalDates)
 
   const totalDates = isAllVsAll
     ? useZoneMode
@@ -119,21 +126,40 @@ export function Step5Fixture() {
   }, [isElimination, zonesWithTeams, selectedEliminationZoneId])
 
   useEffect(() => {
-    if (isAllVsAll && !useZoneMode && teamCount > 0 && teamCount % 2 !== 0) {
-      const currentFree = data.freeDates
-      const currentIz = data.interzonalDates
-      if (currentFree === 0 && currentIz === 0) {
-        setValue('freeDates', 1)
+    if (!useZoneMode && teamCount > 0) {
+      const T = teamCount + data.freeDates + data.interzonalDates
+      if (isElimination) {
+        // Eliminación: debe ser potencia de 2
+        if (!isValidForElimination(teamCount, data.freeDates, data.interzonalDates)) {
+          const nextPower = Math.pow(2, Math.ceil(Math.log2(Math.max(2, T))))
+          const needed = nextPower - T
+          if (needed > 0 && data.freeDates === 0 && data.interzonalDates === 0) {
+            setValue('freeDates', needed)
+          }
+        }
+      } else if (isAllVsAll && teamCount % 2 !== 0) {
+        const currentFree = data.freeDates
+        const currentIz = data.interzonalDates
+        if (currentFree === 0 && currentIz === 0) {
+          setValue('freeDates', 1)
+        }
       }
     }
-  }, [teamCount, isAllVsAll, useZoneMode])
+  }, [teamCount, isAllVsAll, isElimination, useZoneMode])
 
 
   const handleGenerate = () => {
+    setGenerationKey((k) => k + 1)
+
     if (isElimination) {
-      setValue('fixtureGenerated', true)
+      setValue('fixtureGenerated', true, { shouldValidate: true })
       return
     }
+
+    // Clear previous state before regenerating (evita estado inconsistente)
+    setFixtureDates([])
+    setZoneFixtures([])
+    setMergedDates([])
 
     if (useZoneMode) {
       const fixtures = generateAllFixtures(zoneInputs, rounds)
@@ -171,7 +197,7 @@ export function Step5Fixture() {
       )
       setStats(newStats)
     }
-    setValue('fixtureGenerated', true)
+    setValue('fixtureGenerated', true, { shouldValidate: true })
   }
 
   const handleDragStart = (entryId: string) => {
@@ -261,9 +287,9 @@ export function Step5Fixture() {
     <div className='space-y-4'>
       <MiniResumen />
 
-      {isAllVsAll && (
+      {(isAllVsAll || isElimination) && (
         <div className='space-y-4'>
-          {/* Inputs: freeDates por zona cuando hay zonas; interzonal a nivel fase si N>1 */}
+          {/* Inputs: freeDates por zona cuando hay zonas; interzonal si N>1 zonas (igual que todos contra todos) */}
           {useZoneMode ? (
             <div className='space-y-4'>
               <div>
@@ -422,14 +448,25 @@ export function Step5Fixture() {
                       )
                     })}
                     <p className='text-sm text-muted-foreground'>
-                      Cada zona tendrá hasta{' '}
-                      <strong className='text-foreground'>
-                        {totalDates} fechas
-                      </strong>{' '}
-                      ({rounds === 'double' ? 'ida y vuelta' : 'solo ida'}).
-                      {hasMultipleZones &&
-                        zoneInputs.some((z) => z.interzonalDates > 0) &&
-                        ' Los partidos interzonales cruzan equipos entre zonas.'}
+                      {isElimination ? (
+                        <>
+                          Configuración válida para eliminación directa por zona.
+                          {hasMultipleZones &&
+                            zoneInputs.some((z) => z.interzonalDates > 0) &&
+                            ' Los partidos interzonales cruzan equipos entre zonas.'}
+                        </>
+                      ) : (
+                        <>
+                          Cada zona tendrá hasta{' '}
+                          <strong className='text-foreground'>
+                            {totalDates} fechas
+                          </strong>{' '}
+                          ({rounds === 'double' ? 'ida y vuelta' : 'solo ida'}).
+                          {hasMultipleZones &&
+                            zoneInputs.some((z) => z.interzonalDates > 0) &&
+                            ' Los partidos interzonales cruzan equipos entre zonas.'}
+                        </>
+                      )}
                     </p>
                   </>
                 ) : (
@@ -443,11 +480,17 @@ export function Step5Fixture() {
                       </strong>
                     </p>
                     <p className='text-sm text-muted-foreground'>
-                      El torneo tendrá{' '}
-                      <strong className='text-foreground'>
-                        {totalDates} jornadas
-                      </strong>{' '}
-                      ({rounds === 'double' ? 'ida y vuelta' : 'solo ida'}).
+                      {isElimination ? (
+                        <>Configuración válida para eliminación directa.</>
+                      ) : (
+                        <>
+                          El torneo tendrá{' '}
+                          <strong className='text-foreground'>
+                            {totalDates} jornadas
+                          </strong>{' '}
+                          ({rounds === 'double' ? 'ida y vuelta' : 'solo ida'}).
+                        </>
+                      )}
                     </p>
                   </>
                 )}
@@ -481,7 +524,9 @@ export function Step5Fixture() {
                 <AlertTriangle className='w-4 h-4 text-destructive shrink-0 mt-0.5' />
                 <div>
                   <p className='text-sm font-medium text-destructive'>
-                    La cantidad total de participantes debe ser par en cada zona
+                    {isElimination
+                      ? 'La cantidad total de participantes debe ser potencia de 2 (2, 4, 8, 16...) en cada zona'
+                      : 'La cantidad total de participantes debe ser par en cada zona'}
                   </p>
                   <p className='text-xs text-destructive/80 mt-0.5'>
                     {useZoneMode
@@ -495,10 +540,13 @@ export function Step5Fixture() {
                               )
                               const free = z?.freeDates ?? 0
                               const iz = z?.interzonalDates ?? 0
-                              return `${v.zoneName}: ${v.teamCount} + ${free} libre${hasMultipleZones && iz > 0 ? ` + ${iz} interzonal` : ''} = ${v.totalParticipants} (impar). `
+                              const bad = isElimination
+                                ? 'no es potencia de 2'
+                                : 'impar'
+                              return `${v.zoneName}: ${v.teamCount} + ${free} libre${hasMultipleZones && iz > 0 ? ` + ${iz} interzonal` : ''} = ${v.totalParticipants} (${bad}). `
                             })
                             .join(' ') || 'Ajustá libre o interzonal por zona.'
-                      : `Actualmente: ${teamCount} equipos + ${data.freeDates} libre + ${data.interzonalDates} interzonal = ${teamCount + data.freeDates + data.interzonalDates} (impar). Ajustá la cantidad de fechas libre o interzonal.`}
+                      : `Actualmente: ${teamCount} equipos + ${data.freeDates} libre + ${data.interzonalDates} interzonal = ${teamCount + data.freeDates + data.interzonalDates} (${isElimination ? 'no es potencia de 2' : 'impar'}). Ajustá la cantidad de fechas libre o interzonal.`}
                   </p>
                 </div>
               </div>
@@ -512,7 +560,7 @@ export function Step5Fixture() {
         type='button'
         onClick={handleGenerate}
         className='w-full'
-        disabled={isAllVsAll && !validConfig}
+        disabled={(isAllVsAll || isElimination) && !validConfig}
       >
         <Wand2 className='w-5 h-5' />
         {data.fixtureGenerated ? 'Regenerar fixture' : 'Generar fixture'}
@@ -566,7 +614,10 @@ export function Step5Fixture() {
       )}
 
       {/* Vista del fixture */}
-      <div className='bg-background rounded-xl border p-4'>
+      <div
+        key={generationKey}
+        className='bg-background rounded-xl border p-4'
+      >
         {isElimination && data.selectedTeams.length > 0 ? (
           <div>
             <h4 className='font-semibold mb-4 flex items-center gap-2'>

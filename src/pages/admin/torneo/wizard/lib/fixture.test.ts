@@ -4,9 +4,12 @@ import {
   calculateTotalDates,
   generateAllFixtures,
   generateFixture,
+  isPowerOf2,
   isValidConfiguration,
+  isValidForElimination,
   mergeAndResolveInterzonal,
   validateInterzonalPairing,
+  validateZones,
   type FixtureDate,
 } from './fixture'
 
@@ -50,6 +53,51 @@ describe('isValidConfiguration', () => {
     expect(isValidConfiguration(5, 0, 0)).toBe(false)
     expect(isValidConfiguration(16, 1, 0)).toBe(false)
     expect(isValidConfiguration(4, 1, 0)).toBe(false)
+  })
+})
+
+// ─── isPowerOf2 / isValidForElimination ────────────────────────────────────
+
+describe('isPowerOf2 y isValidForElimination', () => {
+  it('isPowerOf2 devuelve true solo para 2, 4, 8, 16, ...', () => {
+    expect(isPowerOf2(2)).toBe(true)
+    expect(isPowerOf2(4)).toBe(true)
+    expect(isPowerOf2(8)).toBe(true)
+    expect(isPowerOf2(16)).toBe(true)
+    expect(isPowerOf2(4)).toBe(true)
+    expect(isPowerOf2(8)).toBe(true)
+    expect(isPowerOf2(6)).toBe(false)
+    expect(isPowerOf2(10)).toBe(false)
+    expect(isPowerOf2(1)).toBe(false)
+  })
+
+  it('isValidForElimination exige potencia de 2', () => {
+    expect(isValidForElimination(4, 0, 0)).toBe(true)
+    expect(isValidForElimination(6, 2, 0)).toBe(true)
+    expect(isValidForElimination(5, 2, 1)).toBe(true)
+    expect(isValidForElimination(5, 1, 0)).toBe(false)
+    expect(isValidForElimination(6, 0, 0)).toBe(false)
+  })
+
+  it('validateZones con mode elimination exige potencia de 2', () => {
+    const zones = [
+      {
+        id: 'z1',
+        name: 'Zona A',
+        teams: makeTeams(6),
+        freeDates: 2,
+        interzonalDates: 0,
+      },
+    ]
+    const result = validateZones(zones, 'elimination')
+    expect(result[0].isValid).toBe(true)
+    expect(result[0].totalParticipants).toBe(8)
+
+    const invalid = validateZones(
+      [{ id: 'z1', name: 'A', teams: makeTeams(5), freeDates: 1, interzonalDates: 0 }],
+      'elimination'
+    )
+    expect(invalid[0].isValid).toBe(false)
   })
 })
 

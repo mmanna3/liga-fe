@@ -84,6 +84,11 @@ export interface ZoneInput {
 
 // ─── Funciones públicas: validación ─────────────────────────────────────────
 
+/** Devuelve true si n es potencia de 2 (2, 4, 8, 16, ...) */
+export function isPowerOf2(n: number): boolean {
+  return n >= 2 && n > 0 && (n & (n - 1)) === 0
+}
+
 /** Devuelve true si N + freeDates + interzonalDates es par (para una zona) */
 export function isValidConfiguration(
   teamCount: number,
@@ -94,18 +99,38 @@ export function isValidConfiguration(
   return T >= 2 && T % 2 === 0
 }
 
+/**
+ * Devuelve true si N + freeDates + interzonalDates es potencia de 2 (para eliminación directa).
+ * La llave requiere 2, 4, 8, 16, ... participantes.
+ */
+export function isValidForElimination(
+  teamCount: number,
+  freeDates: number,
+  interzonalDates: number
+): boolean {
+  const T = teamCount + freeDates + interzonalDates
+  return isPowerOf2(T)
+}
+
 /** Valida cada zona individualmente (freeDates e interzonalDates por zona) */
-export function validateZones(zones: ZoneInput[]): ZoneValidation[] {
+export function validateZones(
+  zones: ZoneInput[],
+  mode: 'all-vs-all' | 'elimination' = 'all-vs-all'
+): ZoneValidation[] {
   return zones.map((zone) => {
     const freeDates = zone.freeDates ?? 0
     const interzonalDates = zone.interzonalDates ?? 0
     const T = zone.teams.length + freeDates + interzonalDates
+    const isValid =
+      mode === 'elimination'
+        ? isPowerOf2(T)
+        : T >= 2 && T % 2 === 0
     return {
       zoneId: zone.id,
       zoneName: zone.name,
       teamCount: zone.teams.length,
       totalParticipants: T,
-      isValid: T >= 2 && T % 2 === 0,
+      isValid,
     }
   })
 }

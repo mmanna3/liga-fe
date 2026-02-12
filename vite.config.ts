@@ -5,9 +5,9 @@ import path from 'path'
 import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react(), tailwindcss()],
-  base: '/liga-fe/',
+  base: command === 'build' ? '/liga-fe/' : '/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src')
@@ -16,4 +16,4 @@ export default defineConfig({
   test: {
     exclude: ['e2e/**', 'node_modules/**']
   }
-})
+}))
