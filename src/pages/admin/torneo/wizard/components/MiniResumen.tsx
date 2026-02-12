@@ -32,7 +32,11 @@ export function MiniResumen({ children }: MiniResumenProps) {
       {categoriesWithName.length > 0 && (
         <div className='flex flex-wrap gap-1.5 mb-2'>
           {categoriesWithName.map((category) => (
-            <Badge key={category.id} variant='secondary' className='text-xs'>
+            <Badge
+              key={category.id}
+              variant='secondary'
+              className='bg-primary/10 text-primary border-primary/20 text-xs'
+            >
               {category.name}
               {(category.yearFrom || category.yearTo) && (
                 <span className='ml-1'>

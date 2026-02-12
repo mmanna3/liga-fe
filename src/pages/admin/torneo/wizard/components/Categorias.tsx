@@ -67,7 +67,7 @@ export function Categorias() {
               <Badge
                 key={category.id}
                 variant='secondary'
-                className='pl-3 pr-1.5 py-1.5 text-sm cursor-pointer hover:bg-secondary/80 transition-colors'
+                className='bg-primary/10 text-primary border-primary/20 pl-3 pr-1.5 py-1.5 text-sm cursor-pointer hover:bg-primary/20 transition-colors'
                 onClick={() => handleCategoryClick(category.id)}
               >
                 {category.name}
