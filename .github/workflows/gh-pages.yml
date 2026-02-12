@@ -1,12 +1,18 @@
-name: Deploy to FTP
+name: Deploy
 
 on:
   push:
-    branches: ['main']
+    branches:
+      - main
+      - wizard-creacion-torneo
   workflow_dispatch:
 
 jobs:
-  deploy:
+  # ==============================
+  # 🚀 DEPLOY FTP (rama main)
+  # ==============================
+  deploy-ftp:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
@@ -17,7 +23,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 20
-          cache: 'npm'
+          cache: "npm"
 
       - name: Instalar dependencias
         run: npm ci --legacy-peer-deps
@@ -28,7 +34,7 @@ jobs:
       - name: Instala Playwright
         run: npx playwright install --with-deps
 
-      - name: Correr tests 2e2
+      - name: Correr tests e2e
         run: npm run e2e
 
       - uses: actions/upload-artifact@v5
@@ -38,7 +44,7 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
-      - name: Deployar por FTP
+      - name: Deployar Liga 1 por FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
@@ -47,7 +53,7 @@ jobs:
           local-dir: ./dist/
           server-dir: ${{ secrets.LIGA_1_SERVER_DIR }}
 
-      - name: Deployar por FTP
+      - name: Deployar Liga 2 por FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
@@ -55,3 +61,48 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
           server-dir: ${{ secrets.LIGA_2_SERVER_DIR }}
+
+  # ==============================
+  # 🌐 DEPLOY GITHUB PAGES
+  # (solo wizard-creacion-torneo)
+  # ==============================
+  deploy-gh-pages:
+    if: github.ref == 'refs/heads/wizard-creacion-torneo'
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkoutear repo
+        uses: actions/checkout@v5
+
+      - name: Set de versión de Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Instalar dependencias
+        run: npm ci --legacy-peer-deps
+
+      - name: Buildear
+        run: npm run build-con-ts
+
+      - name: Configurar Pages
+        uses: actions/configure-pages@v5
+
+      - name: Subir artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+      - name: Deploy a GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

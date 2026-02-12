@@ -50,6 +50,8 @@ export function Step5Fixture() {
   const [stats, setStats] = useState<FixtureStats | null>(null)
   const [draggedEntryId, setDraggedEntryId] = useState<string | null>(null)
   const [selectedZoneId, setSelectedZoneId] = useState<string>('')
+  const [selectedEliminationZoneId, setSelectedEliminationZoneId] =
+    useState<string>('')
 
   const data = {
     phases: watch('phases'),
@@ -106,6 +108,15 @@ export function Step5Fixture() {
       setSelectedZoneId(zoneFixtures[0].zoneId)
     }
   }, [useZoneMode, zoneFixtures, selectedZoneId])
+
+  useEffect(() => {
+    if (isElimination && zonesWithTeams.length > 0) {
+      const exists = zonesWithTeams.some((z) => z.id === selectedEliminationZoneId)
+      if (!selectedEliminationZoneId || !exists) {
+        setSelectedEliminationZoneId(zonesWithTeams[0].id)
+      }
+    }
+  }, [isElimination, zonesWithTeams, selectedEliminationZoneId])
 
   useEffect(() => {
     if (isAllVsAll && !useZoneMode && teamCount > 0 && teamCount % 2 !== 0) {
@@ -562,11 +573,49 @@ export function Step5Fixture() {
               <CalendarIcon className='w-5 h-5 text-primary' />
               Llaves de eliminación directa
             </h4>
-            <BracketView
-              teamSlots={data.selectedTeams.length}
-              teams={data.selectedTeams}
-              zones={data.zones}
-            />
+            {zonesWithTeams.length > 0 ? (
+              <>
+                <div className='mb-4'>
+                  <Label className='text-xs text-muted-foreground block mb-2'>
+                    Ver llave de:
+                  </Label>
+                  <Select
+                    value={selectedEliminationZoneId}
+                    onValueChange={setSelectedEliminationZoneId}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder='Seleccionar zona' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {zonesWithTeams.map((zone) => (
+                        <SelectItem key={zone.id} value={zone.id}>
+                          {zone.name} — {zone.teams.length} equipos
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {selectedEliminationZoneId && (
+                  <BracketView
+                    teamSlots={
+                      zonesWithTeams.find((z) => z.id === selectedEliminationZoneId)
+                        ?.teams.length ?? 0
+                    }
+                    teams={
+                      zonesWithTeams.find((z) => z.id === selectedEliminationZoneId)
+                        ?.teams ?? []
+                    }
+                    zones={data.zones}
+                  />
+                )}
+              </>
+            ) : (
+              <BracketView
+                teamSlots={data.selectedTeams.length}
+                teams={data.selectedTeams}
+                zones={data.zones}
+              />
+            )}
           </div>
         ) : isAllVsAll &&
           (fixtureDates.length > 0 || zoneFixtures.length > 0) ? (
