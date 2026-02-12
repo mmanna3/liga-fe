@@ -1,9 +1,10 @@
+import { cn } from '@/lib/utils'
 import { Trophy } from 'lucide-react'
 import type { WizardTeam, Zone } from '../types'
 
 interface BracketViewProps {
   teamSlots: number
-  teams: WizardTeam[]
+  teams: Array<Pick<WizardTeam, 'name'>>
   zones: Zone[]
 }
 
@@ -29,6 +30,13 @@ export function BracketView({ teamSlots, teams }: BracketViewProps) {
       return teams[index].name
     }
     return `Equipo ${index + 1}`
+  }
+
+  const getTeamSlotClass = (index: number) => {
+    const name = teams[index]?.name
+    if (name === 'LIBRE') return 'bg-amber-50 border-amber-200'
+    if (name === 'INTERZONAL') return 'bg-blue-50 border-blue-200'
+    return ''
   }
 
   return (
@@ -61,8 +69,23 @@ export function BracketView({ teamSlots, teams }: BracketViewProps) {
                         return (
                           <div key={matchIndex} className='relative'>
                             <div className='bg-background rounded-lg border-2 overflow-hidden shadow-sm hover:shadow-md transition-shadow w-40'>
-                              <div className='flex items-center justify-between px-3 py-2.5 border-b hover:bg-accent transition-colors group'>
-                                <span className='text-sm font-medium group-hover:text-primary truncate'>
+                              <div
+                                className={cn(
+                                  'flex items-center justify-between px-3 py-2.5 border-b hover:bg-accent transition-colors group',
+                                  roundIndex === 0 &&
+                                    getTeamSlotClass(team1Index)
+                                )}
+                              >
+                                <span
+                                  className={cn(
+                                    'text-sm font-medium truncate',
+                                    teams[team1Index]?.name === 'LIBRE' &&
+                                      'text-amber-700 italic',
+                                    teams[team1Index]?.name === 'INTERZONAL' &&
+                                      'text-blue-700 italic',
+                                    roundIndex > 0 && 'group-hover:text-primary'
+                                  )}
+                                >
                                   {roundIndex === 0
                                     ? getTeamName(team1Index)
                                     : `Ganador ${team1Index + 1}`}
@@ -71,8 +94,23 @@ export function BracketView({ teamSlots, teams }: BracketViewProps) {
                                   -
                                 </span>
                               </div>
-                              <div className='flex items-center justify-between px-3 py-2.5 hover:bg-accent transition-colors group'>
-                                <span className='text-sm font-medium group-hover:text-primary truncate'>
+                              <div
+                                className={cn(
+                                  'flex items-center justify-between px-3 py-2.5 hover:bg-accent transition-colors group',
+                                  roundIndex === 0 &&
+                                    getTeamSlotClass(team2Index)
+                                )}
+                              >
+                                <span
+                                  className={cn(
+                                    'text-sm font-medium truncate',
+                                    teams[team2Index]?.name === 'LIBRE' &&
+                                      'text-amber-700 italic',
+                                    teams[team2Index]?.name === 'INTERZONAL' &&
+                                      'text-blue-700 italic',
+                                    roundIndex > 0 && 'group-hover:text-primary'
+                                  )}
+                                >
                                   {roundIndex === 0
                                     ? getTeamName(team2Index)
                                     : `Ganador ${team2Index + 1}`}
