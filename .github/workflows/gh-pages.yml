@@ -95,6 +95,9 @@ jobs:
       - name: Buildear
         run: npm run build-con-ts
 
+      - name: Copiar index.html a 404.html (para SPAs en GitHub Pages)
+        run: cp ./dist/index.html ./dist/404.html
+
       - name: Configurar Pages
         uses: actions/configure-pages@v5
 
