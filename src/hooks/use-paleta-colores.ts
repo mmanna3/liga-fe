@@ -21,7 +21,7 @@ function aplicarPaleta(id: PaletaId) {
 
 export function usePaletaColores() {
   const [paleta, setPaletaState] = useState<PaletaId>(() => {
-    return (localStorage.getItem(STORAGE_KEY) as PaletaId) || 'negro'
+    return (localStorage.getItem(STORAGE_KEY) as PaletaId) || 'verde'
   })
 
   useEffect(() => {

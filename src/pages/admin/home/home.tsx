@@ -1,3 +1,4 @@
+import { Badge } from '@/components/ui/badge'
 import { useAuth } from '@/hooks/use-auth'
 import { rutasNavegacion } from '@/routes/rutas'
 import {
@@ -16,37 +17,43 @@ const baseItems = [
     name: 'Torneos',
     path: rutasNavegacion.torneos,
     icon: Trophy,
-    description: 'Gestiona torneos y competencias'
+    description: 'Gestiona torneos y competencias',
+    proximamente: false
   },
   {
     name: 'Clubes',
     path: rutasNavegacion.clubs,
     icon: LayoutDashboard,
-    description: 'Administra clubes afiliados'
+    description: 'Administra clubes afiliados',
+    proximamente: true
   },
   {
     name: 'Equipos',
     path: rutasNavegacion.equipos,
     icon: Shield,
-    description: 'Gestiona equipos y planteles'
+    description: 'Gestiona equipos y planteles',
+    proximamente: true
   },
   {
     name: 'Jugadores',
     path: rutasNavegacion.jugadores,
     icon: Users,
-    description: 'Registro y control de jugadores'
+    description: 'Registro y control de jugadores',
+    proximamente: true
   },
   {
     name: 'Delegados',
     path: rutasNavegacion.delegados,
     icon: UserCog,
-    description: 'Administra delegados de equipos'
+    description: 'Administra delegados de equipos',
+    proximamente: true
   },
   {
     name: 'Configuración',
     path: rutasNavegacion.configuracion,
     icon: Settings,
-    description: 'Personaliza la aplicación'
+    description: 'Personaliza la aplicación',
+    proximamente: true
   }
 ]
 
@@ -55,7 +62,8 @@ const adminItems = [
     name: 'Reportes',
     path: rutasNavegacion.reportes,
     icon: BarChart,
-    description: 'Estadísticas y reportes'
+    description: 'Estadísticas y reportes',
+    proximamente: true
   }
 ]
 
@@ -86,19 +94,28 @@ export default function Home() {
 
         {/* Grid de opciones */}
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-4xl'>
-          {items.map(({ name, path, icon: Icon, description }) => (
+          {items.map(({ name, path, icon: Icon, description, proximamente }) => (
             <button
               key={path}
               type='button'
-              onClick={() => navigate(path)}
-              className='group rounded-2xl p-6 bg-white/95 backdrop-blur-sm border border-white/40 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all flex flex-col items-center text-center hover:cursor-pointer'
+              onClick={() => !proximamente && navigate(path)}
+              className={`group rounded-2xl p-6 bg-white/95 backdrop-blur-sm border border-white/40 shadow-lg transition-all flex flex-col items-center text-center ${
+                proximamente
+                  ? 'cursor-not-allowed opacity-80'
+                  : 'hover:shadow-2xl hover:-translate-y-1 hover:cursor-pointer'
+              }`}
             >
               <div className='rounded-xl w-14 h-14 flex items-center justify-center mb-4 bg-primary/10 group-hover:bg-primary/20 transition-colors'>
                 <Icon className='w-7 h-7 text-primary' />
               </div>
 
-              <h3 className='font-semibold text-lg text-slate-900 mb-1'>
+              <h3 className='font-semibold text-lg text-slate-900 mb-1 flex items-center gap-2'>
                 {name}
+                {proximamente && (
+                  <Badge variant='secondary' className='text-xs'>
+                    Próximamente
+                  </Badge>
+                )}
               </h3>
 
               <p className='text-sm text-slate-600'>{description}</p>
