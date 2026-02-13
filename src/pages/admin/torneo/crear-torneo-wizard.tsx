@@ -133,8 +133,23 @@ function getDefaultsForStepsAfter(step: number): Partial<TournamentWizardData> {
   }
   if (step <= 1) return { ...base, phases: [] }
   if (step <= 2) return base
-  if (step <= 3) return { zones: base.zones, zonesCount: base.zonesCount, preventSameClub: base.preventSameClub, freeDates: base.freeDates, interzonalDates: base.interzonalDates, fixtureGenerated: base.fixtureGenerated, preventClubClash: base.preventClubClash }
-  if (step <= 4) return { freeDates: base.freeDates, interzonalDates: base.interzonalDates, fixtureGenerated: base.fixtureGenerated, preventClubClash: base.preventClubClash }
+  if (step <= 3)
+    return {
+      zones: base.zones,
+      zonesCount: base.zonesCount,
+      preventSameClub: base.preventSameClub,
+      freeDates: base.freeDates,
+      interzonalDates: base.interzonalDates,
+      fixtureGenerated: base.fixtureGenerated,
+      preventClubClash: base.preventClubClash
+    }
+  if (step <= 4)
+    return {
+      freeDates: base.freeDates,
+      interzonalDates: base.interzonalDates,
+      fixtureGenerated: base.fixtureGenerated,
+      preventClubClash: base.preventClubClash
+    }
   return {}
 }
 
@@ -143,9 +158,7 @@ export default function CrearTorneoWizard() {
   const [confirmacionLimpiarAbierta, setConfirmacionLimpiarAbierta] =
     useState(false)
   const pendienteAccionRef = useRef<
-    | { tipo: 'next' }
-    | { tipo: 'step'; targetStep: number }
-    | null
+    { tipo: 'next' } | { tipo: 'step'; targetStep: number } | null
   >(null)
 
   const {
@@ -250,7 +263,10 @@ export default function CrearTorneoWizard() {
   }
 
   const debeMostrarConfirmacionLimpiar = () => {
-    if (editingFromSummaryStep === null || editingFromSummaryStep !== currentStep)
+    if (
+      editingFromSummaryStep === null ||
+      editingFromSummaryStep !== currentStep
+    )
       return false
     const formData = methods.getValues()
     const actual = getStepData(formData, currentStep)
@@ -337,8 +353,7 @@ export default function CrearTorneoWizard() {
     const pendiente = pendienteAccionRef.current
     pendienteAccionRef.current = null
     if (pendiente?.tipo === 'next') nextStep()
-    else if (pendiente?.tipo === 'step')
-      goToStep(pendiente.targetStep)
+    else if (pendiente?.tipo === 'step') goToStep(pendiente.targetStep)
   }
 
   const handleSubmit = methods.handleSubmit((data) => {
@@ -381,9 +396,7 @@ export default function CrearTorneoWizard() {
             {currentStep === 3 && <Step3Teams />}
             {currentStep === 4 && <Step4Zones />}
             {currentStep === 5 && <Step5Fixture />}
-            {currentStep === 6 && (
-              <Step6Summary onEditStep={onEditStep} />
-            )}
+            {currentStep === 6 && <Step6Summary onEditStep={onEditStep} />}
           </div>
 
           <AlertDialog
@@ -397,8 +410,8 @@ export default function CrearTorneoWizard() {
               <AlertDialogHeader>
                 <AlertDialogTitle>Cambios detectados</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Realizaste cambios en este paso y por lo tanto todos los
-                  pasos siguientes se limpiarán.
+                  Realizaste cambios en este paso y por lo tanto todos los pasos
+                  siguientes se limpiarán.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -416,18 +429,28 @@ export default function CrearTorneoWizard() {
             {currentStep === 1 ? (
               <div />
             ) : (
-              <Button type='button' variant='outline' onClick={handlePrev}>
+              <Button
+                type='button'
+                className='h-11 w-28 text-sm'
+                variant='outline'
+                onClick={handlePrev}
+              >
                 Anterior
               </Button>
             )}
 
             {currentStep < 6 ? (
-              <Button type='button' onClick={handleNext}>
+              <Button
+                type='button'
+                className='h-11 w-28 text-sm'
+                onClick={handleNext}
+              >
                 Siguiente
               </Button>
             ) : (
               <Boton
                 type='button'
+                className='h-11 w-28 text-sm'
                 onClick={handleSubmit}
                 estaCargando={mutation.isPending}
               >
