@@ -22,7 +22,10 @@ export function Categorias() {
       yearFrom: '',
       yearTo: ''
     }
-    setValue('categories', [...categories, newCategory])
+    // Quitar categorías vacías antes de agregar: evita errores de validación
+    // cuando el usuario agrega otra sin haber completado la anterior
+    const categoriesWithNames = categories.filter((c) => c.name.trim() !== '')
+    setValue('categories', [...categoriesWithNames, newCategory])
     setEditingCategoryId(newCategory.id)
   }
 
@@ -48,6 +51,9 @@ export function Categorias() {
   }
 
   const handleCategorySave = () => {
+    if (editingCategory && !editingCategory.name.trim()) {
+      removeCategory(editingCategory.id)
+    }
     setEditingCategoryId(null)
   }
 
