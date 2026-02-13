@@ -35,7 +35,7 @@ export function Step2Phases() {
     id: Date.now().toString() + Math.random(),
     name,
     format,
-    rounds: 'double',
+    rounds: 'single',
     zoneFormats: {},
     tiebreakers: [
       'Diferencia de Goles',
@@ -134,9 +134,10 @@ export function Step2Phases() {
 
       <div className='p-3 bg-amber-50 rounded-lg border border-amber-200'>
         <p className='text-sm text-foreground'>
-          <strong>Importante:</strong> Durante la creación del torneo podés
-          configurar todas las fases. Luego de creado, vas a poder editar la
-          información de zonas, equipos y fixture en cada fase.
+          <strong>Importante:</strong> En este paso, podés configurar los datos
+          generales de todas las fases, pero en los pasos siguientes vas a
+          elegir equipos, zonas y fixture SOLO de la primera. Luego de creado el
+          torneo, vas a poder editar toda la información de todas las fases.
         </p>
       </div>
 
@@ -271,15 +272,17 @@ export function Step2Phases() {
                       />
                     </div>
                   </div>
-                  <div className='mt-8'>
-                    <ReglasDeDesempate
-                      tiebreakers={phase.tiebreakers}
-                      editable={editable}
-                      onReorder={(fromIndex: number, toIndex: number) =>
-                        handleReorderTiebreakers(phase.id, fromIndex, toIndex)
-                      }
-                    />
-                  </div>
+                  {phase.format === 'all-vs-all' && (
+                    <div className='mt-8'>
+                      <ReglasDeDesempate
+                        tiebreakers={phase.tiebreakers}
+                        editable={editable}
+                        onReorder={(fromIndex: number, toIndex: number) =>
+                          handleReorderTiebreakers(phase.id, fromIndex, toIndex)
+                        }
+                      />
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -292,14 +295,14 @@ export function Step2Phases() {
         Agregar fase
       </Button>
 
-      {data.phases.length > 0 && (
+      {/* {data.phases.length > 0 && (
         <div className='p-3 bg-muted rounded-lg'>
           <p className='text-sm text-muted-foreground'>
             No hace falta que completes toda la información ahora mismo, siempre
             vas a poder editar la información de las fases y agregar nuevas.
           </p>
         </div>
-      )}
+      )} */}
     </div>
   )
 }

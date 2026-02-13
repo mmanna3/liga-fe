@@ -37,7 +37,7 @@ export function Step1Information() {
             type='text'
             value={data.name}
             onChange={(e) => setValue('name', e.target.value)}
-            placeholder='Ej: Torneo Clausura 2026'
+            placeholder='Ej: Torneo Anual 2026'
             className={cn('h-11', errors.name && 'border-destructive')}
           />
           {errors.name && (

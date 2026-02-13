@@ -26,7 +26,10 @@ export function Step3Teams() {
     teamCount: watch('teamCount'),
     selectedTeams: watch('selectedTeams'),
     searchMode: watch('searchMode'),
+    filterYear: watch('filterYear'),
+    filterType: watch('filterType'),
     filterTournament: watch('filterTournament'),
+    filterPhase: watch('filterPhase'),
     filterZone: watch('filterZone')
   }
 
@@ -61,12 +64,23 @@ export function Step3Teams() {
       const matchesSearch =
         team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         team.club.toLowerCase().includes(searchTerm.toLowerCase())
+      const matchesYear = !data.filterYear || team.year === data.filterYear
+      const matchesType = !data.filterType || team.type === data.filterType
       const matchesTournament =
         !data.filterTournament || team.tournament === data.filterTournament
+      const matchesPhase = !data.filterPhase || team.phase === data.filterPhase
       const matchesZone = !data.filterZone || team.zone === data.filterZone
       const notSelected = !data.selectedTeams.find((t) => t.id === team.id)
 
-      return matchesSearch && matchesTournament && matchesZone && notSelected
+      return (
+        matchesSearch &&
+        matchesYear &&
+        matchesType &&
+        matchesTournament &&
+        matchesPhase &&
+        matchesZone &&
+        notSelected
+      )
     }
   })
 
@@ -194,7 +208,38 @@ export function Step3Teams() {
         </div>
 
         {data.searchMode === 'tournament' && (
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-4'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-4'>
+            <div>
+              <TituloDeInput className='mb-2'>Año</TituloDeInput>
+              <select
+                value={data.filterYear}
+                onChange={(e) =>
+                  handleFilterChange({ filterYear: e.target.value })
+                }
+                className='flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none'
+              >
+                <option value=''>Todos los años</option>
+                <option value='2026'>2026</option>
+                <option value='2025'>2025</option>
+              </select>
+            </div>
+
+            <div>
+              <TituloDeInput className='mb-2'>Tipo</TituloDeInput>
+              <select
+                value={data.filterType}
+                onChange={(e) =>
+                  handleFilterChange({ filterType: e.target.value })
+                }
+                className='flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none'
+              >
+                <option value=''>Todos los tipos</option>
+                <option value='FUTSAL'>FUTSAL</option>
+                <option value='BABY'>BABY</option>
+                <option value='FUTBOL 11'>FUTBOL 11</option>
+              </select>
+            </div>
+
             <div>
               <TituloDeInput className='mb-2'>Torneo</TituloDeInput>
               <select
@@ -210,6 +255,21 @@ export function Step3Teams() {
                     {tournament}
                   </option>
                 ))}
+              </select>
+            </div>
+
+            <div>
+              <TituloDeInput className='mb-2'>Fase</TituloDeInput>
+              <select
+                value={data.filterPhase}
+                onChange={(e) =>
+                  handleFilterChange({ filterPhase: e.target.value })
+                }
+                className='flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none'
+              >
+                <option value=''>Todas las fases</option>
+                <option value='Apertura'>Apertura</option>
+                <option value='Clausura'>Clausura</option>
               </select>
             </div>
 

@@ -4,6 +4,12 @@ export interface WizardTeam {
   club: string
   tournament: string
   zone: string
+  /** Año del torneo (para filtro "Desde otro torneo") */
+  year?: string
+  /** Tipo (FUTSAL, BABY, FUTBOL 11) para filtro */
+  type?: string
+  /** Fase (Apertura, Clausura) para filtro */
+  phase?: string
 }
 
 export interface Category {
@@ -57,7 +63,10 @@ export interface TournamentWizardData {
   teamCount: number
   selectedTeams: WizardTeam[]
   searchMode: 'name' | 'tournament'
+  filterYear: string
+  filterType: string
   filterTournament: string
+  filterPhase: string
   filterZone: string
 
   zones: Zone[]

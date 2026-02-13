@@ -34,7 +34,10 @@ const wizardTeamSchema = z.object({
   name: z.string(),
   club: z.string(),
   tournament: z.string(),
-  zone: z.string()
+  zone: z.string(),
+  year: z.string().optional(),
+  type: z.string().optional(),
+  phase: z.string().optional()
 })
 
 // Schema para zona
@@ -75,7 +78,10 @@ export const tournamentWizardSchema = z.object({
   teamCount: z.number().min(2, 'Debe haber al menos 2 equipos'),
   selectedTeams: z.array(wizardTeamSchema),
   searchMode: z.enum(['name', 'tournament']),
+  filterYear: z.string(),
+  filterType: z.string(),
   filterTournament: z.string(),
+  filterPhase: z.string(),
   filterZone: z.string(),
 
   // Step 4: Zonas

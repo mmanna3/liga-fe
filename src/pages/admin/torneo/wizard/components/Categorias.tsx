@@ -92,8 +92,8 @@ export function Categorias() {
       )}
 
       {editingCategory && (
-        <div className='p-3 bg-muted rounded-lg mb-2'>
-          <div className='flex items-center gap-2'>
+        <div className='p-3 bg-muted rounded-lg mb-2 max-w-2xl'>
+          <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2'>
             <Input
               type='text'
               value={editingCategory.name}
@@ -101,35 +101,37 @@ export function Categorias() {
                 updateCategory(editingCategory.id, { name: e.target.value })
               }
               placeholder='Ej: +40, Sub 15, Mayores'
-              className='flex-1'
+              className='flex-1 min-w-0'
               autoFocus
             />
-            <Input
-              type='text'
-              value={editingCategory.yearFrom}
-              onChange={(e) =>
-                updateCategory(editingCategory.id, {
-                  yearFrom: e.target.value
-                })
-              }
-              placeholder='Desde'
-              className='w-20 text-center'
-            />
-            <span className='text-muted-foreground'>-</span>
-            <Input
-              type='text'
-              value={editingCategory.yearTo}
-              onChange={(e) =>
-                updateCategory(editingCategory.id, {
-                  yearTo: e.target.value
-                })
-              }
-              placeholder='Hasta'
-              className='w-20 text-center'
-            />
-            <Button type='button' size='sm' onClick={handleCategorySave}>
-              Guardar
-            </Button>
+            <div className='flex items-center gap-2 sm:shrink-0'>
+              <Input
+                type='text'
+                value={editingCategory.yearFrom}
+                onChange={(e) =>
+                  updateCategory(editingCategory.id, {
+                    yearFrom: e.target.value
+                  })
+                }
+                placeholder='Desde'
+                className='w-20 text-center'
+              />
+              <span className='text-muted-foreground'>-</span>
+              <Input
+                type='text'
+                value={editingCategory.yearTo}
+                onChange={(e) =>
+                  updateCategory(editingCategory.id, {
+                    yearTo: e.target.value
+                  })
+                }
+                placeholder='Hasta'
+                className='w-20 text-center'
+              />
+              <Button type='button' size='sm' onClick={handleCategorySave}>
+                Guardar
+              </Button>
+            </div>
           </div>
         </div>
       )}

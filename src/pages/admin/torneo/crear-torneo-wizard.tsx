@@ -58,7 +58,10 @@ const initialData: TournamentWizardData = {
   teamCount: 16,
   selectedTeams: [],
   searchMode: 'name',
+  filterYear: '',
+  filterType: '',
   filterTournament: '',
+  filterPhase: '',
   filterZone: '',
   zones: [],
   zonesCount: 1,
@@ -88,7 +91,10 @@ function getStepData(data: TournamentWizardData, step: number): unknown {
         teamCount: data.teamCount,
         selectedTeams: data.selectedTeams,
         searchMode: data.searchMode,
+        filterYear: data.filterYear,
+        filterType: data.filterType,
         filterTournament: data.filterTournament,
+        filterPhase: data.filterPhase,
         filterZone: data.filterZone
       }
     case 4:
@@ -112,7 +118,10 @@ function getDefaultsForStepsAfter(step: number): Partial<TournamentWizardData> {
     teamCount: 16,
     selectedTeams: [] as TournamentWizardData['selectedTeams'],
     searchMode: 'name' as const,
+    filterYear: '',
+    filterType: '',
     filterTournament: '',
+    filterPhase: '',
     filterZone: '',
     zones: [] as TournamentWizardData['zones'],
     zonesCount: 1,

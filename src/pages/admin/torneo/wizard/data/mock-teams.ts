@@ -1,6 +1,24 @@
 import type { WizardTeam } from '../types'
 
-export const mockTeams: WizardTeam[] = [
+function parseTeamMeta(tournament: string): {
+  year: string
+  type: string
+  phase: string
+} {
+  const yearMatch = tournament.match(/\b(202[4-9])\b/)
+  const year = yearMatch ? yearMatch[1] : ''
+  let type = ''
+  const t = tournament.toLowerCase()
+  if (t.includes('futsal')) type = 'FUTSAL'
+  else if (t.includes('futbol 11') || t.includes('futbol11')) type = 'FUTBOL 11'
+  else if (t.includes('matutino') || t.includes('vespertino') || t.includes('infantiles')) type = 'BABY'
+  let phase = ''
+  if (t.includes('torneo final')) phase = 'Clausura'
+  else if (t.includes('matutino') || t.includes('vespertino') || t.includes('apertura')) phase = 'Apertura'
+  return { year, type, phase }
+}
+
+const rawTeams: Array<Omit<WizardTeam, 'year' | 'type' | 'phase'>> = [
   { id: 557, name: 'Atl. San Martín', club: 'Atletico San Martin', tournament: 'Matutino 6 categorías 2025', zone: '' },
   { id: 556, name: 'El Tanque', club: 'El Tanque MAYORES', tournament: 'Futsal Mayores Torneo Final 2025', zone: 'Zona B' },
   { id: 555, name: 'Nueva Chicago', club: 'Nueva Chicago', tournament: 'Matutino 5 categorías 2025', zone: 'Zona "Bronce"' },
@@ -32,3 +50,8 @@ export const mockTeams: WizardTeam[] = [
   { id: 528, name: 'River Plate', club: 'Escuela River San Justo FUTBOL 11', tournament: 'Futbol 11 infantiles 2025', zone: 'ZONA "A"' },
   { id: 527, name: 'C.A. Estudiantes', club: 'C. A. Estudiantes FUTBOL 11', tournament: 'Futbol 11 Juveniles 2025', zone: 'Zona 3' }
 ]
+
+export const mockTeams: WizardTeam[] = rawTeams.map((t) => {
+  const meta = parseTeamMeta(t.tournament)
+  return { ...t, year: meta.year, type: meta.type, phase: meta.phase }
+})
