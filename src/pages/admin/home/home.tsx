@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom'
 const baseItems = [
   {
     name: 'Torneos',
-    path: rutasNavegacion.crearTorneo,
+    path: rutasNavegacion.torneosHome,
     icon: Trophy,
     description: 'Gestiona torneos y competencias',
     proximamente: false

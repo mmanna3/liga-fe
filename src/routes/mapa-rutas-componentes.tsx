@@ -1,5 +1,6 @@
 import { RequiereAutenticacion } from '@/components/RequiereAutenticacion'
 import DetalleClub from '@/pages/admin/club/detalle-club'
+import Configuracion from '@/pages/admin/configuracion/configuracion'
 import BlanquearClaveDelegado from '@/pages/admin/delegados/blanquear-clave-delegado'
 import CrearDelegado from '@/pages/admin/delegados/crear-delegado'
 import Delegados from '@/pages/admin/delegados/delegados'
@@ -10,18 +11,21 @@ import CrearEquipo from '@/pages/admin/equipo/crear-equipo'
 import DetalleEquipo from '@/pages/admin/equipo/detalle-equipo'
 import EditarEquipo from '@/pages/admin/equipo/editar-equipo'
 import Equipo from '@/pages/admin/equipo/equipo'
+import Pases from '@/pages/admin/equipo/pases'
+import Home from '@/pages/admin/home/home'
 import AprobarRechazarJugador from '@/pages/admin/jugador/aprobar-rechazar-jugador'
 import CambiarEstado from '@/pages/admin/jugador/cambiar-estado-jugador'
+import DesvincularJugadorDelEquipo from '@/pages/admin/jugador/desvincular-jugador-del-equipo'
 import DetalleJugador from '@/pages/admin/jugador/detalle-jugador'
 import EliminarJugador from '@/pages/admin/jugador/eliminar-jugador'
 import Jugador from '@/pages/admin/jugador/jugador'
+import SuspenderActivar from '@/pages/admin/jugador/suspender-activar'
 import ReportesPage from '@/pages/admin/reportes'
 import ReportePagosPage from '@/pages/admin/reportes/pagos'
 import CrearTorneoWizard from '@/pages/admin/torneo/crear-torneo-wizard'
 import DetalleTorneo from '@/pages/admin/torneo/detalle-torneo'
+import TorneosHome from '@/pages/admin/torneo/home'
 import Torneo from '@/pages/admin/torneo/torneo'
-import Configuracion from '@/pages/admin/configuracion/configuracion'
-import Home from '@/pages/admin/home/home'
 import ErrorPage from '@/pages/error'
 import FichajeEnOtroEquipo from '@/pages/fichaje/fichaje-en-otro-equipo'
 import FichajeError from '@/pages/fichaje/fichaje-error'
@@ -34,9 +38,6 @@ import CrearClub from '../pages/admin/club/crear-club'
 import FichajeHome from '../pages/fichaje/home'
 import PaginaNoEncontrada from '../pages/pagina-no-encontrada'
 import { rutas } from './rutas'
-import DesvincularJugadorDelEquipo from '@/pages/admin/jugador/desvincular-jugador-del-equipo'
-import SuspenderActivar from '@/pages/admin/jugador/suspender-activar'
-import Pases from '@/pages/admin/equipo/pases'
 
 export const mapaRutasComponentes = [
   {
@@ -123,6 +124,7 @@ export const mapaRutasComponentes = [
         element: <CambiarEstado />
       },
       { path: rutas.torneos, element: <Torneo /> },
+      { path: rutas.torneosHome, element: <TorneosHome /> },
       { path: rutas.crearTorneo, element: <CrearTorneoWizard /> },
       { path: `${rutas.detalleTorneo}/:id`, element: <DetalleTorneo /> },
       { path: rutas.reportes, element: <ReportesPage /> },

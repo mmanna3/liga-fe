@@ -16,6 +16,7 @@ export const rutas = {
   aprobarRechazarJugador: 'jugadores/aprobar-rechazar',
   cambiarEstadoJugador: 'jugadores/cambiar-estado',
   torneos: 'torneos',
+  torneosHome: 'torneos/home',
   crearTorneo: 'torneos/crear',
   detalleTorneo: 'torneos/detalle',
   reportes: 'reportes',
