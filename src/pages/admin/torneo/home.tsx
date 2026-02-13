@@ -136,8 +136,7 @@ export default function TorneosHome() {
   }
 
   const handleTournamentClick = (tournamentId: string) => {
-    // Navegar al paso 6 del wizard con el ID del torneo
-    navigate(`/torneos/editar/${tournamentId}?step=6`)
+    navigate(`${rutasNavegacion.torneosInformacion}/${tournamentId}`)
   }
 
   return (

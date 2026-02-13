@@ -19,6 +19,7 @@ export const rutas = {
   torneosHome: 'torneos/home',
   crearTorneo: 'torneos/crear',
   detalleTorneo: 'torneos/detalle',
+  torneosInformacion: 'torneos/informacion',
   reportes: 'reportes',
   reportePagos: 'reportes/pagos',
   delegados: 'delegados',

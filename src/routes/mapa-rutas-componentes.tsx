@@ -24,6 +24,10 @@ import ReportesPage from '@/pages/admin/reportes'
 import ReportePagosPage from '@/pages/admin/reportes/pagos'
 import CrearTorneoWizard from '@/pages/admin/torneo/crear-torneo-wizard'
 import DetalleTorneo from '@/pages/admin/torneo/detalle-torneo'
+import EditarFixturePage from '@/pages/admin/torneo/editar-fixture'
+import EditarInformacionTorneoPage from '@/pages/admin/torneo/editar-informacion-torneo'
+import EditarZonasPage from '@/pages/admin/torneo/editar-zonas'
+import InformacionDelTorneoPage from '@/pages/admin/torneo/informacion-del-torneo'
 import TorneosHome from '@/pages/admin/torneo/home'
 import Torneo from '@/pages/admin/torneo/torneo'
 import ErrorPage from '@/pages/error'
@@ -127,6 +131,22 @@ export const mapaRutasComponentes = [
       { path: rutas.torneosHome, element: <TorneosHome /> },
       { path: rutas.crearTorneo, element: <CrearTorneoWizard /> },
       { path: `${rutas.detalleTorneo}/:id`, element: <DetalleTorneo /> },
+      {
+        path: `${rutas.torneosInformacion}/:id`,
+        element: <InformacionDelTorneoPage />
+      },
+      {
+        path: `${rutas.torneosInformacion}/:id/editar`,
+        element: <EditarInformacionTorneoPage />
+      },
+      {
+        path: `${rutas.torneosInformacion}/:id/zonas`,
+        element: <EditarZonasPage />
+      },
+      {
+        path: `${rutas.torneosInformacion}/:id/fixture`,
+        element: <EditarFixturePage />
+      },
       { path: rutas.reportes, element: <ReportesPage /> },
       { path: rutas.reportePagos, element: <ReportePagosPage /> },
       { path: rutas.configuracion, element: <Configuracion /> },
