@@ -72,7 +72,7 @@ function InformacionDelTorneo() {
                   <Badge
                     key={category.id}
                     variant='secondary'
-                    className='bg-white/20 text-gray-800 border-white/30 text-xs'
+                    className='bg-primary/10 text-primary border-none shadow-md text-xs'
                   >
                     {category.name}
                     {(category.yearFrom || category.yearTo) && (
@@ -112,12 +112,12 @@ function InformacionDelTorneo() {
         </div>
 
         <Tabs defaultValue={tournament.phases[0]?.id} className='w-full'>
-          <TabsList className='flex flex-wrap w-full gap-2 p-2 bg-white/10 border-2 border-white/30 rounded-xl mb-6 min-h-[4.5rem]'>
+          <TabsList className='flex flex-wrap w-full gap-2 p-2 bg-transparent border-none rounded-xl mb-6 min-h-[4.5rem]'>
             {tournament.phases.map((phase) => (
               <TabsTrigger
                 key={phase.id}
                 value={phase.id}
-                className='flex-1 min-w-[8rem] h-14 rounded-xl border-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-md font-semibold text-gray-800'
+                className='flex-1 min-w-[8rem] h-14 rounded-xl bg-white/50 text-gray-800 shadow-md data-[state=active]:bg-primary/15 data-[state=active]:text-primary data-[state=active]:shadow-lg font-semibold hover:bg-white/70'
               >
                 {phase.name}
               </TabsTrigger>
@@ -151,15 +151,6 @@ function InformacionDelTorneo() {
                       {LABEL_MATCH_TYPE[phase.matchType]}
                     </p>
                   </div>
-                  <Button
-                    variant='ghost'
-                    size='icon'
-                    className='h-9 w-9 rounded-xl shrink-0'
-                    onClick={() => {}}
-                    title='Editar datos de la fase (próximamente)'
-                  >
-                    <Pencil className='h-4 w-4' />
-                  </Button>
                 </div>
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
                   {phase.zones.map((zone) => (

@@ -11,21 +11,30 @@ import {
   type CategorySimple,
   type TournamentDetail
 } from './data/mock-tournament-detail'
+import {
+  SelectorTipoTorneo,
+  type TipoTorneo
+} from './components/selector-tipo-torneo'
 
 export default function EditarInformacionTorneoPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const location = useLocation()
-  const tournamentFromState = (location.state as { tournament?: TournamentDetail } | null)?.tournament
+  const tournamentFromState = (
+    location.state as { tournament?: TournamentDetail } | null
+  )?.tournament
   const tournamentFromMock = mockTournamentsDetail.find((t) => t.id === id)
   const initial = tournamentFromState ?? tournamentFromMock ?? null
 
   const [name, setName] = useState(initial?.name ?? '')
   const [season, setSeason] = useState(initial?.season ?? '')
+  const [type, setType] = useState<TipoTorneo>(initial?.type ?? 'FUTSAL')
   const [categories, setCategories] = useState<CategorySimple[]>(
     initial?.categories ?? []
   )
-  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null)
+  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
+    null
+  )
 
   const handleGuardar = () => {
     if (!initial) return
@@ -33,6 +42,7 @@ export default function EditarInformacionTorneoPage() {
       ...initial,
       name,
       season,
+      type,
       year: parseInt(season) || initial.year,
       categories
     }
@@ -108,7 +118,7 @@ export default function EditarInformacionTorneoPage() {
         >
           <ArrowLeft className='w-5 h-5' />
         </Button>
-        <h1 className='text-2xl font-bold'>Editar información del torneo</h1>
+        <h1 className='text-2xl font-bold'>Editar torneo</h1>
       </div>
 
       <div className='space-y-4'>
@@ -129,6 +139,8 @@ export default function EditarInformacionTorneoPage() {
             placeholder='2026'
           />
         </div>
+
+        <SelectorTipoTorneo valor={type} alCambiar={setType} />
 
         <div>
           <TituloDeInput className='mb-2'>Categorías</TituloDeInput>
@@ -187,7 +199,11 @@ export default function EditarInformacionTorneoPage() {
                         type='text'
                         value={category.yearFrom}
                         onChange={(e) =>
-                          updateCategory(category.id, 'yearFrom', e.target.value)
+                          updateCategory(
+                            category.id,
+                            'yearFrom',
+                            e.target.value
+                          )
                         }
                         placeholder='Desde'
                         className='w-20 text-center'

@@ -1,18 +1,11 @@
 import { Input } from '@/components/ui/input'
-import SelectorSimple from '@/components/ykn-ui/selector-simple'
 import TituloDeInput from '@/components/ykn-ui/titulo-de-input'
 import { cn } from '@/lib/utils'
 import { CalendarRange, Globe, Settings, Zap } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
 import type { TournamentWizardData } from '../types'
+import { SelectorTipoTorneo } from '../../components/selector-tipo-torneo'
 import { Categorias } from './Categorias'
-
-const OPCIONES_TIPO: { id: TournamentWizardData['type']; texto: string }[] = [
-  { id: 'FUTSAL', texto: 'Futsal' },
-  { id: 'BABY', texto: 'Baby' },
-  { id: 'FUTBOL 11', texto: 'Fútbol 11' },
-  { id: 'FEMENINO', texto: 'Femenino' }
-]
 
 export function Step1Information() {
   const {
@@ -63,19 +56,11 @@ export function Step1Information() {
         </div>
       </div>
 
-      <div>
-        <TituloDeInput>Tipo *</TituloDeInput>
-        <SelectorSimple
-          opciones={OPCIONES_TIPO}
-          valorActual={data.type}
-          alElegirOpcion={(id) =>
-            setValue('type', id as TournamentWizardData['type'])
-          }
-        />
-        {errors.type && (
-          <p className='text-sm text-destructive mt-2'>{errors.type.message}</p>
-        )}
-      </div>
+      <SelectorTipoTorneo
+        valor={data.type}
+        alCambiar={(tipo) => setValue('type', tipo)}
+        error={errors.type?.message}
+      />
 
       <Categorias />
 

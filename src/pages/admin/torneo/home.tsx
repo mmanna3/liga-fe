@@ -174,7 +174,7 @@ export default function TorneosHome() {
                     className={`px-4 py-2 rounded-xl font-medium transition-all ${
                       selectedYear === null
                         ? 'bg-primary text-primary-foreground shadow-lg'
-                        : 'bg-white/20 backdrop-blur-sm text-gray-800 hover:bg-white/30 border border-white/30'
+                        : 'bg-white/50 backdrop-blur-sm text-gray-800 hover:bg-white/60 border-none shadow-md'
                     }`}
                   >
                     Todos
@@ -188,7 +188,7 @@ export default function TorneosHome() {
                       className={`px-4 py-2 rounded-xl font-medium transition-all ${
                         selectedYear === year
                           ? 'bg-primary text-primary-foreground shadow-lg'
-                          : 'bg-white/20 backdrop-blur-sm text-gray-800 hover:bg-white/30 border border-white/30'
+                          : 'bg-white/50 backdrop-blur-sm text-gray-800 hover:bg-white/60 border-none shadow-md'
                       }`}
                     >
                       {year}
@@ -203,13 +203,13 @@ export default function TorneosHome() {
                   Buscar por Nombre
                 </label> */}
                 <div className='relative'>
-                  <Search className='absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500' />
+                  <Search className='absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-700' />
                   <input
                     type='text'
                     placeholder='Buscar torneo por nombre...'
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className='w-full pl-12 pr-4 py-3 rounded-xl bg-white/20 backdrop-blur-sm border-2 border-white/30 text-gray-800 placeholder-gray-600 focus:bg-white/30 focus:border-white/50 outline-none transition-all font-medium'
+                    className='w-full pl-12 pr-4 py-3 rounded-xl bg-white/50 backdrop-blur-sm border-none shadow-md text-gray-800 placeholder-gray-700 focus:bg-white/70 focus:shadow-lg outline-none transition-all font-medium'
                   />
                 </div>
               </div>
