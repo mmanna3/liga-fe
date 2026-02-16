@@ -49,8 +49,6 @@ const PasoFechaNacimiento = () => {
       d.getMonth() + 1 === tempMes && // Recordar que getMonth() es 0-indexado
       d.getDate() === tempDia
 
-    console.log(resultado)
-
     return resultado || '¡Ups! Hay un problema con la fecha. Revisala.'
   }
 

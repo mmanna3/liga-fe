@@ -5,22 +5,27 @@ const ErrorPage: React.FC = () => {
   const location = useLocation()
   const navigate = useNavigate()
 
-  // Comprobamos si el error tiene los campos status y title
-  console.log('El error es:', error)
-
   let status: string | undefined
   let title: string | undefined
 
-  // Intentamos parsear el error si tiene la estructura esperada
   try {
-    const parsedError = JSON.parse((error as { response: string }).response)
-    status = parsedError.status
-    title = parsedError.title
-  } catch (e) {
-    // Si no se puede parsear, asumimos que el error es un string
-    if (typeof error === 'string') {
-      title = error
+    if (
+      error instanceof Error &&
+      'response' in error &&
+      typeof (error as { response: unknown }).response === 'string'
+    ) {
+      const parsedError = JSON.parse(
+        (error as { response: string }).response
+      )
+      status = parsedError.status
+      title = parsedError.title
     }
+  } catch {
+    // Si no se puede parsear, asumimos que el error es un string
+  }
+
+  if (!title && typeof error === 'string') {
+    title = error
   }
 
   return (

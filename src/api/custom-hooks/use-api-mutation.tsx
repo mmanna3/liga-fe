@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { parsearErrorApi } from '@/lib/parsear-error-api'
 
 interface IProps<T> {
   fn: (args: T) => Promise<unknown>
@@ -10,24 +11,16 @@ interface IProps<T> {
 
 const useApiMutation = <T,>({
   fn,
-  mensajeDeExito = 'Operación exitosa',
+  mensajeDeExito = 'Operacion exitosa',
   antesDeMensajeExito = () => {},
-  mensajeDeError = 'Ocurrió un error inesperado'
+  mensajeDeError = 'Ocurrio un error inesperado'
 }: IProps<T>) => {
   const mutation = useMutation({
     mutationFn: async (args: T) => {
       return fn(args)
     },
     onError: (error: unknown) => {
-      console.error('Error en la mutación:', error)
-
-      const mensaje =
-        error instanceof Error
-          ? JSON.parse((error as unknown as { response: string }).response)
-              .title
-          : mensajeDeError
-      console.log()
-
+      const mensaje = parsearErrorApi(error, mensajeDeError)
       toast.error(mensaje)
     },
     onSuccess: () => {

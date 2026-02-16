@@ -1,3 +1,6 @@
+import { useAuth } from '@/hooks/use-auth'
+import { Navigate, useLocation } from 'react-router-dom'
+
 interface RequiereAutenticacionProps {
   children: React.ReactNode
 }
@@ -5,12 +8,12 @@ interface RequiereAutenticacionProps {
 export function RequiereAutenticacion({
   children
 }: RequiereAutenticacionProps) {
-  // const { isAuthenticated } = useAuth()
-  // const location = useLocation()
+  const { isAuthenticated } = useAuth()
+  const location = useLocation()
 
-  // if (!isAuthenticated) {
-  //   return <Navigate to='/login' state={{ from: location }} replace />
-  // }
+  if (!isAuthenticated) {
+    return <Navigate to='/login' state={{ from: location }} replace />
+  }
 
   return children
 }

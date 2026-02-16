@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 interface IInput {
   onChange?: (value: string) => void
   name?: string
-  register?: any
+  register?: Record<string, unknown>
   type: string
   className?: string
   valorInicial?: string

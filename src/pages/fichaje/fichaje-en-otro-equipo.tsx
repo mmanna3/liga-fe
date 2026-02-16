@@ -1,6 +1,7 @@
 import { api } from '@/api/api'
 import { FicharEnOtroEquipoDTO } from '@/api/clients'
 import useApiMutation from '@/api/custom-hooks/use-api-mutation'
+import { parsearErrorApi } from '@/lib/parsear-error-api'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import BotonEnviarDatos from './boton-enviar-datos/boton-enviar-datos'
@@ -27,11 +28,7 @@ const FichajeEnOtroEquipo = () => {
           )
         },
         onError: (error) => {
-          const mensajeError =
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            JSON.parse((error as any)?.response)?.title || 'Error desconocido'
-          console.log('El error:', mensajeError)
-
+          const mensajeError = parsearErrorApi(error)
           const mensajeCodificado = encodeURIComponent(mensajeError)
           navigate(`/fichaje-error?mensaje=${mensajeCodificado}`)
         }

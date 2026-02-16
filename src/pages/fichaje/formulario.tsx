@@ -1,6 +1,7 @@
 import { api } from '@/api/api'
 import { JugadorDTO } from '@/api/clients'
 import useApiMutation from '@/api/custom-hooks/use-api-mutation'
+import { parsearErrorApi } from '@/lib/parsear-error-api'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
@@ -45,11 +46,7 @@ const FormularioFichaje = () => {
         )
       },
       onError: (error) => {
-        const mensajeError =
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          JSON.parse((error as any)?.response)?.title || 'Error desconocido'
-        console.log('El error:', mensajeError)
-
+        const mensajeError = parsearErrorApi(error)
         const mensajeCodificado = encodeURIComponent(mensajeError)
 
         navigate(`/fichaje-error?mensaje=${mensajeCodificado}`)

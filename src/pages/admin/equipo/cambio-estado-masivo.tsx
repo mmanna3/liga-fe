@@ -42,7 +42,6 @@ export default function CambioEstadoMasivo() {
       .map((key) => equipo.jugadores && equipo.jugadores[parseInt(key)]?.id)
       .filter((id) => id !== undefined)
     setSelectedJugadores(selectedIds as number[])
-    console.log(selectedIds)
   }, [rowSelection, equipo?.jugadores])
 
   const columnas: ColumnDef<JugadorDelEquipoDTO>[] = [

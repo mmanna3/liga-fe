@@ -1,6 +1,7 @@
 import pluginJs from '@eslint/js'
 import eslintConfigPrettier from 'eslint-config-prettier'
 import pluginReact from 'eslint-plugin-react'
+import pluginReactHooks from 'eslint-plugin-react-hooks'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
@@ -13,9 +14,18 @@ export default [
   ...tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
   {
+    plugins: {
+      'react-hooks': pluginReactHooks
+    },
+    rules: {
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn'
+    }
+  },
+  {
     settings: {
       react: {
-        version: 'detect' // Detecta automáticamente la versión de React del proyecto
+        version: 'detect'
       }
     },
     rules: {

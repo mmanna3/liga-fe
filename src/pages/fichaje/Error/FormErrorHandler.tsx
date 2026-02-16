@@ -13,7 +13,7 @@ const FormErrorHandler = ({ errors, name, nombre }: IError) => {
   if (errors[name] && errors[name]?.type === 'required')
     message = `¡Ups! Te olvidaste tu ${nombre}`
   else if (errors[name] && errors[name]?.type !== 'required')
-    message = (errors[name] as any).message
+    message = errors[name]?.message as string
 
   return (
     <div className='max-w-[360px] mx-auto'>
