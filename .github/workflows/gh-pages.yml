@@ -1,13 +1,18 @@
-name: Deploy to FTP
+name: Deploy FE por FTP
 
 on:
   push:
-    branches: ['main']
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [edefi]
+    environment: ${{ matrix.environment }}
 
     steps:
       - name: Checkoutear repo
@@ -17,7 +22,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 20
-          cache: 'npm'
+          cache: "npm"
 
       - name: Instalar dependencias
         run: npm ci --legacy-peer-deps
@@ -28,7 +33,7 @@ jobs:
       - name: Instala Playwright
         run: npx playwright install --with-deps
 
-      - name: Correr tests 2e2
+      - name: Correr tests e2e
         run: npm run e2e
 
       - uses: actions/upload-artifact@v5
@@ -38,20 +43,11 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
-      - name: Deployar por FTP
+      - name: Deployar ${{ matrix.environment }} por FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
-          server-dir: ${{ secrets.LIGA_1_SERVER_DIR }}
-
-      - name: Deployar por FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./dist/
-          server-dir: ${{ secrets.LIGA_2_SERVER_DIR }}
+          server-dir: ${{ secrets.SERVER_DIR }}
