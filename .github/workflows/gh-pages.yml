@@ -5,15 +5,13 @@ on:
     branches: ["main"]
   workflow_dispatch:
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        environment: [edefi]
-    environment: ${{ matrix.environment }}
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
 
+jobs:
+  build:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkoutear repo
         uses: actions/checkout@v5
@@ -42,6 +40,26 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: dist
+          path: ./dist/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [edefi, luefi]
+    environment: ${{ matrix.environment }}
+
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          name: dist
+          path: ./dist/
 
       - name: Deployar ${{ matrix.environment }} por FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
