@@ -132,7 +132,7 @@ export default function CambiarEstado() {
           <div className='mt-12'>
             <Botonera>              
               <div className='flex justify-between w-full'>
-                <Boton variant='destructive' onClick={() => navigate(`${rutasNavegacion.desvincularJugadorDelEquipo}/${jugadorid}/${jugador?.dni}/${jugadorequipoid}/${equipo?.nombre}`)}>Desvincular jugador del equipo</Boton>
+                <Boton variant='destructive' onClick={() => navigate(`${rutasNavegacion.desvincularJugadorDelEquipo}/${jugadorid}/${jugador?.dni}/${equipo?.equipoId}/${equipo?.nombre}`)}>Desvincular jugador del equipo</Boton>
                 <BotonVolver texto='Cancelar' />
               </div>
             </Botonera>

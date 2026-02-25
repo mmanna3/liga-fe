@@ -19,7 +19,7 @@ export class Client {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
     equiposDelDelegado(): Promise<EquiposDelDelegadoDTO> {
         let url_ = this.baseUrl + "/api/carnet-digital/equipos-del-delegado";
@@ -57,7 +57,7 @@ export class Client {
 
     /**
      * @param equipoId (optional) 
-     * @return Success
+     * @return OK
      */
     carnets(equipoId: number | undefined): Promise<CarnetDigitalDTO[]> {
         let url_ = this.baseUrl + "/api/carnet-digital/carnets?";
@@ -106,7 +106,7 @@ export class Client {
 
     /**
      * @param codigoAlfanumerico (optional) 
-     * @return Success
+     * @return OK
      */
     carnetsPorCodigoAlfanumerico(codigoAlfanumerico: string | undefined): Promise<CarnetDigitalDTO[]> {
         let url_ = this.baseUrl + "/api/carnet-digital/carnets-por-codigo-alfanumerico?";
@@ -155,7 +155,7 @@ export class Client {
 
     /**
      * @param equipoId (optional) 
-     * @return Success
+     * @return OK
      */
     jugadoresPendientes(equipoId: number | undefined): Promise<CarnetDigitalPendienteDTO[]> {
         let url_ = this.baseUrl + "/api/carnet-digital/jugadores-pendientes?";
@@ -204,7 +204,7 @@ export class Client {
 
     /**
      * @param body (optional) 
-     * @return Success
+     * @return OK
      */
     login(body: LoginDTO | undefined): Promise<LoginResponseDTO> {
         let url_ = this.baseUrl + "/api/Auth/login";
@@ -246,7 +246,7 @@ export class Client {
 
     /**
      * @param body (optional) 
-     * @return Success
+     * @return OK
      */
     cambiarPassword(body: CambiarPasswordDTO | undefined): Promise<LoginResponseDTO> {
         let url_ = this.baseUrl + "/api/Auth/cambiar-password";
@@ -287,7 +287,7 @@ export class Client {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
     clubAll(): Promise<ClubDTO[]> {
         let url_ = this.baseUrl + "/api/Club";
@@ -332,7 +332,7 @@ export class Client {
 
     /**
      * @param body (optional) 
-     * @return Success
+     * @return OK
      */
     clubPOST(body: ClubDTO | undefined): Promise<ClubDTO> {
         let url_ = this.baseUrl + "/api/Club";
@@ -373,7 +373,7 @@ export class Client {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
     clubGET(id: number): Promise<ClubDTO> {
         let url_ = this.baseUrl + "/api/Club/{id}";
@@ -414,7 +414,7 @@ export class Client {
 
     /**
      * @param body (optional) 
-     * @return Success
+     * @return OK
      */
     clubPUT(id: number, body: ClubDTO | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/Club/{id}";
@@ -455,7 +455,7 @@ export class Client {
 
     /**
      * @param id (optional) 
-     * @return Success
+     * @return OK
      */
     blanquearClave(id: number | undefined): Promise<boolean> {
         let url_ = this.baseUrl + "/api/Delegado/blanquear-clave?";
@@ -497,7 +497,7 @@ export class Client {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
     delegadoDELETE(id: number): Promise<number> {
         let url_ = this.baseUrl + "/api/Delegado/{id}";
@@ -538,7 +538,7 @@ export class Client {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
     delegadoGET(id: number): Promise<DelegadoDTO> {
         let url_ = this.baseUrl + "/api/Delegado/{id}";
@@ -579,7 +579,7 @@ export class Client {
 
     /**
      * @param body (optional) 
-     * @return Success
+     * @return OK
      */
     delegadoPUT(id: number, body: DelegadoDTO | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/Delegado/{id}";
@@ -619,7 +619,7 @@ export class Client {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
     delegadoAll(): Promise<DelegadoDTO[]> {
         let url_ = this.baseUrl + "/api/Delegado";
@@ -664,7 +664,7 @@ export class Client {
 
     /**
      * @param body (optional) 
-     * @return Success
+     * @return OK
      */
     delegadoPOST(body: DelegadoDTO | undefined): Promise<DelegadoDTO> {
         let url_ = this.baseUrl + "/api/Delegado";
@@ -705,7 +705,7 @@ export class Client {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
     equipoAll(): Promise<EquipoDTO[]> {
         let url_ = this.baseUrl + "/api/Equipo";
@@ -750,7 +750,7 @@ export class Client {
 
     /**
      * @param body (optional) 
-     * @return Success
+     * @return OK
      */
     equipoPOST(body: EquipoDTO | undefined): Promise<EquipoDTO> {
         let url_ = this.baseUrl + "/api/Equipo";
@@ -791,7 +791,7 @@ export class Client {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
     equipoGET(id: number): Promise<EquipoDTO> {
         let url_ = this.baseUrl + "/api/Equipo/{id}";
@@ -832,7 +832,7 @@ export class Client {
 
     /**
      * @param body (optional) 
-     * @return Success
+     * @return OK
      */
     equipoPUT(id: number, body: EquipoDTO | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/Equipo/{id}";
@@ -873,7 +873,7 @@ export class Client {
 
     /**
      * @param body (optional) 
-     * @return Success
+     * @return OK
      */
     jugadorPOST(body: JugadorDTO | undefined): Promise<JugadorDTO> {
         let url_ = this.baseUrl + "/api/Jugador";
@@ -914,7 +914,7 @@ export class Client {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
     jugadorAll(): Promise<JugadorDTO[]> {
         let url_ = this.baseUrl + "/api/Jugador";
@@ -959,7 +959,7 @@ export class Client {
 
     /**
      * @param body (optional) 
-     * @return Success
+     * @return OK
      */
     aprobarJugador(body: AprobarJugadorDTO | undefined): Promise<number> {
         let url_ = this.baseUrl + "/api/Jugador/aprobar-jugador";
@@ -1002,7 +1002,7 @@ export class Client {
 
     /**
      * @param body (optional) 
-     * @return Success
+     * @return OK
      */
     rechazarJugador(body: RechazarJugadorDTO | undefined): Promise<number> {
         let url_ = this.baseUrl + "/api/Jugador/rechazar-jugador";
@@ -1045,7 +1045,7 @@ export class Client {
 
     /**
      * @param body (optional) 
-     * @return Success
+     * @return OK
      */
     activarJugador(body: CambiarEstadoDelJugadorDTO[] | undefined): Promise<number> {
         let url_ = this.baseUrl + "/api/Jugador/activar-jugador";
@@ -1088,7 +1088,7 @@ export class Client {
 
     /**
      * @param body (optional) 
-     * @return Success
+     * @return OK
      */
     efectuarPases(body: EfectuarPaseDTO[] | undefined): Promise<number> {
         let url_ = this.baseUrl + "/api/Jugador/efectuar-pases";
@@ -1131,7 +1131,7 @@ export class Client {
 
     /**
      * @param body (optional) 
-     * @return Success
+     * @return OK
      */
     pagarFichajeDelJugador(body: CambiarEstadoDelJugadorDTO | undefined): Promise<number> {
         let url_ = this.baseUrl + "/api/Jugador/pagar-fichaje-del-jugador";
@@ -1174,7 +1174,7 @@ export class Client {
 
     /**
      * @param body (optional) 
-     * @return Success
+     * @return OK
      */
     inhabilitarJugador(body: CambiarEstadoDelJugadorDTO[] | undefined): Promise<number> {
         let url_ = this.baseUrl + "/api/Jugador/inhabilitar-jugador";
@@ -1217,7 +1217,7 @@ export class Client {
 
     /**
      * @param body (optional) 
-     * @return Success
+     * @return OK
      */
     suspenderJugador(body: CambiarEstadoDelJugadorDTO[] | undefined): Promise<number> {
         let url_ = this.baseUrl + "/api/Jugador/suspender-jugador";
@@ -1260,7 +1260,7 @@ export class Client {
 
     /**
      * @param estados (optional) 
-     * @return Success
+     * @return OK
      */
     listarConFiltro(estados: EstadoJugadorEnum[] | undefined): Promise<JugadorDTO[]> {
         let url_ = this.baseUrl + "/api/Jugador/listar-con-filtro?";
@@ -1308,7 +1308,7 @@ export class Client {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
     jugadorDELETE(id: number): Promise<number> {
         let url_ = this.baseUrl + "/api/Jugador/{id}";
@@ -1349,7 +1349,7 @@ export class Client {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
     jugadorGET(id: number): Promise<JugadorDTO> {
         let url_ = this.baseUrl + "/api/Jugador/{id}";
@@ -1390,7 +1390,7 @@ export class Client {
 
     /**
      * @param body (optional) 
-     * @return Success
+     * @return OK
      */
     jugadorPUT(id: number, body: JugadorDTO | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/Jugador/{id}";
@@ -1431,7 +1431,7 @@ export class Client {
 
     /**
      * @param body (optional) 
-     * @return Success
+     * @return OK
      */
     desvincularJugadorDelEquipo(body: DesvincularJugadorDelEquipoDTO | undefined): Promise<number> {
         let url_ = this.baseUrl + "/api/Jugador/desvincular-jugador-del-equipo";
@@ -1474,7 +1474,7 @@ export class Client {
 
     /**
      * @param dni (optional) 
-     * @return Success
+     * @return OK
      */
     elDniEstaFichado(dni: string | undefined): Promise<boolean> {
         let url_ = this.baseUrl + "/api/publico/el-dni-esta-fichado?";
@@ -1517,7 +1517,7 @@ export class Client {
 
     /**
      * @param codigoAlfanumerico (optional) 
-     * @return Success
+     * @return OK
      */
     obtenerNombreEquipo(codigoAlfanumerico: string | undefined): Promise<ObtenerNombreEquipoDTO> {
         let url_ = this.baseUrl + "/api/publico/obtener-nombre-equipo?";
@@ -1559,7 +1559,7 @@ export class Client {
 
     /**
      * @param body (optional) 
-     * @return Success
+     * @return OK
      */
     ficharEnOtroEquipo(body: FicharEnOtroEquipoDTO | undefined): Promise<number> {
         let url_ = this.baseUrl + "/api/publico/fichar-en-otro-equipo";
@@ -1603,7 +1603,7 @@ export class Client {
     /**
      * @param mes (optional) 
      * @param anio (optional) 
-     * @return Success
+     * @return OK
      */
     obtenerReportePagos(mes: number | undefined, anio: number | undefined): Promise<ReportePagosDTO[]> {
         let url_ = this.baseUrl + "/api/Reporte/obtener-reporte-pagos?";
@@ -1655,7 +1655,7 @@ export class Client {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
     torneoAll(): Promise<TorneoDTO[]> {
         let url_ = this.baseUrl + "/api/Torneo";
@@ -1700,7 +1700,7 @@ export class Client {
 
     /**
      * @param body (optional) 
-     * @return Success
+     * @return OK
      */
     torneoPOST(body: TorneoDTO | undefined): Promise<TorneoDTO> {
         let url_ = this.baseUrl + "/api/Torneo";
@@ -1741,7 +1741,7 @@ export class Client {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
     torneoGET(id: number): Promise<TorneoDTO> {
         let url_ = this.baseUrl + "/api/Torneo/{id}";
@@ -1782,7 +1782,7 @@ export class Client {
 
     /**
      * @param body (optional) 
-     * @return Success
+     * @return OK
      */
     torneoPUT(id: number, body: TorneoDTO | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/Torneo/{id}";
@@ -2168,11 +2168,11 @@ export interface IClubDTO {
 
 export class DelegadoDTO implements IDelegadoDTO {
     id?: number;
-    nombre?: string | undefined;
-    apellido?: string | undefined;
+    nombre!: string | undefined;
+    apellido!: string | undefined;
     nombreUsuario?: string | undefined;
     blanqueoPendiente?: boolean;
-    clubId?: number;
+    clubId!: number;
 
     constructor(data?: IDelegadoDTO) {
         if (data) {
@@ -2215,11 +2215,11 @@ export class DelegadoDTO implements IDelegadoDTO {
 
 export interface IDelegadoDTO {
     id?: number;
-    nombre?: string | undefined;
-    apellido?: string | undefined;
+    nombre: string | undefined;
+    apellido: string | undefined;
     nombreUsuario?: string | undefined;
     blanqueoPendiente?: boolean;
-    clubId?: number;
+    clubId: number;
 }
 
 export class DesvincularJugadorDelEquipoDTO implements IDesvincularJugadorDelEquipoDTO {
@@ -2307,9 +2307,10 @@ export interface IEfectuarPaseDTO {
 }
 
 export class EquipoBaseDTO implements IEquipoBaseDTO {
-    id?: number;
-    nombre?: string | undefined;
-    torneo?: string | undefined;
+    id!: number;
+    nombre!: string | undefined;
+    torneo!: string | undefined;
+    codigoAlfanumerico?: string | undefined;
 
     constructor(data?: IEquipoBaseDTO) {
         if (data) {
@@ -2325,6 +2326,7 @@ export class EquipoBaseDTO implements IEquipoBaseDTO {
             this.id = _data["id"];
             this.nombre = _data["nombre"];
             this.torneo = _data["torneo"];
+            this.codigoAlfanumerico = _data["codigoAlfanumerico"];
         }
     }
 
@@ -2340,20 +2342,22 @@ export class EquipoBaseDTO implements IEquipoBaseDTO {
         data["id"] = this.id;
         data["nombre"] = this.nombre;
         data["torneo"] = this.torneo;
+        data["codigoAlfanumerico"] = this.codigoAlfanumerico;
         return data;
     }
 }
 
 export interface IEquipoBaseDTO {
-    id?: number;
-    nombre?: string | undefined;
-    torneo?: string | undefined;
+    id: number;
+    nombre: string | undefined;
+    torneo: string | undefined;
+    codigoAlfanumerico?: string | undefined;
 }
 
 export class EquipoDTO implements IEquipoDTO {
     id?: number;
-    nombre?: string | undefined;
-    clubId?: number;
+    nombre!: string | undefined;
+    clubId!: number;
     codigoAlfanumerico?: string | undefined;
     clubNombre?: string | undefined;
     torneoId?: number | undefined;
@@ -2413,8 +2417,8 @@ export class EquipoDTO implements IEquipoDTO {
 
 export interface IEquipoDTO {
     id?: number;
-    nombre?: string | undefined;
-    clubId?: number;
+    nombre: string | undefined;
+    clubId: number;
     codigoAlfanumerico?: string | undefined;
     clubNombre?: string | undefined;
     torneoId?: number | undefined;
@@ -2424,6 +2428,7 @@ export interface IEquipoDTO {
 
 export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
     id?: number;
+    equipoId?: number;
     nombre?: string | undefined;
     club?: string | undefined;
     torneo?: string | undefined;
@@ -2443,6 +2448,7 @@ export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
+            this.equipoId = _data["equipoId"];
             this.nombre = _data["nombre"];
             this.club = _data["club"];
             this.torneo = _data["torneo"];
@@ -2462,6 +2468,7 @@ export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["equipoId"] = this.equipoId;
         data["nombre"] = this.nombre;
         data["club"] = this.club;
         data["torneo"] = this.torneo;
@@ -2474,6 +2481,7 @@ export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
 
 export interface IEquipoDelJugadorDTO {
     id?: number;
+    equipoId?: number;
     nombre?: string | undefined;
     club?: string | undefined;
     torneo?: string | undefined;
@@ -2483,7 +2491,7 @@ export interface IEquipoDelJugadorDTO {
 }
 
 export class EquiposDelDelegadoDTO implements IEquiposDelDelegadoDTO {
-    club?: string | undefined;
+    club!: string | undefined;
     equipos?: EquipoBaseDTO[] | undefined;
 
     constructor(data?: IEquiposDelDelegadoDTO) {
@@ -2526,7 +2534,7 @@ export class EquiposDelDelegadoDTO implements IEquiposDelDelegadoDTO {
 }
 
 export interface IEquiposDelDelegadoDTO {
-    club?: string | undefined;
+    club: string | undefined;
     equipos?: EquipoBaseDTO[] | undefined;
 }
 
