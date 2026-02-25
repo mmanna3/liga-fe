@@ -74,7 +74,7 @@ export const mapaRutasComponentes = [
     element: <PoliticaDePrivacidad />
   },
   {
-    path: '/admin',
+    path: '/',
     errorElement: <ErrorPage />,
     element: (
       <RequiereAutenticacion>
