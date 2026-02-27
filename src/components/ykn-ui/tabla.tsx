@@ -21,10 +21,11 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
-  useReactTable,
+  OnChangeFn,
+  Row,
   RowSelectionState,
-  OnChangeFn
+  SortingState,
+  useReactTable
 } from '@tanstack/react-table'
 import { ChevronLeft, ChevronRight, MoreVertical } from 'lucide-react'
 import { useState } from 'react'
@@ -37,6 +38,7 @@ type TablaProps<T> = {
   rowSelection?: RowSelectionState
   onRowSelectionChange?: OnChangeFn<RowSelectionState>
   pageSizeDefault?: number
+  onRowClick?: (row: Row<T>) => void
 }
 
 export default function Tabla<T>({
@@ -46,7 +48,8 @@ export default function Tabla<T>({
   hayError,
   rowSelection,
   onRowSelectionChange,
-  pageSizeDefault = 10
+  pageSizeDefault = 10,
+  onRowClick
 }: TablaProps<T>) {
   const [globalFilter, setGlobalFilter] = useState('')
   const [sorting, setSorting] = useState<SortingState>([])
@@ -118,7 +121,15 @@ export default function Tabla<T>({
             <TableBody>
               {table.getRowModel().rows.length > 0 ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
+                  <TableRow
+                    key={row.id}
+                    onClick={() => onRowClick?.(row)}
+                    className={
+                      onRowClick
+                        ? 'cursor-pointer hover:bg-muted/50 transition-colors'
+                        : undefined
+                    }
+                  >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
                         {flexRender(

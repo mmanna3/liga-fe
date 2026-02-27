@@ -86,7 +86,11 @@ export default function TablaEquipo({
           })
         }
 
-        return <Tabla.MenuContextual items={menuItems} />
+        return (
+          <div onClick={(e) => e.stopPropagation()}>
+            <Tabla.MenuContextual items={menuItems} />
+          </div>
+        )
       }
     }
   ]
@@ -97,6 +101,9 @@ export default function TablaEquipo({
       data={data || []}
       estaCargando={isLoading}
       hayError={isError}
+      onRowClick={(row) =>
+        navigate(`${rutasNavegacion.detalleEquipo}/${row.original.id}`)
+      }
     />
   )
 }

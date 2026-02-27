@@ -23,8 +23,9 @@ export default function TablaClub({ data, isLoading, isError }: ITablaClub) {
       id: 'acciones',
       header: '',
       cell: ({ row }) => (
-        <Tabla.MenuContextual
-          items={[
+        <div onClick={(e) => e.stopPropagation()}>
+          <Tabla.MenuContextual
+            items={[
             {
               texto: 'Detalle',
               onClick: () =>
@@ -32,6 +33,7 @@ export default function TablaClub({ data, isLoading, isError }: ITablaClub) {
             }
           ]}
         />
+        </div>
       )
     }
   ]
@@ -42,6 +44,9 @@ export default function TablaClub({ data, isLoading, isError }: ITablaClub) {
       data={data || []}
       estaCargando={isLoading}
       hayError={isError}
+      onRowClick={(row) =>
+        navigate(`${rutasNavegacion.detalleClub}/${row.original.id}`)
+      }
     />
   )
 }

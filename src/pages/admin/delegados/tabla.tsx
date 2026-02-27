@@ -71,7 +71,8 @@ export default function TablaDelegados({
       header: '',
       cell: ({ row }) => (
         <VisibleSoloParaAdmin>
-          <Tabla.MenuContextual
+          <div onClick={(e) => e.stopPropagation()}>
+            <Tabla.MenuContextual
             items={[
               {
                 texto: 'Detalle',
@@ -96,6 +97,7 @@ export default function TablaDelegados({
               }
             ]}
           />
+          </div>
         </VisibleSoloParaAdmin>
       )
     }
@@ -107,6 +109,11 @@ export default function TablaDelegados({
       data={data || []}
       estaCargando={isLoading}
       hayError={isError}
+      onRowClick={(row) =>
+        navigate(
+          `${rutasNavegacion.detalleDelegado}/${row.original.id}${search}`
+        )
+      }
     />
   )
 }

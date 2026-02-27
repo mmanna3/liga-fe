@@ -78,7 +78,8 @@ export default function TablaJugador({
         return (
           <div
             className={esPendienteORechazo && esAdmin() ? 'cursor-pointer' : ''}
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation()
               if (esPendienteORechazo && esAdmin()) {
                 navigate(
                   `${rutasNavegacion.aprobarRechazarJugador}/${equipo.id}/${row.original.id}`
@@ -133,7 +134,11 @@ export default function TablaJugador({
           })
         }
 
-        return <Tabla.MenuContextual items={menuItems} />
+        return (
+          <div onClick={(e) => e.stopPropagation()}>
+            <Tabla.MenuContextual items={menuItems} />
+          </div>
+        )
       }
     }
   ]
@@ -144,6 +149,9 @@ export default function TablaJugador({
       data={data || []}
       estaCargando={isLoading}
       hayError={isError}
+      onRowClick={(row) =>
+        navigate(`${rutasNavegacion.detalleJugador}/${row.original.id}`)
+      }
     />
   )
 }
