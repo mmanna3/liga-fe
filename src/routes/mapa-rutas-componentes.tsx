@@ -1,7 +1,7 @@
 import { RequiereAutenticacion } from '@/components/RequiereAutenticacion'
 import DetalleClub from '@/pages/admin/club/detalle-club'
+import AprobarRechazarDelegado from '@/pages/admin/delegados/aprobar-rechazar-delegado'
 import BlanquearClaveDelegado from '@/pages/admin/delegados/blanquear-clave-delegado'
-import CrearDelegado from '@/pages/admin/delegados/crear-delegado'
 import Delegados from '@/pages/admin/delegados/delegados'
 import DetalleDelegado from '@/pages/admin/delegados/detalle-delegado'
 import EliminarDelegado from '@/pages/admin/delegados/eliminar-delegado'
@@ -126,8 +126,11 @@ export const mapaRutasComponentes = [
       { path: rutas.reportes, element: <ReportesPage /> },
       { path: rutas.reportePagos, element: <ReportePagosPage /> },
       { path: rutas.delegados, element: <Delegados /> },
-      { path: rutas.crearDelegado, element: <CrearDelegado /> },
       { path: `${rutas.detalleDelegado}/:id`, element: <DetalleDelegado /> },
+      {
+        path: `${rutas.aprobarRechazarDelegado}/:id`,
+        element: <AprobarRechazarDelegado />
+      },
       {
         path: `${rutas.blanquearClaveDelegado}/:id/:usuario`,
         element: <BlanquearClaveDelegado />

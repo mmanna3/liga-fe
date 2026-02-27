@@ -2,9 +2,10 @@ import { DelegadoDTO } from '@/api/clients'
 import { Badge } from '@/components/ui/badge'
 import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import Tabla from '@/components/ykn-ui/tabla'
+import { estadoBadgeClassDelegado } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
 import { ColumnDef } from '@tanstack/react-table'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 interface ITablaDelegados {
   data: DelegadoDTO[]
@@ -18,6 +19,8 @@ export default function TablaDelegados({
   isError
 }: ITablaDelegados) {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const search = searchParams.toString() ? `?${searchParams.toString()}` : ''
 
   const columnas: ColumnDef<DelegadoDTO>[] = [
     {
@@ -34,6 +37,21 @@ export default function TablaDelegados({
       accessorKey: 'apellido',
       header: 'Apellido',
       cell: ({ row }) => <span>{row.getValue('apellido')}</span>
+    },
+    {
+      accessorKey: 'estadoDelegado',
+      header: 'Estado',
+      cell: ({ row }) => {
+        const estado = row.original.estadoDelegado
+        if (!estado) return null
+        return (
+          <Badge
+            className={`px-3 py-1 rounded-md ${estadoBadgeClassDelegado[estado.id!] ?? ''}`}
+          >
+            {estado.estado}
+          </Badge>
+        )
+      }
     },
     {
       accessorKey: 'blanqueoPendiente',
@@ -56,24 +74,24 @@ export default function TablaDelegados({
           <Tabla.MenuContextual
             items={[
               {
-                texto: 'Editar',
+                texto: 'Detalle',
                 onClick: () =>
                   navigate(
-                    `${rutasNavegacion.detalleDelegado}/${row.original.id}`
+                    `${rutasNavegacion.detalleDelegado}/${row.original.id}${search}`
                   )
               },
               {
                 texto: 'Blanquear clave',
                 onClick: () =>
                   navigate(
-                    `${rutasNavegacion.blanquearClaveDelegado}/${row.original.id}/${row.original.nombreUsuario}`
+                    `${rutasNavegacion.blanquearClaveDelegado}/${row.original.id}/${row.original.nombreUsuario}${search}`
                   )
               },
               {
                 texto: 'Eliminar',
                 onClick: () =>
                   navigate(
-                    `${rutasNavegacion.eliminarDelegado}/${row.original.id}/${row.original.nombreUsuario}`
+                    `${rutasNavegacion.eliminarDelegado}/${row.original.id}/${row.original.nombreUsuario}${search}`
                   )
               }
             ]}

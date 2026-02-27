@@ -21,10 +21,10 @@ export const rutas = {
   reportes: 'reportes',
   reportePagos: 'reportes/pagos',
   delegados: 'delegados',
-  crearDelegado: 'delegados/crear',
   detalleDelegado: 'delegados/detalle',
   blanquearClaveDelegado: 'delegados/blanquear-clave',
-  eliminarDelegado: 'delegados/eliminar'
+  eliminarDelegado: 'delegados/eliminar',
+  aprobarRechazarDelegado: 'delegados/aprobar-rechazar'
 }
 
 export const rutasNavegacion: { [K in keyof typeof rutas]: string } =

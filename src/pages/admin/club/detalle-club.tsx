@@ -58,24 +58,11 @@ export default function DetalleClub() {
 
       <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
         <Card className='shadow-md'>
-          <CardHeader className='pb-3 flex flex-row items-center justify-between'>
+          <CardHeader className='pb-3'>
             <CardTitle className='text-xl font-semibold flex items-center gap-2'>
               <UserCog className='h-5 w-5' />
               Delegados
             </CardTitle>
-            <VisibleSoloParaAdmin>
-              <Button
-                onClick={() =>
-                  navigate(`${rutasNavegacion.crearDelegado}?clubId=${id}`)
-                }
-                variant='outline'
-                size='sm'
-                className='flex items-center gap-1'
-              >
-                <PlusCircle className='h-4 w-4' />
-                Nuevo
-              </Button>
-            </VisibleSoloParaAdmin>
           </CardHeader>
           <CardContent>
             {club!.delegados && club!.delegados.length > 0 ? (

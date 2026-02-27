@@ -454,6 +454,135 @@ export class Client {
     }
 
     /**
+     * @param body (optional) 
+     * @return OK
+     */
+    delegadoPOST(body: DelegadoDTO | undefined): Promise<DelegadoDTO> {
+        let url_ = this.baseUrl + "/api/Delegado";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDelegadoPOST(_response);
+        });
+    }
+
+    protected processDelegadoPOST(response: Response): Promise<DelegadoDTO> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = DelegadoDTO.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<DelegadoDTO>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    delegadoAll(): Promise<DelegadoDTO[]> {
+        let url_ = this.baseUrl + "/api/Delegado";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDelegadoAll(_response);
+        });
+    }
+
+    protected processDelegadoAll(response: Response): Promise<DelegadoDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(DelegadoDTO.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<DelegadoDTO[]>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    aprobar(body: AprobarDelegadoDTO | undefined): Promise<number> {
+        let url_ = this.baseUrl + "/api/Delegado/aprobar";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processAprobar(_response);
+        });
+    }
+
+    protected processAprobar(response: Response): Promise<number> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<number>(null as any);
+    }
+
+    /**
      * @param id (optional) 
      * @return OK
      */
@@ -616,92 +745,6 @@ export class Client {
             });
         }
         return Promise.resolve<void>(null as any);
-    }
-
-    /**
-     * @return OK
-     */
-    delegadoAll(): Promise<DelegadoDTO[]> {
-        let url_ = this.baseUrl + "/api/Delegado";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processDelegadoAll(_response);
-        });
-    }
-
-    protected processDelegadoAll(response: Response): Promise<DelegadoDTO[]> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(DelegadoDTO.fromJS(item));
-            }
-            else {
-                result200 = <any>null;
-            }
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<DelegadoDTO[]>(null as any);
-    }
-
-    /**
-     * @param body (optional) 
-     * @return OK
-     */
-    delegadoPOST(body: DelegadoDTO | undefined): Promise<DelegadoDTO> {
-        let url_ = this.baseUrl + "/api/Delegado";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_: RequestInit = {
-            body: content_,
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processDelegadoPOST(_response);
-        });
-    }
-
-    protected processDelegadoPOST(response: Response): Promise<DelegadoDTO> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = DelegadoDTO.fromJS(resultData200);
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<DelegadoDTO>(null as any);
     }
 
     /**
@@ -1822,6 +1865,42 @@ export class Client {
     }
 }
 
+export class AprobarDelegadoDTO implements IAprobarDelegadoDTO {
+    id?: number;
+
+    constructor(data?: IAprobarDelegadoDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): AprobarDelegadoDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new AprobarDelegadoDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data;
+    }
+}
+
+export interface IAprobarDelegadoDTO {
+    id?: number;
+}
+
 export class AprobarJugadorDTO implements IAprobarJugadorDTO {
     id?: number;
     dni!: string;
@@ -2168,11 +2247,21 @@ export interface IClubDTO {
 
 export class DelegadoDTO implements IDelegadoDTO {
     id?: number;
-    nombre!: string | undefined;
-    apellido!: string | undefined;
+    dni!: string;
+    nombre!: string;
+    apellido!: string;
+    fechaNacimiento!: Date;
+    telefonoCelular?: string | undefined;
+    email?: string | undefined;
     nombreUsuario?: string | undefined;
+    fotoCarnet!: string;
+    fotoDNIFrente!: string;
+    fotoDNIDorso!: string;
     blanqueoPendiente?: boolean;
     clubId!: number;
+    estadoDelegado?: EstadoDelegadoDTO;
+    clubNombre?: string | undefined;
+    equiposDelClub?: string[] | undefined;
 
     constructor(data?: IDelegadoDTO) {
         if (data) {
@@ -2186,11 +2275,25 @@ export class DelegadoDTO implements IDelegadoDTO {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
+            this.dni = _data["dni"];
             this.nombre = _data["nombre"];
             this.apellido = _data["apellido"];
+            this.fechaNacimiento = _data["fechaNacimiento"] ? new Date(_data["fechaNacimiento"].toString()) : <any>undefined;
+            this.telefonoCelular = _data["telefonoCelular"];
+            this.email = _data["email"];
             this.nombreUsuario = _data["nombreUsuario"];
+            this.fotoCarnet = _data["fotoCarnet"];
+            this.fotoDNIFrente = _data["fotoDNIFrente"];
+            this.fotoDNIDorso = _data["fotoDNIDorso"];
             this.blanqueoPendiente = _data["blanqueoPendiente"];
             this.clubId = _data["clubId"];
+            this.estadoDelegado = _data["estadoDelegado"] ? EstadoDelegadoDTO.fromJS(_data["estadoDelegado"]) : <any>undefined;
+            this.clubNombre = _data["clubNombre"];
+            if (Array.isArray(_data["equiposDelClub"])) {
+                this.equiposDelClub = [] as any;
+                for (let item of _data["equiposDelClub"])
+                    this.equiposDelClub!.push(item);
+            }
         }
     }
 
@@ -2204,22 +2307,46 @@ export class DelegadoDTO implements IDelegadoDTO {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["dni"] = this.dni;
         data["nombre"] = this.nombre;
         data["apellido"] = this.apellido;
+        data["fechaNacimiento"] = this.fechaNacimiento ? this.fechaNacimiento.toISOString() : <any>undefined;
+        data["telefonoCelular"] = this.telefonoCelular;
+        data["email"] = this.email;
         data["nombreUsuario"] = this.nombreUsuario;
+        data["fotoCarnet"] = this.fotoCarnet;
+        data["fotoDNIFrente"] = this.fotoDNIFrente;
+        data["fotoDNIDorso"] = this.fotoDNIDorso;
         data["blanqueoPendiente"] = this.blanqueoPendiente;
         data["clubId"] = this.clubId;
+        data["estadoDelegado"] = this.estadoDelegado ? this.estadoDelegado.toJSON() : <any>undefined;
+        data["clubNombre"] = this.clubNombre;
+        if (Array.isArray(this.equiposDelClub)) {
+            data["equiposDelClub"] = [];
+            for (let item of this.equiposDelClub)
+                data["equiposDelClub"].push(item);
+        }
         return data;
     }
 }
 
 export interface IDelegadoDTO {
     id?: number;
-    nombre: string | undefined;
-    apellido: string | undefined;
+    dni: string;
+    nombre: string;
+    apellido: string;
+    fechaNacimiento: Date;
+    telefonoCelular?: string | undefined;
+    email?: string | undefined;
     nombreUsuario?: string | undefined;
+    fotoCarnet: string;
+    fotoDNIFrente: string;
+    fotoDNIDorso: string;
     blanqueoPendiente?: boolean;
     clubId: number;
+    estadoDelegado?: EstadoDelegadoDTO;
+    clubNombre?: string | undefined;
+    equiposDelClub?: string[] | undefined;
 }
 
 export class DesvincularJugadorDelEquipoDTO implements IDesvincularJugadorDelEquipoDTO {
@@ -2428,7 +2555,6 @@ export interface IEquipoDTO {
 
 export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
     id?: number;
-    equipoId?: number;
     nombre?: string | undefined;
     club?: string | undefined;
     torneo?: string | undefined;
@@ -2448,7 +2574,6 @@ export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
-            this.equipoId = _data["equipoId"];
             this.nombre = _data["nombre"];
             this.club = _data["club"];
             this.torneo = _data["torneo"];
@@ -2468,7 +2593,6 @@ export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["equipoId"] = this.equipoId;
         data["nombre"] = this.nombre;
         data["club"] = this.club;
         data["torneo"] = this.torneo;
@@ -2481,7 +2605,6 @@ export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
 
 export interface IEquipoDelJugadorDTO {
     id?: number;
-    equipoId?: number;
     nombre?: string | undefined;
     club?: string | undefined;
     torneo?: string | undefined;
@@ -2536,6 +2659,46 @@ export class EquiposDelDelegadoDTO implements IEquiposDelDelegadoDTO {
 export interface IEquiposDelDelegadoDTO {
     club: string | undefined;
     equipos?: EquipoBaseDTO[] | undefined;
+}
+
+export class EstadoDelegadoDTO implements IEstadoDelegadoDTO {
+    id?: number;
+    estado!: string;
+
+    constructor(data?: IEstadoDelegadoDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.estado = _data["estado"];
+        }
+    }
+
+    static fromJS(data: any): EstadoDelegadoDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new EstadoDelegadoDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["estado"] = this.estado;
+        return data;
+    }
+}
+
+export interface IEstadoDelegadoDTO {
+    id?: number;
+    estado: string;
 }
 
 export enum EstadoJugadorEnum {
@@ -2600,9 +2763,9 @@ export class JugadorDTO implements IJugadorDTO {
     equipoInicialId?: number;
     codigoAlfanumerico?: string | undefined;
     equipos?: EquipoDelJugadorDTO[] | undefined;
-    fotoCarnet?: string | undefined;
-    fotoDNIFrente?: string | undefined;
-    fotoDNIDorso?: string | undefined;
+    fotoCarnet!: string;
+    fotoDNIFrente!: string;
+    fotoDNIDorso!: string;
 
     constructor(data?: IJugadorDTO) {
         if (data) {
@@ -2670,9 +2833,9 @@ export interface IJugadorDTO {
     equipoInicialId?: number;
     codigoAlfanumerico?: string | undefined;
     equipos?: EquipoDelJugadorDTO[] | undefined;
-    fotoCarnet?: string | undefined;
-    fotoDNIFrente?: string | undefined;
-    fotoDNIDorso?: string | undefined;
+    fotoCarnet: string;
+    fotoDNIFrente: string;
+    fotoDNIDorso: string;
 }
 
 export class JugadorDelEquipoDTO implements IJugadorDelEquipoDTO {

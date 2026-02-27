@@ -5,16 +5,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
 import Botonera from '@/components/ykn-ui/botonera'
 import { rutasNavegacion } from '@/routes/rutas'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 export default function BlanquearClaveDelegado() {
   const { id, usuario } = useParams<{ id: string; usuario: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
   const mutation = useApiMutation({
     fn: async (id: number) => {
       await api.blanquearClave(id)
     },
-    antesDeMensajeExito: () => navigate(rutasNavegacion.delegados),
+    antesDeMensajeExito: () =>
+      navigate(`${rutasNavegacion.delegados}${location.search}`),
     mensajeDeExito: `La clave de '${usuario}' fue blanqueada`
   })
 
