@@ -54,12 +54,22 @@ export default function TablaDelegados({
       }
     },
     {
+      id: 'esJugador',
+      header: 'Es jugador',
+      cell: ({ row }) =>
+        row.original.jugadorId != null ? (
+          <span className='flex justify-center text-green-600 font-bold'>
+            ✓
+          </span>
+        ) : null
+    },
+    {
       accessorKey: 'blanqueoPendiente',
       header: '',
       cell: ({ row }) => (
         <span>
           {(row.getValue('blanqueoPendiente') as boolean) == true && (
-            <Badge className='px-3 py-1 rounded-md bg-blue-700'>
+            <Badge className='px-3 py-1 rounded-md bg-yellow-100 text-yellow-700'>
               Blanqueo pendiente
             </Badge>
           )}
@@ -73,30 +83,30 @@ export default function TablaDelegados({
         <VisibleSoloParaAdmin>
           <div onClick={(e) => e.stopPropagation()}>
             <Tabla.MenuContextual
-            items={[
-              {
-                texto: 'Detalle',
-                onClick: () =>
-                  navigate(
-                    `${rutasNavegacion.detalleDelegado}/${row.original.id}${search}`
-                  )
-              },
-              {
-                texto: 'Blanquear clave',
-                onClick: () =>
-                  navigate(
-                    `${rutasNavegacion.blanquearClaveDelegado}/${row.original.id}/${row.original.nombreUsuario}${search}`
-                  )
-              },
-              {
-                texto: 'Eliminar',
-                onClick: () =>
-                  navigate(
-                    `${rutasNavegacion.eliminarDelegado}/${row.original.id}/${row.original.nombreUsuario}${search}`
-                  )
-              }
-            ]}
-          />
+              items={[
+                {
+                  texto: 'Detalle',
+                  onClick: () =>
+                    navigate(
+                      `${rutasNavegacion.detalleDelegado}/${row.original.id}${search}`
+                    )
+                },
+                {
+                  texto: 'Blanquear clave',
+                  onClick: () =>
+                    navigate(
+                      `${rutasNavegacion.blanquearClaveDelegado}/${row.original.id}/${row.original.nombreUsuario}${search}`
+                    )
+                },
+                {
+                  texto: 'Eliminar',
+                  onClick: () =>
+                    navigate(
+                      `${rutasNavegacion.eliminarDelegado}/${row.original.id}/${row.original.nombreUsuario}${search}`
+                    )
+                }
+              ]}
+            />
           </div>
         </VisibleSoloParaAdmin>
       )

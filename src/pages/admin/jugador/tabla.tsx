@@ -93,6 +93,14 @@ export default function TablaJugador({
       }
     },
     {
+      id: 'esDelegado',
+      header: 'Es delegado',
+      cell: ({ row }) =>
+        row.original.delegadoId != null ? (
+          <span className='flex justify-center text-green-600 font-bold'>✓</span>
+        ) : null
+    },
+    {
       id: 'acciones',
       header: '',
       cell: ({ row }) => {

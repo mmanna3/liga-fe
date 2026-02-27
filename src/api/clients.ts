@@ -2262,6 +2262,7 @@ export class DelegadoDTO implements IDelegadoDTO {
     estadoDelegado?: EstadoDelegadoDTO;
     clubNombre?: string | undefined;
     equiposDelClub?: string[] | undefined;
+    jugadorId?: number | undefined;
 
     constructor(data?: IDelegadoDTO) {
         if (data) {
@@ -2294,6 +2295,7 @@ export class DelegadoDTO implements IDelegadoDTO {
                 for (let item of _data["equiposDelClub"])
                     this.equiposDelClub!.push(item);
             }
+            this.jugadorId = _data["jugadorId"];
         }
     }
 
@@ -2326,6 +2328,7 @@ export class DelegadoDTO implements IDelegadoDTO {
             for (let item of this.equiposDelClub)
                 data["equiposDelClub"].push(item);
         }
+        data["jugadorId"] = this.jugadorId;
         return data;
     }
 }
@@ -2347,6 +2350,7 @@ export interface IDelegadoDTO {
     estadoDelegado?: EstadoDelegadoDTO;
     clubNombre?: string | undefined;
     equiposDelClub?: string[] | undefined;
+    jugadorId?: number | undefined;
 }
 
 export class DesvincularJugadorDelEquipoDTO implements IDesvincularJugadorDelEquipoDTO {
@@ -2762,6 +2766,7 @@ export class JugadorDTO implements IJugadorDTO {
     fechaNacimiento!: Date;
     equipoInicialId?: number;
     codigoAlfanumerico?: string | undefined;
+    delegadoId?: number | undefined;
     equipos?: EquipoDelJugadorDTO[] | undefined;
     fotoCarnet!: string;
     fotoDNIFrente!: string;
@@ -2785,6 +2790,7 @@ export class JugadorDTO implements IJugadorDTO {
             this.fechaNacimiento = _data["fechaNacimiento"] ? new Date(_data["fechaNacimiento"].toString()) : <any>undefined;
             this.equipoInicialId = _data["equipoInicialId"];
             this.codigoAlfanumerico = _data["codigoAlfanumerico"];
+            this.delegadoId = _data["delegadoId"];
             if (Array.isArray(_data["equipos"])) {
                 this.equipos = [] as any;
                 for (let item of _data["equipos"])
@@ -2812,6 +2818,7 @@ export class JugadorDTO implements IJugadorDTO {
         data["fechaNacimiento"] = this.fechaNacimiento ? this.fechaNacimiento.toISOString() : <any>undefined;
         data["equipoInicialId"] = this.equipoInicialId;
         data["codigoAlfanumerico"] = this.codigoAlfanumerico;
+        data["delegadoId"] = this.delegadoId;
         if (Array.isArray(this.equipos)) {
             data["equipos"] = [];
             for (let item of this.equipos)
@@ -2832,6 +2839,7 @@ export interface IJugadorDTO {
     fechaNacimiento: Date;
     equipoInicialId?: number;
     codigoAlfanumerico?: string | undefined;
+    delegadoId?: number | undefined;
     equipos?: EquipoDelJugadorDTO[] | undefined;
     fotoCarnet: string;
     fotoDNIFrente: string;

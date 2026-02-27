@@ -22,7 +22,7 @@ export enum EstadoDelegado {
 }
 
 export const estadoBadgeClassDelegado: Record<number, string> = {
-  1: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100',
+  1: 'bg-blue-100 text-blue-800 hover:bg-blue-100',
   2: 'bg-red-100 text-red-800 hover:bg-red-100',
   3: 'bg-green-100 text-green-800 hover:bg-green-100'
 }

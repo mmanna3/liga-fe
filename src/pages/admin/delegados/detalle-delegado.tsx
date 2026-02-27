@@ -8,11 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
 import DetalleItem from '@/components/ykn-ui/detalle-item'
-import DialogoEliminarDelegado from './components/dialogo-eliminar-delegado'
-import { EstadoDelegado } from '@/lib/utils'
-import { estadoBadgeClassDelegado } from '@/lib/utils'
+import { estadoBadgeClassDelegado, EstadoDelegado } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import DialogoEliminarDelegado from './components/dialogo-eliminar-delegado'
 
 export default function DetalleDelegado() {
   const navigate = useNavigate()
@@ -64,7 +63,7 @@ export default function DetalleDelegado() {
                 </Badge>
               )}
               {delegado.blanqueoPendiente && (
-                <Badge className='px-3 py-1 rounded-md bg-blue-700'>
+                <Badge className='px-3 py-1 rounded-md bg-yellow-100 text-yellow-700'>
                   Blanqueo pendiente
                 </Badge>
               )}
@@ -111,6 +110,21 @@ export default function DetalleDelegado() {
                   </ul>
                 )}
             </div>
+
+            {delegado.jugadorId != null && (
+              <div className='mb-4'>
+                <button
+                  className='text-blue-600 hover:underline text-sm'
+                  onClick={() =>
+                    navigate(
+                      `${rutasNavegacion.detalleJugador}/${delegado.jugadorId}`
+                    )
+                  }
+                >
+                  Este delegado es jugador →
+                </button>
+              </div>
+            )}
 
             {delegado.estadoDelegado?.id ===
               EstadoDelegado.PendienteDeAprobacion && (

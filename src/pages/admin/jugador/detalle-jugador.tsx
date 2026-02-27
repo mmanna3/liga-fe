@@ -68,6 +68,21 @@ export default function DetalleJugador() {
               />
             </div>
 
+            {jugador.delegadoId != null && (
+              <div className='mb-4'>
+                <button
+                  className='text-blue-600 hover:underline text-sm'
+                  onClick={() =>
+                    navigate(
+                      `${rutasNavegacion.detalleDelegado}/${jugador.delegadoId}`
+                    )
+                  }
+                >
+                  Este jugador es delegado →
+                </button>
+              </div>
+            )}
+
             <h2 className='text-lg font-medium mt-6 mb-4 text-gray-700'>
               Equipos
             </h2>
