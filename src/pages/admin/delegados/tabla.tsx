@@ -69,7 +69,7 @@ export default function TablaDelegados({
       cell: ({ row }) => (
         <span>
           {(row.getValue('blanqueoPendiente') as boolean) == true && (
-            <Badge className='px-3 py-1 rounded-md bg-yellow-100 text-yellow-700'>
+            <Badge className='px-3 py-1 rounded-md border-gray-700 bg-white text-gray-700'>
               Blanqueo pendiente
             </Badge>
           )}
