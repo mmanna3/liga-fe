@@ -38,7 +38,9 @@ export default function DetalleTorneo() {
                     <span
                       className='cursor-pointer text-blue-500 hover:underline'
                       onClick={() =>
-                        navigate(`${rutasNavegacion.detalleEquipo}/${equipo.id}`)
+                        navigate(
+                          `${rutasNavegacion.detalleEquipo}/${equipo.id}`
+                        )
                       }
                     >
                       {equipo.nombre}
@@ -47,7 +49,9 @@ export default function DetalleTorneo() {
                 ))}
               </ul>
             ) : (
-              <p className='text-gray-500 mt-2'>No hay equipos en este torneo</p>
+              <p className='text-gray-500 mt-2'>
+                No hay equipos en este torneo
+              </p>
             )}
           </div>
 
@@ -58,4 +62,4 @@ export default function DetalleTorneo() {
       </CardContent>
     </Card>
   )
-} 
+}

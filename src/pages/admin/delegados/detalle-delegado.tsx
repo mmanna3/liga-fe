@@ -10,6 +10,7 @@ import BotonVolver from '@/components/ykn-ui/boton-volver'
 import DetalleItem from '@/components/ykn-ui/detalle-item'
 import { estadoBadgeClassDelegado, EstadoDelegado } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
+import { Building2, User } from 'lucide-react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import DialogoEliminarDelegado from './components/dialogo-eliminar-delegado'
 
@@ -55,13 +56,6 @@ export default function DetalleDelegado() {
               {delegado.nombre} {delegado.apellido}
             </CardTitle>
             <div className='mt-3 flex flex-wrap gap-2 justify-center'>
-              {delegado.estadoDelegado && (
-                <Badge
-                  className={`px-3 py-1 rounded-md ${estadoBadgeClassDelegado[delegado.estadoDelegado.id!] ?? ''}`}
-                >
-                  {delegado.estadoDelegado.estado}
-                </Badge>
-              )}
               {delegado.blanqueoPendiente && (
                 <Badge className='px-3 py-1 rounded-md border-gray-700 bg-white text-gray-700'>
                   Blanqueo pendiente
@@ -75,7 +69,9 @@ export default function DetalleDelegado() {
               <DetalleItem clave='DNI' valor={delegado.dni} />
               <DetalleItem
                 clave='Usuario'
-                valor={delegado.nombreUsuario ?? 'Usuario aún no generado'}
+                valor={
+                  delegado.usuario?.nombreUsuario ?? 'Usuario aún no generado'
+                }
               />
               <DetalleItem
                 clave='Fecha de nacimiento'
@@ -92,57 +88,70 @@ export default function DetalleDelegado() {
               )}
             </div>
 
-            <h2 className='text-lg font-medium mt-6 mb-3 text-gray-700'>
-              Club
-            </h2>
-            <div className='bg-gray-50 p-5 rounded-lg mb-4'>
-              <p className='text-base font-semibold text-gray-900 mb-2'>
-                {delegado.clubNombre}
-              </p>
-              {delegado.equiposDelClub &&
-                delegado.equiposDelClub.length > 0 && (
-                  <ul className='divide-y divide-gray-200'>
-                    {delegado.equiposDelClub.map((nombre) => (
-                      <li key={nombre} className='py-2 text-sm text-gray-700'>
-                        {nombre}
+            {delegado.delegadoClubs && delegado.delegadoClubs.length > 0 && (
+              <Card className='mb-4 shadow-md'>
+                <CardHeader className='pb-3'>
+                  <CardTitle className='text-xl font-semibold flex items-center gap-2'>
+                    <Building2 className='h-5 w-5' />
+                    {delegado.delegadoClubs.length === 1 ? 'Club' : 'Clubs'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className='space-y-2 divide-y divide-gray-100'>
+                    {delegado.delegadoClubs.map((dc) => (
+                      <li key={dc.id ?? dc.clubId} className='pt-2 first:pt-0'>
+                        <div className='flex items-center justify-between gap-2'>
+                          <Button
+                            variant='ghost'
+                            className='flex-1 justify-start font-normal hover:bg-gray-50'
+                            onClick={() => {
+                              if (
+                                dc.estadoDelegado?.id ===
+                                  EstadoDelegado.PendienteDeAprobacion &&
+                                dc.id != null
+                              ) {
+                                navigate(
+                                  `${rutasNavegacion.aprobarRechazarDelegado}/${delegado.id}/${dc.id}${location.search}`
+                                )
+                              } else if (dc.clubId != null) {
+                                navigate(
+                                  `${rutasNavegacion.detalleClub}/${dc.clubId}`
+                                )
+                              }
+                            }}
+                          >
+                            {dc.clubNombre ?? `Club ${dc.clubId}`}
+                          </Button>
+                          {dc.estadoDelegado && (
+                            <Badge
+                              className={`shrink-0 px-3 py-1 rounded-md ${estadoBadgeClassDelegado[dc.estadoDelegado.id!] ?? ''}`}
+                            >
+                              {dc.estadoDelegado.estado}
+                            </Badge>
+                          )}
+                        </div>
                       </li>
                     ))}
                   </ul>
-                )}
-            </div>
+                </CardContent>
+              </Card>
+            )}
 
             {delegado.jugadorId != null && (
               <div className='mb-4'>
-                <button
-                  className='text-blue-600 hover:underline text-sm'
+                <Button
+                  variant='ghost'
+                  className='w-full justify-start font-normal hover:bg-gray-50'
                   onClick={() =>
                     navigate(
                       `${rutasNavegacion.detalleJugador}/${delegado.jugadorId}`
                     )
                   }
                 >
+                  <User className='h-4 w-4 mr-2' />
                   Este delegado es jugador →
-                </button>
+                </Button>
               </div>
-            )}
-
-            {delegado.estadoDelegado?.id ===
-              EstadoDelegado.PendienteDeAprobacion && (
-              <VisibleSoloParaAdmin>
-                <div className='flex justify-end mt-2'>
-                  <Button
-                    variant='ghost'
-                    className='text-blue-600'
-                    onClick={() =>
-                      navigate(
-                        `${rutasNavegacion.aprobarRechazarDelegado}/${delegado.id}${location.search}`
-                      )
-                    }
-                  >
-                    Gestionar
-                  </Button>
-                </div>
-              </VisibleSoloParaAdmin>
             )}
           </CardContent>
 

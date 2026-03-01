@@ -1,5 +1,5 @@
 import { api } from '@/api/api'
-import { AprobarDelegadoDTO } from '@/api/clients'
+import { AprobarDelegadoEnElClubDTO } from '@/api/clients'
 import useApiMutation from '@/api/custom-hooks/use-api-mutation'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/components/cargando-y-error-contenedor'
@@ -14,7 +14,10 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 const AprobarRechazarDelegado: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const { id } = useParams<{ id: string }>()
+  const { id, delegadoClubId } = useParams<{
+    id: string
+    delegadoClubId: string
+  }>()
   const volverADelegados = () =>
     navigate(`${rutasNavegacion.delegados}${location.search}`)
 
@@ -28,8 +31,8 @@ const AprobarRechazarDelegado: React.FC = () => {
   })
 
   const aprobarMutation = useApiMutation({
-    fn: async (dto: AprobarDelegadoDTO) => {
-      await api.aprobar(dto)
+    fn: async (dto: AprobarDelegadoEnElClubDTO) => {
+      await api.aprobarDelegadoEnElClub(dto)
     },
     antesDeMensajeExito: volverADelegados,
     mensajeDeExito: 'Delegado aprobado'
@@ -109,9 +112,13 @@ const AprobarRechazarDelegado: React.FC = () => {
                 estaCargando={
                   aprobarMutation.isPending || rechazarMutation.isPending
                 }
+                disabled={!delegadoClubId}
                 onClick={() =>
+                  delegadoClubId &&
                   aprobarMutation.mutate(
-                    new AprobarDelegadoDTO({ id: delegado.id })
+                    new AprobarDelegadoEnElClubDTO({
+                      delegadoClubId: Number(delegadoClubId)
+                    })
                   )
                 }
               >

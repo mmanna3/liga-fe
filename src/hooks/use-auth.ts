@@ -53,7 +53,12 @@ export const useAuth = create<AuthState>()(
         }
       },
       logout: () => {
-        set({ token: null, isAuthenticated: false, userRole: null, userName: null })
+        set({
+          token: null,
+          isAuthenticated: false,
+          userRole: null,
+          userName: null
+        })
       },
       esAdmin: () => {
         const { userRole } = get()

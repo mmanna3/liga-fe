@@ -128,7 +128,7 @@ export const mapaRutasComponentes = [
       { path: rutas.delegados, element: <Delegados /> },
       { path: `${rutas.detalleDelegado}/:id`, element: <DetalleDelegado /> },
       {
-        path: `${rutas.aprobarRechazarDelegado}/:id`,
+        path: `${rutas.aprobarRechazarDelegado}/:id/:delegadoClubId`,
         element: <AprobarRechazarDelegado />
       },
       {

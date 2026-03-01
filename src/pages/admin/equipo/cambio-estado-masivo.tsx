@@ -57,11 +57,17 @@ export default function CambioEstadoMasivo() {
           onCheckedChange={(value) => {
             table.toggleAllPageRowsSelected(!!value)
             const selectedRows = table.getSelectedRowModel().rows
-            setSelectedJugadores(selectedRows.map(row => row.original.id!))
+            setSelectedJugadores(selectedRows.map((row) => row.original.id!))
           }}
         />
       ),
-      cell: ({ row, table }: { row: Row<JugadorDelEquipoDTO>; table: Table<JugadorDelEquipoDTO> }) => (
+      cell: ({
+        row,
+        table
+      }: {
+        row: Row<JugadorDelEquipoDTO>
+        table: Table<JugadorDelEquipoDTO>
+      }) => (
         <Checkbox
           checked={row.getIsSelected()}
           onCheckedChange={(value) => {

@@ -6,6 +6,7 @@ interface IProps<TData, TTransformed = TData> {
   activado?: boolean
   transformarResultado?: (data: TData) => TTransformed
   onError?: (error: unknown) => void
+  refetchInterval?: number
 }
 
 const useApiQuery = <TData, TTransformed = TData>(
@@ -16,7 +17,8 @@ const useApiQuery = <TData, TTransformed = TData>(
     queryKey: props.key,
     throwOnError: true,
     queryFn: async () => await props.fn(),
-    select: props.transformarResultado
+    select: props.transformarResultado,
+    refetchInterval: props.refetchInterval
   } as UseQueryOptions<TData, Error, TTransformed>)
 }
 

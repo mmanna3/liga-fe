@@ -1,9 +1,5 @@
 import { api } from '@/api/api'
-import {
-  EfectuarPaseDTO,
-  EquipoDTO,
-  JugadorDelEquipoDTO
-} from '@/api/clients'
+import { EfectuarPaseDTO, EquipoDTO, JugadorDelEquipoDTO } from '@/api/clients'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/components/cargando-y-error-contenedor'
 import { Button } from '@/components/ui/button'
@@ -17,7 +13,13 @@ import { ColumnDef, Row, Table, RowSelectionState } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useEfectuarPaseMutation } from '../jugador/hooks/use-efectuar-pase'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 
 export default function Pases() {
   const { equipoid } = useParams<{ equipoid: string }>()
@@ -34,9 +36,7 @@ export default function Pases() {
     fn: async () => await api.equipoGET(Number(equipoid))
   })
 
-  const {
-    data: equipos
-  } = useApiQuery<EquipoDTO[]>({
+  const { data: equipos } = useApiQuery<EquipoDTO[]>({
     key: ['equipos'],
     fn: async () => {
       const response = await api.equipoAll()
@@ -67,11 +67,17 @@ export default function Pases() {
           onCheckedChange={(value) => {
             table.toggleAllPageRowsSelected(!!value)
             const selectedRows = table.getSelectedRowModel().rows
-            setSelectedJugadores(selectedRows.map(row => row.original.id!))
+            setSelectedJugadores(selectedRows.map((row) => row.original.id!))
           }}
         />
       ),
-      cell: ({ row, table }: { row: Row<JugadorDelEquipoDTO>; table: Table<JugadorDelEquipoDTO> }) => (
+      cell: ({
+        row,
+        table
+      }: {
+        row: Row<JugadorDelEquipoDTO>
+        table: Table<JugadorDelEquipoDTO>
+      }) => (
         <Checkbox
           checked={row.getIsSelected()}
           onCheckedChange={(value) => {
@@ -139,18 +145,23 @@ export default function Pases() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-
-        <div className='space-y-2 w-96 ml-auto'>
-            <Select value={equipoDestinoId} onValueChange={setEquipoDestinoId} required>
+          <div className='space-y-2 w-96 ml-auto'>
+            <Select
+              value={equipoDestinoId}
+              onValueChange={setEquipoDestinoId}
+              required
+            >
               <SelectTrigger id='equipoDestinoId'>
                 <SelectValue placeholder='Seleccionar equipo destino' />
               </SelectTrigger>
               <SelectContent>
-                {equipos?.filter((e) => e.id !== equipo?.id).map((e) => (
-                  <SelectItem key={e.id} value={e.id!.toString()}>
-                    {e.nombre}
-                  </SelectItem>
-                ))}
+                {equipos
+                  ?.filter((e) => e.id !== equipo?.id)
+                  .map((e) => (
+                    <SelectItem key={e.id} value={e.id!.toString()}>
+                      {e.nombre}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
           </div>

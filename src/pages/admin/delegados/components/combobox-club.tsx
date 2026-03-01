@@ -39,4 +39,4 @@ export function ComboboxClub({ value, onChange, required }: ComboboxClubProps) {
       </SelectContent>
     </Select>
   )
-} 
+}

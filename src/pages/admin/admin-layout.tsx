@@ -73,7 +73,9 @@ export default function AdminLayout() {
               <User className='w-5 h-5 text-gray-300' />
             </div>
             <div className='flex-1 min-w-0'>
-              <div className='font-medium text-sm text-white truncate'>{userName}</div>
+              <div className='font-medium text-sm text-white truncate'>
+                {userName}
+              </div>
               <div className='text-xs text-gray-400 truncate'>{userRole}</div>
             </div>
             <Button
@@ -125,7 +127,9 @@ export default function AdminLayout() {
                 <User className='w-5 h-5 text-gray-300' />
               </div>
               <div className='flex-1 min-w-0'>
-                <div className='font-medium text-sm text-white truncate'>{userName}</div>
+                <div className='font-medium text-sm text-white truncate'>
+                  {userName}
+                </div>
                 <div className='text-xs text-gray-400 truncate'>{userRole}</div>
               </div>
               <Button

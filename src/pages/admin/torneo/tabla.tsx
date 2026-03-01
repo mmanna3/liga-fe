@@ -10,7 +10,11 @@ interface ITablaTorneo {
   isError: boolean
 }
 
-export default function TablaTorneo({ data, isLoading, isError }: ITablaTorneo) {
+export default function TablaTorneo({
+  data,
+  isLoading,
+  isError
+}: ITablaTorneo) {
   const navigate = useNavigate()
 
   const columnas: ColumnDef<TorneoDTO>[] = [
@@ -26,13 +30,15 @@ export default function TablaTorneo({ data, isLoading, isError }: ITablaTorneo) 
         <div onClick={(e) => e.stopPropagation()}>
           <Tabla.MenuContextual
             items={[
-            {
-              texto: 'Detalle',
-              onClick: () =>
-                navigate(`${rutasNavegacion.detalleTorneo}/${row.original.id}`)
-            }
-          ]}
-        />
+              {
+                texto: 'Detalle',
+                onClick: () =>
+                  navigate(
+                    `${rutasNavegacion.detalleTorneo}/${row.original.id}`
+                  )
+              }
+            ]}
+          />
         </div>
       )
     }
@@ -49,4 +55,4 @@ export default function TablaTorneo({ data, isLoading, isError }: ITablaTorneo) 
       }
     />
   )
-} 
+}

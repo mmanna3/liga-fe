@@ -97,7 +97,9 @@ export default function TablaJugador({
       header: 'Es delegado',
       cell: ({ row }) =>
         row.original.delegadoId != null ? (
-          <span className='flex justify-center text-green-600 font-bold'>✓</span>
+          <span className='flex justify-center text-green-600 font-bold'>
+            ✓
+          </span>
         ) : null
     },
     {
@@ -119,7 +121,7 @@ export default function TablaJugador({
           const estaActivoOSuspendido =
             estado === EstadoJugador.Activo ||
             estado === EstadoJugador.Suspendido
-          
+
           if (estaActivoOSuspendido) {
             menuItems.push({
               texto: 'Suspender/Activar',

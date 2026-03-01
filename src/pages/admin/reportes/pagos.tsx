@@ -210,10 +210,14 @@ export default function ReportePagosPage() {
                   </TableRow>
                 ))}
                 {data && data.length > 0 && (
-                  <TableRow className="font-bold">
+                  <TableRow className='font-bold'>
                     <TableCell colSpan={3}>Total</TableCell>
                     <TableCell className='text-right'>
-                      {data.reduce((sum, item) => sum + (item.cantidadJugadoresPagados ?? 0), 0)}
+                      {data.reduce(
+                        (sum, item) =>
+                          sum + (item.cantidadJugadoresPagados ?? 0),
+                        0
+                      )}
                     </TableCell>
                   </TableRow>
                 )}

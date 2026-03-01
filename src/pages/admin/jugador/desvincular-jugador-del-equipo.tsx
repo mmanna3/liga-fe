@@ -9,7 +9,12 @@ import { rutasNavegacion } from '@/routes/rutas'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export default function DesvincularJugadorDelEquipo() {
-  const { id, dni, equipoId, equipoNombre } = useParams<{ id: string; dni: string; equipoId: string; equipoNombre: string }>()
+  const { id, dni, equipoId, equipoNombre } = useParams<{
+    id: string
+    dni: string
+    equipoId: string
+    equipoNombre: string
+  }>()
   const navigate = useNavigate()
   const mutation = useApiMutation({
     fn: async (dto: DesvincularJugadorDelEquipoDTO) => {
@@ -21,7 +26,12 @@ export default function DesvincularJugadorDelEquipo() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    mutation.mutate(new DesvincularJugadorDelEquipoDTO({jugadorId: Number(id), equipoId: Number(equipoId)}))
+    mutation.mutate(
+      new DesvincularJugadorDelEquipoDTO({
+        jugadorId: Number(id),
+        equipoId: Number(equipoId)
+      })
+    )
   }
 
   return (
@@ -32,18 +42,19 @@ export default function DesvincularJugadorDelEquipo() {
       <CardContent>
         <form onSubmit={handleSubmit} className='space-y-4'>
           <p>
-            ¿Desvincular al jugador de DNI: {dni} del equipo <strong>{equipoNombre}</strong>? 
+            ¿Desvincular al jugador de DNI: {dni} del equipo{' '}
+            <strong>{equipoNombre}</strong>?
           </p>
-          <p>
-          Si es su único equipo, se lo eliminará del sistema.
-          </p>
+          <p>Si es su único equipo, se lo eliminará del sistema.</p>
           <div className='mt-16'>
-          <Botonera>
-            <BotonVolver texto='Cancelar' />
-            <Button type='submit' disabled={mutation.isPending}>
-              {mutation.isPending ? 'Desvinculando...' : 'Desvincular jugador del equipo'}
-            </Button>
-          </Botonera>
+            <Botonera>
+              <BotonVolver texto='Cancelar' />
+              <Button type='submit' disabled={mutation.isPending}>
+                {mutation.isPending
+                  ? 'Desvinculando...'
+                  : 'Desvincular jugador del equipo'}
+              </Button>
+            </Botonera>
           </div>
         </form>
       </CardContent>

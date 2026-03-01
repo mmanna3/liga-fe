@@ -1,4 +1,5 @@
 import { api } from '@/api/api'
+import { EstadoDelegadoEnum } from '@/api/clients'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { Button } from '@/components/ui/button'
 import {
@@ -9,7 +10,7 @@ import {
 import Titulo from '@/components/ykn-ui/titulo'
 import { EstadoDelegado } from '@/lib/utils'
 import { FilterIcon } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import Tabla from './tabla'
 
@@ -57,17 +58,15 @@ export default function Delegados() {
   }
 
   const { data, isLoading, isError } = useApiQuery({
-    key: ['delegados'],
-    fn: async () => await api.delegadoAll()
+    key: ['delegados', filtroEstados.toString()],
+    fn: async () =>
+      await api.listarDelegadosConFiltro(
+        filtroEstados.length > 0
+          ? (filtroEstados as unknown as EstadoDelegadoEnum[])
+          : undefined
+      ),
+    refetchInterval: 60_000
   })
-
-  const delegadosFiltrados = useMemo(() => {
-    if (!data) return []
-    if (filtroEstados.length === 0) return data
-    return data.filter((d) =>
-      filtroEstados.includes(d.estadoDelegado?.id as EstadoDelegado)
-    )
-  }, [data, filtroEstados])
 
   return (
     <>
@@ -100,7 +99,7 @@ export default function Delegados() {
           </PopoverContent>
         </Popover>
       </div>
-      <Tabla data={delegadosFiltrados} isLoading={isLoading} isError={isError} />
+      <Tabla data={data || []} isLoading={isLoading} isError={isError} />
     </>
   )
 }

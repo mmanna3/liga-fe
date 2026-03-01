@@ -75,12 +75,14 @@ export default function EditarEquipo() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
+    const torneoIdNum = torneoId ? Number(torneoId) : NaN
+    if (!torneoId || isNaN(torneoIdNum) || clubId == null) return
     mutation.mutate(
       new EquipoDTO({
         id: Number(id),
         nombre,
-        clubId: clubId || undefined,
-        torneoId: Number(torneoId)
+        clubId,
+        torneoId: torneoIdNum
       })
     )
   }

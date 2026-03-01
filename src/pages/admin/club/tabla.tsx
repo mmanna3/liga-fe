@@ -26,13 +26,13 @@ export default function TablaClub({ data, isLoading, isError }: ITablaClub) {
         <div onClick={(e) => e.stopPropagation()}>
           <Tabla.MenuContextual
             items={[
-            {
-              texto: 'Detalle',
-              onClick: () =>
-                navigate(`${rutasNavegacion.detalleClub}/${row.original.id}`)
-            }
-          ]}
-        />
+              {
+                texto: 'Detalle',
+                onClick: () =>
+                  navigate(`${rutasNavegacion.detalleClub}/${row.original.id}`)
+              }
+            ]}
+          />
         </div>
       )
     }

@@ -1,4 +1,4 @@
-import { DelegadoDTO } from '@/api/clients'
+import { DelegadoClubDTO, DelegadoDTO } from '@/api/clients'
 import { Badge } from '@/components/ui/badge'
 import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import Tabla from '@/components/ykn-ui/tabla'
@@ -24,9 +24,10 @@ export default function TablaDelegados({
 
   const columnas: ColumnDef<DelegadoDTO>[] = [
     {
-      accessorKey: 'nombreUsuario',
+      id: 'nombreUsuario',
+      accessorFn: (row) => row.usuario?.nombreUsuario,
       header: 'Usuario',
-      cell: ({ row }) => <span>{row.getValue('nombreUsuario')}</span>
+      cell: ({ row }) => <span>{row.original.usuario?.nombreUsuario}</span>
     },
     {
       accessorKey: 'nombre',
@@ -39,17 +40,42 @@ export default function TablaDelegados({
       cell: ({ row }) => <span>{row.getValue('apellido')}</span>
     },
     {
-      accessorKey: 'estadoDelegado',
+      id: 'clubs',
+      header: 'Clubs',
+      cell: ({ row }) => (
+        <span>
+          {row.original.delegadoClubs
+            ?.map((dc: DelegadoClubDTO) => dc.clubNombre)
+            .filter(Boolean)
+            .join(', ') ?? ''}
+        </span>
+      )
+    },
+    {
+      id: 'estado',
       header: 'Estado',
       cell: ({ row }) => {
-        const estado = row.original.estadoDelegado
-        if (!estado) return null
+        const clubs = row.original.delegadoClubs ?? []
+        const estadosUnicos = [
+          ...new Map(
+            clubs
+              .map((dc) => dc.estadoDelegado)
+              .filter((e): e is NonNullable<typeof e> => e != null)
+              .map((e) => [e.id, e])
+          ).values()
+        ]
+        if (estadosUnicos.length === 0) return null
         return (
-          <Badge
-            className={`px-3 py-1 rounded-md ${estadoBadgeClassDelegado[estado.id!] ?? ''}`}
-          >
-            {estado.estado}
-          </Badge>
+          <div className='flex flex-wrap gap-1'>
+            {estadosUnicos.map((estado) => (
+              <Badge
+                key={estado.id}
+                className={`px-3 py-1 rounded-md ${estadoBadgeClassDelegado[estado.id!] ?? ''}`}
+              >
+                {estado.estado}
+              </Badge>
+            ))}
+          </div>
         )
       }
     },
@@ -95,14 +121,14 @@ export default function TablaDelegados({
                   texto: 'Blanquear clave',
                   onClick: () =>
                     navigate(
-                      `${rutasNavegacion.blanquearClaveDelegado}/${row.original.id}/${row.original.nombreUsuario}${search}`
+                      `${rutasNavegacion.blanquearClaveDelegado}/${row.original.id}/${row.original.usuario?.nombreUsuario ?? ''}${search}`
                     )
                 },
                 {
                   texto: 'Eliminar',
                   onClick: () =>
                     navigate(
-                      `${rutasNavegacion.eliminarDelegado}/${row.original.id}/${row.original.nombreUsuario}${search}`
+                      `${rutasNavegacion.eliminarDelegado}/${row.original.id}/${row.original.usuario?.nombreUsuario ?? ''}${search}`
                     )
                 }
               ]}

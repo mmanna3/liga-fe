@@ -80,9 +80,7 @@ export default function TablaEquipo({
           menuItems.push({
             texto: 'Pases',
             onClick: () =>
-              navigate(
-                `${rutasNavegacion.pases}/${row.original.id}`
-              )
+              navigate(`${rutasNavegacion.pases}/${row.original.id}`)
           })
         }
 

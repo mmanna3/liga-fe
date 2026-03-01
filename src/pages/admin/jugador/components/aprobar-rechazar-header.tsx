@@ -25,15 +25,17 @@ export default function AprobarRechazarHeader({
   )
 
   useEffect(() => {
+    if (!jugador) return
     onChange(
       new JugadorDTO({
+        ...jugador,
         dni: dni!,
         nombre: nombre!,
         apellido: apellido!,
         fechaNacimiento: fechaNacimiento!
       })
     )
-  }, [dni, nombre, apellido, fechaNacimiento])
+  }, [dni, nombre, apellido, fechaNacimiento, jugador])
 
   if (!jugador)
     return (
