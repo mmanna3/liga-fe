@@ -11,11 +11,12 @@
     "build-con-ts": "tsc -b && vite build",
     "build": "vite build",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write --ignore-unknown ./src",
+    "format": "prettier --write --log-level silent --ignore-unknown ./src",
     "check:tsc": "tsc --build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prepare": "husky"
+    "prepare": "husky",
+    "prepush": "npm run format && npm run lint:fix && npm run check:tsc"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.15",

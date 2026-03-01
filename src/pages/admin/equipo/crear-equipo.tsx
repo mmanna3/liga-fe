@@ -6,13 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
+import { cn } from '@/lib/utils'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
 import Botonera from '@/components/ykn-ui/botonera'
 import { rutasNavegacion } from '@/routes/rutas'
@@ -83,18 +77,25 @@ export default function CrearEquipo() {
 
             <div className='space-y-2'>
               <Label htmlFor='torneo'>Torneo</Label>
-              <Select value={torneoId} onValueChange={setTorneoId} required>
-                <SelectTrigger id='torneo'>
-                  <SelectValue placeholder='Seleccionar torneo' />
-                </SelectTrigger>
-                <SelectContent>
-                  {torneos?.map((torneo) => (
-                    <SelectItem key={torneo.id} value={torneo.id!.toString()}>
-                      {torneo.nombre}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <select
+                id='torneo'
+                value={torneoId}
+                onChange={(e) => setTorneoId(e.target.value)}
+                required
+                className={cn(
+                  'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+                  !torneoId && 'text-muted-foreground'
+                )}
+              >
+                <option value='' disabled>
+                  Seleccionar torneo
+                </option>
+                {torneos?.map((torneo) => (
+                  <option key={torneo.id} value={torneo.id!.toString()}>
+                    {torneo.nombre}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <Botonera>
