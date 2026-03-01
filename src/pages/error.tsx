@@ -16,7 +16,7 @@ const ErrorPage: React.FC = () => {
     const parsedError = JSON.parse((error as { response: string }).response)
     status = parsedError.status
     title = parsedError.title
-  } catch (e) {
+  } catch {
     // Si no se puede parsear, asumimos que el error es un string
     if (typeof error === 'string') {
       title = error

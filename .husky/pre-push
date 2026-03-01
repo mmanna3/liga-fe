@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+
+echo "🔍 Ejecutando checks pre-push (format, lint, tsc)..."
+echo ""
+
+npm run format || {
+  echo ""
+  echo "❌ Falló: npm run format (Prettier)"
+  exit 1
+}
+
+npm run lint:fix || {
+  echo ""
+  echo "❌ Falló: npm run lint:fix (ESLint)"
+  exit 1
+}
+
+npm run check:tsc || {
+  echo ""
+  echo "❌ Falló: npm run check:tsc (TypeScript)"
+  exit 1
+}
+
+echo ""
+echo "✅ Todos los checks pasaron. Push permitido."

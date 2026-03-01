@@ -1,4 +1,4 @@
-import { FieldErrors, FieldValues } from 'react-hook-form'
+import { FieldError, FieldErrors, FieldValues } from 'react-hook-form'
 import CartelMensaje from '../cartel-mensaje'
 
 interface IError {
@@ -13,7 +13,7 @@ const FormErrorHandler = ({ errors, name, nombre }: IError) => {
   if (errors[name] && errors[name]?.type === 'required')
     message = `¡Ups! Te olvidaste tu ${nombre}`
   else if (errors[name] && errors[name]?.type !== 'required')
-    message = (errors[name] as any).message
+    message = (errors[name] as FieldError).message
 
   return (
     <div className='max-w-[360px] mx-auto'>

@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
+import type { UseFormRegisterReturn } from 'react-hook-form'
 // import bootstrap from "GlobalStyle/bootstrap.min.css";
 
 interface IInput {
   onChange?: (value: string) => void
   name?: string
-  register?: any
+  register?: UseFormRegisterReturn
   type: string
   className?: string
   valorInicial?: string
