@@ -54,7 +54,8 @@ export default function DetalleClub() {
             {club!.escudo ? (
               <img
                 src={
-                  club!.escudo.startsWith('data:') || club!.escudo.startsWith('http')
+                  club!.escudo.startsWith('data:') ||
+                  club!.escudo.startsWith('http')
                     ? club!.escudo
                     : `data:image/${club!.escudo.startsWith('/9j/') ? 'jpeg' : 'png'};base64,${club!.escudo}`
                 }
