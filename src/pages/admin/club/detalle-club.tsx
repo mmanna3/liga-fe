@@ -53,7 +53,11 @@ export default function DetalleClub() {
           <div className='flex items-center gap-4'>
             {club!.escudo ? (
               <img
-                src={club!.escudo}
+                src={
+                  club!.escudo.startsWith('data:') || club!.escudo.startsWith('http')
+                    ? club!.escudo
+                    : `data:image/${club!.escudo.startsWith('/9j/') ? 'jpeg' : 'png'};base64,${club!.escudo}`
+                }
                 alt={`Escudo de ${club!.nombre}`}
                 className='h-16 w-16 rounded-lg object-contain border border-input'
               />
