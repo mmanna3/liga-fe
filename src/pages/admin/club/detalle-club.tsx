@@ -60,7 +60,7 @@ export default function DetalleClub() {
                     : `data:image/${club!.escudo.startsWith('/9j/') ? 'jpeg' : 'png'};base64,${club!.escudo}`
                 }
                 alt={`Escudo de ${club!.nombre}`}
-                className='h-16 w-16 rounded-lg object-contain border border-input'
+                className='h-16 w-16 object-contain'
               />
             ) : (
               <div className='h-16 w-16 rounded-lg border border-input bg-muted flex items-center justify-center'>
