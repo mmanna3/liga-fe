@@ -50,9 +50,22 @@ export default function DetalleClub() {
     <div className='max-w-3xl mx-auto mt-10 px-4'>
       <Card className='mb-6 shadow-md'>
         <CardHeader className='pb-4'>
-          <CardTitle className='text-3xl font-bold text-primary'>
-            {club!.nombre}
-          </CardTitle>
+          <div className='flex items-center gap-4'>
+            {club!.escudo ? (
+              <img
+                src={club!.escudo}
+                alt={`Escudo de ${club!.nombre}`}
+                className='h-16 w-16 rounded-lg object-contain border border-input'
+              />
+            ) : (
+              <div className='h-16 w-16 rounded-lg border border-input bg-muted flex items-center justify-center'>
+                <Shield className='h-8 w-8 text-muted-foreground' />
+              </div>
+            )}
+            <CardTitle className='text-3xl font-bold text-primary'>
+              {club!.nombre}
+            </CardTitle>
+          </div>
         </CardHeader>
       </Card>
 
