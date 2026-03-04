@@ -52,97 +52,97 @@ export default function DetalleJugador() {
             <BotonVolver />
           </div>
           <Card className='max-w-lg mx-auto p-6 rounded-xl border bg-white'>
-          <CardHeader className='flex flex-col items-center text-center'>
-            <img
-              src={jugador.fotoCarnet}
-              alt={`${jugador.nombre} ${jugador.apellido}`}
-              className='w-32 h-32 rounded-lg object-cover'
-            />
-            <CardTitle className='mt-4 text-3xl font-semibold text-gray-900'>
-              {jugador.nombre} {jugador.apellido}
-            </CardTitle>
-          </CardHeader>
-
-          <CardContent>
-            <div className='flex flex-col gap-1 bg-gray-50 p-5 rounded-lg mb-6'>
-              <DetalleItem clave='DNI' valor={jugador.dni!} />
-              <DetalleItem
-                clave='Fecha de nacimiento'
-                valor={jugador.fechaNacimiento!.toLocaleDateString('es-AR')}
+            <CardHeader className='flex flex-col items-center text-center'>
+              <img
+                src={jugador.fotoCarnet}
+                alt={`${jugador.nombre} ${jugador.apellido}`}
+                className='w-32 h-32 rounded-lg object-cover'
               />
-            </div>
+              <CardTitle className='mt-4 text-3xl font-semibold text-gray-900'>
+                {jugador.nombre} {jugador.apellido}
+              </CardTitle>
+            </CardHeader>
 
-            {jugador.delegadoId != null && (
-              <div className='mb-4'>
-                <button
-                  className='text-blue-600 hover:underline text-sm'
-                  onClick={() =>
-                    navigate(
-                      `${rutasNavegacion.detalleDelegado}/${jugador.delegadoId}`
-                    )
-                  }
-                >
-                  Este jugador es delegado →
-                </button>
+            <CardContent>
+              <div className='flex flex-col gap-1 bg-gray-50 p-5 rounded-lg mb-6'>
+                <DetalleItem clave='DNI' valor={jugador.dni!} />
+                <DetalleItem
+                  clave='Fecha de nacimiento'
+                  valor={jugador.fechaNacimiento!.toLocaleDateString('es-AR')}
+                />
               </div>
-            )}
 
-            <h2 className='text-lg font-medium mt-6 mb-4 text-gray-700'>
-              Equipos
-            </h2>
-            <ul className='divide-y divide-gray-200'>
-              {jugador.equipos!.map((equipo) => (
-                <li key={equipo.id} className='py-3 flex flex-col'>
-                  <div className='flex justify-between items-center'>
-                    <div>
-                      <span className='text-lg font-medium text-gray-900'>
-                        {equipo.nombre}
-                      </span>
-                      <div className='text-sm text-gray-600'>
-                        {equipo.torneo}
+              {jugador.delegadoId != null && (
+                <div className='mb-4'>
+                  <button
+                    className='text-blue-600 hover:underline text-sm'
+                    onClick={() =>
+                      navigate(
+                        `${rutasNavegacion.detalleDelegado}/${jugador.delegadoId}`
+                      )
+                    }
+                  >
+                    Este jugador es delegado →
+                  </button>
+                </div>
+              )}
+
+              <h2 className='text-lg font-medium mt-6 mb-4 text-gray-700'>
+                Equipos
+              </h2>
+              <ul className='divide-y divide-gray-200'>
+                {jugador.equipos!.map((equipo) => (
+                  <li key={equipo.id} className='py-3 flex flex-col'>
+                    <div className='flex justify-between items-center'>
+                      <div>
+                        <span className='text-lg font-medium text-gray-900'>
+                          {equipo.nombre}
+                        </span>
+                        <div className='text-sm text-gray-600'>
+                          {equipo.torneo}
+                        </div>
+                      </div>
+                      <div className='flex items-center gap-4'>
+                        <JugadorEquipoEstadoBadge
+                          estado={Number(equipo.estado)}
+                        />
+                        {
+                          <VisibleSoloParaAdmin>
+                            <Button
+                              variant='ghost'
+                              className='text-blue-600'
+                              onClick={() => {
+                                if (
+                                  Number(equipo.estado) ===
+                                    EstadoJugador.FichajePendienteDeAprobacion ||
+                                  Number(equipo.estado) ===
+                                    EstadoJugador.FichajeRechazado
+                                )
+                                  navigate(
+                                    `${rutasNavegacion.aprobarRechazarJugador}/${equipo.id}/${jugador.id}`
+                                  )
+                                else
+                                  navigate(
+                                    `${rutasNavegacion.cambiarEstadoJugador}/${equipo.id}/${jugador.id}`
+                                  )
+                              }}
+                            >
+                              Gestionar
+                            </Button>
+                          </VisibleSoloParaAdmin>
+                        }
                       </div>
                     </div>
-                    <div className='flex items-center gap-4'>
-                      <JugadorEquipoEstadoBadge
-                        estado={Number(equipo.estado)}
-                      />
-                      {
-                        <VisibleSoloParaAdmin>
-                          <Button
-                            variant='ghost'
-                            className='text-blue-600'
-                            onClick={() => {
-                              if (
-                                Number(equipo.estado) ===
-                                  EstadoJugador.FichajePendienteDeAprobacion ||
-                                Number(equipo.estado) ===
-                                  EstadoJugador.FichajeRechazado
-                              )
-                                navigate(
-                                  `${rutasNavegacion.aprobarRechazarJugador}/${equipo.id}/${jugador.id}`
-                                )
-                              else
-                                navigate(
-                                  `${rutasNavegacion.cambiarEstadoJugador}/${equipo.id}/${jugador.id}`
-                                )
-                            }}
-                          >
-                            Gestionar
-                          </Button>
-                        </VisibleSoloParaAdmin>
-                      }
+                    <div className='text-sm text-gray-400 mt-1'>
+                      {equipo.fechaPagoDeFichaje
+                        ? `Pago de fichaje: ${formatearFecha(equipo.fechaPagoDeFichaje)}`
+                        : 'Fichaje impago'}
                     </div>
-                  </div>
-                  <div className='text-sm text-gray-400 mt-1'>
-                    {equipo.fechaPagoDeFichaje
-                      ? `Pago de fichaje: ${formatearFecha(equipo.fechaPagoDeFichaje)}`
-                      : 'Fichaje impago'}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
         </>
       )}
     </ContenedorCargandoYError>

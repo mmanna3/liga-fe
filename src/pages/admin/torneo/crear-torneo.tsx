@@ -33,26 +33,26 @@ export default function CrearTorneo() {
         <BotonVolver />
       </div>
       <Card className='max-w-md mx-auto p-4'>
-      <CardHeader>
-        <CardTitle>Crear Torneo</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className='space-y-4'>
-          <Input
-            type='text'
-            placeholder='Nombre'
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
-            required
-          />
-          <Botonera>
-            <Button type='submit' disabled={mutation.isPending}>
-              {mutation.isPending ? 'Guardando...' : 'Guardar'}
-            </Button>
-          </Botonera>
-        </form>
-      </CardContent>
-    </Card>
+        <CardHeader>
+          <CardTitle>Crear Torneo</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className='space-y-4'>
+            <Input
+              type='text'
+              placeholder='Nombre'
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              required
+            />
+            <Botonera>
+              <Button type='submit' disabled={mutation.isPending}>
+                {mutation.isPending ? 'Guardando...' : 'Guardar'}
+              </Button>
+            </Botonera>
+          </form>
+        </CardContent>
+      </Card>
     </>
   )
 }

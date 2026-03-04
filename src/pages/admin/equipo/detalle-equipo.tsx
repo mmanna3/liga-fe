@@ -224,7 +224,6 @@ export default function DetalleEquipo() {
             />
             <DetalleItem clave='Código' valor={equipo!.codigoAlfanumerico!} />
           </div>
-          <h2 className='text-md font-bold mb-4'>Jugadores</h2>
           <Tabla
             columnas={columnas}
             data={equipo!.jugadores || []}

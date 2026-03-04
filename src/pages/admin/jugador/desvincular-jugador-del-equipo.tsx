@@ -40,28 +40,28 @@ export default function DesvincularJugadorDelEquipo() {
         <BotonVolver path={rutasNavegacion.jugadores} />
       </div>
       <Card className='max-w-md mx-auto p-4'>
-      <CardHeader>
-        <CardTitle>Desvincular jugador</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className='space-y-4'>
-          <p>
-            ¿Desvincular al jugador de DNI: {dni} del equipo{' '}
-            <strong>{equipoNombre}</strong>?
-          </p>
-          <p>Si es su único equipo, se lo eliminará del sistema.</p>
-          <div className='mt-16'>
-            <Botonera>
-              <Button type='submit' disabled={mutation.isPending}>
-                {mutation.isPending
-                  ? 'Desvinculando...'
-                  : 'Desvincular jugador del equipo'}
-              </Button>
-            </Botonera>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+        <CardHeader>
+          <CardTitle>Desvincular jugador</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className='space-y-4'>
+            <p>
+              ¿Desvincular al jugador de DNI: {dni} del equipo{' '}
+              <strong>{equipoNombre}</strong>?
+            </p>
+            <p>Si es su único equipo, se lo eliminará del sistema.</p>
+            <div className='mt-16'>
+              <Botonera>
+                <Button type='submit' disabled={mutation.isPending}>
+                  {mutation.isPending
+                    ? 'Desvinculando...'
+                    : 'Desvincular jugador del equipo'}
+                </Button>
+              </Botonera>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </>
   )
 }

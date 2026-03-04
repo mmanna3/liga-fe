@@ -27,39 +27,39 @@ export default function DetalleTorneo() {
         <BotonVolver />
       </div>
       <Card>
-      <CardHeader className='flex flex-row items-center justify-between'>
-        <CardTitle>Detalle del Torneo: {data.nombre}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className='space-y-4'>
-          <div>
-            <h3 className='text-lg font-semibold'>Equipos</h3>
-            {data.equipos && data.equipos.length > 0 ? (
-              <ul className='list-disc pl-5 mt-2'>
-                {data.equipos.map((equipo) => (
-                  <li key={equipo.id}>
-                    <span
-                      className='cursor-pointer text-blue-500 hover:underline'
-                      onClick={() =>
-                        navigate(
-                          `${rutasNavegacion.detalleEquipo}/${equipo.id}`
-                        )
-                      }
-                    >
-                      {equipo.nombre}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className='text-gray-500 mt-2'>
-                No hay equipos en este torneo
-              </p>
-            )}
+        <CardHeader className='flex flex-row items-center justify-between'>
+          <CardTitle>Detalle del Torneo: {data.nombre}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className='space-y-4'>
+            <div>
+              <h3 className='text-lg font-semibold'>Equipos</h3>
+              {data.equipos && data.equipos.length > 0 ? (
+                <ul className='list-disc pl-5 mt-2'>
+                  {data.equipos.map((equipo) => (
+                    <li key={equipo.id}>
+                      <span
+                        className='cursor-pointer text-blue-500 hover:underline'
+                        onClick={() =>
+                          navigate(
+                            `${rutasNavegacion.detalleEquipo}/${equipo.id}`
+                          )
+                        }
+                      >
+                        {equipo.nombre}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className='text-gray-500 mt-2'>
+                  No hay equipos en este torneo
+                </p>
+              )}
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
     </>
   )
 }

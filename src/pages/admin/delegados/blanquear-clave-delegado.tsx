@@ -31,23 +31,23 @@ export default function BlanquearClaveDelegado() {
         <BotonVolver path={`${rutasNavegacion.delegados}${location.search}`} />
       </div>
       <Card className='max-w-md mx-auto p-4'>
-      <CardHeader>
-        <CardTitle>Blanquear clave</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className='space-y-4'>
-          <p>
-            Al blanquear la clave, la próxima vez que el delegado intente
-            iniciar sesión en la APP se le pedirá una nueva.
-          </p>
-          <Botonera>
-            <Button type='submit' disabled={mutation.isPending}>
-              {mutation.isPending ? 'Blanqueando...' : 'Blanquear clave'}
-            </Button>
-          </Botonera>
-        </form>
-      </CardContent>
-    </Card>
+        <CardHeader>
+          <CardTitle>Blanquear clave</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className='space-y-4'>
+            <p>
+              Al blanquear la clave, la próxima vez que el delegado intente
+              iniciar sesión en la APP se le pedirá una nueva.
+            </p>
+            <Botonera>
+              <Button type='submit' disabled={mutation.isPending}>
+                {mutation.isPending ? 'Blanqueando...' : 'Blanquear clave'}
+              </Button>
+            </Botonera>
+          </form>
+        </CardContent>
+      </Card>
     </>
   )
 }

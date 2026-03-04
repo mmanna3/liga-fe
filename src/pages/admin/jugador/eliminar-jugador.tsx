@@ -29,23 +29,23 @@ export default function EliminarJugador() {
         <BotonVolver path={rutasNavegacion.jugadores} />
       </div>
       <Card className='max-w-md mx-auto p-4'>
-      <CardHeader>
-        <CardTitle>Eliminar jugador</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className='space-y-4'>
-          <p>
-            Al eliminar el jugador, se lo desvinculará también de todos los
-            equipos.
-          </p>
-          <Botonera>
-            <Button type='submit' disabled={mutation.isPending}>
-              {mutation.isPending ? 'Eliminando...' : 'Eliminar jugador'}
-            </Button>
-          </Botonera>
-        </form>
-      </CardContent>
-    </Card>
+        <CardHeader>
+          <CardTitle>Eliminar jugador</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className='space-y-4'>
+            <p>
+              Al eliminar el jugador, se lo desvinculará también de todos los
+              equipos.
+            </p>
+            <Botonera>
+              <Button type='submit' disabled={mutation.isPending}>
+                {mutation.isPending ? 'Eliminando...' : 'Eliminar jugador'}
+              </Button>
+            </Botonera>
+          </form>
+        </CardContent>
+      </Card>
     </>
   )
 }
