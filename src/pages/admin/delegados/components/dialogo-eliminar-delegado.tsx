@@ -1,14 +1,4 @@
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger
-} from '@/components/ui/alert-dialog'
+import ModalEliminacion from '@/components/modal-eliminacion'
 
 interface DialogoEliminarDelegadoProps {
   descripcion: string
@@ -26,26 +16,13 @@ export default function DialogoEliminarDelegado({
   estaCargando = false
 }: DialogoEliminarDelegadoProps) {
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>
-            ¿Estás seguro de borrar definitivamente del sistema este delegado?
-          </AlertDialogTitle>
-          <AlertDialogDescription>{descripcion}</AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction
-            variant='destructive'
-            onClick={() => onConfirm(delegadoId)}
-            disabled={estaCargando}
-          >
-            Eliminar definitivamente
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <ModalEliminacion
+      titulo='¿Estás seguro de borrar definitivamente del sistema este delegado?'
+      subtitulo={descripcion}
+      eliminarOnClick={() => onConfirm(delegadoId)}
+      eliminarTexto='Eliminar definitivamente'
+      trigger={trigger}
+      estaCargando={estaCargando}
+    />
   )
 }

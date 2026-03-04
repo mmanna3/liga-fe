@@ -1,19 +1,25 @@
 import { api } from '@/api/api'
+import useApiMutation from '@/api/custom-hooks/use-api-mutation'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import ModalEliminacion from '@/components/modal-eliminacion'
+import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import { Skeleton } from '@/components/ui/skeleton'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
 import Botonera from '@/components/ykn-ui/botonera'
 import DetalleItem from '@/components/ykn-ui/detalle-item'
 import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
 import { generarReportePDF } from '@/pages/admin/equipo/components/reporte-jugadores-pdf'
-import { FileDown } from 'lucide-react'
-import { useParams } from 'react-router-dom'
+import { rutasNavegacion } from '@/routes/rutas'
+import { useQuery } from '@tanstack/react-query'
+import { FileDown, Trash2 } from 'lucide-react'
+import { useNavigate, useParams } from 'react-router-dom'
 
 export default function DetalleEquipo() {
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
 
   const {
     data: equipo,
@@ -24,11 +30,39 @@ export default function DetalleEquipo() {
     fn: async () => await api.equipoGET(Number(id))
   })
 
+  const {
+    data: jugadoresExclusivos,
+    isLoading: isLoadingJugadoresExclusivos
+  } = useQuery({
+    queryKey: ['jugadores-equipo-exclusivos', id],
+    queryFn: () => api.jugadoresQueSoloJueganEnEsteEquipo(Number(id)),
+    enabled: !!equipo
+  })
+
+  const eliminarMutation = useApiMutation<void>({
+    fn: async () => {
+      await api.equipoDELETE(Number(id))
+    },
+    antesDeMensajeExito: () =>
+      navigate(
+        equipo?.clubId
+          ? `${rutasNavegacion.detalleClub}/${equipo.clubId}`
+          : rutasNavegacion.equipos
+      ),
+    mensajeDeExito: `El equipo '${equipo?.nombre}' fue eliminado.`
+  })
+
   const handleGenerarReportePDF = async () => {
     if (equipo) {
       await generarReportePDF(equipo)
     }
   }
+
+  const listaJugadoresExclusivos = isLoadingJugadoresExclusivos
+    ? 'Cargando...'
+    : jugadoresExclusivos && jugadoresExclusivos.length > 0
+      ? jugadoresExclusivos.map((j) => `${j.nombre} ${j.apellido}`).join(', ')
+      : 'Ninguno'
 
   if (isError) {
     return (
@@ -56,15 +90,32 @@ export default function DetalleEquipo() {
     <Card className='max-w-2lg mx-auto mt-10 p-4'>
       <CardHeader className='flex flex-row items-center justify-between'>
         <CardTitle>{equipo!.nombre}</CardTitle>
-        <Button
-          variant='outline'
-          size='sm'
-          className='gap-2'
-          onClick={handleGenerarReportePDF}
-        >
-          <FileDown className='h-4 w-4' />
-          Generar Reporte PDF
-        </Button>
+        <div className='flex gap-2'>
+          <Button
+            variant='outline'
+            size='sm'
+            className='gap-2'
+            onClick={handleGenerarReportePDF}
+          >
+            <FileDown className='h-4 w-4' />
+            Generar Reporte PDF
+          </Button>
+          <VisibleSoloParaAdmin>
+            <ModalEliminacion
+              titulo={`Eliminar definitivamente al equipo ${equipo!.nombre}`}
+              subtitulo={`Al eliminar el equipo, se eliminarán también los jugadores que solo jueguen en este equipo. Son: ${listaJugadoresExclusivos}`}
+              eliminarOnClick={() => eliminarMutation.mutate(undefined)}
+              eliminarTexto='Eliminar definitivamente equipo y jugadores'
+              trigger={
+                <Button variant='destructive' size='sm' className='gap-2'>
+                  <Trash2 className='h-4 w-4' />
+                  Eliminar equipo
+                </Button>
+              }
+              estaCargando={eliminarMutation.isPending}
+            />
+          </VisibleSoloParaAdmin>
+        </div>
       </CardHeader>
       <CardContent>
         <div className='mb-4 space-y-2'>
