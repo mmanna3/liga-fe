@@ -30,14 +30,12 @@ export default function DetalleEquipo() {
     fn: async () => await api.equipoGET(Number(id))
   })
 
-  const {
-    data: jugadoresExclusivos,
-    isLoading: isLoadingJugadoresExclusivos
-  } = useQuery({
-    queryKey: ['jugadores-equipo-exclusivos', id],
-    queryFn: () => api.jugadoresQueSoloJueganEnEsteEquipo(Number(id)),
-    enabled: !!equipo
-  })
+  const { data: jugadoresExclusivos, isLoading: isLoadingJugadoresExclusivos } =
+    useQuery({
+      queryKey: ['jugadores-equipo-exclusivos', id],
+      queryFn: () => api.jugadoresQueSoloJueganEnEsteEquipo(Number(id)),
+      enabled: !!equipo
+    })
 
   const eliminarMutation = useApiMutation<void>({
     fn: async () => {
