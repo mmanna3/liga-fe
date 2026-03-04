@@ -7,7 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover'
-import Titulo from '@/components/ykn-ui/titulo'
+import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
 import { EstadoDelegado } from '@/lib/utils'
 import { FilterIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -69,9 +69,9 @@ export default function Delegados() {
   })
 
   return (
-    <>
-      <Titulo>Delegados</Titulo>
-      <div className='mb-4 flex justify-end'>
+    <FlujoHomeLayout
+      titulo='Delegados'
+      panelDerecho={
         <Popover>
           <PopoverTrigger asChild>
             <Button variant='outline'>
@@ -98,8 +98,10 @@ export default function Delegados() {
             ))}
           </PopoverContent>
         </Popover>
-      </div>
-      <Tabla data={data || []} isLoading={isLoading} isError={isError} />
-    </>
+      }
+      contenido={
+        <Tabla data={data || []} isLoading={isLoading} isError={isError} />
+      }
+    />
   )
 }

@@ -1,6 +1,6 @@
 import { api } from '@/api/api'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
-import Titulo from '@/components/ykn-ui/titulo'
+import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
 import Tabla from './tabla'
 
 export default function EquipoHome() {
@@ -10,10 +10,11 @@ export default function EquipoHome() {
   })
 
   return (
-    <>
-      <Titulo>Equipos</Titulo>
-      <div className='mb-10' />
-      <Tabla data={data || []} isLoading={isLoading} isError={isError} />
-    </>
+    <FlujoHomeLayout
+      titulo='Equipos'
+      contenido={
+        <Tabla data={data || []} isLoading={isLoading} isError={isError} />
+      }
+    />
   )
 }

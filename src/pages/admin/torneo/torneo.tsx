@@ -1,6 +1,6 @@
 import { api } from '@/api/api'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
 import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useQuery } from '@tanstack/react-query'
@@ -19,22 +19,22 @@ export default function Torneo() {
   })
 
   return (
-    <Card>
-      <CardHeader className='flex flex-row items-center justify-between'>
-        <CardTitle>Torneos</CardTitle>
+    <FlujoHomeLayout
+      titulo='Torneos'
+      panelDerecho={
         <VisibleSoloParaAdmin>
           <Button onClick={() => navigate(rutasNavegacion.crearTorneo)}>
             Crear Torneo
           </Button>
         </VisibleSoloParaAdmin>
-      </CardHeader>
-      <CardContent>
+      }
+      contenido={
         <TablaTorneo
           data={data || []}
           isLoading={isLoading}
           isError={isError}
         />
-      </CardContent>
-    </Card>
+      }
+    />
   )
 }

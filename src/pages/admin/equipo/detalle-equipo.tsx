@@ -2,25 +2,25 @@ import { api } from '@/api/api'
 import { EquipoDTO, JugadorDelEquipoDTO } from '@/api/clients'
 import useApiMutation from '@/api/custom-hooks/use-api-mutation'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
+import ModalEliminacion from '@/components/modal-eliminacion'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
-import ModalEliminacion from '@/components/modal-eliminacion'
-import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import { Skeleton } from '@/components/ui/skeleton'
+import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import { Boton } from '@/components/ykn-ui/boton'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
 import DetalleItem from '@/components/ykn-ui/detalle-item'
 import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
 import Tabla from '@/components/ykn-ui/tabla'
+import { EstadoJugador } from '@/lib/utils'
 import CambiarEstadoModal from '@/pages/admin/equipo/components/cambiar-estado-modal'
 import EfectuarPasesModal from '@/pages/admin/equipo/components/efectuar-pases-modal'
 import { generarReportePDF } from '@/pages/admin/equipo/components/reporte-jugadores-pdf'
 import { rutasNavegacion } from '@/routes/rutas'
-import { EstadoJugador } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
-import { ColumnDef, Row, Table, RowSelectionState } from '@tanstack/react-table'
+import { ColumnDef, Row, RowSelectionState, Table } from '@tanstack/react-table'
 import { FileDown, Pencil, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -163,58 +163,60 @@ export default function DetalleEquipo() {
 
   return (
     <>
-      <div className='mb-4'>
-        <BotonVolver />
-      </div>
       <Card className='max-w-4xl mx-auto p-4'>
-        <CardHeader className='flex flex-row items-center justify-between'>
-          <CardTitle>{equipo!.nombre}</CardTitle>
-          <div className='flex gap-2'>
-            <Boton
-              variant='outline'
-              className='group h-10 w-10 min-w-10 gap-0 overflow-hidden px-0 transition-[width,gap,padding] duration-200 hover:w-auto hover:min-w-40 hover:gap-2 hover:px-3'
-              onClick={handleGenerarReportePDF}
-            >
-              <FileDown className='h-5 w-5 shrink-0' />
-              <span className='max-w-0 overflow-hidden whitespace-nowrap transition-[max-width] duration-200 group-hover:max-w-40'>
-                Generar Reporte PDF
-              </span>
-            </Boton>
-            <VisibleSoloParaAdmin>
+        <div className='flex flex-col'>
+          <div className='ml-3'>
+            <BotonVolver />
+          </div>
+          <CardHeader className='flex flex-row items-center justify-between'>
+            <CardTitle>{equipo!.nombre}</CardTitle>
+            <div className='flex gap-2'>
               <Boton
                 variant='outline'
-                className='group h-10 w-10 min-w-10 gap-0 overflow-hidden px-0 transition-[width,gap,padding] duration-200 hover:w-auto hover:min-w-24 hover:gap-2 hover:px-3'
-                onClick={() =>
-                  navigate(`${rutasNavegacion.editarEquipo}/${equipo!.id}`)
-                }
+                className='group h-10 w-10 min-w-10 gap-0 overflow-hidden px-0 transition-[width,gap,padding] duration-200 hover:w-auto hover:min-w-40 hover:gap-2 hover:px-3'
+                onClick={handleGenerarReportePDF}
               >
-                <Pencil className='h-5 w-5 shrink-0' />
-                <span className='max-w-0 overflow-hidden whitespace-nowrap transition-[max-width] duration-200 group-hover:max-w-20'>
-                  Editar
+                <FileDown className='h-5 w-5 shrink-0' />
+                <span className='max-w-0 overflow-hidden whitespace-nowrap transition-[max-width] duration-200 group-hover:max-w-40'>
+                  Generar Reporte PDF
                 </span>
               </Boton>
-              <ModalEliminacion
-                titulo={`Eliminar definitivamente al equipo ${equipo!.nombre}`}
-                subtitulo={`Al eliminar el equipo, se eliminarán también los jugadores que solo jueguen en este equipo. Son: ${listaJugadoresExclusivos}`}
-                eliminarOnClick={() => eliminarMutation.mutate(undefined)}
-                eliminarTexto='Eliminar definitivamente equipo y jugadores'
-                trigger={
-                  <Boton
-                    variant='destructive'
-                    className='group h-10 w-10 min-w-10 gap-0 overflow-hidden px-0 transition-[width,gap,padding] duration-200 hover:w-auto hover:min-w-32 hover:gap-2 hover:px-3'
-                    estaCargando={eliminarMutation.isPending}
-                  >
-                    <Trash2 className='h-5 w-5 shrink-0' />
-                    <span className='max-w-0 overflow-hidden whitespace-nowrap transition-[max-width] duration-200 group-hover:max-w-32'>
-                      Eliminar equipo
-                    </span>
-                  </Boton>
-                }
-                estaCargando={eliminarMutation.isPending}
-              />
-            </VisibleSoloParaAdmin>
-          </div>
-        </CardHeader>
+              <VisibleSoloParaAdmin>
+                <Boton
+                  variant='outline'
+                  className='group h-10 w-10 min-w-10 gap-0 overflow-hidden px-0 transition-[width,gap,padding] duration-200 hover:w-auto hover:min-w-24 hover:gap-2 hover:px-3'
+                  onClick={() =>
+                    navigate(`${rutasNavegacion.editarEquipo}/${equipo!.id}`)
+                  }
+                >
+                  <Pencil className='h-5 w-5 shrink-0' />
+                  <span className='max-w-0 overflow-hidden whitespace-nowrap transition-[max-width] duration-200 group-hover:max-w-20'>
+                    Editar
+                  </span>
+                </Boton>
+                <ModalEliminacion
+                  titulo={`Eliminar definitivamente al equipo ${equipo!.nombre}`}
+                  subtitulo={`Al eliminar el equipo, se eliminarán también los jugadores que solo jueguen en este equipo. Son: ${listaJugadoresExclusivos}`}
+                  eliminarOnClick={() => eliminarMutation.mutate(undefined)}
+                  eliminarTexto='Eliminar definitivamente equipo y jugadores'
+                  trigger={
+                    <Boton
+                      variant='destructive'
+                      className='group h-10 w-10 min-w-10 gap-0 overflow-hidden px-0 transition-[width,gap,padding] duration-200 hover:w-auto hover:min-w-32 hover:gap-2 hover:px-3'
+                      estaCargando={eliminarMutation.isPending}
+                    >
+                      <Trash2 className='h-5 w-5 shrink-0' />
+                      <span className='max-w-0 overflow-hidden whitespace-nowrap transition-[max-width] duration-200 group-hover:max-w-32'>
+                        Eliminar equipo
+                      </span>
+                    </Boton>
+                  }
+                  estaCargando={eliminarMutation.isPending}
+                />
+              </VisibleSoloParaAdmin>
+            </div>
+          </CardHeader>
+        </div>
         <CardContent>
           <div className='mb-4 space-y-2'>
             <DetalleItem clave='Club' valor={equipo!.clubNombre!} />
@@ -236,11 +238,16 @@ export default function DetalleEquipo() {
           />
           <VisibleSoloParaAdmin>
             <div className='mt-6 flex gap-2'>
-              <Button variant='outline' onClick={() => setPasesModalOpen(true)}>
+              <Button
+                variant='outline'
+                disabled={selectedJugadores.length === 0}
+                onClick={() => setPasesModalOpen(true)}
+              >
                 Efectuar pases
               </Button>
               <Button
                 variant='outline'
+                disabled={selectedJugadores.length === 0}
                 onClick={() => setCambioEstadoModalOpen(true)}
               >
                 Cambiar estado

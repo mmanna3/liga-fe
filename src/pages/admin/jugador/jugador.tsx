@@ -7,8 +7,8 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover'
+import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
 import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
-import Titulo from '@/components/ykn-ui/titulo'
 import { EstadoJugador } from '@/lib/utils'
 import { FilterIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -74,9 +74,9 @@ export default function Jugador() {
   })
 
   return (
-    <>
-      <Titulo>Jugadores</Titulo>
-      <div className='mb-4 flex justify-end'>
+    <FlujoHomeLayout
+      titulo='Jugadores'
+      panelDerecho={
         <Popover>
           <PopoverTrigger asChild>
             <Button variant='outline'>
@@ -103,8 +103,10 @@ export default function Jugador() {
             ))}
           </PopoverContent>
         </Popover>
-      </div>
-      <Tabla data={data || []} isLoading={isLoading} isError={isError} />
-    </>
+      }
+      contenido={
+        <Tabla data={data || []} isLoading={isLoading} isError={isError} />
+      }
+    />
   )
 }
