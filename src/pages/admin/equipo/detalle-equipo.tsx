@@ -164,59 +164,57 @@ export default function DetalleEquipo() {
   return (
     <>
       <Card className='max-w-4xl mx-auto p-4'>
-        <div className='flex flex-col'>
-          <div className='ml-3'>
-            <BotonVolver />
-          </div>
-          <CardHeader className='flex flex-row items-center justify-between'>
+        <CardHeader className='flex flex-row items-start justify-between gap-4'>
+          <div className='flex flex-col gap-2'>
+            <BotonVolver className='-ml-2' />
             <CardTitle>{equipo!.nombre}</CardTitle>
-            <div className='flex gap-2'>
+          </div>
+          <div className='flex gap-2 shrink-0'>
+            <Boton
+              variant='outline'
+              className='group h-10 w-10 min-w-10 gap-0 overflow-hidden px-0 transition-[width,gap,padding] duration-200 hover:w-auto hover:min-w-40 hover:gap-2 hover:px-3'
+              onClick={handleGenerarReportePDF}
+            >
+              <FileDown className='h-5 w-5 shrink-0' />
+              <span className='max-w-0 overflow-hidden whitespace-nowrap transition-[max-width] duration-200 group-hover:max-w-40'>
+                Generar Reporte PDF
+              </span>
+            </Boton>
+            <VisibleSoloParaAdmin>
               <Boton
                 variant='outline'
-                className='group h-10 w-10 min-w-10 gap-0 overflow-hidden px-0 transition-[width,gap,padding] duration-200 hover:w-auto hover:min-w-40 hover:gap-2 hover:px-3'
-                onClick={handleGenerarReportePDF}
+                className='group h-10 w-10 min-w-10 gap-0 overflow-hidden px-0 transition-[width,gap,padding] duration-200 hover:w-auto hover:min-w-24 hover:gap-2 hover:px-3'
+                onClick={() =>
+                  navigate(`${rutasNavegacion.editarEquipo}/${equipo!.id}`)
+                }
               >
-                <FileDown className='h-5 w-5 shrink-0' />
-                <span className='max-w-0 overflow-hidden whitespace-nowrap transition-[max-width] duration-200 group-hover:max-w-40'>
-                  Generar Reporte PDF
+                <Pencil className='h-5 w-5 shrink-0' />
+                <span className='max-w-0 overflow-hidden whitespace-nowrap transition-[max-width] duration-200 group-hover:max-w-20'>
+                  Editar
                 </span>
               </Boton>
-              <VisibleSoloParaAdmin>
-                <Boton
-                  variant='outline'
-                  className='group h-10 w-10 min-w-10 gap-0 overflow-hidden px-0 transition-[width,gap,padding] duration-200 hover:w-auto hover:min-w-24 hover:gap-2 hover:px-3'
-                  onClick={() =>
-                    navigate(`${rutasNavegacion.editarEquipo}/${equipo!.id}`)
-                  }
-                >
-                  <Pencil className='h-5 w-5 shrink-0' />
-                  <span className='max-w-0 overflow-hidden whitespace-nowrap transition-[max-width] duration-200 group-hover:max-w-20'>
-                    Editar
-                  </span>
-                </Boton>
-                <ModalEliminacion
-                  titulo={`Eliminar definitivamente al equipo ${equipo!.nombre}`}
-                  subtitulo={`Al eliminar el equipo, se eliminarán también los jugadores que solo jueguen en este equipo. Son: ${listaJugadoresExclusivos}`}
-                  eliminarOnClick={() => eliminarMutation.mutate(undefined)}
-                  eliminarTexto='Eliminar definitivamente equipo y jugadores'
-                  trigger={
-                    <Boton
-                      variant='destructive'
-                      className='group h-10 w-10 min-w-10 gap-0 overflow-hidden px-0 transition-[width,gap,padding] duration-200 hover:w-auto hover:min-w-32 hover:gap-2 hover:px-3'
-                      estaCargando={eliminarMutation.isPending}
-                    >
-                      <Trash2 className='h-5 w-5 shrink-0' />
-                      <span className='max-w-0 overflow-hidden whitespace-nowrap transition-[max-width] duration-200 group-hover:max-w-32'>
-                        Eliminar equipo
-                      </span>
-                    </Boton>
-                  }
-                  estaCargando={eliminarMutation.isPending}
-                />
-              </VisibleSoloParaAdmin>
-            </div>
-          </CardHeader>
-        </div>
+              <ModalEliminacion
+                titulo={`Eliminar definitivamente al equipo ${equipo!.nombre}`}
+                subtitulo={`Al eliminar el equipo, se eliminarán también los jugadores que solo jueguen en este equipo. Son: ${listaJugadoresExclusivos}`}
+                eliminarOnClick={() => eliminarMutation.mutate(undefined)}
+                eliminarTexto='Eliminar definitivamente equipo y jugadores'
+                trigger={
+                  <Boton
+                    variant='destructive'
+                    className='group h-10 w-10 min-w-10 gap-0 overflow-hidden px-0 transition-[width,gap,padding] duration-200 hover:w-auto hover:min-w-32 hover:gap-2 hover:px-3'
+                    estaCargando={eliminarMutation.isPending}
+                  >
+                    <Trash2 className='h-5 w-5 shrink-0' />
+                    <span className='max-w-0 overflow-hidden whitespace-nowrap transition-[max-width] duration-200 group-hover:max-w-32'>
+                      Eliminar equipo
+                    </span>
+                  </Boton>
+                }
+                estaCargando={eliminarMutation.isPending}
+              />
+            </VisibleSoloParaAdmin>
+          </div>
+        </CardHeader>
         <CardContent>
           <div className='mb-4 space-y-2'>
             <DetalleItem clave='Club' valor={equipo!.clubNombre!} />
