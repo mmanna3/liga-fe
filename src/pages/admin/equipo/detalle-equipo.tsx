@@ -54,9 +54,7 @@ export default function DetalleEquipo() {
     if (!equipo?.jugadores) return
     const selectedIds = Object.keys(rowSelection)
       .filter((key) => (rowSelection as Record<string, boolean>)[key])
-      .map((key) =>
-        equipo.jugadores && equipo.jugadores[parseInt(key)]?.id
-      )
+      .map((key) => equipo.jugadores && equipo.jugadores[parseInt(key)]?.id)
       .filter((jugadorId): jugadorId is number => jugadorId !== undefined)
     setSelectedJugadores(selectedIds as number[])
   }, [rowSelection, equipo?.jugadores])
@@ -236,10 +234,7 @@ export default function DetalleEquipo() {
           />
           <VisibleSoloParaAdmin>
             <div className='mt-6 flex gap-2'>
-              <Button
-                variant='outline'
-                onClick={() => setPasesModalOpen(true)}
-              >
+              <Button variant='outline' onClick={() => setPasesModalOpen(true)}>
                 Efectuar pases
               </Button>
               <Button

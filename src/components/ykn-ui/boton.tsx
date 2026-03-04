@@ -8,10 +8,7 @@ type BotonProps = React.ComponentProps<typeof Button> & {
 }
 
 const Boton = React.forwardRef<HTMLButtonElement, BotonProps>(
-  (
-    { estaCargando = false, children, disabled, className, ...props },
-    ref
-  ) => {
+  ({ estaCargando = false, children, disabled, className, ...props }, ref) => {
     return (
       <Button
         ref={ref}

@@ -1,8 +1,5 @@
 import { api } from '@/api/api'
-import {
-  CambiarEstadoDelJugadorDTO,
-  EquipoDTO
-} from '@/api/clients'
+import { CambiarEstadoDelJugadorDTO, EquipoDTO } from '@/api/clients'
 import useApiMutation from '@/api/custom-hooks/use-api-mutation'
 import { Button } from '@/components/ui/button'
 import {
@@ -99,9 +96,7 @@ export default function CambiarEstadoModal({
           motivo
         })
       })
-      .filter(
-        (dto): dto is CambiarEstadoDelJugadorDTO => dto !== null
-      )
+      .filter((dto): dto is CambiarEstadoDelJugadorDTO => dto !== null)
 
     mutation.mutate(dtos)
   }
@@ -140,26 +135,20 @@ export default function CambiarEstadoModal({
             <Button
               variant='destructive'
               onClick={() => handleAction(inhabilitarMutation)}
-              disabled={
-                selectedJugadores.length === 0 || !motivo || isPending
-              }
+              disabled={selectedJugadores.length === 0 || !motivo || isPending}
             >
               Inhabilitar
             </Button>
             <Button
               variant='destructive'
               onClick={() => handleAction(suspenderMutation)}
-              disabled={
-                selectedJugadores.length === 0 || !motivo || isPending
-              }
+              disabled={selectedJugadores.length === 0 || !motivo || isPending}
             >
               Suspender
             </Button>
             <Button
               onClick={() => handleAction(activarMutation)}
-              disabled={
-                selectedJugadores.length === 0 || !motivo || isPending
-              }
+              disabled={selectedJugadores.length === 0 || !motivo || isPending}
             >
               Activar
             </Button>

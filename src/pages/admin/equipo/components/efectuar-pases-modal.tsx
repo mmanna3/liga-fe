@@ -59,13 +59,19 @@ export default function EfectuarPasesModal({
     },
     antesDeMensajeExito: () => {
       onOpenChange(false)
-      queryClient.invalidateQueries({ queryKey: ['equipo', equipo.id?.toString()] })
+      queryClient.invalidateQueries({
+        queryKey: ['equipo', equipo.id?.toString()]
+      })
     },
     mensajeDeExito: 'Pases efectuados exitosamente'
   })
 
   const handleEfectuarPase = () => {
-    if (selectedJugadores.length === 0 || !equipo?.jugadores || !equipoDestinoId)
+    if (
+      selectedJugadores.length === 0 ||
+      !equipo?.jugadores ||
+      !equipoDestinoId
+    )
       return
 
     const jugadores = equipo.jugadores
@@ -128,7 +134,9 @@ export default function EfectuarPasesModal({
               efectuarPasesMutation.isPending
             }
           >
-            {efectuarPasesMutation.isPending ? 'Procesando...' : 'Efectuar pase'}
+            {efectuarPasesMutation.isPending
+              ? 'Procesando...'
+              : 'Efectuar pase'}
           </Button>
         </DialogFooter>
       </DialogContent>
