@@ -5,7 +5,6 @@ import BlanquearClaveDelegado from '@/pages/admin/delegados/blanquear-clave-dele
 import Delegados from '@/pages/admin/delegados/delegados'
 import DetalleDelegado from '@/pages/admin/delegados/detalle-delegado'
 import EliminarDelegado from '@/pages/admin/delegados/eliminar-delegado'
-import CambioEstadoMasivo from '@/pages/admin/equipo/cambio-estado-masivo'
 import CrearEquipo from '@/pages/admin/equipo/crear-equipo'
 import DetalleEquipo from '@/pages/admin/equipo/detalle-equipo'
 import EditarEquipo from '@/pages/admin/equipo/editar-equipo'
@@ -35,8 +34,6 @@ import PaginaNoEncontrada from '../pages/pagina-no-encontrada'
 import { rutas } from './rutas'
 import DesvincularJugadorDelEquipo from '@/pages/admin/jugador/desvincular-jugador-del-equipo'
 import SuspenderActivar from '@/pages/admin/jugador/suspender-activar'
-import Pases from '@/pages/admin/equipo/pases'
-
 export const mapaRutasComponentes = [
   {
     path: '/login',
@@ -89,14 +86,6 @@ export const mapaRutasComponentes = [
       { path: `${rutas.detalleClub}/:id`, element: <DetalleClub /> },
       { path: `${rutas.editarClub}/:id`, element: <EditarClub /> },
       { path: rutas.equipos, element: <Equipo /> },
-      {
-        path: `${rutas.cambioEstadoMasivoEquipo}/:equipoid`,
-        element: <CambioEstadoMasivo />
-      },
-      {
-        path: `${rutas.pases}/:equipoid`,
-        element: <Pases />
-      },
       { path: `${rutas.crearEquipo}/:clubid`, element: <CrearEquipo /> },
       { path: `${rutas.detalleEquipo}/:id`, element: <DetalleEquipo /> },
       { path: `${rutas.editarEquipo}/:id`, element: <EditarEquipo /> },

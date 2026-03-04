@@ -126,7 +126,7 @@ export default function Tabla<T>({
                     onClick={() => onRowClick?.(row)}
                     className={
                       onRowClick
-                        ? 'cursor-pointer hover:bg-muted/50 transition-colors'
+                        ? 'cursor-pointer hover:bg-gray-100 transition-colors'
                         : undefined
                     }
                   >

@@ -7,8 +7,6 @@ export const rutas = {
   crearEquipo: 'equipos/crear',
   editarEquipo: 'equipos/editar',
   detalleEquipo: 'equipos/detalle',
-  cambioEstadoMasivoEquipo: 'equipos/cambio-estado-masivo',
-  pases: 'equipos/pases',
   jugadores: 'jugadores',
   detalleJugador: 'jugadores/detalle',
   eliminarJugador: 'jugadores/eliminar',

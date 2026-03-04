@@ -1,6 +1,5 @@
 import { EquipoDTO, JugadorDelEquipoDTO } from '@/api/clients'
 import Tabla from '@/components/ykn-ui/tabla'
-import { useAuth } from '@/hooks/use-auth'
 import { rutasNavegacion } from '@/routes/rutas'
 import { ColumnDef } from '@tanstack/react-table'
 import { useNavigate } from 'react-router-dom'
@@ -17,7 +16,6 @@ export default function TablaEquipo({
   isError
 }: ITablaEquipo) {
   const navigate = useNavigate()
-  const esAdmin = useAuth((state) => state.esAdmin)
 
   const columnas: ColumnDef<EquipoDTO>[] = [
     {
@@ -48,42 +46,6 @@ export default function TablaEquipo({
           {(row.getValue('jugadores') as JugadorDelEquipoDTO[]).length}
         </span>
       )
-    },
-    {
-      id: 'acciones',
-      header: '',
-      cell: ({ row }) => {
-        const menuItems = [
-          {
-            texto: 'Detalle',
-            onClick: () =>
-              navigate(`${rutasNavegacion.detalleEquipo}/${row.original.id}`)
-          }
-        ]
-
-        // Solo agregar opciones de admin si el usuario es admin
-        if (esAdmin()) {
-          menuItems.push({
-            texto: 'Cambio estado masivo',
-            onClick: () =>
-              navigate(
-                `${rutasNavegacion.cambioEstadoMasivoEquipo}/${row.original.id}`
-              )
-          })
-
-          menuItems.push({
-            texto: 'Pases',
-            onClick: () =>
-              navigate(`${rutasNavegacion.pases}/${row.original.id}`)
-          })
-        }
-
-        return (
-          <div onClick={(e) => e.stopPropagation()}>
-            <Tabla.MenuContextual items={menuItems} />
-          </div>
-        )
-      }
     }
   ]
 
