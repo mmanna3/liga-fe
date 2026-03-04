@@ -35,7 +35,11 @@ export default function DesvincularJugadorDelEquipo() {
   }
 
   return (
-    <Card className='max-w-md mx-auto mt-10 p-4'>
+    <>
+      <div className='mb-4'>
+        <BotonVolver path={rutasNavegacion.jugadores} />
+      </div>
+      <Card className='max-w-md mx-auto p-4'>
       <CardHeader>
         <CardTitle>Desvincular jugador</CardTitle>
       </CardHeader>
@@ -48,7 +52,6 @@ export default function DesvincularJugadorDelEquipo() {
           <p>Si es su único equipo, se lo eliminará del sistema.</p>
           <div className='mt-16'>
             <Botonera>
-              <BotonVolver texto='Cancelar' />
               <Button type='submit' disabled={mutation.isPending}>
                 {mutation.isPending
                   ? 'Desvinculando...'
@@ -59,5 +62,6 @@ export default function DesvincularJugadorDelEquipo() {
         </form>
       </CardContent>
     </Card>
+    </>
   )
 }

@@ -18,8 +18,7 @@ export default function DetalleDelegado() {
   const navigate = useNavigate()
   const location = useLocation()
   const { id } = useParams<{ id: string }>()
-  const volverADelegados = () =>
-    navigate(`${rutasNavegacion.delegados}${location.search}`)
+  const pathDelegados = `${rutasNavegacion.delegados}${location.search}`
 
   const {
     data: delegado,
@@ -34,7 +33,7 @@ export default function DetalleDelegado() {
     fn: async (delegadoId: number) => {
       await api.delegadoDELETE(delegadoId)
     },
-    antesDeMensajeExito: volverADelegados,
+    antesDeMensajeExito: () => navigate(pathDelegados),
     mensajeDeExito: 'Delegado eliminado del sistema'
   })
 
@@ -45,7 +44,11 @@ export default function DetalleDelegado() {
       mensajeDeError='No se pudieron recuperar los datos del delegado'
     >
       {delegado && (
-        <Card className='max-w-lg mx-auto mt-10 p-6 rounded-xl border bg-white'>
+        <>
+          <div className='mb-4'>
+            <BotonVolver path={pathDelegados} />
+          </div>
+          <Card className='max-w-lg mx-auto p-6 rounded-xl border bg-white'>
           <CardHeader className='flex flex-col items-center text-center'>
             <img
               src={delegado.fotoCarnet}
@@ -167,9 +170,9 @@ export default function DetalleDelegado() {
                 }
               />
             </VisibleSoloParaAdmin>
-            <BotonVolver texto='Volver' />
           </div>
         </Card>
+        </>
       )}
     </ContenedorCargandoYError>
   )

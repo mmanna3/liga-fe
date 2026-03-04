@@ -1,7 +1,6 @@
 import { api } from '@/api/api'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
-import Botonera from '@/components/ykn-ui/botonera'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -23,7 +22,11 @@ export default function DetalleTorneo() {
   if (!data) return <div>No se encontró el torneo</div>
 
   return (
-    <Card>
+    <>
+      <div className='mb-4'>
+        <BotonVolver />
+      </div>
+      <Card>
       <CardHeader className='flex flex-row items-center justify-between'>
         <CardTitle>Detalle del Torneo: {data.nombre}</CardTitle>
       </CardHeader>
@@ -54,12 +57,9 @@ export default function DetalleTorneo() {
               </p>
             )}
           </div>
-
-          <Botonera>
-            <BotonVolver texto='Volver' />
-          </Botonera>
         </div>
       </CardContent>
     </Card>
+    </>
   )
 }

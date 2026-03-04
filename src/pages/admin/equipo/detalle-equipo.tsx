@@ -11,7 +11,6 @@ import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Boton } from '@/components/ykn-ui/boton'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
-import Botonera from '@/components/ykn-ui/botonera'
 import DetalleItem from '@/components/ykn-ui/detalle-item'
 import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
 import Tabla from '@/components/ykn-ui/tabla'
@@ -164,7 +163,10 @@ export default function DetalleEquipo() {
 
   return (
     <>
-      <Card className='max-w-4xl mx-auto mt-10 p-4'>
+      <div className='mb-4'>
+        <BotonVolver />
+      </div>
+      <Card className='max-w-4xl mx-auto p-4'>
         <CardHeader className='flex flex-row items-center justify-between'>
           <CardTitle>{equipo!.nombre}</CardTitle>
           <div className='flex gap-2'>
@@ -246,9 +248,6 @@ export default function DetalleEquipo() {
             </div>
           </VisibleSoloParaAdmin>
         </CardContent>
-        <Botonera>
-          <BotonVolver texto='Volver' />
-        </Botonera>
       </Card>
 
       {equipo && (

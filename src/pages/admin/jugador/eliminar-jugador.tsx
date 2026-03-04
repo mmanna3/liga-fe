@@ -24,7 +24,11 @@ export default function EliminarJugador() {
   }
 
   return (
-    <Card className='max-w-md mx-auto mt-10 p-4'>
+    <>
+      <div className='mb-4'>
+        <BotonVolver path={rutasNavegacion.jugadores} />
+      </div>
+      <Card className='max-w-md mx-auto p-4'>
       <CardHeader>
         <CardTitle>Eliminar jugador</CardTitle>
       </CardHeader>
@@ -35,7 +39,6 @@ export default function EliminarJugador() {
             equipos.
           </p>
           <Botonera>
-            <BotonVolver texto='Cancelar' />
             <Button type='submit' disabled={mutation.isPending}>
               {mutation.isPending ? 'Eliminando...' : 'Eliminar jugador'}
             </Button>
@@ -43,5 +46,6 @@ export default function EliminarJugador() {
         </form>
       </CardContent>
     </Card>
+    </>
   )
 }

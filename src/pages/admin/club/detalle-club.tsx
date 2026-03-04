@@ -47,7 +47,10 @@ export default function DetalleClub() {
   }
 
   return (
-    <div className='max-w-3xl mx-auto mt-10 px-4'>
+    <div className='max-w-3xl mx-auto px-4'>
+      <div className='mb-4'>
+        <BotonVolver path={rutasNavegacion.clubs} />
+      </div>
       <Card className='mb-6 shadow-md'>
         <CardHeader className='pb-4'>
           <div className='flex items-center gap-4'>
@@ -165,10 +168,6 @@ export default function DetalleClub() {
             )}
           </CardContent>
         </Card>
-      </div>
-
-      <div className='mt-6'>
-        <BotonVolver path={rutasNavegacion.clubs} />
       </div>
     </div>
   )

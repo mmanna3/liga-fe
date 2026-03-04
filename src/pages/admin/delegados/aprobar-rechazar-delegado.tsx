@@ -48,6 +48,9 @@ const AprobarRechazarDelegado: React.FC = () => {
 
   return (
     <ContenedorCargandoYError estaCargando={isLoading} hayError={isError}>
+      <div className='mb-4'>
+        <BotonVolver path={`${rutasNavegacion.delegados}${location.search}`} />
+      </div>
       {delegado && (
         <Card className='max-w-3xl mx-auto mt-10 p-6 rounded-xl border bg-white'>
           <CardHeader className='flex flex-col items-center text-center'>
@@ -146,10 +149,6 @@ const AprobarRechazarDelegado: React.FC = () => {
               />
             </div>
           </CardContent>
-
-          <div className='flex justify-end mt-6'>
-            <BotonVolver texto='Volver' />
-          </div>
         </Card>
       )}
     </ContenedorCargandoYError>

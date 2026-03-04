@@ -57,7 +57,10 @@ export default function CrearEquipo() {
       estaCargando={isLoadingTorneos}
       hayError={isErrorTorneos}
     >
-      <Card className='max-w-md mx-auto mt-10 p-4'>
+      <div className='mb-4'>
+        <BotonVolver />
+      </div>
+      <Card className='max-w-md mx-auto p-4'>
         <CardHeader>
           <CardTitle>Crear Equipo</CardTitle>
         </CardHeader>
@@ -99,7 +102,6 @@ export default function CrearEquipo() {
             </div>
 
             <Botonera>
-              <BotonVolver texto='Cancelar' />
               <Button type='submit' disabled={mutation.isPending}>
                 {mutation.isPending ? 'Guardando...' : 'Guardar'}
               </Button>

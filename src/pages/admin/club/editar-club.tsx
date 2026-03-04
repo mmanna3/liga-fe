@@ -125,7 +125,10 @@ export default function EditarClub() {
       hayError={isError}
       mensajeDeError='No se pudieron recuperar los datos del club'
     >
-      <Card className='max-w-md mx-auto mt-10 p-4'>
+      <div className='mb-4'>
+        <BotonVolver path={`${rutasNavegacion.detalleClub}/${id}`} />
+      </div>
+      <Card className='max-w-md mx-auto p-4'>
         <CardHeader>
           <CardTitle>Editar Club</CardTitle>
         </CardHeader>
@@ -202,7 +205,6 @@ export default function EditarClub() {
             </div>
 
             <Botonera>
-              <BotonVolver texto='Cancelar' />
               <Button type='submit' disabled={isPending || !hayCambios}>
                 {isPending ? 'Guardando...' : 'Guardar'}
               </Button>

@@ -26,7 +26,11 @@ export default function BlanquearClaveDelegado() {
   }
 
   return (
-    <Card className='max-w-md mx-auto mt-10 p-4'>
+    <>
+      <div className='mb-4'>
+        <BotonVolver path={`${rutasNavegacion.delegados}${location.search}`} />
+      </div>
+      <Card className='max-w-md mx-auto p-4'>
       <CardHeader>
         <CardTitle>Blanquear clave</CardTitle>
       </CardHeader>
@@ -37,7 +41,6 @@ export default function BlanquearClaveDelegado() {
             iniciar sesión en la APP se le pedirá una nueva.
           </p>
           <Botonera>
-            <BotonVolver texto='Cancelar' />
             <Button type='submit' disabled={mutation.isPending}>
               {mutation.isPending ? 'Blanqueando...' : 'Blanquear clave'}
             </Button>
@@ -45,5 +48,6 @@ export default function BlanquearClaveDelegado() {
         </form>
       </CardContent>
     </Card>
+    </>
   )
 }

@@ -59,8 +59,11 @@ const AprobarRechazarJugador: React.FC = () => {
 
   return (
     <ContenedorCargandoYError estaCargando={isLoading} hayError={isError}>
+      <div className='mb-4'>
+        <BotonVolver />
+      </div>
       {jugador && (
-        <Card className='max-w-3xl mx-auto mt-10 p-6 rounded-xl border bg-white'>
+        <Card className='max-w-3xl mx-auto p-6 rounded-xl border bg-white'>
           <CardHeader className='flex flex-col items-center text-center'>
             <AprobarRechazarHeader
               jugador={jugador}
@@ -163,10 +166,6 @@ const AprobarRechazarJugador: React.FC = () => {
               />
             </div>
           </CardContent>
-
-          <div className='flex justify-end mt-6'>
-            <BotonVolver texto='Volver' />
-          </div>
         </Card>
       )}
     </ContenedorCargandoYError>

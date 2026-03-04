@@ -28,7 +28,11 @@ export default function CrearTorneo() {
   }
 
   return (
-    <Card className='max-w-md mx-auto mt-10 p-4'>
+    <>
+      <div className='mb-4'>
+        <BotonVolver />
+      </div>
+      <Card className='max-w-md mx-auto p-4'>
       <CardHeader>
         <CardTitle>Crear Torneo</CardTitle>
       </CardHeader>
@@ -42,7 +46,6 @@ export default function CrearTorneo() {
             required
           />
           <Botonera>
-            <BotonVolver texto='Cancelar' />
             <Button type='submit' disabled={mutation.isPending}>
               {mutation.isPending ? 'Guardando...' : 'Guardar'}
             </Button>
@@ -50,5 +53,6 @@ export default function CrearTorneo() {
         </form>
       </CardContent>
     </Card>
+    </>
   )
 }

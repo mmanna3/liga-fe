@@ -64,7 +64,10 @@ export default function CambiarEstado() {
 
   return (
     <ContenedorCargandoYError hayError={isError} estaCargando={isLoading}>
-      <Card className='max-w-lg mx-auto mt-10 p-6 rounded-xl border bg-white'>
+      <div className='mb-4'>
+        <BotonVolver />
+      </div>
+      <Card className='max-w-lg mx-auto p-6 rounded-xl border bg-white'>
         <CardHeader className='flex flex-col items-center text-center'>
           <img
             src={jugador!.fotoCarnet}
@@ -131,19 +134,16 @@ export default function CambiarEstado() {
           </div>
           <div className='mt-12'>
             <Botonera>
-              <div className='flex justify-between w-full'>
-                <Boton
-                  variant='destructive'
-                  onClick={() =>
-                    navigate(
-                      `${rutasNavegacion.desvincularJugadorDelEquipo}/${jugadorid}/${jugador?.dni}/${equipo?.equipoId}/${equipo?.nombre}`
-                    )
-                  }
-                >
-                  Desvincular jugador del equipo
-                </Boton>
-                <BotonVolver texto='Cancelar' />
-              </div>
+              <Boton
+                variant='destructive'
+                onClick={() =>
+                  navigate(
+                    `${rutasNavegacion.desvincularJugadorDelEquipo}/${jugadorid}/${jugador?.dni}/${equipo?.equipoId}/${equipo?.nombre}`
+                  )
+                }
+              >
+                Desvincular jugador del equipo
+              </Boton>
             </Botonera>
           </div>
         </CardContent>

@@ -92,7 +92,9 @@ export default function EditarEquipo() {
 
   return (
     <div>
-      <BotonVolver texto='Volver' />
+      <div className='mb-4'>
+        <BotonVolver />
+      </div>
       <ContenedorCargandoYError estaCargando={isLoading} hayError={isError}>
         <Card className='max-w-md mx-auto'>
           <CardHeader>

@@ -47,7 +47,11 @@ export default function DetalleJugador() {
       mensajeDeError='No se pudieron recuperar los datos del jugador'
     >
       {jugador && (
-        <Card className='max-w-lg mx-auto mt-10 p-6 rounded-xl border bg-white'>
+        <>
+          <div className='mb-4'>
+            <BotonVolver />
+          </div>
+          <Card className='max-w-lg mx-auto p-6 rounded-xl border bg-white'>
           <CardHeader className='flex flex-col items-center text-center'>
             <img
               src={jugador.fotoCarnet}
@@ -138,11 +142,8 @@ export default function DetalleJugador() {
               ))}
             </ul>
           </CardContent>
-
-          <div className='flex justify-end mt-6'>
-            <BotonVolver texto='Volver' />
-          </div>
         </Card>
+        </>
       )}
     </ContenedorCargandoYError>
   )

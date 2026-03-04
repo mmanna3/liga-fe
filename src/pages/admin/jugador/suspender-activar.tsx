@@ -58,7 +58,10 @@ export default function SuspenderActivar() {
   return (
     jugador && (
       <ContenedorCargandoYError hayError={isError} estaCargando={isLoading}>
-        <Card className='max-w-lg mx-auto mt-10 p-6 rounded-xl border bg-white'>
+        <div className='mb-4'>
+          <BotonVolver />
+        </div>
+        <Card className='max-w-lg mx-auto p-6 rounded-xl border bg-white'>
           <CardHeader className='flex flex-col items-center text-center'>
             <img
               src={jugador!.fotoCarnet}
@@ -144,11 +147,6 @@ export default function SuspenderActivar() {
                   }
                 />
               )}
-            </div>
-            <div className='mt-12'>
-              <div className='flex justify-between w-full'>
-                <BotonVolver texto='Cancelar' />
-              </div>
             </div>
           </CardContent>
         </Card>
