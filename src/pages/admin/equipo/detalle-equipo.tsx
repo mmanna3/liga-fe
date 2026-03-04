@@ -2,11 +2,11 @@ import { api } from '@/api/api'
 import useApiMutation from '@/api/custom-hooks/use-api-mutation'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import ModalEliminacion from '@/components/modal-eliminacion'
 import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Boton } from '@/components/ykn-ui/boton'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
 import Botonera from '@/components/ykn-ui/botonera'
 import DetalleItem from '@/components/ykn-ui/detalle-item'
@@ -14,7 +14,7 @@ import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-
 import { generarReportePDF } from '@/pages/admin/equipo/components/reporte-jugadores-pdf'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useQuery } from '@tanstack/react-query'
-import { FileDown, Trash2 } from 'lucide-react'
+import { FileDown, Pencil, Trash2 } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export default function DetalleEquipo() {
@@ -89,26 +89,45 @@ export default function DetalleEquipo() {
       <CardHeader className='flex flex-row items-center justify-between'>
         <CardTitle>{equipo!.nombre}</CardTitle>
         <div className='flex gap-2'>
-          <Button
+          <Boton
             variant='outline'
-            size='sm'
-            className='gap-2'
+            className='group h-10 w-10 min-w-10 gap-0 overflow-hidden px-0 transition-[width,gap,padding] duration-200 hover:w-auto hover:min-w-40 hover:gap-2 hover:px-3'
             onClick={handleGenerarReportePDF}
           >
-            <FileDown className='h-4 w-4' />
-            Generar Reporte PDF
-          </Button>
+            <FileDown className='h-5 w-5 shrink-0' />
+            <span className='max-w-0 overflow-hidden whitespace-nowrap transition-[max-width] duration-200 group-hover:max-w-40'>
+              Generar Reporte PDF
+            </span>
+          </Boton>
           <VisibleSoloParaAdmin>
+            <Boton
+              variant='outline'
+              className='group h-10 w-10 min-w-10 gap-0 overflow-hidden px-0 transition-[width,gap,padding] duration-200 hover:w-auto hover:min-w-24 hover:gap-2 hover:px-3'
+              onClick={() =>
+                navigate(`${rutasNavegacion.editarEquipo}/${equipo!.id}`)
+              }
+            >
+              <Pencil className='h-5 w-5 shrink-0' />
+              <span className='max-w-0 overflow-hidden whitespace-nowrap transition-[max-width] duration-200 group-hover:max-w-20'>
+                Editar
+              </span>
+            </Boton>
             <ModalEliminacion
               titulo={`Eliminar definitivamente al equipo ${equipo!.nombre}`}
               subtitulo={`Al eliminar el equipo, se eliminarán también los jugadores que solo jueguen en este equipo. Son: ${listaJugadoresExclusivos}`}
               eliminarOnClick={() => eliminarMutation.mutate(undefined)}
               eliminarTexto='Eliminar definitivamente equipo y jugadores'
               trigger={
-                <Button variant='destructive' size='sm' className='gap-2'>
-                  <Trash2 className='h-4 w-4' />
-                  Eliminar equipo
-                </Button>
+                <Boton
+                  variant='destructive'
+                  className='group h-10 w-10 min-w-10 gap-0 overflow-hidden px-0 transition-[width,gap,padding] duration-200 hover:w-auto hover:min-w-32 hover:gap-2 hover:px-3'
+                  estaCargando={eliminarMutation.isPending}
+                >
+                  <Trash2 className='h-5 w-5 shrink-0' />
+                  <span className='max-w-0 overflow-hidden whitespace-nowrap transition-[max-width] duration-200 group-hover:max-w-32'>
+                    Eliminar equipo
+                  </span>
+                </Boton>
               }
               estaCargando={eliminarMutation.isPending}
             />

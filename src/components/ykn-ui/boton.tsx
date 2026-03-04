@@ -7,21 +7,28 @@ type BotonProps = React.ComponentProps<typeof Button> & {
   estaCargando?: boolean
 }
 
-function Boton({
-  estaCargando = false,
-  children,
-  disabled,
-  ...props
-}: BotonProps) {
-  return (
-    <Button
-      disabled={disabled || estaCargando}
-      className={cn('relative', props.className)}
-      {...props}
-    >
-      {estaCargando ? <Loader2 className='size-4 animate-spin' /> : children}
-    </Button>
-  )
-}
+const Boton = React.forwardRef<HTMLButtonElement, BotonProps>(
+  (
+    { estaCargando = false, children, disabled, className, ...props },
+    ref
+  ) => {
+    return (
+      <Button
+        ref={ref}
+        disabled={disabled || estaCargando}
+        className={cn('relative', className)}
+        {...props}
+      >
+        {estaCargando ? (
+          <Loader2 className='size-4 shrink-0 animate-spin' />
+        ) : (
+          children
+        )}
+      </Button>
+    )
+  }
+)
+
+Boton.displayName = 'Boton'
 
 export { Boton }

@@ -61,14 +61,8 @@ export default function TablaEquipo({
           }
         ]
 
-        // Solo agregar el botón de Editar si el usuario es admin
+        // Solo agregar opciones de admin si el usuario es admin
         if (esAdmin()) {
-          menuItems.push({
-            texto: 'Editar',
-            onClick: () =>
-              navigate(`${rutasNavegacion.editarEquipo}/${row.original.id}`)
-          })
-
           menuItems.push({
             texto: 'Cambio estado masivo',
             onClick: () =>

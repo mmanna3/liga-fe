@@ -2,6 +2,7 @@ export const rutas = {
   clubs: 'clubs',
   crearClub: 'clubs/crear',
   detalleClub: 'clubs/detalle',
+  editarClub: 'clubs/editar',
   equipos: 'equipos',
   crearEquipo: 'equipos/crear',
   editarEquipo: 'equipos/editar',

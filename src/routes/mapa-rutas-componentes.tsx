@@ -29,6 +29,7 @@ import PoliticaDePrivacidad from '@/pages/politica-de-privacidad'
 import AdminLayout from '../pages/admin/admin-layout'
 import Club from '../pages/admin/club/club'
 import CrearClub from '../pages/admin/club/crear-club'
+import EditarClub from '../pages/admin/club/editar-club'
 import FichajeHome from '../pages/fichaje/home'
 import PaginaNoEncontrada from '../pages/pagina-no-encontrada'
 import { rutas } from './rutas'
@@ -86,6 +87,7 @@ export const mapaRutasComponentes = [
       { path: rutas.clubs, element: <Club /> },
       { path: rutas.crearClub, element: <CrearClub /> },
       { path: `${rutas.detalleClub}/:id`, element: <DetalleClub /> },
+      { path: `${rutas.editarClub}/:id`, element: <EditarClub /> },
       { path: rutas.equipos, element: <Equipo /> },
       {
         path: `${rutas.cambioEstadoMasivoEquipo}/:equipoid`,

@@ -2,6 +2,7 @@ import { ClubDTO } from '@/api/clients'
 import Tabla from '@/components/ykn-ui/tabla'
 import { rutasNavegacion } from '@/routes/rutas'
 import { ColumnDef } from '@tanstack/react-table'
+import { Pencil } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 interface ITablaClub {
@@ -30,6 +31,12 @@ export default function TablaClub({ data, isLoading, isError }: ITablaClub) {
                 texto: 'Detalle',
                 onClick: () =>
                   navigate(`${rutasNavegacion.detalleClub}/${row.original.id}`)
+              },
+              {
+                texto: 'Editar',
+                icon: <Pencil className='h-4 w-4' />,
+                onClick: () =>
+                  navigate(`${rutasNavegacion.editarClub}/${row.original.id}`)
               }
             ]}
           />

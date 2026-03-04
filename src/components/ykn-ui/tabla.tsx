@@ -187,7 +187,7 @@ export default function Tabla<T>({
 }
 
 interface MenuContextualProps {
-  items: { texto: string; onClick: () => void }[]
+  items: { texto: string; onClick: () => void; icon?: React.ReactNode }[]
 }
 
 Tabla.MenuContextual = function MenuContextual({ items }: MenuContextualProps) {
@@ -206,8 +206,9 @@ Tabla.MenuContextual = function MenuContextual({ items }: MenuContextualProps) {
           <DropdownMenuItem
             key={index}
             onClick={item.onClick}
-            className='py-1 cursor-pointer'
+            className='py-1 cursor-pointer flex items-center gap-2'
           >
+            {item.icon}
             {item.texto}
           </DropdownMenuItem>
         ))}
