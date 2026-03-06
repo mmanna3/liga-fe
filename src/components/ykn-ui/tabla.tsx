@@ -27,7 +27,13 @@ import {
   SortingState,
   useReactTable
 } from '@tanstack/react-table'
-import { ChevronLeft, ChevronRight, MoreVertical } from 'lucide-react'
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  MoreVertical
+} from 'lucide-react'
 import { useState } from 'react'
 
 type TablaProps<T> = {
@@ -108,11 +114,11 @@ export default function Tabla<T>({
                         header.column.columnDef.header,
                         header.getContext()
                       )}
-                      {header.column.getIsSorted() === 'asc'
-                        ? ' 🔼'
-                        : header.column.getIsSorted() === 'desc'
-                          ? ' 🔽'
-                          : ''}
+                      {header.column.getIsSorted() === 'asc' ? (
+                        <ChevronUp className='ml-1 inline h-4 w-4 shrink-0 align-middle' />
+                      ) : header.column.getIsSorted() === 'desc' ? (
+                        <ChevronDown className='ml-1 inline h-4 w-4 shrink-0 align-middle' />
+                      ) : null}
                     </TableHead>
                   ))}
                 </TableRow>
