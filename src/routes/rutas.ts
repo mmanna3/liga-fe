@@ -21,7 +21,6 @@ export const rutas = {
   reportePagos: 'reportes/pagos',
   delegados: 'delegados',
   detalleDelegado: 'delegados/detalle',
-  blanquearClaveDelegado: 'delegados/blanquear-clave',
   eliminarDelegado: 'delegados/eliminar',
   aprobarRechazarDelegado: 'delegados/aprobar-rechazar'
 }

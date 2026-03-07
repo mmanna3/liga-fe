@@ -1,6 +1,5 @@
 import { DelegadoClubDTO, DelegadoDTO } from '@/api/clients'
 import { Badge } from '@/components/ui/badge'
-import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import Tabla from '@/components/ykn-ui/tabla'
 import { estadoBadgeClassDelegado } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
@@ -100,41 +99,6 @@ export default function TablaDelegados({
             </Badge>
           )}
         </span>
-      )
-    },
-    {
-      id: 'acciones',
-      header: '',
-      cell: ({ row }) => (
-        <VisibleSoloParaAdmin>
-          <div onClick={(e) => e.stopPropagation()}>
-            <Tabla.MenuContextual
-              items={[
-                {
-                  texto: 'Detalle',
-                  onClick: () =>
-                    navigate(
-                      `${rutasNavegacion.detalleDelegado}/${row.original.id}${search}`
-                    )
-                },
-                {
-                  texto: 'Blanquear clave',
-                  onClick: () =>
-                    navigate(
-                      `${rutasNavegacion.blanquearClaveDelegado}/${row.original.id}/${row.original.usuario?.nombreUsuario ?? ''}${search}`
-                    )
-                },
-                {
-                  texto: 'Eliminar',
-                  onClick: () =>
-                    navigate(
-                      `${rutasNavegacion.eliminarDelegado}/${row.original.id}/${row.original.usuario?.nombreUsuario ?? ''}${search}`
-                    )
-                }
-              ]}
-            />
-          </div>
-        </VisibleSoloParaAdmin>
       )
     }
   ]

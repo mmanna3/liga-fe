@@ -12,6 +12,7 @@ import { estadoBadgeClassDelegado, EstadoDelegado } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
 import { Building2, User } from 'lucide-react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import DialogoBlanquearClaveDelegado from './components/dialogo-blanquear-clave-delegado'
 import DialogoEliminarDelegado from './components/dialogo-eliminar-delegado'
 
 export default function DetalleDelegado() {
@@ -163,6 +164,15 @@ export default function DetalleDelegado() {
 
             <div className='flex gap-2 justify-end mt-6'>
               <VisibleSoloParaAdmin>
+                {delegado.usuario?.nombreUsuario && (
+                  <DialogoBlanquearClaveDelegado
+                    delegadoId={delegado.id!}
+                    nombreUsuario={delegado.usuario.nombreUsuario}
+                    trigger={
+                      <Button variant='outline'>Blanquear clave</Button>
+                    }
+                  />
+                )}
                 <DialogoEliminarDelegado
                   descripcion='Si confirmás la eliminación, toda su información se perderá y tendrá que volver a ficharse.'
                   delegadoId={delegado.id!}
