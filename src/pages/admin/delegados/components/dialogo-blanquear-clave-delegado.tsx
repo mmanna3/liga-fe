@@ -53,8 +53,8 @@ export default function DialogoBlanquearClaveDelegado({
         </DialogHeader>
         <form onSubmit={handleSubmit} className='space-y-4'>
           <p className='text-muted-foreground text-sm'>
-            Al blanquear la clave, la próxima vez que el delegado intente iniciar
-            sesión en la APP se le pedirá una nueva.
+            Al blanquear la clave, la próxima vez que el delegado intente
+            iniciar sesión en la APP se le pedirá una nueva.
           </p>
           <DialogFooter>
             <Button

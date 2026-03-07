@@ -168,9 +168,7 @@ export default function DetalleDelegado() {
                   <DialogoBlanquearClaveDelegado
                     delegadoId={delegado.id!}
                     nombreUsuario={delegado.usuario.nombreUsuario}
-                    trigger={
-                      <Button variant='outline'>Blanquear clave</Button>
-                    }
+                    trigger={<Button variant='outline'>Blanquear clave</Button>}
                   />
                 )}
                 <DialogoEliminarDelegado
