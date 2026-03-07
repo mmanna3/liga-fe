@@ -20,9 +20,9 @@ Font.register({
 // Colores del diseño original Carnets.cshtml
 const VERDE = '#01582e'
 const AZUL = '#002987'
-const ROJO = '#e81f05'
+// const ROJO = '#e81f05'
 const GRIS = '#b4b4b4'
-const NEGRO = '#111111'
+// const NEGRO = '#111111'
 const BLANCO = '#eeeeee'
 
 const CARD_WIDTH = 68
@@ -202,7 +202,7 @@ function CarnetDelegado({ delegado }: { delegado: DelegadoDTO }) {
   }> = [
     {
       label: 'Nombre:',
-      valor: 'Abcdabcdabcdaa Abcdabcdabcdaa',
+      valor: nombreCompleto,
       color: BLANCO,
       tamanio: 16
     },

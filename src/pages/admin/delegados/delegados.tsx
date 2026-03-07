@@ -123,6 +123,6 @@ export default function Delegados() {
         open={modalSeleccionOpen}
         onOpenChange={setModalSeleccionOpen}
       />
-  </>
+    </>
   )
 }
