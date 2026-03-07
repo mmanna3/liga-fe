@@ -13,8 +13,8 @@ import {
 } from '@react-pdf/renderer'
 
 Font.register({
-  family: 'CollegiateFLF',
-  src: '/fonts/CollegiateFLF.ttf'
+  family: 'VarsityTeam',
+  src: '/fonts/VarsityTeam-Bold.otf'
 })
 
 // Colores del diseño original Carnets.cshtml
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     borderColor: VERDE,
     borderRadius: 4,
     padding: '5mm',
-    fontFamily: 'CollegiateFLF',
+    fontFamily: 'VarsityTeam',
     alignItems: 'center',
     overflow: 'hidden',
     position: 'relative' as const
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: VERDE,
     textAlign: 'center',
-    fontFamily: 'CollegiateFLF',
+    fontFamily: 'VarsityTeam',
     maxLines: 3
   },
   // subtitulo: {
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   //   color: AZUL,
   //   textAlign: 'center',
   //   marginBottom: 6,
-  //   fontFamily: 'CollegiateFLF'
+  //   fontFamily: 'VarsityTeam'
   // },
   imgContainer: {
     width: `${IMG_SIZE}mm`,
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
   imgPlaceholderText: {
     fontSize: 5,
     color: GRIS,
-    fontFamily: 'CollegiateFLF'
+    fontFamily: 'VarsityTeam'
   },
   campoRow: {
     marginBottom: 2,
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     textAlign: 'center',
-    fontFamily: 'CollegiateFLF',
+    fontFamily: 'VarsityTeam',
     width: '100%'
   }
 })
