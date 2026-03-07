@@ -102,7 +102,10 @@ export default function AdminLayout() {
             <Menu className='w-6 h-6' />
           </Button>
         </SheetTrigger>
-        <SheetContent side='left' className='admin-sidebar w-64 bg-gray-900 text-white p-4'>
+        <SheetContent
+          side='left'
+          className='admin-sidebar w-64 bg-gray-900 text-white p-4'
+        >
           <nav className='space-y-2'>
             {menuItems.map(({ name, path, icon: Icon }) => (
               <NavLink
