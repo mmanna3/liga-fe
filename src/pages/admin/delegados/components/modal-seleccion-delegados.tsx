@@ -53,10 +53,10 @@ export default function ModalSeleccionDelegados({
           .map((d) => api.delegadoGET(d.id!))
       )
       await generarCarnetsDelegadosPDF([
-        ...delegadosCompletos,
-        ...delegadosCompletos,
-        ...delegadosCompletos,
         ...delegadosCompletos
+        // ...delegadosCompletos,
+        // ...delegadosCompletos,
+        // ...delegadosCompletos
       ])
       onOpenChange(false)
     } finally {

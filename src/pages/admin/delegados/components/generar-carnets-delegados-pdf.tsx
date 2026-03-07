@@ -93,7 +93,15 @@ const styles = StyleSheet.create({
   },
   cardTop: {
     alignItems: 'center',
-    marginBottom: 0
+    marginBottom: 0,
+    flexShrink: 0
+  },
+  tituloContainer: {
+    width: '100%',
+    height: '32mm',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    marginBottom: 2
   },
   waveSection: {
     position: 'absolute' as const,
@@ -134,19 +142,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: VERDE,
     textAlign: 'center',
-    marginBottom: 1,
-    fontFamily: 'CollegiateFLF'
+    fontFamily: 'CollegiateFLF',
+    maxLines: 3
   },
-  subtitulo: {
-    fontSize: 12,
-    color: AZUL,
-    textAlign: 'center',
-    marginBottom: 6,
-    fontFamily: 'CollegiateFLF'
-  },
+  // subtitulo: {
+  //   fontSize: 12,
+  //   color: AZUL,
+  //   textAlign: 'center',
+  //   marginBottom: 6,
+  //   fontFamily: 'CollegiateFLF'
+  // },
   imgContainer: {
     width: `${IMG_SIZE}mm`,
     height: `${IMG_SIZE}mm`,
+    minWidth: `${IMG_SIZE}mm`,
+    minHeight: `${IMG_SIZE}mm`,
+    flexShrink: 0,
     alignSelf: 'center',
     marginBottom: 6,
     borderWidth: 0.3,
@@ -157,6 +168,9 @@ const styles = StyleSheet.create({
   imgPlaceholder: {
     width: `${IMG_SIZE}mm`,
     height: `${IMG_SIZE}mm`,
+    minWidth: `${IMG_SIZE}mm`,
+    minHeight: `${IMG_SIZE}mm`,
+    flexShrink: 0,
     alignSelf: 'center',
     marginBottom: 6,
     borderWidth: 0.3,
@@ -186,7 +200,7 @@ const styles = StyleSheet.create({
 })
 
 function CarnetDelegado({ delegado }: { delegado: DelegadoDTO }) {
-  const titulo = clubsDelegado(delegado) || 'Delegado'
+  const titulo = 'Gimnasia y Esgrima de Gregoria Laferrere' || 'Delegado'
   const imgSrc = delegado.fotoCarnet
     ? toImageDataUrl(delegado.fotoCarnet)
     : null
@@ -204,7 +218,7 @@ function CarnetDelegado({ delegado }: { delegado: DelegadoDTO }) {
       label: 'Nombre:',
       valor: nombreCompleto,
       color: BLANCO,
-      tamanio: 16
+      tamanio: nombreCompleto.length > 16 ? 12 : 16
     },
     { label: 'DNI:', valor: delegado.dni ?? '-', color: BLANCO, tamanio: 14 },
     {
@@ -238,8 +252,10 @@ function CarnetDelegado({ delegado }: { delegado: DelegadoDTO }) {
         </Svg>
       </View>
       <View style={styles.cardTop}>
-        <Text style={styles.titulo}>{titulo}</Text>
-        <Text style={styles.subtitulo}>Liga</Text>
+        <View style={styles.tituloContainer}>
+          <Text style={styles.titulo}>{titulo}</Text>
+        </View>
+        {/* <Text style={styles.subtitulo}>Liga</Text> */}
         {imgSrc ? (
           <View style={styles.imgContainer}>
             <Image
