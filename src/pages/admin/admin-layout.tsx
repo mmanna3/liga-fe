@@ -11,9 +11,9 @@ import {
   Menu,
   Shield,
   Trophy,
+  User,
   UserCog,
-  Users,
-  User
+  Users
 } from 'lucide-react'
 import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
@@ -47,7 +47,7 @@ export default function AdminLayout() {
     <div className='flex h-screen w-screen'>
       <Toaster />
       {/* Menú lateral */}
-      <aside className='hidden md:flex flex-col w-64 bg-gray-900 text-white p-4'>
+      <aside className='admin-sidebar hidden md:flex flex-col w-64 bg-gray-900 text-white p-4'>
         <nav className='space-y-2 flex-1'>
           {menuItems.map(({ name, path, icon: Icon }) => (
             <NavLink
@@ -56,7 +56,9 @@ export default function AdminLayout() {
               className={({ isActive }) =>
                 cn(
                   'flex items-center gap-2 px-3 py-2 rounded-lg transition',
-                  isActive ? 'bg-gray-700' : 'hover:bg-gray-800'
+                  isActive
+                    ? 'bg-gray-700'
+                    : 'hover:bg-gray-800 hover:text-green-300'
                 )
               }
             >
@@ -100,7 +102,7 @@ export default function AdminLayout() {
             <Menu className='w-6 h-6' />
           </Button>
         </SheetTrigger>
-        <SheetContent side='left' className='w-64 bg-gray-900 text-white p-4'>
+        <SheetContent side='left' className='admin-sidebar w-64 bg-gray-900 text-white p-4'>
           <nav className='space-y-2'>
             {menuItems.map(({ name, path, icon: Icon }) => (
               <NavLink
@@ -110,7 +112,9 @@ export default function AdminLayout() {
                 className={({ isActive }) =>
                   cn(
                     'flex items-center gap-2 px-3 py-2 rounded-lg transition',
-                    isActive ? 'bg-gray-700' : 'hover:bg-gray-800'
+                    isActive
+                      ? 'bg-gray-700'
+                      : 'hover:bg-gray-800 hover:text-green-300'
                   )
                 }
               >
