@@ -1,0 +1,8 @@
+npm run format
+npm run lint:fix
+
+# Re-agregar archivos modificados por los fixers
+git add -u
+
+# Si hay errores de tipos, se cancela el commit
+npm run check:tsc

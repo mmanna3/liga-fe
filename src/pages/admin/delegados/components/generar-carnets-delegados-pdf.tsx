@@ -243,7 +243,10 @@ function CarnetDelegado({
     : null
 
   const nombreCompleto =
-    [delegado.nombre, delegado.apellido].filter(Boolean).join(' ') || '-'
+    [delegado.nombre?.trim(), delegado.apellido?.trim()]
+      .filter(Boolean)
+      .join(' ')
+      .trim() || '-'
 
   const campos: Array<{
     label: string
