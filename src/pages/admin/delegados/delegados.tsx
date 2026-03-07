@@ -7,11 +7,13 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover'
+import { Boton } from '@/components/ykn-ui/boton'
 import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
 import { EstadoDelegado } from '@/lib/utils'
-import { FilterIcon } from 'lucide-react'
+import { FileDown, FilterIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import ModalSeleccionDelegados from './components/modal-seleccion-delegados'
 import Tabla from './tabla'
 
 const estadoConfigArray = [
@@ -24,6 +26,7 @@ export default function Delegados() {
   const navigate = useNavigate()
   const location = useLocation()
   const [filtroEstados, setFiltroEstados] = useState<EstadoDelegado[]>([])
+  const [modalSeleccionOpen, setModalSeleccionOpen] = useState(false)
 
   useEffect(() => {
     const filtrosParam = searchParams.get('filtros')
@@ -69,39 +72,57 @@ export default function Delegados() {
   })
 
   return (
-    <FlujoHomeLayout
-      titulo='Delegados'
-      panelDerecho={
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant='outline'>
-              <FilterIcon className='w-4 h-4 mr-1' />
-              Filtrar por estado
-              {filtroEstados.length > 0 && (
-                <span className='ml-1 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs'>
-                  {filtroEstados.length}
-                </span>
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className='w-48 flex flex-col gap-1'>
-            {estadoConfigArray.map(({ key, label }) => (
-              <div
-                key={key}
-                className={`cursor-pointer flex items-center gap-2 p-2 rounded-md ${
-                  filtroEstados.includes(key) ? 'bg-blue-100' : ''
-                }`}
-                onClick={() => toggleFiltro(key)}
-              >
-                <span className='text-sm'>{label}</span>
-              </div>
-            ))}
-          </PopoverContent>
-        </Popover>
-      }
-      contenido={
-        <Tabla data={data || []} isLoading={isLoading} isError={isError} />
-      }
-    />
+    <>
+      <FlujoHomeLayout
+        titulo='Delegados'
+        panelDerecho={
+          <div className='flex items-center gap-2'>
+            <Boton
+              variant='outline'
+              className='group h-10 w-10 min-w-10 gap-0 overflow-hidden px-0 transition-[width,gap,padding] duration-200 hover:w-auto hover:min-w-56 hover:gap-2 hover:px-3'
+              onClick={() => setModalSeleccionOpen(true)}
+            >
+              <FileDown className='h-5 w-5 shrink-0' />
+              <span className='max-w-0 overflow-hidden whitespace-nowrap transition-[max-width] duration-200 group-hover:max-w-48'>
+                Generar carnets PDF
+              </span>
+            </Boton>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant='outline'>
+                  <FilterIcon className='w-4 h-4 mr-1' />
+                  Filtrar por estado
+                  {filtroEstados.length > 0 && (
+                    <span className='ml-1 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs'>
+                      {filtroEstados.length}
+                    </span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className='w-48 flex flex-col gap-1'>
+                {estadoConfigArray.map(({ key, label }) => (
+                  <div
+                    key={key}
+                    className={`cursor-pointer flex items-center gap-2 p-2 rounded-md ${
+                      filtroEstados.includes(key) ? 'bg-blue-100' : ''
+                    }`}
+                    onClick={() => toggleFiltro(key)}
+                  >
+                    <span className='text-sm'>{label}</span>
+                  </div>
+                ))}
+              </PopoverContent>
+            </Popover>
+          </div>
+        }
+        contenido={
+          <Tabla data={data || []} isLoading={isLoading} isError={isError} />
+        }
+      />
+      <ModalSeleccionDelegados
+        open={modalSeleccionOpen}
+        onOpenChange={setModalSeleccionOpen}
+      />
+  </>
   )
 }
