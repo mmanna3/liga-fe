@@ -33,11 +33,25 @@ const IMG_SIZE = 38
 const WATERMARK_SIZE = 42
 const ICONO_LIGA = '/ligas/edefi/icono.png'
 
-const clubsDelegado = (d: DelegadoDTO): string =>
-  d.delegadoClubs
-    ?.map((dc) => dc.clubNombre)
-    .filter(Boolean)
-    .join(', ') ?? ''
+/** Expande delegados a un carnet por club. Si tiene varios clubs → varios carnets idénticos salvo el club. */
+const expandirDelegadosACarnets = (
+  delegados: DelegadoDTO[]
+): Array<{ delegado: DelegadoDTO; clubNombre: string }> => {
+  const items: Array<{ delegado: DelegadoDTO; clubNombre: string }> = []
+  for (const d of delegados) {
+    const clubs = d.delegadoClubs
+      ?.map((dc) => dc.clubNombre)
+      .filter((c): c is string => Boolean(c)) ?? []
+    if (clubs.length === 0) {
+      items.push({ delegado: d, clubNombre: 'Delegado' })
+    } else {
+      for (const clubNombre of clubs) {
+        items.push({ delegado: d, clubNombre })
+      }
+    }
+  }
+  return items
+}
 
 const formatFechaNac = (d: DelegadoDTO): string => {
   const f = d.fechaNacimiento
@@ -198,8 +212,14 @@ const styles = StyleSheet.create({
   }
 })
 
-function CarnetDelegado({ delegado }: { delegado: DelegadoDTO }) {
-  const titulo = clubsDelegado(delegado) || 'Delegado'
+function CarnetDelegado({
+  delegado,
+  clubNombre
+}: {
+  delegado: DelegadoDTO
+  clubNombre: string
+}) {
+  const titulo = clubNombre
   const imgSrc = delegado.fotoCarnet
     ? toImageDataUrl(delegado.fotoCarnet)
     : null
@@ -288,16 +308,18 @@ function CarnetDelegado({ delegado }: { delegado: DelegadoDTO }) {
   )
 }
 
-function CarnetsDocument({ delegados }: { delegados: DelegadoDTO[] }) {
+type CarnetItem = { delegado: DelegadoDTO; clubNombre: string }
+
+function CarnetsDocument({ items }: { items: CarnetItem[] }) {
   const CARDS_PER_PAGE = 9
-  const pages: DelegadoDTO[][] = []
-  for (let i = 0; i < delegados.length; i += CARDS_PER_PAGE) {
-    pages.push(delegados.slice(i, i + CARDS_PER_PAGE))
+  const pages: CarnetItem[][] = []
+  for (let i = 0; i < items.length; i += CARDS_PER_PAGE) {
+    pages.push(items.slice(i, i + CARDS_PER_PAGE))
   }
 
   return (
     <Document>
-      {pages.map((pageDelegados, pageIdx) => (
+      {pages.map((pageItems, pageIdx) => (
         <Page
           key={pageIdx}
           size='A4'
@@ -308,8 +330,8 @@ function CarnetsDocument({ delegados }: { delegados: DelegadoDTO[] }) {
             <View key={row} style={styles.row}>
               {[0, 1, 2].map((col) => {
                 const idx = row * CARDS_PER_ROW + col
-                const delegado = pageDelegados[idx]
-                if (!delegado)
+                const item = pageItems[idx]
+                if (!item)
                   return (
                     <View
                       key={col}
@@ -321,8 +343,9 @@ function CarnetsDocument({ delegados }: { delegados: DelegadoDTO[] }) {
                   )
                 return (
                   <CarnetDelegado
-                    key={delegado.id ?? idx}
-                    delegado={delegado}
+                    key={`${item.delegado.id}-${item.clubNombre}-${idx}`}
+                    delegado={item.delegado}
+                    clubNombre={item.clubNombre}
                   />
                 )
               })}
@@ -339,7 +362,8 @@ export const generarCarnetsDelegadosPDF = async (
 ): Promise<void> => {
   if (delegados.length === 0) return
 
-  const blob = await pdf(<CarnetsDocument delegados={delegados} />).toBlob()
+  const items = expandirDelegadosACarnets(delegados)
+  const blob = await pdf(<CarnetsDocument items={items} />).toBlob()
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url

@@ -47,11 +47,10 @@ export default function ModalSeleccionDelegados({
     setGenerandoPDF(true)
     try {
       // Obtener datos completos (con fotoCarnet) de cada delegado seleccionado
-      const delegadosCompletos = await Promise.all(
-        selectedDelegados
-          .filter((d) => d.id != null)
-          .map((d) => api.delegadoGET(d.id!))
-      )
+      const ids = selectedDelegados
+        .filter((d) => d.id != null)
+        .map((d) => d.id!)
+      const delegadosCompletos = await api.delegadosPorIds(ids)
       await generarCarnetsDelegadosPDF([
         ...delegadosCompletos
         // ...delegadosCompletos,
