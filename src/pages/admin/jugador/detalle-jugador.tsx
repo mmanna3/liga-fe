@@ -1,8 +1,10 @@
 import { api } from '@/api/api'
+import useApiMutation from '@/api/custom-hooks/use-api-mutation'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/components/cargando-y-error-contenedor'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import ModalEliminacion from '@/components/modal-eliminacion'
 import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
 import DetalleItem from '@/components/ykn-ui/detalle-item'
@@ -22,6 +24,14 @@ export default function DetalleJugador() {
   } = useApiQuery({
     key: ['jugador', id],
     fn: async () => await api.jugadorGET(Number(id))
+  })
+
+  const eliminarMutation = useApiMutation({
+    fn: async (jugadorId: number) => {
+      await api.jugadorDELETE(jugadorId)
+    },
+    antesDeMensajeExito: () => navigate(rutasNavegacion.jugadores),
+    mensajeDeExito: `El jugador de DNI '${jugador?.dni}' fue eliminado.`
   })
 
   // Función para formatear la fecha en formato dd-MM-yy
@@ -141,6 +151,20 @@ export default function DetalleJugador() {
                   </li>
                 ))}
               </ul>
+              <VisibleSoloParaAdmin>
+                <div className='mb-6 flex justify-end'>
+                  <ModalEliminacion
+                    titulo='Eliminar jugador'
+                    subtitulo='Al eliminar el jugador, se lo desvinculará también de todos los equipos.'
+                    eliminarOnClick={() => eliminarMutation.mutate(jugador.id!)}
+                    eliminarTexto='Eliminar jugador'
+                    estaCargando={eliminarMutation.isPending}
+                    trigger={
+                      <Button variant='destructive'>Eliminar jugador</Button>
+                    }
+                  />
+                </div>
+              </VisibleSoloParaAdmin>
             </CardContent>
           </Card>
         </>
