@@ -52,10 +52,10 @@ export default function ModalSeleccionDelegados({
         .map((d) => d.id!)
       const delegadosCompletos = await api.delegadosPorIds(ids)
       await generarCarnetsDelegadosPDF([
+        ...delegadosCompletos,
+        ...delegadosCompletos,
+        ...delegadosCompletos,
         ...delegadosCompletos
-        // ...delegadosCompletos,
-        // ...delegadosCompletos,
-        // ...delegadosCompletos
       ])
       onOpenChange(false)
     } finally {
@@ -142,7 +142,7 @@ export default function ModalSeleccionDelegados({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='max-w-6xl max-h-[90vh] overflow-hidden flex flex-col'>
+      <DialogContent className='left-[55%]! top-[30%] w-full -translate-x-1/2! sm:max-w-6xl max-h-[90vh] overflow-hidden flex flex-col'>
         <DialogHeader>
           <DialogTitle>Selección de delegados</DialogTitle>
         </DialogHeader>

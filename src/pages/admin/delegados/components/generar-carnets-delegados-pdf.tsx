@@ -1,4 +1,7 @@
 import { DelegadoDTO } from '@/api/clients'
+import roboto400 from '@fontsource/roboto/files/roboto-latin-400-normal.woff?url'
+import roboto600 from '@fontsource/roboto/files/roboto-latin-600-normal.woff?url'
+import roboto700 from '@fontsource/roboto/files/roboto-latin-700-normal.woff?url'
 import {
   Document,
   Font,
@@ -17,6 +20,18 @@ Font.register({
   src: '/fonts/VarsityTeam-Bold.otf'
 })
 
+Font.register({
+  family: 'Roboto',
+  fonts: [
+    { src: roboto400, fontWeight: 400 },
+    { src: roboto600, fontWeight: 600 },
+    { src: roboto700, fontWeight: 700 }
+  ]
+})
+
+// Evita que las palabras se corten con guiones; si no entran, bajan de renglón completas
+Font.registerHyphenationCallback((word) => [word])
+
 // Colores del diseño original Carnets.cshtml
 const VERDE = '#01582e'
 // const ROJO = '#e81f05'
@@ -25,7 +40,7 @@ const GRIS = '#b4b4b4'
 const BLANCO = '#eeeeee'
 
 const CARD_WIDTH = 68
-const CARD_HEIGHT = 86
+const CARD_HEIGHT = 92
 const CARDS_PER_ROW = 3
 const MARGIN = 2
 const GAP = 0
@@ -115,7 +130,7 @@ const styles = StyleSheet.create({
     height: '32mm',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    marginBottom: 2
+    paddingBottom: 2
   },
   waveSection: {
     position: 'absolute' as const,
@@ -173,6 +188,7 @@ const styles = StyleSheet.create({
     minHeight: `${IMG_SIZE}mm`,
     flexShrink: 0,
     alignSelf: 'center',
+    marginTop: 2,
     marginBottom: 6,
     borderWidth: 0.3,
     borderColor: VERDE,
@@ -206,9 +222,10 @@ const styles = StyleSheet.create({
   },
   campoValor: {
     fontSize: 14,
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
+    paddingBottom: 3,
     textAlign: 'center',
-    fontFamily: 'VarsityTeam',
+    fontFamily: 'Roboto',
     width: '100%'
   }
 })
@@ -233,19 +250,29 @@ function CarnetDelegado({
     valor: string
     color: string
     tamanio: number
+    fontWeight: string
   }> = [
     {
       label: 'Nombre:',
       valor: nombreCompleto,
       color: BLANCO,
-      tamanio: nombreCompleto.length > 16 ? 12 : 16
+      tamanio:
+        nombreCompleto.length > 22 ? 10 : nombreCompleto.length > 16 ? 14 : 16,
+      fontWeight: 'semibold'
     },
-    { label: 'DNI:', valor: delegado.dni ?? '-', color: BLANCO, tamanio: 14 },
+    {
+      label: 'DNI:',
+      valor: delegado.dni ?? '-',
+      color: BLANCO,
+      tamanio: 13,
+      fontWeight: 'normal'
+    },
     {
       label: 'Fecha Nac:',
       valor: formatFechaNac(delegado),
       color: BLANCO,
-      tamanio: 10
+      tamanio: 10,
+      fontWeight: 'normal'
     }
     // {
     //   label: 'Categoría:',
@@ -296,9 +323,12 @@ function CarnetDelegado({
             <Text
               style={[
                 styles.campoValor,
-                { color: c.color, fontSize: c.tamanio }
+                {
+                  color: c.color,
+                  fontSize: c.tamanio,
+                  fontWeight: c.fontWeight
+                }
               ]}
-              wrap={false}
             >
               {c.valor}
             </Text>

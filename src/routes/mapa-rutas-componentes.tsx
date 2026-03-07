@@ -25,6 +25,7 @@ import FichajeExitoso from '@/pages/fichaje/fichaje-exitoso'
 import Login from '@/pages/login'
 import PoliticaDePrivacidad from '@/pages/politica-de-privacidad'
 import AdminLayout from '../pages/admin/admin-layout'
+import HomePlaceholder from '../pages/admin/home-placeholder'
 import Club from '../pages/admin/club/club'
 import CrearClub from '../pages/admin/club/crear-club'
 import EditarClub from '../pages/admin/club/editar-club'
@@ -79,7 +80,7 @@ export const mapaRutasComponentes = [
       </RequiereAutenticacion>
     ),
     children: [
-      { path: '', element: <></> },
+      { path: '', element: <HomePlaceholder /> },
       { path: rutas.clubs, element: <Club /> },
       { path: rutas.crearClub, element: <CrearClub /> },
       { path: `${rutas.detalleClub}/:id`, element: <DetalleClub /> },
