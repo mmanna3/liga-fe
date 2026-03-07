@@ -39,9 +39,10 @@ const expandirDelegadosACarnets = (
 ): Array<{ delegado: DelegadoDTO; clubNombre: string }> => {
   const items: Array<{ delegado: DelegadoDTO; clubNombre: string }> = []
   for (const d of delegados) {
-    const clubs = d.delegadoClubs
-      ?.map((dc) => dc.clubNombre)
-      .filter((c): c is string => Boolean(c)) ?? []
+    const clubs =
+      d.delegadoClubs
+        ?.map((dc) => dc.clubNombre)
+        .filter((c): c is string => Boolean(c)) ?? []
     if (clubs.length === 0) {
       items.push({ delegado: d, clubNombre: 'Delegado' })
     } else {
