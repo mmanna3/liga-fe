@@ -142,7 +142,7 @@ export default function ModalSeleccionDelegados({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='w-full top-70 left-260 sm:max-w-6xl max-h-[90vh] overflow-hidden flex flex-col'>
+      <DialogContent className='w-full sm:max-w-6xl max-h-[90vh] overflow-hidden flex flex-col'>
         <DialogHeader>
           <DialogTitle>Selección de delegados</DialogTitle>
         </DialogHeader>
