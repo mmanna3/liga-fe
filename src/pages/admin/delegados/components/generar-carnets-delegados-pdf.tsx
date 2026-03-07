@@ -19,7 +19,6 @@ Font.register({
 
 // Colores del diseño original Carnets.cshtml
 const VERDE = '#01582e'
-const AZUL = '#002987'
 // const ROJO = '#e81f05'
 const GRIS = '#b4b4b4'
 // const NEGRO = '#111111'
@@ -200,7 +199,7 @@ const styles = StyleSheet.create({
 })
 
 function CarnetDelegado({ delegado }: { delegado: DelegadoDTO }) {
-  const titulo = 'Gimnasia y Esgrima de Gregoria Laferrere' || 'Delegado'
+  const titulo = clubsDelegado(delegado) || 'Delegado'
   const imgSrc = delegado.fotoCarnet
     ? toImageDataUrl(delegado.fotoCarnet)
     : null
