@@ -7,7 +7,6 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Skeleton } from '@/components/ui/skeleton'
 import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
-import DetalleItem from '@/components/ykn-ui/detalle-item'
 import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
 import Tabla from '@/components/ykn-ui/tabla'
 import { EstadoJugador } from '@/lib/utils'
@@ -138,19 +137,20 @@ export default function DetalleEquipo() {
   return (
     <>
       <FlujoHomeLayout
-        titulo={
+        botonera={
           <BotoneraDetalleEquipo equipo={equipo!} jugadores={jugadores} />
         }
+        detalleItems={[
+          { clave: 'Club', valor: equipo!.clubNombre! },
+          {
+            clave: 'Torneo',
+            valor: equipo!.torneoNombre || 'No asignado'
+          },
+          { clave: 'Código', valor: equipo!.codigoAlfanumerico! }
+        ]}
+        headerClassName='items-start gap-4'
         contenido={
           <>
-            <div className='mb-4 space-y-2'>
-              <DetalleItem clave='Club' valor={equipo!.clubNombre!} />
-              <DetalleItem
-                clave='Torneo'
-                valor={equipo!.torneoNombre || 'No asignado'}
-              />
-              <DetalleItem clave='Código' valor={equipo!.codigoAlfanumerico!} />
-            </div>
             <Tabla
               columnas={columnas}
               data={equipo!.jugadores || []}
@@ -181,7 +181,6 @@ export default function DetalleEquipo() {
           </>
         }
         className='max-w-4xl mx-auto p-4'
-        headerClassName='items-start gap-4'
       />
 
       {equipo && (
