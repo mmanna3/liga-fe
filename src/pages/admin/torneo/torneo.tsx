@@ -2,7 +2,7 @@ import { api } from '@/api/api'
 import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useQuery } from '@tanstack/react-query'
-import { Award, Plus } from 'react-feather'
+import { Award, Plus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import TablaTorneo from './tabla'
 

@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
 import {
   BarChart2,
-  Layout,
+  LayoutDashboard,
   LogOut,
   Menu,
   Shield,
@@ -14,13 +14,13 @@ import {
   User,
   UserCheck,
   Users
-} from 'react-feather'
+} from 'lucide-react'
 import { useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 
 const baseMenuItems = [
   { name: 'Torneos', path: rutasNavegacion.torneos, icon: Award },
-  { name: 'Clubes', path: rutasNavegacion.clubs, icon: Layout },
+  { name: 'Clubes', path: rutasNavegacion.clubs, icon: LayoutDashboard },
   { name: 'Equipos', path: rutasNavegacion.equipos, icon: Shield },
   { name: 'Jugadores', path: rutasNavegacion.jugadores, icon: Users },
   { name: 'Delegados', path: rutasNavegacion.delegados, icon: UserCheck }

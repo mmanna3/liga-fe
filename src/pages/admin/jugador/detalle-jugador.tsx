@@ -12,7 +12,7 @@ import BotonVolver from '@/components/ykn-ui/boton-volver'
 import Link from '@/components/ykn-ui/link'
 import { EstadoJugador } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
-import { Calendar, CreditCard, Trash2 } from 'react-feather'
+import { Calendar, CreditCard, Trash2 } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export default function DetalleJugador() {

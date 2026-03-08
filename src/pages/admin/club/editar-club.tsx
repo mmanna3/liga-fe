@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
 import ContenedorBotones from '@/components/ykn-ui/contenedor-botones'
 import { rutasNavegacion } from '@/routes/rutas'
-import { Shield, Upload } from 'react-feather'
+import { Shield, Upload } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 

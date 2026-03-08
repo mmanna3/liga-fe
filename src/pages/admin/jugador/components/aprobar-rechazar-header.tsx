@@ -2,7 +2,7 @@ import { EquipoDelJugadorDTO, JugadorDTO } from '@/api/clients'
 import { CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Edit2 } from 'react-feather'
+import { Pencil } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import InputFecha from './fecha-input-editable'
 
@@ -115,7 +115,7 @@ function ItemTextoEditable({ valor, setValor, tamanio }: IItemEditableProps) {
         >
           {valor}
         </p>
-        <Edit2
+        <Pencil
           className={`${tamanioObj[tamanio].lapiz} hidden group-hover:block group-hover:text-blue-700 group-hover:font-semibold`}
         />
       </div>
@@ -152,7 +152,7 @@ function ItemFechaEditable({ valor, setValor }: IItemFechaEditableProps) {
         >
           {valor ? valor.toLocaleDateString('es-AR') : 'Sin fecha'}
         </p>
-        <Edit2 className='w-3 ml-1 pb-1 text-gray-500 hidden group-hover:block group-hover:text-blue-700 group-hover:font-semibold' />
+        <Pencil className='w-3 ml-1 pb-1 text-gray-500 hidden group-hover:block group-hover:text-blue-700 group-hover:font-semibold' />
       </div>
     )
   else

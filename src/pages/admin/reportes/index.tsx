@@ -7,7 +7,7 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { rutasNavegacion } from '@/routes/rutas'
-import { BarChart2 } from 'react-feather'
+import { BarChart2 } from 'lucide-react'
 
 import { useNavigate } from 'react-router-dom'
 

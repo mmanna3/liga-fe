@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/hooks/use-auth'
-import { Loader } from 'react-feather'
+import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -78,7 +78,7 @@ export default function Login() {
             <Button type='submit' className='w-full' disabled={isLoading}>
               {isLoading ? (
                 <>
-                  <Loader className='animate-spin' />
+                  <Loader2 className='animate-spin' />
                   Ingresando...
                 </>
               ) : (

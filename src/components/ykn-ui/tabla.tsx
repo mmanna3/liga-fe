@@ -33,7 +33,7 @@ import {
   ChevronRight,
   ChevronUp,
   MoreVertical
-} from 'react-feather'
+} from 'lucide-react'
 import { useState } from 'react'
 
 type TablaProps<T> = {

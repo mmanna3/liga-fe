@@ -24,7 +24,7 @@ import {
   Phone,
   Trash2,
   User
-} from 'react-feather'
+} from 'lucide-react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import DialogoBlanquearClaveDelegado from './components/dialogo-blanquear-clave-delegado'
 import DialogoEliminarDelegado from './components/dialogo-eliminar-delegado'

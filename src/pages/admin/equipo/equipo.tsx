@@ -1,7 +1,7 @@
 import { api } from '@/api/api'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
-import { Shield } from 'react-feather'
+import { Shield } from 'lucide-react'
 import Tabla from './tabla'
 
 export default function EquipoHome() {

@@ -1,5 +1,5 @@
 import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
-import { Users } from 'react-feather'
+import { Users } from 'lucide-react'
 import TablaJugador from './tabla'
 
 export default function Jugador() {

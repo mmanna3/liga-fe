@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
 import { rutasNavegacion } from '@/routes/rutas'
-import { Edit2, PlusCircle, Shield, UserCheck } from 'react-feather'
+import { Pencil, CirclePlus, Shield, UserCheck } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export default function DetalleClub() {
@@ -72,7 +72,7 @@ export default function DetalleClub() {
           {
             alApretar: () => navigate(`${rutasNavegacion.editarClub}/${id}`),
             tooltip: 'Editar',
-            icono: Edit2,
+            icono: Pencil,
             visibleSoloParaAdmin: true
           }
         ]
@@ -129,7 +129,7 @@ export default function DetalleClub() {
                   size='sm'
                   className='flex items-center gap-1'
                 >
-                  <PlusCircle className='h-4 w-4' />
+                  <CirclePlus className='h-4 w-4' />
                   Nuevo
                 </Button>
               </VisibleSoloParaAdmin>

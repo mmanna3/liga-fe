@@ -4,7 +4,7 @@ import useApiMutation from '@/api/custom-hooks/use-api-mutation'
 import type { BotoneraProps } from '@/components/ykn-ui/botonera'
 import { generarReportePDF } from '@/pages/admin/equipo/components/reporte-jugadores-pdf'
 import { rutasNavegacion } from '@/routes/rutas'
-import { Download, Edit2, Trash2 } from 'react-feather'
+import { Download, Pencil, Trash2 } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 interface UseBotoneraDetalleEquipoArgs {
@@ -47,7 +47,7 @@ export function useBotoneraDetalleEquipo({
         alApretar: () =>
           navigate(`${rutasNavegacion.editarEquipo}/${equipo.id}`),
         tooltip: 'Editar',
-        icono: Edit2,
+        icono: Pencil,
         visibleSoloParaAdmin: true
       },
       {
