@@ -1,6 +1,6 @@
 import { Label } from '@/design-system/base-ui/label'
+import Icono, { type NombreIcono } from '@/design-system/ykn-ui/icono'
 import { cn } from '@/logica-compartida/utils'
-import { CalendarRange, Globe, Settings, Zap } from 'lucide-react'
 import type { DatosWizardTorneo } from '../tipos'
 
 export type FormatoTorneo = DatosWizardTorneo['formato']
@@ -8,12 +8,12 @@ export type FormatoTorneo = DatosWizardTorneo['formato']
 const OPCIONES_FORMATO: {
   id: FormatoTorneo
   label: string
-  icon: typeof CalendarRange
+  icono: NombreIcono
 }[] = [
-  { id: 'ANUAL', label: 'Apertura/Clausura', icon: CalendarRange },
-  { id: 'MUNDIAL', label: 'Mundial', icon: Globe },
-  { id: 'RELAMPAGO', label: 'Eliminación directa', icon: Zap },
-  { id: 'PERSONALIZADO', label: 'Personalizado', icon: Settings }
+  { id: 'ANUAL', label: 'Apertura/Clausura', icono: 'Apertura/Clausura' },
+  { id: 'MUNDIAL', label: 'Mundial', icono: 'Mundial' },
+  { id: 'RELAMPAGO', label: 'Eliminación directa', icono: 'Relámpago' },
+  { id: 'PERSONALIZADO', label: 'Personalizado', icono: 'Personalizado' }
 ]
 
 interface SelectorFormatoProps {
@@ -48,7 +48,8 @@ export function SelectorFormato({
                 : 'bg-muted border-transparent hover:border-border'
             )}
           >
-            <formato.icon
+            <Icono
+              nombre={formato.icono}
               className={cn(
                 'w-10 h-10',
                 valor === formato.id ? 'text-primary' : 'text-muted-foreground'

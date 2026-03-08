@@ -43,6 +43,12 @@ const MAPEO_ICONOS: Record<
   Siguiente: LucideIcons.ChevronRight,
   'Más opciones': LucideIcons.MoreVertical,
 
+  // Formatos de torneo
+  'Apertura/Clausura': LucideIcons.CalendarRange,
+  Mundial: LucideIcons.Earth,
+  Relámpago: LucideIcons.Zap,
+  Personalizado: LucideIcons.Settings,
+
   // Datos personales
   Calendario: LucideIcons.CalendarDays,
   Carnet: LucideIcons.IdCard,
