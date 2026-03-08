@@ -1,19 +1,29 @@
+import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface FlujoHomeLayoutProps {
   titulo: React.ReactNode
   panelDerecho?: React.ReactNode
   contenido: React.ReactNode
+  className?: string
+  headerClassName?: string
 }
 
 export default function FlujoHomeLayout({
   titulo,
   panelDerecho,
-  contenido
+  contenido,
+  className,
+  headerClassName
 }: FlujoHomeLayoutProps) {
   return (
-    <Card>
-      <CardHeader className='flex flex-row items-center justify-between'>
+    <Card className={className}>
+      <CardHeader
+        className={cn(
+          'flex flex-row items-center justify-between',
+          headerClassName
+        )}
+      >
         <CardTitle>{titulo}</CardTitle>
         {panelDerecho}
       </CardHeader>

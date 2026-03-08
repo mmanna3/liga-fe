@@ -3,15 +3,15 @@ import { EquipoDTO, JugadorDelEquipoDTO } from '@/api/clients'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Skeleton } from '@/components/ui/skeleton'
 import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
+import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
 import DetalleItem from '@/components/ykn-ui/detalle-item'
 import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
 import Tabla from '@/components/ykn-ui/tabla'
 import { EstadoJugador } from '@/lib/utils'
-import Botonera from '@/pages/admin/equipo/components/botonera-detalle-equipo'
+import BotoneraDetalleEquipo from '@/pages/admin/equipo/components/botonera-detalle-equipo'
 import CambiarEstadoModal from '@/pages/admin/equipo/components/cambiar-estado-modal'
 import EfectuarPasesModal from '@/pages/admin/equipo/components/efectuar-pases-modal'
 import { useQuery } from '@tanstack/react-query'
@@ -137,48 +137,52 @@ export default function DetalleEquipo() {
 
   return (
     <>
-      <Card className='max-w-4xl mx-auto p-4'>
-        <CardHeader className='flex flex-row items-start justify-between gap-4'>
-          <Botonera equipo={equipo!} jugadores={jugadores} />
-        </CardHeader>
-        <CardContent>
-          <div className='mb-4 space-y-2'>
-            <DetalleItem clave='Club' valor={equipo!.clubNombre!} />
-            <DetalleItem
-              clave='Torneo'
-              valor={equipo!.torneoNombre || 'No asignado'}
-            />
-            <DetalleItem clave='Código' valor={equipo!.codigoAlfanumerico!} />
-          </div>
-          <Tabla
-            columnas={columnas}
-            data={equipo!.jugadores || []}
-            estaCargando={isLoading}
-            hayError={isError}
-            rowSelection={rowSelection}
-            onRowSelectionChange={setRowSelection}
-            pageSizeDefault={100}
-          />
-          <VisibleSoloParaAdmin>
-            <div className='mt-6 flex gap-2'>
-              <Button
-                variant='outline'
-                disabled={selectedJugadores.length === 0}
-                onClick={() => setPasesModalOpen(true)}
-              >
-                Efectuar pases
-              </Button>
-              <Button
-                variant='outline'
-                disabled={selectedJugadores.length === 0}
-                onClick={() => setCambioEstadoModalOpen(true)}
-              >
-                Cambiar estado
-              </Button>
+      <FlujoHomeLayout
+        titulo={
+          <BotoneraDetalleEquipo equipo={equipo!} jugadores={jugadores} />
+        }
+        contenido={
+          <>
+            <div className='mb-4 space-y-2'>
+              <DetalleItem clave='Club' valor={equipo!.clubNombre!} />
+              <DetalleItem
+                clave='Torneo'
+                valor={equipo!.torneoNombre || 'No asignado'}
+              />
+              <DetalleItem clave='Código' valor={equipo!.codigoAlfanumerico!} />
             </div>
-          </VisibleSoloParaAdmin>
-        </CardContent>
-      </Card>
+            <Tabla
+              columnas={columnas}
+              data={equipo!.jugadores || []}
+              estaCargando={isLoading}
+              hayError={isError}
+              rowSelection={rowSelection}
+              onRowSelectionChange={setRowSelection}
+              pageSizeDefault={100}
+            />
+            <VisibleSoloParaAdmin>
+              <div className='mt-6 flex gap-2'>
+                <Button
+                  variant='outline'
+                  disabled={selectedJugadores.length === 0}
+                  onClick={() => setPasesModalOpen(true)}
+                >
+                  Efectuar pases
+                </Button>
+                <Button
+                  variant='outline'
+                  disabled={selectedJugadores.length === 0}
+                  onClick={() => setCambioEstadoModalOpen(true)}
+                >
+                  Cambiar estado
+                </Button>
+              </div>
+            </VisibleSoloParaAdmin>
+          </>
+        }
+        className='max-w-4xl mx-auto p-4'
+        headerClassName='items-start gap-4'
+      />
 
       {equipo && (
         <>
