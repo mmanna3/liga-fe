@@ -142,6 +142,7 @@ export default function DetalleEquipo() {
   return (
     <>
       <FlujoHomeLayout
+        titulo={equipo!.nombre}
         botonera={botoneraProps}
         detalleItems={[
           { clave: 'Club', valor: equipo!.clubNombre! },

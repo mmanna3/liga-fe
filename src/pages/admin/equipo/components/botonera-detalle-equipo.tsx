@@ -1,7 +1,6 @@
 import { api } from '@/api/api'
 import { EquipoDTO } from '@/api/clients'
 import useApiMutation from '@/api/custom-hooks/use-api-mutation'
-import { CardTitle } from '@/components/ui/card'
 import type { BotoneraProps } from '@/components/ykn-ui/botonera'
 import { generarReportePDF } from '@/pages/admin/equipo/components/reporte-jugadores-pdf'
 import { rutasNavegacion } from '@/routes/rutas'
@@ -34,10 +33,7 @@ export function useBotoneraDetalleEquipo({
   })
 
   if (!equipo?.id) {
-    return {
-      iconos: [],
-      children: <CardTitle>Cargando...</CardTitle>
-    }
+    return { iconos: [] }
   }
 
   return {
@@ -68,6 +64,6 @@ export function useBotoneraDetalleEquipo({
         }
       }
     ],
-    children: <CardTitle>{equipo.nombre}</CardTitle>
+    classNameBotonVolver: '-ml-2'
   }
 }

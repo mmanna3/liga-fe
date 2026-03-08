@@ -30,6 +30,8 @@ export interface BotoneraProps {
   iconos: IconoBotonera[]
   /** Contenido que va a la izquierda (ej. título) */
   children?: React.ReactNode
+  /** Clase para el BotonVolver cuando FlujoHomeLayout lo renderiza */
+  classNameBotonVolver?: string
 }
 
 function IconoBoton({ item }: { item: IconoBotonera }) {
