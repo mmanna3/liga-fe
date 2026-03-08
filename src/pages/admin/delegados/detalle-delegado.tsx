@@ -10,7 +10,7 @@ import DetalleItem from '@/components/ykn-ui/detalle-item'
 import LayoutABM from '@/components/ykn-ui/layout-abm'
 import { estadoBadgeClassDelegado, EstadoDelegado } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
-import { Layout, User } from 'react-feather'
+import { Calendar, CreditCard, Layout, Mail, Phone, User } from 'react-feather'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import DialogoBlanquearClaveDelegado from './components/dialogo-blanquear-clave-delegado'
 import DialogoEliminarDelegado from './components/dialogo-eliminar-delegado'
@@ -66,23 +66,29 @@ export default function DetalleDelegado() {
                 )}
               </div>
               <div className='flex flex-col gap-1 bg-gray-50 p-5 rounded-lg mb-6'>
-                <DetalleItem clave='DNI' valor={delegado.dni} />
                 <DetalleItem
-                  clave='Usuario'
+                  icon={<CreditCard className='h-5 w-5' />}
+                  valor={delegado.dni}
+                />
+                <DetalleItem
+                  icon={<User className='h-5 w-5' />}
                   valor={
                     delegado.usuario?.nombreUsuario ?? 'Usuario aún no generado'
                   }
                 />
                 <DetalleItem
-                  clave='Fecha de nacimiento'
+                  icon={<Calendar className='h-5 w-5' />}
                   valor={delegado.fechaNacimiento.toLocaleDateString('es-AR')}
                 />
                 {delegado.email && (
-                  <DetalleItem clave='Email' valor={delegado.email} />
+                  <DetalleItem
+                    icon={<Mail className='h-5 w-5' />}
+                    valor={delegado.email}
+                  />
                 )}
                 {delegado.telefonoCelular && (
                   <DetalleItem
-                    clave='Teléfono'
+                    icon={<Phone className='h-5 w-5' />}
                     valor={delegado.telefonoCelular}
                   />
                 )}

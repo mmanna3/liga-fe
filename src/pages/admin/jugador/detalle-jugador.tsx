@@ -10,6 +10,7 @@ import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-
 import LayoutABM from '@/components/ykn-ui/layout-abm'
 import { EstadoJugador } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
+import { Calendar, CreditCard } from 'react-feather'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export default function DetalleJugador() {
@@ -69,9 +70,12 @@ export default function DetalleJugador() {
                 />
               </div>
               <div className='flex flex-col gap-1 bg-gray-50 p-5 rounded-lg mb-6'>
-                <DetalleItem clave='DNI' valor={jugador.dni!} />
                 <DetalleItem
-                  clave='Fecha de nacimiento'
+                  icon={<CreditCard className='h-5 w-5' />}
+                  valor={jugador.dni!}
+                />
+                <DetalleItem
+                  icon={<Calendar className='h-5 w-5' />}
                   valor={jugador.fechaNacimiento!.toLocaleDateString('es-AR')}
                 />
               </div>

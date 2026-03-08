@@ -1,12 +1,19 @@
 interface Props {
-  clave: string
+  clave?: string
   valor: string
+  icon?: React.ReactNode
 }
 
-export default function DetalleItem({ clave, valor }: Props) {
+export default function DetalleItem({ clave, valor, icon }: Props) {
   return (
-    <div className='flex space-x-1'>
-      <h2 className='text-md font-bold'>{clave}:</h2>
+    <div className='flex items-center gap-2'>
+      {icon ? (
+        <span className='text-gray-900 font-bold shrink-0 [&>svg]:stroke-[2.5]'>
+          {icon}
+        </span>
+      ) : (
+        <h2 className='text-md font-bold shrink-0'>{clave}:</h2>
+      )}
       <p className='text-md'>{valor}</p>
     </div>
   )
