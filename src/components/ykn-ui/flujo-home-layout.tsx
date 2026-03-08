@@ -1,13 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import BotonVolver from '@/components/ykn-ui/boton-volver'
+import { Card, CardContent } from '@/components/ui/card'
+import Cabecera from '@/components/ykn-ui/cabecera'
+import type { DetalleItemData } from '@/components/ykn-ui/cabecera'
 import type { BotoneraProps } from '@/components/ykn-ui/botonera'
-import Botonera from '@/components/ykn-ui/botonera'
-import DetalleItem from '@/components/ykn-ui/detalle-item'
 
-export interface DetalleItemData {
-  clave: string
-  valor: string
-}
+export type { DetalleItemData }
 
 interface FlujoHomeLayoutProps {
   /** Título principal (obligatorio) */
@@ -36,31 +32,13 @@ export default function FlujoHomeLayout({
     <div
       className={`max-w-4xl mx-auto px-4 ${ocultarBotonVolver ? 'pt-13' : '-pt-1'}`}
     >
-      {!ocultarBotonVolver && (
-        <div className='mb-4'>
-          <BotonVolver className={botonera?.classNameBotonVolver} />
-        </div>
-      )}
-      <Card className='mb-6 shadow-md'>
-        <CardHeader className='flex flex-row items-center justify-between pb-4'>
-          <div className='flex items-center gap-4'>
-            {iconoOImagen}
-            <CardTitle className='text-3xl font-bold text-primary'>
-              {titulo}
-            </CardTitle>
-          </div>
-          {botonera && <Botonera {...botonera} />}
-        </CardHeader>
-        {detalleItems && detalleItems.length > 0 && (
-          <CardContent className='pt-0'>
-            <div className='space-y-2'>
-              {detalleItems.map((item, i) => (
-                <DetalleItem key={i} clave={item.clave} valor={item.valor} />
-              ))}
-            </div>
-          </CardContent>
-        )}
-      </Card>
+      <Cabecera
+        titulo={titulo}
+        botonera={botonera}
+        ocultarBotonVolver={ocultarBotonVolver}
+        detalleItems={detalleItems}
+        iconoOImagen={iconoOImagen}
+      />
 
       <Card className='shadow-md'>
         <CardContent>{contenido}</CardContent>
