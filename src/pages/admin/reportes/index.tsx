@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/card'
 import { rutasNavegacion } from '@/routes/rutas'
 import { BarChart2 } from 'react-feather'
+
 import { useNavigate } from 'react-router-dom'
 
 export default function ReportesPage() {
@@ -15,7 +16,10 @@ export default function ReportesPage() {
 
   return (
     <div className='space-y-4'>
-      <h1 className='text-2xl font-bold'>Reportes</h1>
+      <h1 className='text-2xl font-bold flex items-center gap-3'>
+        <BarChart2 className='h-8 w-8 text-primary' />
+        Reportes
+      </h1>
       <div className='grid gap-4 md:grid-cols-2'>
         <Card className='overflow-hidden'>
           <CardHeader className='bg-slate-50'>

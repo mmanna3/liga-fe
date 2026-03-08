@@ -2,7 +2,7 @@ import { api } from '@/api/api'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
 import { rutasNavegacion } from '@/routes/rutas'
-import { Plus } from 'react-feather'
+import { Layout, Plus } from 'react-feather'
 import { useNavigate } from 'react-router-dom'
 import Tabla from './tabla'
 
@@ -17,6 +17,7 @@ export default function Club() {
   return (
     <FlujoHomeLayout
       titulo='Clubes'
+      iconoTitulo={<Layout className='h-8 w-8 text-primary' />}
       ocultarBotonVolver
       botonera={{
         iconos: [
