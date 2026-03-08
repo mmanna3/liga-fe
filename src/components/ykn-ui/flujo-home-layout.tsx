@@ -36,7 +36,7 @@ export default function FlujoHomeLayout({
   const tieneHeader = titulo ?? botonera
 
   return (
-    <div className={cn('max-w-3xl mx-auto px-4', className)}>
+    <div className={cn('max-w-4xl mx-auto px-4', className)}>
       {tieneHeader && (
         <Card className='mb-6 shadow-md'>
           <CardHeader
