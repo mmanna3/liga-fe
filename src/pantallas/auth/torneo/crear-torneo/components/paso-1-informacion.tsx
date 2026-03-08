@@ -1,5 +1,5 @@
-import { Input } from '@/design-system/base-ui/input'
-import TituloDeInput from '@/design-system/ykn-ui/titulo-de-input'
+import { Label } from '@/design-system/base-ui/label'
+import { Input } from '@/design-system/ykn-ui/input'
 import { cn } from '@/logica-compartida/utils'
 import { CalendarRange, Globe, Settings, Zap } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
@@ -24,36 +24,22 @@ export function Paso1Informacion() {
   return (
     <div className='space-y-4'>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
-        <div>
-          <TituloDeInput>Nombre del torneo *</TituloDeInput>
-          <Input
-            type='text'
-            value={datos.nombre}
-            onChange={(e) => setValue('nombre', e.target.value)}
-            placeholder='Ej: Torneo Anual 2026'
-            className={cn('h-11', errors.nombre && 'border-destructive')}
-          />
-          {errors.nombre && (
-            <p className='text-sm text-destructive mt-1'>
-              {errors.nombre.message}
-            </p>
-          )}
-        </div>
-        <div>
-          <TituloDeInput>Temporada/Año *</TituloDeInput>
-          <Input
-            type='number'
-            value={datos.temporada}
-            onChange={(e) => setValue('temporada', e.target.value)}
-            placeholder='2026'
-            className={cn('h-11', errors.temporada && 'border-destructive')}
-          />
-          {errors.temporada && (
-            <p className='text-sm text-destructive mt-1'>
-              {errors.temporada.message}
-            </p>
-          )}
-        </div>
+        <Input
+          tipo='text'
+          titulo='Nombre del torneo *'
+          value={datos.nombre}
+          onChange={(e) => setValue('nombre', e.target.value)}
+          placeholder='Ej: Torneo Anual 2026'
+          error={errors.nombre?.message}
+        />
+        <Input
+          tipo='number'
+          titulo='Temporada/Año *'
+          value={datos.temporada}
+          onChange={(e) => setValue('temporada', e.target.value)}
+          placeholder='2026'
+          error={errors.temporada?.message}
+        />
       </div>
 
       <SelectorTipoTorneo
@@ -65,7 +51,7 @@ export function Paso1Informacion() {
       <Categorias />
 
       <div>
-        <TituloDeInput>Formato *</TituloDeInput>
+        <Label className='block mb-2 text-md font-semibold'>Formato *</Label>
         <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
           {[
             { id: 'ANUAL', label: 'Apertura/Clausura', icon: CalendarRange },

@@ -1,7 +1,7 @@
 import { Button } from '@/design-system/base-ui/button'
 import { Input } from '@/design-system/base-ui/input'
+import { Label } from '@/design-system/base-ui/label'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
-import TituloDeInput from '@/design-system/ykn-ui/titulo-de-input'
 import { cn } from '@/logica-compartida/utils'
 import { ChevronDown, ChevronRight, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -238,7 +238,9 @@ export function Paso2Fases() {
                   <div className='flex gap-8 my-3'>
                     {/* Formato de la fase */}
                     <div className='flex-1'>
-                      <TituloDeInput>Formato de la fase</TituloDeInput>
+                      <Label className='block mb-2 text-md font-semibold'>
+                        Formato de la fase
+                      </Label>
                       <SelectorSimple
                         opciones={[
                           { id: 'all-vs-all', texto: 'Todos contra todos' },
@@ -256,7 +258,9 @@ export function Paso2Fases() {
 
                     {/* Tipo de vuelta */}
                     <div className='flex-1'>
-                      <TituloDeInput>Tipo de vuelta</TituloDeInput>
+                      <Label className='block mb-2 text-md font-semibold'>
+                        Tipo de vuelta
+                      </Label>
                       <SelectorSimple
                         opciones={[
                           { id: 'single', texto: 'Solo ida' },

@@ -1,5 +1,5 @@
+import { Label } from '@/design-system/base-ui/label'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
-import TituloDeInput from '@/design-system/ykn-ui/titulo-de-input'
 
 export type TipoTorneo = 'FUTSAL' | 'BABY' | 'FUTBOL 11' | 'FEMENINO'
 
@@ -27,7 +27,7 @@ export function SelectorTipoTorneo({
 }: SelectorTipoTorneoProps) {
   return (
     <div>
-      <TituloDeInput>{titulo}</TituloDeInput>
+      <Label className='block mb-2 text-md font-semibold'>{titulo}</Label>
       <SelectorSimple
         opciones={OPCIONES_TIPO}
         valorActual={valor}

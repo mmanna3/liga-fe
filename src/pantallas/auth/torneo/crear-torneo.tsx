@@ -16,13 +16,11 @@ import { FormProvider } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { IndicadorDePasos } from './crear-torneo/components/indicador-de-pasos'
 import ModalCambiosDetectadosEnEdicion from './crear-torneo/components/ModalCambiosDetectadosEnEdicion'
-import { Paso1Informacion } from './crear-torneo/components/paso-1-informacion'
-import { Paso2Fases } from './crear-torneo/components/paso-2-fases'
-import { Paso3Equipos } from './crear-torneo/components/paso-3-equipos'
-import { Paso4Zonas } from './crear-torneo/components/paso-4-zonas'
-import { Paso5Fixture } from './crear-torneo/components/paso-5-fixture'
 import { Paso6Resumen } from './crear-torneo/components/paso-6-resumen'
+import { PASOS } from './crear-torneo/datos-pasos'
 import { useNavegacionWizard } from './crear-torneo/use-navegacion-wizard'
+
+const ULTIMO_PASO = PASOS.length
 
 export default function CrearTorneo() {
   const navigate = useNavigate()
@@ -31,6 +29,7 @@ export default function CrearTorneo() {
     methods,
     pasoActual,
     maxPasoAlcanzado,
+    pasoConfig,
     confirmacionAbierta,
     accionPendienteRef,
     alSiguiente,
@@ -79,17 +78,16 @@ export default function CrearTorneo() {
           <IndicadorDePasos
             pasoActual={pasoActual}
             maxPasoAlcanzado={maxPasoAlcanzado}
-            totalPasos={6}
+            totalPasos={ULTIMO_PASO}
             alClickearPaso={alClickearPaso}
           />
 
           <div>
-            {pasoActual === 1 && <Paso1Informacion />}
-            {pasoActual === 2 && <Paso2Fases />}
-            {pasoActual === 3 && <Paso3Equipos />}
-            {pasoActual === 4 && <Paso4Zonas />}
-            {pasoActual === 5 && <Paso5Fixture />}
-            {pasoActual === 6 && <Paso6Resumen alEditarPaso={alEditarPaso} />}
+            {pasoActual < ULTIMO_PASO ? (
+              <pasoConfig.Componente />
+            ) : (
+              <Paso6Resumen alEditarPaso={alEditarPaso} />
+            )}
           </div>
 
           <ModalCambiosDetectadosEnEdicion
@@ -115,7 +113,7 @@ export default function CrearTorneo() {
               </Button>
             )}
 
-            {pasoActual < 6 ? (
+            {pasoActual < ULTIMO_PASO ? (
               <Button
                 type='button'
                 className='h-11 w-28 text-sm'

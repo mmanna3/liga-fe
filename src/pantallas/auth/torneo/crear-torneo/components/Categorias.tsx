@@ -1,7 +1,7 @@
 import { Badge } from '@/design-system/base-ui/badge'
 import { Button } from '@/design-system/base-ui/button'
 import { Input } from '@/design-system/base-ui/input'
-import TituloDeInput from '@/design-system/ykn-ui/titulo-de-input'
+import { Label } from '@/design-system/base-ui/label'
 import { Plus, X } from 'lucide-react'
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -63,7 +63,7 @@ export function Categorias() {
 
   return (
     <div>
-      <TituloDeInput>Categorías *</TituloDeInput>
+      <Label className='block mb-2 text-md font-semibold'>Categorías *</Label>
 
       {categorias.length > 0 && categorias.some((c) => c.nombre) && (
         <div className='flex flex-wrap gap-2 mb-3'>

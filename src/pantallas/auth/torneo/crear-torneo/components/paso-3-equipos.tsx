@@ -1,8 +1,8 @@
 import { Button } from '@/design-system/base-ui/button'
 import { Checkbox } from '@/design-system/base-ui/checkbox'
 import { Input } from '@/design-system/base-ui/input'
+import { Label } from '@/design-system/base-ui/label'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
-import TituloDeInput from '@/design-system/ykn-ui/titulo-de-input'
 import { cn } from '@/logica-compartida/utils'
 import { Search, X } from 'lucide-react'
 import { useState } from 'react'
@@ -120,7 +120,7 @@ export function Paso3Equipos() {
 
       <div className='flex items-center gap-4'>
         <div>
-          <TituloDeInput className='mb-1'>Equipos</TituloDeInput>
+          <Label className='block mb-1 text-md font-semibold'>Equipos</Label>
           <Input
             type='number'
             value={datos.cantidadEquipos}
@@ -189,7 +189,9 @@ export function Paso3Equipos() {
       )}
 
       <div>
-        <TituloDeInput>Búsqueda de equipo</TituloDeInput>
+        <Label className='block mb-2 text-md font-semibold'>
+          Búsqueda de equipo
+        </Label>
         <SelectorSimple
           opciones={[
             { id: 'name', texto: 'Por Nombre/Código' },
@@ -220,7 +222,7 @@ export function Paso3Equipos() {
         {datos.modoBusqueda === 'tournament' && (
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-4'>
             <div>
-              <TituloDeInput className='mb-2'>Año</TituloDeInput>
+              <Label className='block mb-2 text-md font-semibold'>Año</Label>
               <select
                 value={datos.filtroAnio}
                 onChange={(e) =>
@@ -235,7 +237,7 @@ export function Paso3Equipos() {
             </div>
 
             <div>
-              <TituloDeInput className='mb-2'>Tipo</TituloDeInput>
+              <Label className='block mb-2 text-md font-semibold'>Tipo</Label>
               <select
                 value={datos.filtroTipo}
                 onChange={(e) =>
@@ -251,7 +253,7 @@ export function Paso3Equipos() {
             </div>
 
             <div>
-              <TituloDeInput className='mb-2'>Torneo</TituloDeInput>
+              <Label className='block mb-2 text-md font-semibold'>Torneo</Label>
               <select
                 value={datos.filtroTorneo}
                 onChange={(e) =>
@@ -269,7 +271,7 @@ export function Paso3Equipos() {
             </div>
 
             <div>
-              <TituloDeInput className='mb-2'>Fase</TituloDeInput>
+              <Label className='block mb-2 text-md font-semibold'>Fase</Label>
               <select
                 value={datos.filtroFase}
                 onChange={(e) =>
@@ -284,7 +286,7 @@ export function Paso3Equipos() {
             </div>
 
             <div>
-              <TituloDeInput className='mb-2'>Zona</TituloDeInput>
+              <Label className='block mb-2 text-md font-semibold'>Zona</Label>
               <select
                 value={datos.filtroZona}
                 onChange={(e) =>
@@ -315,14 +317,14 @@ export function Paso3Equipos() {
                   checked={seleccionarTodos}
                   onCheckedChange={() => alSeleccionarTodos()}
                 />
-                <TituloDeInput
+                <Label
                   htmlFor='seleccionar-todos'
                   className='mb-0 text-xs cursor-pointer'
                 >
                   {seleccionarTodos
                     ? 'Deseleccionar todos'
                     : 'Seleccionar todos'}
-                </TituloDeInput>
+                </Label>
               </div>
             )}
         </div>
