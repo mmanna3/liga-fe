@@ -3,37 +3,37 @@ import { cn } from '@/logica-compartida/utils'
 import { GripVertical } from 'lucide-react'
 
 interface ReglasDeDesempateProps {
-  tiebreakers: string[]
+  desempates: string[]
   editable: boolean
-  onReorder: (fromIndex: number, toIndex: number) => void
+  alReordenar: (desdeIndice: number, hastaIndice: number) => void
 }
 
 export function ReglasDeDesempate({
-  tiebreakers,
+  desempates,
   editable,
-  onReorder
+  alReordenar
 }: ReglasDeDesempateProps) {
-  const handleDragStart = (
+  const alIniciarArrastre = (
     e: React.DragEvent<HTMLDivElement>,
-    index: number
+    indice: number
   ) => {
     e.dataTransfer.effectAllowed = 'move'
-    e.dataTransfer.setData('text/plain', index.toString())
+    e.dataTransfer.setData('text/plain', indice.toString())
   }
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+  const alArrastrarSobre = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
     e.dataTransfer.dropEffect = 'move'
   }
 
-  const handleDrop = (
+  const alSoltar = (
     e: React.DragEvent<HTMLDivElement>,
-    dropIndex: number
+    indiceDestino: number
   ) => {
     e.preventDefault()
-    const dragIndex = parseInt(e.dataTransfer.getData('text/plain'), 10)
-    if (dragIndex !== dropIndex) {
-      onReorder(dragIndex, dropIndex)
+    const indiceOrigen = parseInt(e.dataTransfer.getData('text/plain'), 10)
+    if (indiceOrigen !== indiceDestino) {
+      alReordenar(indiceOrigen, indiceDestino)
     }
   }
 
@@ -44,13 +44,13 @@ export function ReglasDeDesempate({
         Arrastra para ordenar por prioridad
       </p>
       <div className='space-y-1.5'>
-        {tiebreakers.map((rule, index) => (
+        {desempates.map((regla, indice) => (
           <div
-            key={index}
+            key={indice}
             draggable={editable}
-            onDragStart={(e) => editable && handleDragStart(e, index)}
-            onDragOver={handleDragOver}
-            onDrop={(e) => editable && handleDrop(e, index)}
+            onDragStart={(e) => editable && alIniciarArrastre(e, indice)}
+            onDragOver={alArrastrarSobre}
+            onDrop={(e) => editable && alSoltar(e, indice)}
             className={cn(
               'flex items-center gap-2 p-2 bg-muted rounded-lg border transition-colors',
               editable ? 'cursor-move hover:bg-accent' : 'cursor-not-allowed'
@@ -58,9 +58,9 @@ export function ReglasDeDesempate({
           >
             <GripVertical className='w-4 h-4 text-muted-foreground' />
             <span className='w-5 h-5 bg-primary text-primary-foreground rounded flex items-center justify-center text-xs font-bold'>
-              {index + 1}
+              {indice + 1}
             </span>
-            <span className='text-sm font-medium'>{rule}</span>
+            <span className='text-sm font-medium'>{regla}</span>
           </div>
         ))}
       </div>

@@ -1,34 +1,39 @@
 import { Input } from '@/design-system/base-ui/input'
 import { Label } from '@/design-system/base-ui/label'
 import { useFormContext } from 'react-hook-form'
-import type { TournamentWizardData, Zone } from '../types'
+import type { DatosWizardTorneo, Zona } from '../tipos'
 
 interface TablaConfigZonasProps {
-  zonesWithTeams: (Zone & { freeDates?: number; interzonalDates?: number })[]
-  hasMultipleZones: boolean
+  zonasConEquipos: (Zona & {
+    fechasLibres?: number
+    fechasInterzonales?: number
+  })[]
+  tieneMultiplesZonas: boolean
 }
 
 export function TablaConfigZonas({
-  zonesWithTeams,
-  hasMultipleZones
+  zonasConEquipos,
+  tieneMultiplesZonas
 }: TablaConfigZonasProps) {
-  const { watch, setValue } = useFormContext<TournamentWizardData>()
-  const zones = watch('zones') as (Zone & { freeDates?: number })[]
+  const { watch, setValue } = useFormContext<DatosWizardTorneo>()
+  const zonas = watch('zonas') as (Zona & { fechasLibres?: number })[]
 
-  const handleFreeDatesChange = (zoneId: string, value: number) => {
+  const alCambiarFechasLibres = (zonaId: string, valor: number) => {
     setValue(
-      'zones',
-      zones.map((z) => (z.id === zoneId ? { ...z, freeDates: value } : z))
+      'zonas',
+      zonas.map((z) => (z.id === zonaId ? { ...z, fechasLibres: valor } : z))
     )
-    setValue('fixtureGenerated', false)
+    setValue('fixtureGenerado', false)
   }
 
-  const handleInterzonalChange = (zoneId: string, value: number) => {
+  const alCambiarInterzonal = (zonaId: string, valor: number) => {
     setValue(
-      'zones',
-      zones.map((z) => (z.id === zoneId ? { ...z, interzonalDates: value } : z))
+      'zonas',
+      zonas.map((z) =>
+        z.id === zonaId ? { ...z, fechasInterzonales: valor } : z
+      )
     )
-    setValue('fixtureGenerated', false)
+    setValue('fixtureGenerado', false)
   }
 
   return (
@@ -46,7 +51,7 @@ export function TablaConfigZonas({
               <th className='py-1.5 px-3 font-medium text-muted-foreground text-center w-20'>
                 Libre
               </th>
-              {hasMultipleZones && (
+              {tieneMultiplesZonas && (
                 <th className='py-1.5 pl-3 font-medium text-muted-foreground text-center w-20'>
                   Interzonal
                 </th>
@@ -54,38 +59,38 @@ export function TablaConfigZonas({
             </tr>
           </thead>
           <tbody>
-            {zonesWithTeams.map((zone) => (
-              <tr key={zone.id} className='border-b last:border-0'>
+            {zonasConEquipos.map((zona) => (
+              <tr key={zona.id} className='border-b last:border-0'>
                 <td className='py-1.5 pr-3'>
-                  <Label className='text-sm'>{zone.name}</Label>
+                  <Label className='text-sm'>{zona.nombre}</Label>
                 </td>
                 <td className='py-1.5 px-3 text-center text-muted-foreground'>
-                  {zone.teams.length}
+                  {zona.equipos.length}
                 </td>
                 <td className='py-1.5 px-3'>
                   <Input
                     type='number'
                     min={0}
                     className='h-8 w-16 text-center mx-auto [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
-                    value={zone.freeDates ?? 0}
+                    value={zona.fechasLibres ?? 0}
                     onChange={(e) =>
-                      handleFreeDatesChange(
-                        zone.id,
+                      alCambiarFechasLibres(
+                        zona.id,
                         Math.max(0, parseInt(e.target.value) || 0)
                       )
                     }
                   />
                 </td>
-                {hasMultipleZones && (
+                {tieneMultiplesZonas && (
                   <td className='py-1.5 pl-3'>
                     <Input
                       type='number'
                       min={0}
                       className='h-8 w-16 text-center mx-auto [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
-                      value={zone.interzonalDates ?? 0}
+                      value={zona.fechasInterzonales ?? 0}
                       onChange={(e) =>
-                        handleInterzonalChange(
-                          zone.id,
+                        alCambiarInterzonal(
+                          zona.id,
                           Math.max(0, parseInt(e.target.value) || 0)
                         )
                       }
@@ -98,7 +103,7 @@ export function TablaConfigZonas({
         </table>
       </div>
       <p className='text-xs text-muted-foreground'>
-        {hasMultipleZones
+        {tieneMultiplesZonas
           ? 'Cada zona puede tener distinta cantidad de fechas libres. Las interzonales deben coincidir entre zonas.'
           : 'Cada zona puede tener distinta cantidad de fechas libres.'}
       </p>

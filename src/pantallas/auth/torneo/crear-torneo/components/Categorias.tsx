@@ -104,7 +104,9 @@ export function Categorias() {
               type='text'
               value={categoriaEditando.nombre}
               onChange={(e) =>
-                actualizarCategoria(categoriaEditando.id, { nombre: e.target.value })
+                actualizarCategoria(categoriaEditando.id, {
+                  nombre: e.target.value
+                })
               }
               placeholder='Ej: +40, Sub 15, Mayores'
               className='flex-1 min-w-0'

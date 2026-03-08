@@ -7,38 +7,38 @@ import {
 } from '@/design-system/base-ui/select'
 import { Label } from '@/design-system/base-ui/label'
 
-interface ZoneOption {
+interface OpcionZona {
   id: string
-  name: string
-  detail: string
+  nombre: string
+  detalle: string
 }
 
 interface SelectorDeZonaProps {
-  zones: ZoneOption[]
-  selectedZoneId: string
-  onZoneChange: (zoneId: string) => void
-  label: string
+  zonas: OpcionZona[]
+  zonaSeleccionadaId: string
+  alCambiarZona: (zonaId: string) => void
+  etiqueta: string
 }
 
 export function SelectorDeZona({
-  zones,
-  selectedZoneId,
-  onZoneChange,
-  label
+  zonas,
+  zonaSeleccionadaId,
+  alCambiarZona,
+  etiqueta
 }: SelectorDeZonaProps) {
   return (
     <div className='mb-4'>
       <Label className='text-xs text-muted-foreground block mb-2'>
-        {label}
+        {etiqueta}
       </Label>
-      <Select value={selectedZoneId} onValueChange={onZoneChange}>
+      <Select value={zonaSeleccionadaId} onValueChange={alCambiarZona}>
         <SelectTrigger>
           <SelectValue placeholder='Seleccionar zona' />
         </SelectTrigger>
         <SelectContent>
-          {zones.map((zone) => (
-            <SelectItem key={zone.id} value={zone.id}>
-              {zone.name} — {zone.detail}
+          {zonas.map((zona) => (
+            <SelectItem key={zona.id} value={zona.id}>
+              {zona.nombre} — {zona.detalle}
             </SelectItem>
           ))}
         </SelectContent>

@@ -3,22 +3,22 @@ import TituloDeInput from '@/design-system/ykn-ui/titulo-de-input'
 import { cn } from '@/logica-compartida/utils'
 import { CalendarRange, Globe, Settings, Zap } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
-import type { TournamentWizardData } from '../types'
-import { SelectorTipoTorneo } from './SelectorTipoTorneo'
-import { Categorias } from './Categorias'
+import type { DatosWizardTorneo } from '../tipos'
+import { SelectorTipoTorneo } from './selector-tipo-torneo'
+import { Categorias } from './categorias'
 
-export function Step1Information() {
+export function Paso1Informacion() {
   const {
     watch,
     setValue,
     formState: { errors }
-  } = useFormContext<TournamentWizardData>()
+  } = useFormContext<DatosWizardTorneo>()
 
-  const data = {
-    name: watch('name'),
-    season: watch('season'),
-    type: watch('type'),
-    format: watch('format')
+  const datos = {
+    nombre: watch('nombre'),
+    temporada: watch('temporada'),
+    tipo: watch('tipo'),
+    formato: watch('formato')
   }
 
   return (
@@ -28,14 +28,14 @@ export function Step1Information() {
           <TituloDeInput>Nombre del torneo *</TituloDeInput>
           <Input
             type='text'
-            value={data.name}
-            onChange={(e) => setValue('name', e.target.value)}
+            value={datos.nombre}
+            onChange={(e) => setValue('nombre', e.target.value)}
             placeholder='Ej: Torneo Anual 2026'
-            className={cn('h-11', errors.name && 'border-destructive')}
+            className={cn('h-11', errors.nombre && 'border-destructive')}
           />
-          {errors.name && (
+          {errors.nombre && (
             <p className='text-sm text-destructive mt-1'>
-              {errors.name.message}
+              {errors.nombre.message}
             </p>
           )}
         </div>
@@ -43,23 +43,23 @@ export function Step1Information() {
           <TituloDeInput>Temporada/Año *</TituloDeInput>
           <Input
             type='number'
-            value={data.season}
-            onChange={(e) => setValue('season', e.target.value)}
+            value={datos.temporada}
+            onChange={(e) => setValue('temporada', e.target.value)}
             placeholder='2026'
-            className={cn('h-11', errors.season && 'border-destructive')}
+            className={cn('h-11', errors.temporada && 'border-destructive')}
           />
-          {errors.season && (
+          {errors.temporada && (
             <p className='text-sm text-destructive mt-1'>
-              {errors.season.message}
+              {errors.temporada.message}
             </p>
           )}
         </div>
       </div>
 
       <SelectorTipoTorneo
-        valor={data.type}
-        alCambiar={(tipo) => setValue('type', tipo)}
-        error={errors.type?.message}
+        valor={datos.tipo}
+        alCambiar={(tipo) => setValue('tipo', tipo)}
+        error={errors.tipo?.message}
       />
 
       <Categorias />
@@ -72,24 +72,24 @@ export function Step1Information() {
             { id: 'MUNDIAL', label: 'Mundial', icon: Globe },
             { id: 'RELAMPAGO', label: 'Eliminación directa', icon: Zap },
             { id: 'PERSONALIZADO', label: 'Personalizado', icon: Settings }
-          ].map((format) => (
+          ].map((formato) => (
             <button
-              key={format.id}
+              key={formato.id}
               type='button'
               onClick={() =>
-                setValue('format', format.id as TournamentWizardData['format'])
+                setValue('formato', formato.id as DatosWizardTorneo['formato'])
               }
               className={cn(
                 'aspect-square rounded-lg transition-all border-2 flex flex-col items-center justify-center gap-2 p-3',
-                data.format === format.id
+                datos.formato === formato.id
                   ? 'bg-primary/10 border-primary'
                   : 'bg-muted border-transparent hover:border-border'
               )}
             >
-              <format.icon
+              <formato.icon
                 className={cn(
                   'w-10 h-10',
-                  data.format === format.id
+                  datos.formato === formato.id
                     ? 'text-primary'
                     : 'text-muted-foreground'
                 )}
@@ -97,19 +97,19 @@ export function Step1Information() {
               <p
                 className={cn(
                   'text-sm font-medium leading-tight',
-                  data.format === format.id
+                  datos.formato === formato.id
                     ? 'text-primary'
                     : 'text-muted-foreground'
                 )}
               >
-                {format.label}
+                {formato.label}
               </p>
             </button>
           ))}
         </div>
-        {errors.format && (
+        {errors.formato && (
           <p className='text-sm text-destructive mt-2'>
-            {errors.format.message}
+            {errors.formato.message}
           </p>
         )}
       </div>

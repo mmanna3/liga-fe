@@ -10,59 +10,59 @@ import {
   Users
 } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
-import type { TournamentWizardData } from '../types'
-import { useWizardStore } from '../use-wizard-store'
-import { BracketView } from './BracketView'
+import type { DatosWizardTorneo } from '../tipos'
+import { useStoreWizard } from '../use-store-wizard'
+import { VistaBracket } from './vista-bracket'
 
-interface Step6SummaryProps {
-  onEditStep?: (step: number) => void
+interface Paso6ResumenProps {
+  alEditarPaso?: (paso: number) => void
 }
 
-export function Step6Summary({ onEditStep }: Step6SummaryProps) {
-  const { watch, setValue } = useFormContext<TournamentWizardData>()
-  const { goToStep } = useWizardStore()
+export function Paso6Resumen({ alEditarPaso }: Paso6ResumenProps) {
+  const { watch, setValue } = useFormContext<DatosWizardTorneo>()
+  const { irAlPaso } = useStoreWizard()
 
-  const handleEditStep = (step: number) => {
-    if (onEditStep) onEditStep(step)
-    else goToStep(step)
+  const editarPaso = (paso: number) => {
+    if (alEditarPaso) alEditarPaso(paso)
+    else irAlPaso(paso)
   }
 
-  const data = {
-    name: watch('name'),
-    season: watch('season'),
-    type: watch('type'),
-    categories: watch('categories'),
-    phases: watch('phases'),
-    currentPhaseIndex: watch('currentPhaseIndex'),
-    selectedTeams: watch('selectedTeams'),
-    zones: watch('zones'),
-    preventSameClub: watch('preventSameClub'),
-    fixtureGenerated: watch('fixtureGenerated'),
-    freeDates: watch('freeDates'),
-    interzonalDates: watch('interzonalDates'),
-    status: watch('status')
+  const datos = {
+    nombre: watch('nombre'),
+    temporada: watch('temporada'),
+    tipo: watch('tipo'),
+    categorias: watch('categorias'),
+    fases: watch('fases'),
+    indiceFaseActual: watch('indiceFaseActual'),
+    equiposSeleccionados: watch('equiposSeleccionados'),
+    zonas: watch('zonas'),
+    prevenirMismoClub: watch('prevenirMismoClub'),
+    fixtureGenerado: watch('fixtureGenerado'),
+    fechasLibres: watch('fechasLibres'),
+    fechasInterzonales: watch('fechasInterzonales'),
+    estado: watch('estado')
   }
 
-  const currentPhase = data.phases[data.currentPhaseIndex] ?? data.phases[0]
-  const firstPhaseName = data.phases[0]?.name ?? 'Fase 1'
+  const faseActual = datos.fases[datos.indiceFaseActual] ?? datos.fases[0]
+  const nombrePrimeraFase = datos.fases[0]?.nombre ?? 'Fase 1'
 
-  const typeLabels: Record<string, string> = {
+  const etiquetasTipo: Record<string, string> = {
     FUTSAL: 'Futsal',
     BABY: 'Baby',
     'FUTBOL 11': 'Fútbol 11',
     FEMENINO: 'Femenino'
   }
 
-  const getFormatDisplay = (phase: (typeof data.phases)[number]) => {
-    if (!phase) return ''
+  const obtenerTextoFormato = (fase: (typeof datos.fases)[number]) => {
+    if (!fase) return ''
 
-    const formatText =
-      phase.format === 'all-vs-all'
+    const textoFormato =
+      fase.formato === 'all-vs-all'
         ? 'Todos contra todos'
         : 'Eliminación directa'
-    const roundsText = phase.rounds === 'double' ? 'Ida y vuelta' : 'Solo ida'
+    const textoVueltas = fase.vueltas === 'double' ? 'Ida y vuelta' : 'Solo ida'
 
-    return `${formatText} - ${roundsText}`
+    return `${textoFormato} - ${textoVueltas}`
   }
 
   return (
@@ -71,7 +71,9 @@ export function Step6Summary({ onEditStep }: Step6SummaryProps) {
         <div className='w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3'>
           <CheckCircle className='w-10 h-10 text-primary' />
         </div>
-        <h3 className='text-lg font-semibold mb-1'>Resumen de {data.name}</h3>
+        <h3 className='text-lg font-semibold mb-1'>
+          Resumen de {datos.nombre}
+        </h3>
         <p className='text-muted-foreground text-sm'>
           Revisa la configuración antes de crear el torneo
         </p>
@@ -90,7 +92,7 @@ export function Step6Summary({ onEditStep }: Step6SummaryProps) {
             variant='ghost'
             size='icon'
             className='h-8 w-8'
-            onClick={() => handleEditStep(1)}
+            onClick={() => editarPaso(1)}
           >
             <Edit className='w-4 h-4' />
           </Button>
@@ -99,29 +101,29 @@ export function Step6Summary({ onEditStep }: Step6SummaryProps) {
           <div>
             <p className='text-xs text-muted-foreground mb-0.5'>Nombre - Año</p>
             <p className='font-medium'>
-              {data.name || '-'} - {data.season}
+              {datos.nombre || '-'} - {datos.temporada}
             </p>
           </div>
           <div>
             <p className='text-xs text-muted-foreground mb-0.5'>Tipo</p>
             <p className='font-medium'>
-              {data.type ? (typeLabels[data.type] ?? data.type) : '-'}
+              {datos.tipo ? (etiquetasTipo[datos.tipo] ?? datos.tipo) : '-'}
             </p>
           </div>
           <div className='col-span-2'>
             <p className='text-xs text-muted-foreground mb-1'>Categorías</p>
             <div className='flex flex-wrap gap-1.5'>
-              {data.categories
-                .filter((c) => c.name)
+              {datos.categorias
+                .filter((c) => c.nombre)
                 .map((cat) => (
                   <span
                     key={cat.id}
                     className='px-2 py-0.5 bg-background rounded text-xs font-medium'
                   >
-                    {cat.name}
-                    {cat.yearFrom &&
-                      cat.yearFrom !== 'TODAS' &&
-                      ` (${cat.yearFrom}/${cat.yearTo})`}
+                    {cat.nombre}
+                    {cat.anioDesde &&
+                      cat.anioDesde !== 'TODAS' &&
+                      ` (${cat.anioDesde}/${cat.anioHasta})`}
                   </span>
                 ))}
             </div>
@@ -129,7 +131,7 @@ export function Step6Summary({ onEditStep }: Step6SummaryProps) {
         </div>
       </div>
 
-      {data.phases.length > 0 && (
+      {datos.fases.length > 0 && (
         <div className='bg-muted rounded-xl p-4'>
           <div className='flex items-center justify-between mb-3'>
             <div className='flex items-center gap-2'>
@@ -143,23 +145,23 @@ export function Step6Summary({ onEditStep }: Step6SummaryProps) {
               variant='ghost'
               size='icon'
               className='h-8 w-8'
-              onClick={() => handleEditStep(2)}
+              onClick={() => editarPaso(2)}
             >
               <Edit className='w-4 h-4' />
             </Button>
           </div>
           <div className='space-y-2'>
-            {data.phases.map((phase, idx) => (
-              <div key={phase.id} className='bg-background rounded-lg p-3'>
+            {datos.fases.map((fase, idx) => (
+              <div key={fase.id} className='bg-background rounded-lg p-3'>
                 <div className='flex items-center gap-2 mb-2'>
                   <span className='w-6 h-6 bg-primary text-primary-foreground rounded-md flex items-center justify-center text-xs font-bold'>
                     {idx + 1}
                   </span>
-                  <span className='font-semibold text-sm'>{phase.name}</span>
+                  <span className='font-semibold text-sm'>{fase.nombre}</span>
                 </div>
                 <div className='text-xs text-muted-foreground'>
                   <span className='font-medium'>Formato:</span>{' '}
-                  {getFormatDisplay(phase)}
+                  {obtenerTextoFormato(fase)}
                 </div>
               </div>
             ))}
@@ -174,7 +176,7 @@ export function Step6Summary({ onEditStep }: Step6SummaryProps) {
               <Users className='w-4 h-4 text-primary-foreground' />
             </div>
             <h4 className='font-semibold text-sm'>
-              Equipos participantes de la fase {firstPhaseName}
+              Equipos participantes de la fase {nombrePrimeraFase}
             </h4>
           </div>
           <Button
@@ -182,7 +184,7 @@ export function Step6Summary({ onEditStep }: Step6SummaryProps) {
             variant='ghost'
             size='icon'
             className='h-8 w-8'
-            onClick={() => handleEditStep(3)}
+            onClick={() => editarPaso(3)}
           >
             <Edit className='w-4 h-4' />
           </Button>
@@ -190,27 +192,27 @@ export function Step6Summary({ onEditStep }: Step6SummaryProps) {
         <div className='space-y-2'>
           <div className='flex items-center gap-2 text-sm'>
             <p className='text-muted-foreground'>
-              {data.selectedTeams.length} equipos
+              {datos.equiposSeleccionados.length} equipos
             </p>
-            {data.selectedTeams.length % 2 !== 0 && (
+            {datos.equiposSeleccionados.length % 2 !== 0 && (
               <span className='px-2 py-0.5 bg-amber-200 text-amber-800 rounded text-xs font-medium'>
                 Impar
               </span>
             )}
           </div>
-          {data.selectedTeams.length > 0 && (
+          {datos.equiposSeleccionados.length > 0 && (
             <div className='flex flex-wrap gap-1.5 mt-2'>
-              {data.selectedTeams.slice(0, 15).map((team) => (
+              {datos.equiposSeleccionados.slice(0, 15).map((equipo) => (
                 <span
-                  key={team.id}
+                  key={equipo.id}
                   className='px-2 py-1 bg-background rounded text-xs font-medium shadow-sm'
                 >
-                  {team.name}
+                  {equipo.nombre}
                 </span>
               ))}
-              {data.selectedTeams.length > 15 && (
+              {datos.equiposSeleccionados.length > 15 && (
                 <span className='px-2 py-1 bg-secondary rounded text-xs font-medium'>
-                  +{data.selectedTeams.length - 15} más
+                  +{datos.equiposSeleccionados.length - 15} más
                 </span>
               )}
             </div>
@@ -218,7 +220,7 @@ export function Step6Summary({ onEditStep }: Step6SummaryProps) {
         </div>
       </div>
 
-      {data.zones.length > 0 && (
+      {datos.zonas.length > 0 && (
         <div className='bg-muted rounded-xl p-4'>
           <div className='flex items-center justify-between mb-3'>
             <div className='flex items-center gap-2'>
@@ -226,7 +228,7 @@ export function Step6Summary({ onEditStep }: Step6SummaryProps) {
                 <MapPin className='w-4 h-4 text-primary-foreground' />
               </div>
               <h4 className='font-semibold text-sm'>
-                Zonas de la fase {firstPhaseName}
+                Zonas de la fase {nombrePrimeraFase}
               </h4>
             </div>
             <Button
@@ -234,35 +236,35 @@ export function Step6Summary({ onEditStep }: Step6SummaryProps) {
               variant='ghost'
               size='icon'
               className='h-8 w-8'
-              onClick={() => handleEditStep(4)}
+              onClick={() => editarPaso(4)}
             >
               <Edit className='w-4 h-4' />
             </Button>
           </div>
           <div className='grid grid-cols-2 gap-2'>
-            {data.zones.map((zone) => (
-              <div key={zone.id} className='bg-background rounded-lg p-2'>
-                <p className='font-semibold text-xs mb-1'>{zone.name}</p>
+            {datos.zonas.map((zona) => (
+              <div key={zona.id} className='bg-background rounded-lg p-2'>
+                <p className='font-semibold text-xs mb-1'>{zona.nombre}</p>
                 <p className='text-xs text-muted-foreground'>
-                  {zone.teams.length} equipo
-                  {zone.teams.length !== 1 ? 's' : ''}
+                  {zona.equipos.length} equipo
+                  {zona.equipos.length !== 1 ? 's' : ''}
                 </p>
                 <div className='mt-1 space-y-0.5'>
-                  {zone.teams.slice(0, 2).map((team) => (
-                    <p key={team.id} className='text-xs'>
-                      • {team.name}
+                  {zona.equipos.slice(0, 2).map((equipo) => (
+                    <p key={equipo.id} className='text-xs'>
+                      • {equipo.nombre}
                     </p>
                   ))}
-                  {zone.teams.length > 2 && (
+                  {zona.equipos.length > 2 && (
                     <p className='text-xs text-muted-foreground'>
-                      +{zone.teams.length - 2} más
+                      +{zona.equipos.length - 2} más
                     </p>
                   )}
                 </div>
               </div>
             ))}
           </div>
-          {data.preventSameClub && (
+          {datos.prevenirMismoClub && (
             <div className='mt-2 p-2 bg-primary/10 rounded-lg'>
               <p className='text-xs font-medium'>
                 Restricción: Mismo club no en misma zona
@@ -279,7 +281,7 @@ export function Step6Summary({ onEditStep }: Step6SummaryProps) {
               <Target className='w-4 h-4 text-primary-foreground' />
             </div>
             <h4 className='font-semibold text-sm'>
-              Fixture de la fase {firstPhaseName}
+              Fixture de la fase {nombrePrimeraFase}
             </h4>
           </div>
           <Button
@@ -287,60 +289,62 @@ export function Step6Summary({ onEditStep }: Step6SummaryProps) {
             variant='ghost'
             size='icon'
             className='h-8 w-8'
-            onClick={() => handleEditStep(5)}
+            onClick={() => editarPaso(5)}
           >
             <Edit className='w-4 h-4' />
           </Button>
         </div>
         <div className='space-y-2'>
-          {data.fixtureGenerated ? (
+          {datos.fixtureGenerado ? (
             <>
               <p className='text-sm text-muted-foreground'>
                 Fixture generado exitosamente
               </p>
-              {data.zones.some((z) => (z.freeDates ?? 0) > 0) ? (
+              {datos.zonas.some((z) => (z.fechasLibres ?? 0) > 0) ? (
                 <p className='text-sm text-muted-foreground'>
                   • Libre por zona:{' '}
-                  {data.zones
-                    .filter((z) => (z.freeDates ?? 0) > 0)
-                    .map((z) => `${z.name} (${z.freeDates})`)
+                  {datos.zonas
+                    .filter((z) => (z.fechasLibres ?? 0) > 0)
+                    .map((z) => `${z.nombre} (${z.fechasLibres})`)
                     .join(', ')}
                 </p>
               ) : (
-                data.freeDates > 0 && (
+                datos.fechasLibres > 0 && (
                   <p className='text-sm text-muted-foreground'>
-                    • {data.freeDates} jornada
-                    {data.freeDates !== 1 ? 's' : ''} libre por equipo
+                    • {datos.fechasLibres} jornada
+                    {datos.fechasLibres !== 1 ? 's' : ''} libre por equipo
                   </p>
                 )
               )}
-              {data.zones.some((z) => (z.interzonalDates ?? 0) > 0) ? (
+              {datos.zonas.some((z) => (z.fechasInterzonales ?? 0) > 0) ? (
                 <p className='text-sm text-muted-foreground'>
                   • Interzonal por zona:{' '}
-                  {data.zones
-                    .filter((z) => (z.interzonalDates ?? 0) > 0)
-                    .map((z) => `${z.name} (${z.interzonalDates})`)
+                  {datos.zonas
+                    .filter((z) => (z.fechasInterzonales ?? 0) > 0)
+                    .map((z) => `${z.nombre} (${z.fechasInterzonales})`)
                     .join(', ')}
                 </p>
               ) : (
-                data.interzonalDates > 0 && (
+                datos.fechasInterzonales > 0 && (
                   <p className='text-sm text-muted-foreground'>
-                    • {data.interzonalDates} jornada
-                    {data.interzonalDates !== 1 ? 's' : ''} interzonal por
+                    • {datos.fechasInterzonales} jornada
+                    {datos.fechasInterzonales !== 1 ? 's' : ''} interzonal por
                     equipo
                   </p>
                 )
               )}
 
-              {currentPhase?.format === 'elimination' && (
+              {faseActual?.formato === 'elimination' && (
                 <div className='mt-3 bg-background rounded-lg p-3'>
                   <h5 className='font-semibold text-xs mb-2'>
                     Vista de llaves
                   </h5>
-                  <BracketView
-                    teamSlots={data.selectedTeams.length}
-                    teams={data.selectedTeams}
-                    zones={data.zones}
+                  <VistaBracket
+                    totalSlots={datos.equiposSeleccionados.length}
+                    equipos={datos.equiposSeleccionados.map((e) => ({
+                      nombre: e.nombre
+                    }))}
+                    zonas={datos.zonas}
                   />
                 </div>
               )}
@@ -355,11 +359,7 @@ export function Step6Summary({ onEditStep }: Step6SummaryProps) {
                   <p className='text-xs text-muted-foreground mb-2'>
                     Es necesario generar el fixture antes de crear el torneo.
                   </p>
-                  <Button
-                    type='button'
-                    size='sm'
-                    onClick={() => handleEditStep(5)}
-                  >
+                  <Button type='button' size='sm' onClick={() => editarPaso(5)}>
                     <Target className='w-3 h-3' />
                     Ir al paso 5 para generar fixture
                   </Button>
@@ -383,10 +383,10 @@ export function Step6Summary({ onEditStep }: Step6SummaryProps) {
         <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
           <button
             type='button'
-            onClick={() => setValue('status', 'draft')}
+            onClick={() => setValue('estado', 'draft')}
             className={cn(
               'px-6 py-4 rounded-xl font-semibold transition-all text-center',
-              data.status === 'draft'
+              datos.estado === 'draft'
                 ? 'bg-primary text-primary-foreground shadow-lg scale-105'
                 : 'bg-background border-2 text-muted-foreground hover:bg-accent'
             )}
@@ -396,18 +396,19 @@ export function Step6Summary({ onEditStep }: Step6SummaryProps) {
           </button>
           <button
             type='button'
-            onClick={() => setValue('status', 'published')}
+            onClick={() => setValue('estado', 'published')}
             className={cn(
               'px-6 py-4 rounded-xl font-semibold transition-all text-center',
-              data.status === 'published'
+              datos.estado === 'published'
                 ? 'bg-primary text-primary-foreground shadow-lg scale-105'
                 : 'bg-background border-2 text-muted-foreground hover:bg-accent'
             )}
           >
             <div className='text-sm'>Publicar</div>
             <p className='text-xs mt-1 opacity-80'>
-              La fase {firstPhaseName} estará visible en la app y en la web. Las
-              demás permanecerán ocultas hasta que se las marque como visibles.
+              La fase {nombrePrimeraFase} estará visible en la app y en la web.
+              Las demás permanecerán ocultas hasta que se las marque como
+              visibles.
             </p>
           </button>
         </div>

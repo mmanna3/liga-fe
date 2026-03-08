@@ -28,158 +28,159 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import { Step1Information } from './crear-torneo/components/Step1Information'
-import { Step2Phases } from './crear-torneo/components/Step2Phases'
-import { Step3Teams } from './crear-torneo/components/Step3Teams'
-import { Step4Zones } from './crear-torneo/components/Step4Zones'
-import { Step5Fixture } from './crear-torneo/components/Step5Fixture'
-import { Step6Summary } from './crear-torneo/components/Step6Summary'
-import { StepIndicator } from './crear-torneo/components/StepIndicator'
-import type { TournamentWizardData } from './crear-torneo/types'
-import { useWizardStore } from './crear-torneo/use-wizard-store'
+import { IndicadorDePasos } from './crear-torneo/components/indicador-de-pasos'
+import { Paso1Informacion } from './crear-torneo/components/paso-1-informacion'
+import { Paso2Fases } from './crear-torneo/components/paso-2-fases'
+import { Paso3Equipos } from './crear-torneo/components/paso-3-equipos'
+import { Paso4Zonas } from './crear-torneo/components/paso-4-zonas'
+import { Paso5Fixture } from './crear-torneo/components/paso-5-fixture'
+import { Paso6Resumen } from './crear-torneo/components/paso-6-resumen'
 import {
-  step1Schema,
-  step2Schema,
-  step3Schema,
-  step4Schema,
-  step5Schema,
-  tournamentWizardSchema
-} from './crear-torneo/validation-schema'
+  esquemaPaso1,
+  esquemaPaso2,
+  esquemaPaso3,
+  esquemaPaso4,
+  esquemaPaso5,
+  esquemaTorneo
+} from './crear-torneo/esquema-validacion'
+import type { DatosWizardTorneo } from './crear-torneo/tipos'
+import { useStoreWizard } from './crear-torneo/use-store-wizard'
 
-const initialData: TournamentWizardData = {
-  name: '',
-  season: new Date().getFullYear().toString(),
-  type: '',
-  categories: [],
-  format: '',
-  phases: [],
-  sumAnnualPoints: false,
-  currentPhaseIndex: 0,
-  teamCount: 16,
-  selectedTeams: [],
-  searchMode: 'name',
-  filterYear: '',
-  filterType: '',
-  filterTournament: '',
-  filterPhase: '',
-  filterZone: '',
-  zones: [],
-  zonesCount: 1,
-  preventSameClub: false,
-  freeDates: 0,
-  interzonalDates: 0,
-  fixtureGenerated: false,
-  preventClubClash: false,
-  status: 'draft'
+const datosIniciales: DatosWizardTorneo = {
+  nombre: '',
+  temporada: new Date().getFullYear().toString(),
+  tipo: '',
+  categorias: [],
+  formato: '',
+  fases: [],
+  sumarPuntosAnuales: false,
+  indiceFaseActual: 0,
+  cantidadEquipos: 16,
+  equiposSeleccionados: [],
+  modoBusqueda: 'name',
+  filtroAnio: '',
+  filtroTipo: '',
+  filtroTorneo: '',
+  filtroFase: '',
+  filtroZona: '',
+  zonas: [],
+  cantidadZonas: 1,
+  prevenirMismoClub: false,
+  fechasLibres: 0,
+  fechasInterzonales: 0,
+  fixtureGenerado: false,
+  prevenirChoquesDeClub: false,
+  estado: 'draft'
 }
 
 /** Extrae los datos relevantes de un paso para comparación/snapshot */
-function getStepData(data: TournamentWizardData, step: number): unknown {
-  switch (step) {
+function obtenerDatosDePaso(datos: DatosWizardTorneo, paso: number): unknown {
+  switch (paso) {
     case 1:
       return {
-        name: data.name,
-        season: data.season,
-        type: data.type,
-        categories: data.categories,
-        format: data.format
+        nombre: datos.nombre,
+        temporada: datos.temporada,
+        tipo: datos.tipo,
+        categorias: datos.categorias,
+        formato: datos.formato
       }
     case 2:
-      return { phases: data.phases }
+      return { fases: datos.fases }
     case 3:
       return {
-        teamCount: data.teamCount,
-        selectedTeams: data.selectedTeams,
-        searchMode: data.searchMode,
-        filterYear: data.filterYear,
-        filterType: data.filterType,
-        filterTournament: data.filterTournament,
-        filterPhase: data.filterPhase,
-        filterZone: data.filterZone
+        cantidadEquipos: datos.cantidadEquipos,
+        equiposSeleccionados: datos.equiposSeleccionados,
+        modoBusqueda: datos.modoBusqueda,
+        filtroAnio: datos.filtroAnio,
+        filtroTipo: datos.filtroTipo,
+        filtroTorneo: datos.filtroTorneo,
+        filtroFase: datos.filtroFase,
+        filtroZona: datos.filtroZona
       }
     case 4:
-      return { zones: data.zones, preventSameClub: data.preventSameClub }
+      return { zonas: datos.zonas, prevenirMismoClub: datos.prevenirMismoClub }
     case 5:
       return {
-        freeDates: data.freeDates,
-        interzonalDates: data.interzonalDates,
-        fixtureGenerated: data.fixtureGenerated,
-        preventClubClash: data.preventClubClash
+        fechasLibres: datos.fechasLibres,
+        fechasInterzonales: datos.fechasInterzonales,
+        fixtureGenerado: datos.fixtureGenerado,
+        prevenirChoquesDeClub: datos.prevenirChoquesDeClub
       }
     default:
       return null
   }
 }
 
-/** Valores por defecto para limpiar los pasos posteriores a `step` */
-function getDefaultsForStepsAfter(step: number): Partial<TournamentWizardData> {
+/** Valores por defecto para limpiar los pasos posteriores a `paso` */
+function obtenerDefaultsDespuesDePaso(
+  paso: number
+): Partial<DatosWizardTorneo> {
   const base = {
-    currentPhaseIndex: 0,
-    teamCount: 16,
-    selectedTeams: [] as TournamentWizardData['selectedTeams'],
-    searchMode: 'name' as const,
-    filterYear: '',
-    filterType: '',
-    filterTournament: '',
-    filterPhase: '',
-    filterZone: '',
-    zones: [] as TournamentWizardData['zones'],
-    zonesCount: 1,
-    preventSameClub: false,
-    freeDates: 0,
-    interzonalDates: 0,
-    fixtureGenerated: false,
-    preventClubClash: false
+    indiceFaseActual: 0,
+    cantidadEquipos: 16,
+    equiposSeleccionados: [] as DatosWizardTorneo['equiposSeleccionados'],
+    modoBusqueda: 'name' as const,
+    filtroAnio: '',
+    filtroTipo: '',
+    filtroTorneo: '',
+    filtroFase: '',
+    filtroZona: '',
+    zonas: [] as DatosWizardTorneo['zonas'],
+    cantidadZonas: 1,
+    prevenirMismoClub: false,
+    fechasLibres: 0,
+    fechasInterzonales: 0,
+    fixtureGenerado: false,
+    prevenirChoquesDeClub: false
   }
-  if (step <= 1) return { ...base, phases: [] }
-  if (step <= 2) return base
-  if (step <= 3)
+  if (paso <= 1) return { ...base, fases: [] }
+  if (paso <= 2) return base
+  if (paso <= 3)
     return {
-      zones: base.zones,
-      zonesCount: base.zonesCount,
-      preventSameClub: base.preventSameClub,
-      freeDates: base.freeDates,
-      interzonalDates: base.interzonalDates,
-      fixtureGenerated: base.fixtureGenerated,
-      preventClubClash: base.preventClubClash
+      zonas: base.zonas,
+      cantidadZonas: base.cantidadZonas,
+      prevenirMismoClub: base.prevenirMismoClub,
+      fechasLibres: base.fechasLibres,
+      fechasInterzonales: base.fechasInterzonales,
+      fixtureGenerado: base.fixtureGenerado,
+      prevenirChoquesDeClub: base.prevenirChoquesDeClub
     }
-  if (step <= 4)
+  if (paso <= 4)
     return {
-      freeDates: base.freeDates,
-      interzonalDates: base.interzonalDates,
-      fixtureGenerated: base.fixtureGenerated,
-      preventClubClash: base.preventClubClash
+      fechasLibres: base.fechasLibres,
+      fechasInterzonales: base.fechasInterzonales,
+      fixtureGenerado: base.fixtureGenerado,
+      prevenirChoquesDeClub: base.prevenirChoquesDeClub
     }
   return {}
 }
 
 export default function CrearTorneo() {
   const navigate = useNavigate()
-  const [confirmacionLimpiarAbierta, setConfirmacionLimpiarAbierta] =
-    useState(false)
-  const pendienteAccionRef = useRef<
+  const [confirmacionAbierta, setConfirmacionAbierta] = useState(false)
+  const accionPendienteRef = useRef<
     { tipo: 'next' } | { tipo: 'step'; targetStep: number } | null
   >(null)
 
   const {
-    currentStep,
-    maxStepReached,
-    nextStep,
-    prevStep,
-    goToStep,
-    editingFromSummaryStep,
-    setEditingFromSummaryStep
-  } = useWizardStore()
+    pasoActual,
+    maxPasoAlcanzado,
+    siguientePaso,
+    pasoAnterior,
+    irAlPaso,
+    editandoDesdePasoResumen,
+    setEditandoDesdePasoResumen
+  } = useStoreWizard()
 
-  const stepSnapshotRef = useRef<unknown>(null)
+  const snapshotPasoRef = useRef<unknown>(null)
 
-  const methods = useForm<TournamentWizardData>({
-    defaultValues: initialData,
+  const methods = useForm<DatosWizardTorneo>({
+    defaultValues: datosIniciales,
     mode: 'onChange',
-    resolver: zodResolver(tournamentWizardSchema)
+    resolver: zodResolver(esquemaTorneo)
   })
 
-  const mutation = useApiMutation({
+  const mutacion = useApiMutation({
     fn: async (nuevoTorneo: TorneoDTO) => {
       await api.torneoPOST(nuevoTorneo)
     },
@@ -188,44 +189,44 @@ export default function CrearTorneo() {
   })
 
   // Validar el paso actual antes de avanzar
-  const validateCurrentStep = async () => {
-    const formData = methods.getValues()
+  const validarPasoActual = async () => {
+    const datosForm = methods.getValues()
 
     try {
-      switch (currentStep) {
+      switch (pasoActual) {
         case 1:
-          await step1Schema.parseAsync({
-            name: formData.name,
-            season: formData.season,
-            type: formData.type,
-            categories: formData.categories,
-            format: formData.format
+          await esquemaPaso1.parseAsync({
+            nombre: datosForm.nombre,
+            temporada: datosForm.temporada,
+            tipo: datosForm.tipo,
+            categorias: datosForm.categorias,
+            formato: datosForm.formato
           })
           break
 
         case 2:
-          await step2Schema.parseAsync({
-            phases: formData.phases
+          await esquemaPaso2.parseAsync({
+            fases: datosForm.fases
           })
           break
 
         case 3:
-          await step3Schema.parseAsync({
-            teamCount: formData.teamCount,
-            selectedTeams: formData.selectedTeams
+          await esquemaPaso3.parseAsync({
+            cantidadEquipos: datosForm.cantidadEquipos,
+            equiposSeleccionados: datosForm.equiposSeleccionados
           })
           break
 
         case 4:
-          await step4Schema.parseAsync({
-            zones: formData.zones,
-            selectedTeams: formData.selectedTeams
+          await esquemaPaso4.parseAsync({
+            zonas: datosForm.zonas,
+            equiposSeleccionados: datosForm.equiposSeleccionados
           })
           break
 
         case 5:
-          await step5Schema.parseAsync({
-            fixtureGenerated: formData.fixtureGenerated
+          await esquemaPaso5.parseAsync({
+            fixtureGenerado: datosForm.fixtureGenerado
           })
           break
       }
@@ -255,116 +256,116 @@ export default function CrearTorneo() {
     }
   }
 
-  const onEditStep = (step: number) => {
-    const formData = methods.getValues()
-    stepSnapshotRef.current = getStepData(formData, step)
-    setEditingFromSummaryStep(step)
-    goToStep(step)
+  const alEditarPaso = (paso: number) => {
+    const datosForm = methods.getValues()
+    snapshotPasoRef.current = obtenerDatosDePaso(datosForm, paso)
+    setEditandoDesdePasoResumen(paso)
+    irAlPaso(paso)
   }
 
-  const debeMostrarConfirmacionLimpiar = () => {
+  const debeMostrarConfirmacion = () => {
     if (
-      editingFromSummaryStep === null ||
-      editingFromSummaryStep !== currentStep
+      editandoDesdePasoResumen === null ||
+      editandoDesdePasoResumen !== pasoActual
     )
       return false
-    const formData = methods.getValues()
-    const actual = getStepData(formData, currentStep)
-    const snapshot = stepSnapshotRef.current
+    const datosForm = methods.getValues()
+    const actual = obtenerDatosDePaso(datosForm, pasoActual)
+    const snapshot = snapshotPasoRef.current
     return JSON.stringify(actual) !== JSON.stringify(snapshot)
   }
 
-  const aplicarRevertirCambios = () => {
-    const snapshot = stepSnapshotRef.current as Record<string, unknown>
+  const aplicarReversion = () => {
+    const snapshot = snapshotPasoRef.current as Record<string, unknown>
     if (!snapshot) return
-    const current = methods.getValues()
-    const nuevosValores = { ...current }
-    if (currentStep === 1) {
+    const actual = methods.getValues()
+    const nuevosValores = { ...actual }
+    if (pasoActual === 1) {
       Object.assign(nuevosValores, snapshot)
-    } else if (currentStep === 2) {
-      nuevosValores.phases = snapshot.phases as TournamentWizardData['phases']
-    } else if (currentStep === 3) {
+    } else if (pasoActual === 2) {
+      nuevosValores.fases = snapshot.fases as DatosWizardTorneo['fases']
+    } else if (pasoActual === 3) {
       Object.assign(nuevosValores, snapshot)
-    } else if (currentStep === 4) {
-      nuevosValores.zones = snapshot.zones as TournamentWizardData['zones']
-      nuevosValores.preventSameClub = snapshot.preventSameClub as boolean
-    } else if (currentStep === 5) {
+    } else if (pasoActual === 4) {
+      nuevosValores.zonas = snapshot.zonas as DatosWizardTorneo['zonas']
+      nuevosValores.prevenirMismoClub = snapshot.prevenirMismoClub as boolean
+    } else if (pasoActual === 5) {
       Object.assign(nuevosValores, snapshot)
     }
     methods.reset(nuevosValores)
-    setEditingFromSummaryStep(null)
-    stepSnapshotRef.current = null
+    setEditandoDesdePasoResumen(null)
+    snapshotPasoRef.current = null
   }
 
-  const aplicarConfirmarYLimpiar = () => {
-    const defaults = getDefaultsForStepsAfter(currentStep)
-    const current = methods.getValues()
-    methods.reset({ ...current, ...defaults })
-    setEditingFromSummaryStep(null)
-    stepSnapshotRef.current = null
+  const aplicarConfirmacionYLimpieza = () => {
+    const defaults = obtenerDefaultsDespuesDePaso(pasoActual)
+    const actual = methods.getValues()
+    methods.reset({ ...actual, ...defaults })
+    setEditandoDesdePasoResumen(null)
+    snapshotPasoRef.current = null
   }
 
-  const handleNext = async () => {
-    const isValid = await validateCurrentStep()
-    if (!isValid) return
+  const alSiguiente = async () => {
+    const esValido = await validarPasoActual()
+    if (!esValido) return
 
-    if (debeMostrarConfirmacionLimpiar()) {
-      pendienteAccionRef.current = { tipo: 'next' }
-      setConfirmacionLimpiarAbierta(true)
+    if (debeMostrarConfirmacion()) {
+      accionPendienteRef.current = { tipo: 'next' }
+      setConfirmacionAbierta(true)
       return
     }
-    nextStep()
+    siguientePaso()
   }
 
-  const handlePrev = () => prevStep()
+  const alAnterior = () => pasoAnterior()
 
-  const handleStepClick = async (targetStep: number) => {
-    if (targetStep === currentStep) return
-    if (targetStep < currentStep) {
-      goToStep(targetStep)
+  const alClickearPaso = async (pasoDestino: number) => {
+    if (pasoDestino === pasoActual) return
+    if (pasoDestino < pasoActual) {
+      irAlPaso(pasoDestino)
       return
     }
-    const isValid = await validateCurrentStep()
-    if (!isValid) return
-    if (targetStep > maxStepReached) {
+    const esValido = await validarPasoActual()
+    if (!esValido) return
+    if (pasoDestino > maxPasoAlcanzado) {
       toast.error(
         'Completa el paso actual y avanza con "Siguiente" para desbloquear más pasos'
       )
       return
     }
 
-    if (debeMostrarConfirmacionLimpiar()) {
-      pendienteAccionRef.current = { tipo: 'step', targetStep }
-      setConfirmacionLimpiarAbierta(true)
+    if (debeMostrarConfirmacion()) {
+      accionPendienteRef.current = { tipo: 'step', targetStep: pasoDestino }
+      setConfirmacionAbierta(true)
       return
     }
-    goToStep(targetStep)
+    irAlPaso(pasoDestino)
   }
 
-  const handleRevertirCambios = () => {
-    aplicarRevertirCambios()
-    setConfirmacionLimpiarAbierta(false)
-    pendienteAccionRef.current = null
+  const alRevertir = () => {
+    aplicarReversion()
+    setConfirmacionAbierta(false)
+    accionPendienteRef.current = null
   }
 
-  const handleConfirmarYLimpiar = () => {
-    aplicarConfirmarYLimpiar()
-    setConfirmacionLimpiarAbierta(false)
-    const pendiente = pendienteAccionRef.current
-    pendienteAccionRef.current = null
-    if (pendiente?.tipo === 'next') nextStep()
-    else if (pendiente?.tipo === 'step') goToStep(pendiente.targetStep)
+  const alConfirmarYLimpiar = () => {
+    aplicarConfirmacionYLimpieza()
+    setConfirmacionAbierta(false)
+    const pendiente = accionPendienteRef.current
+    accionPendienteRef.current = null
+    if (pendiente?.tipo === 'next') siguientePaso()
+    else if (pendiente?.tipo === 'step') irAlPaso(pendiente.targetStep)
   }
 
-  const handleSubmit = methods.handleSubmit((data) => {
+  const alEnviar = methods.handleSubmit((datos) => {
     const nombre =
-      data.name || `Torneo ${data.season} - ${data.type || 'General'}`
-    mutation.mutate(new TorneoDTO({ nombre }))
+      datos.nombre || `Torneo ${datos.temporada} - ${datos.tipo || 'General'}`
+    mutacion.mutate(new TorneoDTO({ nombre }))
   })
 
   return (
     <FormProvider {...methods}>
-      <Card>
+      <Card className='max-w-5xl mx-auto'>
         <CardHeader className='flex flex-row items-center justify-between'>
           <div>
             <CardTitle>Crear nuevo torneo</CardTitle>
@@ -383,27 +384,27 @@ export default function CrearTorneo() {
           />
         </CardHeader>
         <CardContent className='space-y-6'>
-          <StepIndicator
-            currentStep={currentStep}
-            maxStepReached={maxStepReached}
-            totalSteps={6}
-            onStepClick={handleStepClick}
+          <IndicadorDePasos
+            pasoActual={pasoActual}
+            maxPasoAlcanzado={maxPasoAlcanzado}
+            totalPasos={6}
+            alClickearPaso={alClickearPaso}
           />
 
           <div>
-            {currentStep === 1 && <Step1Information />}
-            {currentStep === 2 && <Step2Phases />}
-            {currentStep === 3 && <Step3Teams />}
-            {currentStep === 4 && <Step4Zones />}
-            {currentStep === 5 && <Step5Fixture />}
-            {currentStep === 6 && <Step6Summary onEditStep={onEditStep} />}
+            {pasoActual === 1 && <Paso1Informacion />}
+            {pasoActual === 2 && <Paso2Fases />}
+            {pasoActual === 3 && <Paso3Equipos />}
+            {pasoActual === 4 && <Paso4Zonas />}
+            {pasoActual === 5 && <Paso5Fixture />}
+            {pasoActual === 6 && <Paso6Resumen alEditarPaso={alEditarPaso} />}
           </div>
 
           <AlertDialog
-            open={confirmacionLimpiarAbierta}
+            open={confirmacionAbierta}
             onOpenChange={(open) => {
-              if (!open) pendienteAccionRef.current = null
-              setConfirmacionLimpiarAbierta(open)
+              if (!open) accionPendienteRef.current = null
+              setConfirmacionAbierta(open)
             }}
           >
             <AlertDialogContent>
@@ -415,10 +416,10 @@ export default function CrearTorneo() {
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel onClick={handleRevertirCambios}>
+                <AlertDialogCancel onClick={alRevertir}>
                   Revertir cambios
                 </AlertDialogCancel>
-                <AlertDialogAction onClick={handleConfirmarYLimpiar}>
+                <AlertDialogAction onClick={alConfirmarYLimpiar}>
                   Confirmar cambios y limpiar pasos siguientes
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -426,24 +427,24 @@ export default function CrearTorneo() {
           </AlertDialog>
 
           <div className='flex justify-between pt-4 border-t'>
-            {currentStep === 1 ? (
+            {pasoActual === 1 ? (
               <div />
             ) : (
               <Button
                 type='button'
                 className='h-11 w-28 text-sm'
                 variant='outline'
-                onClick={handlePrev}
+                onClick={alAnterior}
               >
                 Anterior
               </Button>
             )}
 
-            {currentStep < 6 ? (
+            {pasoActual < 6 ? (
               <Button
                 type='button'
                 className='h-11 w-28 text-sm'
-                onClick={handleNext}
+                onClick={alSiguiente}
               >
                 Siguiente
               </Button>
@@ -451,8 +452,8 @@ export default function CrearTorneo() {
               <Boton
                 type='button'
                 className='h-11 w-28 text-sm'
-                onClick={handleSubmit}
-                estaCargando={mutation.isPending}
+                onClick={alEnviar}
+                estaCargando={mutacion.isPending}
               >
                 Crear torneo
               </Boton>

@@ -7,104 +7,110 @@ import { cn } from '@/logica-compartida/utils'
 import { Search, X } from 'lucide-react'
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { mockTeams } from '../data/mock-teams'
-import type { TournamentWizardData, WizardTeam } from '../types'
-import { MiniResumen } from './MiniResumen'
+import { equiposMock } from '../data/equipos-mock'
+import type { DatosWizardTorneo, EquipoWizard } from '../tipos'
+import { MiniResumen } from './mini-resumen'
 
-export function Step3Teams() {
+export function Paso3Equipos() {
   const {
     watch,
     setValue,
     formState: { errors }
-  } = useFormContext<TournamentWizardData>()
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectAll, setSelectAll] = useState(false)
+  } = useFormContext<DatosWizardTorneo>()
+  const [terminoBusqueda, setTerminoBusqueda] = useState('')
+  const [seleccionarTodos, setSeleccionarTodos] = useState(false)
 
-  const data = {
-    name: watch('name'),
-    phases: watch('phases'),
-    teamCount: watch('teamCount'),
-    selectedTeams: watch('selectedTeams'),
-    searchMode: watch('searchMode'),
-    filterYear: watch('filterYear'),
-    filterType: watch('filterType'),
-    filterTournament: watch('filterTournament'),
-    filterPhase: watch('filterPhase'),
-    filterZone: watch('filterZone')
+  const datos = {
+    nombre: watch('nombre'),
+    fases: watch('fases'),
+    cantidadEquipos: watch('cantidadEquipos'),
+    equiposSeleccionados: watch('equiposSeleccionados'),
+    modoBusqueda: watch('modoBusqueda'),
+    filtroAnio: watch('filtroAnio'),
+    filtroTipo: watch('filtroTipo'),
+    filtroTorneo: watch('filtroTorneo'),
+    filtroFase: watch('filtroFase'),
+    filtroZona: watch('filtroZona')
   }
 
-  const handleSearchChange = (value: string) => {
-    setSearchTerm(value)
-    setSelectAll(false)
+  const alCambiarBusqueda = (valor: string) => {
+    setTerminoBusqueda(valor)
+    setSeleccionarTodos(false)
   }
 
-  const handleFilterChange = (field: Partial<TournamentWizardData>) => {
-    Object.entries(field).forEach(([key, value]) => {
-      setValue(key as keyof TournamentWizardData, value)
+  const alCambiarFiltro = (campo: Partial<DatosWizardTorneo>) => {
+    Object.entries(campo).forEach(([clave, valor]) => {
+      setValue(clave as keyof DatosWizardTorneo, valor)
     })
-    setSelectAll(false)
+    setSeleccionarTodos(false)
   }
 
-  const zones = Array.from(
-    new Set(mockTeams.map((t) => t.zone).filter(Boolean))
+  const zonas = Array.from(
+    new Set(equiposMock.map((t) => t.zona).filter(Boolean))
   ).sort() as string[]
-  const tournaments = Array.from(
-    new Set(mockTeams.map((t) => t.tournament))
-  ).sort()
+  const torneos = Array.from(new Set(equiposMock.map((t) => t.torneo))).sort()
 
-  const filteredTeams = mockTeams.filter((team) => {
-    if (data.searchMode === 'name') {
-      const matchesSearch =
-        team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        team.club.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        team.id.toString().includes(searchTerm)
-      const notSelected = !data.selectedTeams.find((t) => t.id === team.id)
-      return matchesSearch && notSelected
+  const equiposFiltrados = equiposMock.filter((equipo) => {
+    if (datos.modoBusqueda === 'name') {
+      const coincideBusqueda =
+        equipo.nombre.toLowerCase().includes(terminoBusqueda.toLowerCase()) ||
+        equipo.club.toLowerCase().includes(terminoBusqueda.toLowerCase()) ||
+        equipo.id.toString().includes(terminoBusqueda)
+      const noSeleccionado = !datos.equiposSeleccionados.find(
+        (t) => t.id === equipo.id
+      )
+      return coincideBusqueda && noSeleccionado
     } else {
-      const matchesSearch =
-        team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        team.club.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesYear = !data.filterYear || team.year === data.filterYear
-      const matchesType = !data.filterType || team.type === data.filterType
-      const matchesTournament =
-        !data.filterTournament || team.tournament === data.filterTournament
-      const matchesPhase = !data.filterPhase || team.phase === data.filterPhase
-      const matchesZone = !data.filterZone || team.zone === data.filterZone
-      const notSelected = !data.selectedTeams.find((t) => t.id === team.id)
+      const coincideBusqueda =
+        equipo.nombre.toLowerCase().includes(terminoBusqueda.toLowerCase()) ||
+        equipo.club.toLowerCase().includes(terminoBusqueda.toLowerCase())
+      const coincideAnio = !datos.filtroAnio || equipo.anio === datos.filtroAnio
+      const coincideTipo = !datos.filtroTipo || equipo.tipo === datos.filtroTipo
+      const coincideTorneo =
+        !datos.filtroTorneo || equipo.torneo === datos.filtroTorneo
+      const coincideFase = !datos.filtroFase || equipo.fase === datos.filtroFase
+      const coincideZona = !datos.filtroZona || equipo.zona === datos.filtroZona
+      const noSeleccionado = !datos.equiposSeleccionados.find(
+        (t) => t.id === equipo.id
+      )
 
       return (
-        matchesSearch &&
-        matchesYear &&
-        matchesType &&
-        matchesTournament &&
-        matchesPhase &&
-        matchesZone &&
-        notSelected
+        coincideBusqueda &&
+        coincideAnio &&
+        coincideTipo &&
+        coincideTorneo &&
+        coincideFase &&
+        coincideZona &&
+        noSeleccionado
       )
     }
   })
 
-  const handleSelectTeam = (team: WizardTeam) => {
-    if (data.selectedTeams.length < data.teamCount) {
-      setValue('selectedTeams', [...data.selectedTeams, team])
+  const alSeleccionarEquipo = (equipo: EquipoWizard) => {
+    if (datos.equiposSeleccionados.length < datos.cantidadEquipos) {
+      setValue('equiposSeleccionados', [...datos.equiposSeleccionados, equipo])
     }
   }
 
-  const handleRemoveTeam = (teamId: number) => {
+  const alQuitarEquipo = (equipoId: number) => {
     setValue(
-      'selectedTeams',
-      data.selectedTeams.filter((t) => t.id !== teamId)
+      'equiposSeleccionados',
+      datos.equiposSeleccionados.filter((t) => t.id !== equipoId)
     )
   }
 
-  const handleSelectAll = () => {
-    if (selectAll) {
-      setSelectAll(false)
+  const alSeleccionarTodos = () => {
+    if (seleccionarTodos) {
+      setSeleccionarTodos(false)
     } else {
-      const remaining = data.teamCount - data.selectedTeams.length
-      const teamsToAdd = filteredTeams.slice(0, remaining)
-      setValue('selectedTeams', [...data.selectedTeams, ...teamsToAdd])
-      setSelectAll(true)
+      const restantes =
+        datos.cantidadEquipos - datos.equiposSeleccionados.length
+      const equiposAgregar = equiposFiltrados.slice(0, restantes)
+      setValue('equiposSeleccionados', [
+        ...datos.equiposSeleccionados,
+        ...equiposAgregar
+      ])
+      setSeleccionarTodos(true)
     }
   }
 
@@ -117,11 +123,14 @@ export function Step3Teams() {
           <TituloDeInput className='mb-1'>Equipos</TituloDeInput>
           <Input
             type='number'
-            value={data.teamCount}
+            value={datos.cantidadEquipos}
             onChange={(e) => {
-              const count = parseInt(e.target.value, 10) || 0
-              setValue('teamCount', count)
-              setValue('selectedTeams', data.selectedTeams.slice(0, count))
+              const cantidad = parseInt(e.target.value, 10) || 0
+              setValue('cantidadEquipos', cantidad)
+              setValue(
+                'equiposSeleccionados',
+                datos.equiposSeleccionados.slice(0, cantidad)
+              )
             }}
             min={2}
             className='font-semibold w-20 h-11'
@@ -129,45 +138,46 @@ export function Step3Teams() {
         </div>
         <div className='flex items-center gap-2 flex-1 min-w-0 mt-6'>
           <span className='text-sm font-medium'>
-            Seleccionados: {data.selectedTeams.length} / {data.teamCount}
+            Seleccionados: {datos.equiposSeleccionados.length} /{' '}
+            {datos.cantidadEquipos}
           </span>
           <div className='flex-1 h-2 bg-muted rounded-full overflow-hidden'>
             <div
               className={cn(
                 'h-full transition-all duration-300',
-                data.selectedTeams.length === data.teamCount
+                datos.equiposSeleccionados.length === datos.cantidadEquipos
                   ? 'bg-primary'
                   : 'bg-amber-500'
               )}
               style={{
-                width: `${(data.selectedTeams.length / data.teamCount) * 100}%`
+                width: `${(datos.equiposSeleccionados.length / datos.cantidadEquipos) * 100}%`
               }}
             />
           </div>
         </div>
       </div>
 
-      {errors.selectedTeams && (
+      {errors.equiposSeleccionados && (
         <div className='p-3 bg-destructive/10 border border-destructive/30 rounded-lg'>
           <p className='text-sm text-destructive'>
-            {errors.selectedTeams.message}
+            {errors.equiposSeleccionados.message}
           </p>
         </div>
       )}
 
-      {data.selectedTeams.length > 0 && (
+      {datos.equiposSeleccionados.length > 0 && (
         <div className='bg-muted rounded-xl p-4'>
           <h4 className='text-sm font-semibold mb-3'>Equipos seleccionados</h4>
           <div className='flex flex-wrap gap-2'>
-            {data.selectedTeams.map((team) => (
+            {datos.equiposSeleccionados.map((equipo) => (
               <div
-                key={team.id}
+                key={equipo.id}
                 className='flex items-center gap-2 bg-background px-3 py-2 rounded-lg shadow-sm'
               >
-                <span className='text-sm font-medium'>{team.name}</span>
+                <span className='text-sm font-medium'>{equipo.nombre}</span>
                 <button
                   type='button'
-                  onClick={() => handleRemoveTeam(team.id)}
+                  onClick={() => alQuitarEquipo(equipo.id)}
                   className='text-muted-foreground hover:text-destructive transition-colors'
                 >
                   <X className='w-4 h-4' />
@@ -185,9 +195,9 @@ export function Step3Teams() {
             { id: 'name', texto: 'Por Nombre/Código' },
             { id: 'tournament', texto: 'Desde otro torneo' }
           ]}
-          valorActual={data.searchMode}
+          valorActual={datos.modoBusqueda}
           alElegirOpcion={(id) =>
-            setValue('searchMode', id as TournamentWizardData['searchMode'])
+            setValue('modoBusqueda', id as DatosWizardTorneo['modoBusqueda'])
           }
           className='mb-4'
         />
@@ -196,10 +206,10 @@ export function Step3Teams() {
           <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground' />
           <Input
             type='text'
-            value={searchTerm}
-            onChange={(e) => handleSearchChange(e.target.value)}
+            value={terminoBusqueda}
+            onChange={(e) => alCambiarBusqueda(e.target.value)}
             placeholder={
-              data.searchMode === 'name'
+              datos.modoBusqueda === 'name'
                 ? 'Buscar por nombre o código...'
                 : 'Buscar equipos...'
             }
@@ -207,14 +217,14 @@ export function Step3Teams() {
           />
         </div>
 
-        {data.searchMode === 'tournament' && (
+        {datos.modoBusqueda === 'tournament' && (
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-4'>
             <div>
               <TituloDeInput className='mb-2'>Año</TituloDeInput>
               <select
-                value={data.filterYear}
+                value={datos.filtroAnio}
                 onChange={(e) =>
-                  handleFilterChange({ filterYear: e.target.value })
+                  alCambiarFiltro({ filtroAnio: e.target.value })
                 }
                 className='flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none'
               >
@@ -227,9 +237,9 @@ export function Step3Teams() {
             <div>
               <TituloDeInput className='mb-2'>Tipo</TituloDeInput>
               <select
-                value={data.filterType}
+                value={datos.filtroTipo}
                 onChange={(e) =>
-                  handleFilterChange({ filterType: e.target.value })
+                  alCambiarFiltro({ filtroTipo: e.target.value })
                 }
                 className='flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none'
               >
@@ -243,16 +253,16 @@ export function Step3Teams() {
             <div>
               <TituloDeInput className='mb-2'>Torneo</TituloDeInput>
               <select
-                value={data.filterTournament}
+                value={datos.filtroTorneo}
                 onChange={(e) =>
-                  handleFilterChange({ filterTournament: e.target.value })
+                  alCambiarFiltro({ filtroTorneo: e.target.value })
                 }
                 className='flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none'
               >
                 <option value=''>Todos los torneos</option>
-                {tournaments.map((tournament) => (
-                  <option key={tournament} value={tournament}>
-                    {tournament}
+                {torneos.map((torneo) => (
+                  <option key={torneo} value={torneo}>
+                    {torneo}
                   </option>
                 ))}
               </select>
@@ -261,9 +271,9 @@ export function Step3Teams() {
             <div>
               <TituloDeInput className='mb-2'>Fase</TituloDeInput>
               <select
-                value={data.filterPhase}
+                value={datos.filtroFase}
                 onChange={(e) =>
-                  handleFilterChange({ filterPhase: e.target.value })
+                  alCambiarFiltro({ filtroFase: e.target.value })
                 }
                 className='flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none'
               >
@@ -276,16 +286,16 @@ export function Step3Teams() {
             <div>
               <TituloDeInput className='mb-2'>Zona</TituloDeInput>
               <select
-                value={data.filterZone}
+                value={datos.filtroZona}
                 onChange={(e) =>
-                  handleFilterChange({ filterZone: e.target.value })
+                  alCambiarFiltro({ filtroZona: e.target.value })
                 }
                 className='flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none'
               >
                 <option value=''>Todas las zonas</option>
-                {zones.map((zone) => (
-                  <option key={zone} value={zone}>
-                    {zone}
+                {zonas.map((zona) => (
+                  <option key={zona} value={zona}>
+                    {zona}
                   </option>
                 ))}
               </select>
@@ -297,25 +307,27 @@ export function Step3Teams() {
       <div className='border rounded-xl overflow-hidden'>
         <div className='bg-muted px-4 py-3 border-b flex items-center justify-between'>
           <h4 className='text-sm font-semibold'>Equipos disponibles</h4>
-          {filteredTeams.length > 0 &&
-            data.selectedTeams.length < data.teamCount && (
+          {equiposFiltrados.length > 0 &&
+            datos.equiposSeleccionados.length < datos.cantidadEquipos && (
               <div className='flex items-center gap-2'>
                 <Checkbox
-                  id='select-all'
-                  checked={selectAll}
-                  onCheckedChange={() => handleSelectAll()}
+                  id='seleccionar-todos'
+                  checked={seleccionarTodos}
+                  onCheckedChange={() => alSeleccionarTodos()}
                 />
                 <TituloDeInput
-                  htmlFor='select-all'
+                  htmlFor='seleccionar-todos'
                   className='mb-0 text-xs cursor-pointer'
                 >
-                  {selectAll ? 'Deseleccionar todos' : 'Seleccionar todos'}
+                  {seleccionarTodos
+                    ? 'Deseleccionar todos'
+                    : 'Seleccionar todos'}
                 </TituloDeInput>
               </div>
             )}
         </div>
         <div className='max-h-96 overflow-y-auto'>
-          {filteredTeams.length === 0 ? (
+          {equiposFiltrados.length === 0 ? (
             <div className='p-8 text-center text-muted-foreground'>
               No se encontraron equipos
             </div>
@@ -332,7 +344,7 @@ export function Step3Teams() {
                   <th className='px-4 py-3 text-left text-xs font-medium text-muted-foreground'>
                     Club
                   </th>
-                  {data.searchMode === 'tournament' && (
+                  {datos.modoBusqueda === 'tournament' && (
                     <>
                       <th className='px-4 py-3 text-left text-xs font-medium text-muted-foreground'>
                         Torneo
@@ -348,27 +360,27 @@ export function Step3Teams() {
                 </tr>
               </thead>
               <tbody className='divide-y'>
-                {filteredTeams.slice(0, 50).map((team) => (
+                {equiposFiltrados.slice(0, 50).map((equipo) => (
                   <tr
-                    key={team.id}
+                    key={equipo.id}
                     className='hover:bg-muted/50 transition-colors'
                   >
                     <td className='px-4 py-3 text-sm text-muted-foreground'>
-                      {team.id}
+                      {equipo.id}
                     </td>
                     <td className='px-4 py-3 text-sm font-medium'>
-                      {team.name}
+                      {equipo.nombre}
                     </td>
                     <td className='px-4 py-3 text-sm text-muted-foreground'>
-                      {team.club}
+                      {equipo.club}
                     </td>
-                    {data.searchMode === 'tournament' && (
+                    {datos.modoBusqueda === 'tournament' && (
                       <>
                         <td className='px-4 py-3 text-sm text-muted-foreground'>
-                          {team.tournament}
+                          {equipo.torneo}
                         </td>
                         <td className='px-4 py-3 text-sm text-muted-foreground'>
-                          {team.zone || '-'}
+                          {equipo.zona || '-'}
                         </td>
                       </>
                     )}
@@ -376,8 +388,11 @@ export function Step3Teams() {
                       <Button
                         type='button'
                         size='sm'
-                        onClick={() => handleSelectTeam(team)}
-                        disabled={data.selectedTeams.length >= data.teamCount}
+                        onClick={() => alSeleccionarEquipo(equipo)}
+                        disabled={
+                          datos.equiposSeleccionados.length >=
+                          datos.cantidadEquipos
+                        }
                       >
                         Seleccionar
                       </Button>

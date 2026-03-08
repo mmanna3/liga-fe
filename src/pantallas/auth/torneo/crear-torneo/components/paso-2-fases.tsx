@@ -6,127 +6,129 @@ import { cn } from '@/logica-compartida/utils'
 import { ChevronDown, ChevronRight, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import type { Phase, TournamentWizardData } from '../types'
-import { MiniResumen } from './MiniResumen'
-import { ReglasDeDesempate } from './ReglasDeDesempate'
+import type { Fase, DatosWizardTorneo } from '../tipos'
+import { MiniResumen } from './mini-resumen'
+import { ReglasDeDesempate } from './reglas-de-desempate'
 
-export function Step2Phases() {
-  const { watch, setValue } = useFormContext<TournamentWizardData>()
-  const [expandedPhase, setExpandedPhase] = useState<string | null>(null)
-  const [editingPhaseName, setEditingPhaseName] = useState<string | null>(null)
+export function Paso2Fases() {
+  const { watch, setValue } = useFormContext<DatosWizardTorneo>()
+  const [faseExpandida, setFaseExpandida] = useState<string | null>(null)
+  const [editandoNombreFase, setEditandoNombreFase] = useState<string | null>(
+    null
+  )
 
-  const data = {
-    format: watch('format'),
-    name: watch('name'),
-    categories: watch('categories'),
-    phases: watch('phases')
+  const datos = {
+    formato: watch('formato'),
+    nombre: watch('nombre'),
+    categorias: watch('categorias'),
+    fases: watch('fases')
   }
 
   useEffect(() => {
-    if (data.format && data.phases.length === 0) {
-      initializePhasesForFormat()
+    if (datos.formato && datos.fases.length === 0) {
+      inicializarFasesParaFormato()
     }
-  }, [data.format])
+  }, [datos.formato])
 
-  const createPhase = (
-    name: string,
-    format: 'all-vs-all' | 'elimination'
-  ): Phase => ({
+  const crearFase = (
+    nombre: string,
+    formato: 'all-vs-all' | 'elimination'
+  ): Fase => ({
     id: Date.now().toString() + Math.random(),
-    name,
-    format,
-    rounds: 'single',
-    zoneFormats: {},
-    tiebreakers: [
+    nombre,
+    formato,
+    vueltas: 'single',
+    formatosPorZona: {},
+    desempates: [
       'Diferencia de Goles',
       'Goles a Favor',
       'Resultado entre sí',
       'Sorteo',
       'Manual'
     ],
-    transitionMode: 'automatic',
-    qualifiersPerZone: 2,
-    qualifiersStartPosition: 1,
-    qualifiersEndPosition: 2,
-    crossGroupQualifiers: 0,
-    comparisonMode: 'total-points',
-    enableTriangular: false,
-    tieResolution: 'penalties',
-    transitionRules: [
+    modoTransicion: 'automatic',
+    clasificadosPorZona: 2,
+    posicionInicioClasificados: 1,
+    posicionFinClasificados: 2,
+    clasificadosCruzados: 0,
+    modoComparacion: 'total-points',
+    habilitarTriangular: false,
+    resolucionDesempate: 'penalties',
+    reglasTransicion: [
       'Diferencia de Goles',
       'Mejores de tabla general (Cross-Group)',
       'Sorteo'
     ],
-    completed: false
+    completada: false
   })
 
-  const initializePhasesForFormat = () => {
-    const newPhases: Phase[] = []
+  const inicializarFasesParaFormato = () => {
+    const nuevasFases: Fase[] = []
 
-    if (data.format === 'ANUAL') {
-      newPhases.push(createPhase('Apertura', 'all-vs-all'))
-      newPhases.push(createPhase('Clausura', 'all-vs-all'))
-    } else if (data.format === 'MUNDIAL') {
-      newPhases.push(createPhase('Fase de grupos', 'all-vs-all'))
-      newPhases.push(createPhase('Playoffs', 'elimination'))
-    } else if (data.format === 'RELAMPAGO') {
-      newPhases.push(createPhase('Eliminación directa', 'elimination'))
-    } else if (data.format === 'PERSONALIZADO') {
-      newPhases.push(createPhase('Fase 1', 'all-vs-all'))
+    if (datos.formato === 'ANUAL') {
+      nuevasFases.push(crearFase('Apertura', 'all-vs-all'))
+      nuevasFases.push(crearFase('Clausura', 'all-vs-all'))
+    } else if (datos.formato === 'MUNDIAL') {
+      nuevasFases.push(crearFase('Fase de grupos', 'all-vs-all'))
+      nuevasFases.push(crearFase('Playoffs', 'elimination'))
+    } else if (datos.formato === 'RELAMPAGO') {
+      nuevasFases.push(crearFase('Eliminación directa', 'elimination'))
+    } else if (datos.formato === 'PERSONALIZADO') {
+      nuevasFases.push(crearFase('Fase 1', 'all-vs-all'))
     }
 
-    if (newPhases.length > 0) {
-      setValue('phases', newPhases)
-      setExpandedPhase(newPhases[0].id)
+    if (nuevasFases.length > 0) {
+      setValue('fases', nuevasFases)
+      setFaseExpandida(nuevasFases[0].id)
     }
   }
 
-  const addPhase = () => {
-    const phaseNumber = data.phases.length + 1
-    const newPhase = createPhase(`Fase ${phaseNumber}`, 'all-vs-all')
-    setValue('phases', [...data.phases, newPhase])
-    setExpandedPhase(newPhase.id)
+  const agregarFase = () => {
+    const numeroDeFase = datos.fases.length + 1
+    const nuevaFase = crearFase(`Fase ${numeroDeFase}`, 'all-vs-all')
+    setValue('fases', [...datos.fases, nuevaFase])
+    setFaseExpandida(nuevaFase.id)
   }
 
-  const removePhase = (id: string) => {
-    if (data.phases.length > 1) {
+  const quitarFase = (id: string) => {
+    if (datos.fases.length > 1) {
       setValue(
-        'phases',
-        data.phases.filter((p) => p.id !== id)
+        'fases',
+        datos.fases.filter((p) => p.id !== id)
       )
-      if (expandedPhase === id) {
-        setExpandedPhase(null)
+      if (faseExpandida === id) {
+        setFaseExpandida(null)
       }
     }
   }
 
-  const updatePhase = (id: string, field: Partial<Phase>) => {
+  const actualizarFase = (id: string, campo: Partial<Fase>) => {
     setValue(
-      'phases',
-      data.phases.map((p) => (p.id === id ? { ...p, ...field } : p))
+      'fases',
+      datos.fases.map((p) => (p.id === id ? { ...p, ...campo } : p))
     )
   }
 
-  const handleReorderTiebreakers = (
-    phaseId: string,
-    fromIndex: number,
-    toIndex: number
+  const alReordenarDesempates = (
+    faseId: string,
+    desdeIndice: number,
+    hastaIndice: number
   ) => {
-    const phase = data.phases.find((p) => p.id === phaseId)
-    if (!phase) return
+    const fase = datos.fases.find((p) => p.id === faseId)
+    if (!fase) return
 
-    const newTiebreakers = [...phase.tiebreakers]
-    const [moved] = newTiebreakers.splice(fromIndex, 1)
-    newTiebreakers.splice(toIndex, 0, moved)
+    const nuevosDesempates = [...fase.desempates]
+    const [movido] = nuevosDesempates.splice(desdeIndice, 1)
+    nuevosDesempates.splice(hastaIndice, 0, movido)
 
-    updatePhase(phaseId, { tiebreakers: newTiebreakers })
+    actualizarFase(faseId, { desempates: nuevosDesempates })
   }
 
-  const getFormatLabel = (format: 'all-vs-all' | 'elimination') =>
-    format === 'all-vs-all' ? 'Todos contra todos' : 'Eliminación directa'
+  const obtenerEtiquetaFormato = (formato: 'all-vs-all' | 'elimination') =>
+    formato === 'all-vs-all' ? 'Todos contra todos' : 'Eliminación directa'
 
-  const getRoundsLabel = (rounds: 'single' | 'double') =>
-    rounds === 'single' ? 'Solo ida' : 'Ida y vuelta'
+  const obtenerEtiquetaVueltas = (vueltas: 'single' | 'double') =>
+    vueltas === 'single' ? 'Solo ida' : 'Ida y vuelta'
 
   return (
     <div className='space-y-4'>
@@ -142,12 +144,12 @@ export function Step2Phases() {
       </div>
 
       <div className='space-y-2'>
-        {data.phases.map((phase, phaseIndex) => {
+        {datos.fases.map((fase, indiceFase) => {
           const editable = true
 
           return (
             <div
-              key={phase.id}
+              key={fase.id}
               className={cn(
                 'border rounded-xl overflow-hidden',
                 !editable && 'opacity-60'
@@ -157,31 +159,29 @@ export function Step2Phases() {
                 <button
                   type='button'
                   onClick={() =>
-                    setExpandedPhase(
-                      expandedPhase === phase.id ? null : phase.id
-                    )
+                    setFaseExpandida(faseExpandida === fase.id ? null : fase.id)
                   }
                   className='flex items-center gap-3 flex-1'
                   disabled={!editable}
                 >
-                  {expandedPhase === phase.id ? (
+                  {faseExpandida === fase.id ? (
                     <ChevronDown className='w-4 h-4 text-muted-foreground' />
                   ) : (
                     <ChevronRight className='w-4 h-4 text-muted-foreground' />
                   )}
                   <span className='w-8 h-8 bg-primary text-primary-foreground rounded-md flex items-center justify-center font-bold text-md'>
-                    {phaseIndex + 1}
+                    {indiceFase + 1}
                   </span>
-                  {editingPhaseName === phase.id && editable ? (
+                  {editandoNombreFase === fase.id && editable ? (
                     <Input
                       type='text'
-                      value={phase.name}
+                      value={fase.nombre}
                       onChange={(e) =>
-                        updatePhase(phase.id, { name: e.target.value })
+                        actualizarFase(fase.id, { nombre: e.target.value })
                       }
-                      onBlur={() => setEditingPhaseName(null)}
+                      onBlur={() => setEditandoNombreFase(null)}
                       onKeyDown={(e) => {
-                        if (e.key === 'Enter') setEditingPhaseName(null)
+                        if (e.key === 'Enter') setEditandoNombreFase(null)
                       }}
                       autoFocus
                       onClick={(e) => e.stopPropagation()}
@@ -189,17 +189,17 @@ export function Step2Phases() {
                     />
                   ) : (
                     <span className='font-semibold text-foreground text-lg'>
-                      {phase.name}
+                      {fase.nombre}
                     </span>
                   )}
                   {editable && (
                     <span
                       onClick={(e) => {
                         e.stopPropagation()
-                        setEditingPhaseName(phase.id)
+                        setEditandoNombreFase(fase.id)
                       }}
                       onKeyDown={(e) => {
-                        if (e.key === 'Enter') setEditingPhaseName(phase.id)
+                        if (e.key === 'Enter') setEditandoNombreFase(fase.id)
                       }}
                       role='button'
                       tabIndex={0}
@@ -209,14 +209,14 @@ export function Step2Phases() {
                     </span>
                   )}
                   <span className='text-sm text-muted-foreground'>
-                    • {getFormatLabel(phase.format)}
+                    • {obtenerEtiquetaFormato(fase.formato)}
                   </span>
                   <span className='text-sm text-muted-foreground'>
-                    • {getRoundsLabel(phase.rounds)}
+                    • {obtenerEtiquetaVueltas(fase.vueltas)}
                   </span>
                 </button>
                 <div className='flex items-center gap-2'>
-                  {data.phases.length > 1 && editable && (
+                  {datos.fases.length > 1 && editable && (
                     <Button
                       type='button'
                       variant='ghost'
@@ -224,7 +224,7 @@ export function Step2Phases() {
                       className='h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10'
                       onClick={(e) => {
                         e.stopPropagation()
-                        removePhase(phase.id)
+                        quitarFase(fase.id)
                       }}
                     >
                       <Trash2 className='w-4 h-4' />
@@ -233,7 +233,7 @@ export function Step2Phases() {
                 </div>
               </div>
 
-              {expandedPhase === phase.id && (
+              {faseExpandida === fase.id && (
                 <div className='p-4 space-y-6'>
                   <div className='flex gap-8 my-3'>
                     {/* Formato de la fase */}
@@ -244,10 +244,10 @@ export function Step2Phases() {
                           { id: 'all-vs-all', texto: 'Todos contra todos' },
                           { id: 'elimination', texto: 'Eliminación directa' }
                         ]}
-                        valorActual={phase.format}
+                        valorActual={fase.formato}
                         alElegirOpcion={(id) =>
-                          updatePhase(phase.id, {
-                            format: id as Phase['format']
+                          actualizarFase(fase.id, {
+                            formato: id as Fase['formato']
                           })
                         }
                         deshabilitado={!editable}
@@ -262,23 +262,30 @@ export function Step2Phases() {
                           { id: 'single', texto: 'Solo ida' },
                           { id: 'double', texto: 'Ida y vuelta' }
                         ]}
-                        valorActual={phase.rounds}
+                        valorActual={fase.vueltas}
                         alElegirOpcion={(id) =>
-                          updatePhase(phase.id, {
-                            rounds: id as Phase['rounds']
+                          actualizarFase(fase.id, {
+                            vueltas: id as Fase['vueltas']
                           })
                         }
                         deshabilitado={!editable}
                       />
                     </div>
                   </div>
-                  {phase.format === 'all-vs-all' && (
+                  {fase.formato === 'all-vs-all' && (
                     <div className='mt-8'>
                       <ReglasDeDesempate
-                        tiebreakers={phase.tiebreakers}
+                        desempates={fase.desempates}
                         editable={editable}
-                        onReorder={(fromIndex: number, toIndex: number) =>
-                          handleReorderTiebreakers(phase.id, fromIndex, toIndex)
+                        alReordenar={(
+                          desdeIndice: number,
+                          hastaIndice: number
+                        ) =>
+                          alReordenarDesempates(
+                            fase.id,
+                            desdeIndice,
+                            hastaIndice
+                          )
                         }
                       />
                     </div>
@@ -290,19 +297,10 @@ export function Step2Phases() {
         })}
       </div>
 
-      <Button type='button' onClick={addPhase} className='w-full'>
+      <Button type='button' onClick={agregarFase} className='w-full'>
         <Plus className='w-4 h-4' />
         Agregar fase
       </Button>
-
-      {/* {data.phases.length > 0 && (
-        <div className='p-3 bg-muted rounded-lg'>
-          <p className='text-sm text-muted-foreground'>
-            No hace falta que completes toda la información ahora mismo, siempre
-            vas a poder editar la información de las fases y agregar nuevas.
-          </p>
-        </div>
-      )} */}
     </div>
   )
 }
