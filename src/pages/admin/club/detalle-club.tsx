@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
 import { rutasNavegacion } from '@/routes/rutas'
-import { PlusCircle, Shield, UserCheck } from 'react-feather'
+import { Edit2, PlusCircle, Shield, UserCheck } from 'react-feather'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export default function DetalleClub() {
@@ -67,6 +67,16 @@ export default function DetalleClub() {
       titulo={club!.nombre}
       iconoTitulo={iconoTitulo}
       pathBotonVolver={rutasNavegacion.clubs}
+      botonera={{
+        iconos: [
+          {
+            alApretar: () => navigate(`${rutasNavegacion.editarClub}/${id}`),
+            tooltip: 'Editar',
+            icono: Edit2,
+            visibleSoloParaAdmin: true
+          }
+        ]
+      }}
       contenidoEnCard={false}
       contenido={
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
