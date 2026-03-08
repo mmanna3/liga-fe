@@ -1,11 +1,9 @@
-import { Label } from '@/design-system/base-ui/label'
 import { Input } from '@/design-system/ykn-ui/input'
-import { cn } from '@/logica-compartida/utils'
-import { CalendarRange, Globe, Settings, Zap } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
 import type { DatosWizardTorneo } from '../tipos'
 import { SelectorTipoTorneo } from './selector-tipo-torneo'
 import { Categorias } from './categorias'
+import { SelectorFormato } from './selector-formato'
 
 export function Paso1Informacion() {
   const {
@@ -55,55 +53,11 @@ export function Paso1Informacion() {
         error={errors.categorias?.message}
       />
 
-      <div>
-        <Label className='block mb-2 text-md font-semibold'>Formato *</Label>
-        <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
-          {[
-            { id: 'ANUAL', label: 'Apertura/Clausura', icon: CalendarRange },
-            { id: 'MUNDIAL', label: 'Mundial', icon: Globe },
-            { id: 'RELAMPAGO', label: 'Eliminación directa', icon: Zap },
-            { id: 'PERSONALIZADO', label: 'Personalizado', icon: Settings }
-          ].map((formato) => (
-            <button
-              key={formato.id}
-              type='button'
-              onClick={() =>
-                setValue('formato', formato.id as DatosWizardTorneo['formato'])
-              }
-              className={cn(
-                'aspect-square rounded-lg transition-all border-2 flex flex-col items-center justify-center gap-2 p-3',
-                datos.formato === formato.id
-                  ? 'bg-primary/10 border-primary'
-                  : 'bg-muted border-transparent hover:border-border'
-              )}
-            >
-              <formato.icon
-                className={cn(
-                  'w-10 h-10',
-                  datos.formato === formato.id
-                    ? 'text-primary'
-                    : 'text-muted-foreground'
-                )}
-              />
-              <p
-                className={cn(
-                  'text-sm font-medium leading-tight',
-                  datos.formato === formato.id
-                    ? 'text-primary'
-                    : 'text-muted-foreground'
-                )}
-              >
-                {formato.label}
-              </p>
-            </button>
-          ))}
-        </div>
-        {errors.formato && (
-          <p className='text-sm text-destructive mt-2'>
-            {errors.formato.message}
-          </p>
-        )}
-      </div>
+      <SelectorFormato
+        valor={datos.formato}
+        alCambiar={(formato) => setValue('formato', formato)}
+        error={errors.formato?.message}
+      />
     </div>
   )
 }
