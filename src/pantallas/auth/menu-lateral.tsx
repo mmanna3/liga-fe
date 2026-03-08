@@ -1,6 +1,12 @@
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger
+} from '@/design-system/base-ui/sheet'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import Icono from '@/design-system/ykn-ui/icono'
 import { cn } from '@/logica-compartida/utils'
+import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import type { NombreIcono } from '@/design-system/ykn-ui/icono'
 
@@ -17,19 +23,25 @@ interface MenuLateralProps {
   onLogout: () => void
 }
 
-export default function MenuLateral({
+function ContenidoMenu({
   menuItems,
   userName,
   userRole,
-  onLogout
-}: MenuLateralProps) {
+  onLogout,
+  onLinkClick,
+  navClassName = 'space-y-2 flex-1'
+}: MenuLateralProps & {
+  onLinkClick?: () => void
+  navClassName?: string
+}) {
   return (
-    <aside className='admin-sidebar hidden md:flex flex-col w-64 bg-gray-900 text-white p-4'>
-      <nav className='space-y-2 flex-1'>
+    <>
+      <nav className={navClassName}>
         {menuItems.map(({ name, path, icono }) => (
           <NavLink
             key={path}
             to={path}
+            onClick={onLinkClick}
             className={({ isActive }) =>
               cn(
                 'flex items-center gap-2 px-3 py-2 rounded-lg transition',
@@ -45,7 +57,6 @@ export default function MenuLateral({
         ))}
       </nav>
 
-      {/* Información del usuario y botón de cerrar sesión */}
       <div className='mt-auto pt-4 border-t border-gray-700'>
         <div className='flex items-center gap-3 px-3 py-2 group'>
           <div className='w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center'>
@@ -69,6 +80,54 @@ export default function MenuLateral({
           </Boton>
         </div>
       </div>
-    </aside>
+    </>
+  )
+}
+
+export default function MenuLateral({
+  menuItems,
+  userName,
+  userRole,
+  onLogout
+}: MenuLateralProps) {
+  const [sheetOpen, setSheetOpen] = useState(false)
+
+  return (
+    <>
+      {/* Desktop */}
+      <aside className='admin-sidebar hidden md:flex flex-col w-64 bg-gray-900 text-white p-4'>
+        <ContenidoMenu
+          menuItems={menuItems}
+          userName={userName}
+          userRole={userRole}
+          onLogout={onLogout}
+        />
+      </aside>
+
+      {/* Mobile */}
+      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+        <SheetTrigger asChild>
+          <Boton
+            variant='ghost'
+            className='md:hidden fixed top-4 left-4 z-50 bg-gray-900 text-white'
+          >
+            <Icono nombre='Menú' className='w-6 h-6' />
+          </Boton>
+        </SheetTrigger>
+        <SheetContent
+          side='left'
+          className='admin-sidebar w-64 bg-gray-900 text-white p-4 flex flex-col'
+        >
+          <ContenidoMenu
+            menuItems={menuItems}
+            userName={userName}
+            userRole={userRole}
+            onLogout={onLogout}
+            onLinkClick={() => setSheetOpen(false)}
+            navClassName='space-y-2'
+          />
+        </SheetContent>
+      </Sheet>
+    </>
   )
 }

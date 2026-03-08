@@ -64,10 +64,10 @@ export interface InterzonalPairingValidation {
 
 // ─── Tipos internos ─────────────────────────────────────────────────────────
 
-type ParticipantType = 'team' | 'libre' | 'interzonal'
+type TipoParticipante = 'team' | 'libre' | 'interzonal'
 
-interface Participant {
-  type: ParticipantType
+interface Participante {
+  type: TipoParticipante
   teamId: number | null
   name: string
 }
@@ -89,44 +89,44 @@ export function isPowerOf2(n: number): boolean {
   return n >= 2 && n > 0 && (n & (n - 1)) === 0
 }
 
-/** Devuelve true si N + freeDates + interzonalDates es par (para una zona) */
-export function isValidConfiguration(
-  teamCount: number,
-  freeDates: number,
-  interzonalDates: number
+/** Devuelve true si N + fechasLibres + fechasInterzonales es par (para una zona) */
+export function esConfiguracionValida(
+  cantidadEquipos: number,
+  fechasLibres: number,
+  fechasInterzonales: number
 ): boolean {
-  const T = teamCount + freeDates + interzonalDates
+  const T = cantidadEquipos + fechasLibres + fechasInterzonales
   return T >= 2 && T % 2 === 0
 }
 
 /**
- * Devuelve true si N + freeDates + interzonalDates es potencia de 2 (para eliminación directa).
+ * Devuelve true si N + fechasLibres + fechasInterzonales es potencia de 2 (para eliminación directa).
  * La llave requiere 2, 4, 8, 16, ... participantes.
  */
-export function isValidForElimination(
-  teamCount: number,
-  freeDates: number,
-  interzonalDates: number
+export function esValidoParaEliminacion(
+  cantidadEquipos: number,
+  fechasLibres: number,
+  fechasInterzonales: number
 ): boolean {
-  const T = teamCount + freeDates + interzonalDates
+  const T = cantidadEquipos + fechasLibres + fechasInterzonales
   return isPowerOf2(T)
 }
 
-/** Valida cada zona individualmente (freeDates e interzonalDates por zona) */
-export function validateZones(
-  zones: ZoneInput[],
-  mode: 'all-vs-all' | 'elimination' = 'all-vs-all'
+/** Valida cada zona individualmente (fechasLibres y fechasInterzonales por zona) */
+export function validarZonas(
+  zonas: ZoneInput[],
+  modo: 'all-vs-all' | 'elimination' = 'all-vs-all'
 ): ZoneValidation[] {
-  return zones.map((zone) => {
-    const freeDates = zone.freeDates ?? 0
-    const interzonalDates = zone.interzonalDates ?? 0
-    const T = zone.teams.length + freeDates + interzonalDates
+  return zonas.map((zona) => {
+    const fechasLibres = zona.freeDates ?? 0
+    const fechasInterzonales = zona.interzonalDates ?? 0
+    const T = zona.teams.length + fechasLibres + fechasInterzonales
     const isValid =
-      mode === 'elimination' ? isPowerOf2(T) : T >= 2 && T % 2 === 0
+      modo === 'elimination' ? isPowerOf2(T) : T >= 2 && T % 2 === 0
     return {
-      zoneId: zone.id,
-      zoneName: zone.name,
-      teamCount: zone.teams.length,
+      zoneId: zona.id,
+      zoneName: zona.name,
+      teamCount: zona.teams.length,
       totalParticipants: T,
       isValid
     }
@@ -136,48 +136,48 @@ export function validateZones(
 /**
  * Valida que el emparejamiento interzonal sea posible.
  * Para que cada equipo tenga rival en cada fecha, TODAS las zonas deben tener
- * la misma cantidad de interzonalDates (o todas 0).
+ * la misma cantidad de fechasInterzonales (o todas 0).
  */
-export function validateInterzonalPairing(
-  zones: ZoneInput[]
+export function validarEmparejamientoInterzonal(
+  zonas: ZoneInput[]
 ): InterzonalPairingValidation {
-  if (zones.length <= 1) {
+  if (zonas.length <= 1) {
     return { isValid: true, message: '' }
   }
 
-  const values = zones.map((z) => z.interzonalDates ?? 0)
-  const withInterzonal = values.filter((v) => v > 0)
+  const valores = zonas.map((z) => z.interzonalDates ?? 0)
+  const conInterzonal = valores.filter((v) => v > 0)
 
-  if (withInterzonal.length === 0) {
+  if (conInterzonal.length === 0) {
     return { isValid: true, message: '' }
   }
 
-  const first = withInterzonal[0]
-  const allSame = withInterzonal.every((v) => v === first)
+  const primero = conInterzonal[0]
+  const todosIguales = conInterzonal.every((v) => v === primero)
 
-  if (!allSame) {
-    const byZone = zones
+  if (!todosIguales) {
+    const porZona = zonas
       .filter((z) => (z.interzonalDates ?? 0) > 0)
       .map((z) => `${z.name}: ${z.interzonalDates}`)
       .join(', ')
     return {
       isValid: false,
-      message: `Todas las zonas deben tener la misma cantidad de fechas interzonales por equipo para que cada equipo tenga rival en cada fecha. Actual: ${byZone}`
+      message: `Todas las zonas deben tener la misma cantidad de fechas interzonales por equipo para que cada equipo tenga rival en cada fecha. Actual: ${porZona}`
     }
   }
 
-  const zonesWithZero = zones.filter((z) => (z.interzonalDates ?? 0) === 0)
-  if (zonesWithZero.length > 0) {
+  const zonasConCero = zonas.filter((z) => (z.interzonalDates ?? 0) === 0)
+  if (zonasConCero.length > 0) {
     return {
       isValid: false,
-      message: `Las zonas ${zonesWithZero.map((z) => z.name).join(', ')} tienen 0 interzonal mientras otras tienen ${first}. Todas deben ser iguales.`
+      message: `Las zonas ${zonasConCero.map((z) => z.name).join(', ')} tienen 0 interzonal mientras otras tienen ${primero}. Todas deben ser iguales.`
     }
   }
 
-  if (zones.length >= 3 && first % 2 !== 0) {
+  if (zonas.length >= 3 && primero % 2 !== 0) {
     return {
       isValid: false,
-      message: `Con 3 o más zonas, la cantidad interzonal debe ser par para que cada equipo tenga rival en cada fecha (actual: ${first}).`
+      message: `Con 3 o más zonas, la cantidad interzonal debe ser par para que cada equipo tenga rival en cada fecha (actual: ${primero}).`
     }
   }
 
@@ -193,25 +193,25 @@ export function calculateTotalDates(
 ): number {
   const T = teamCount + freeDates + interzonalDates
   if (T < 2) return 0
-  const idaDates = T - 1
-  return rounds === 'double' ? idaDates * 2 : idaDates
+  const fechasIda = T - 1
+  return rounds === 'double' ? fechasIda * 2 : fechasIda
 }
 
 /** Cantidad de jornadas cuando hay zonas: cada zona tiene su propio cálculo. Retorna el máximo. */
 export function calculateTotalDatesForZones(
-  zones: ZoneInput[],
-  rounds: 'single' | 'double'
+  zonas: ZoneInput[],
+  vueltas: 'single' | 'double'
 ): number {
-  if (zones.length === 0) return 0
-  const datesPerZone = zones.map((z) =>
+  if (zonas.length === 0) return 0
+  const fechasPorZona = zonas.map((z) =>
     calculateTotalDates(
       z.teams.length,
       z.freeDates ?? 0,
       z.interzonalDates ?? 0,
-      rounds
+      vueltas
     )
   )
-  return Math.max(...datesPerZone)
+  return Math.max(...fechasPorZona)
 }
 
 // ─── Funciones públicas: generación ─────────────────────────────────────────
@@ -219,66 +219,66 @@ export function calculateTotalDatesForZones(
 /**
  * Genera el fixture de una sola zona.
  *
- * @throws si N + freeDates + interzonalDates es impar
+ * @throws si N + fechasLibres + fechasInterzonales es impar
  */
-export function generateFixture(
-  teams: { id: number; name: string }[],
-  freeDates: number,
-  interzonalDates: number,
-  rounds: 'single' | 'double'
+export function generarFixture(
+  equipos: { id: number; name: string }[],
+  fechasLibres: number,
+  fechasInterzonales: number,
+  vueltas: 'single' | 'double'
 ): FixtureDate[] {
-  const N = teams.length
-  const T = N + freeDates + interzonalDates
+  const N = equipos.length
+  const T = N + fechasLibres + fechasInterzonales
 
   if (T < 2) return []
 
   if (T % 2 !== 0) {
     throw new Error(
       `La cantidad total de participantes (${T}) debe ser par. ` +
-        `Equipos: ${N}, Libre: ${freeDates}, Interzonal: ${interzonalDates}`
+        `Equipos: ${N}, Libre: ${fechasLibres}, Interzonal: ${fechasInterzonales}`
     )
   }
 
   // Mezclar equipos reales
-  const shuffled = [...teams].sort(() => Math.random() - 0.5)
+  const mezclados = [...equipos].sort(() => Math.random() - 0.5)
 
-  // Ordenar participantes: equipos primero, phantoms al final (rotación completa).
-  const fixedTeam = shuffled[0]
-  const otherTeams = shuffled.slice(1)
-  const phantoms: Participant[] = [
-    ...Array.from({ length: freeDates }, () => ({
+  // Ordenar participantes: equipos primero, fantasmas al final (rotación completa).
+  const equipoFijo = mezclados[0]
+  const otrosEquipos = mezclados.slice(1)
+  const fantasmas: Participante[] = [
+    ...Array.from({ length: fechasLibres }, () => ({
       type: 'libre' as const,
       teamId: null as number | null,
       name: 'LIBRE'
     })),
-    ...Array.from({ length: interzonalDates }, () => ({
+    ...Array.from({ length: fechasInterzonales }, () => ({
       type: 'interzonal' as const,
       teamId: null as number | null,
       name: 'INTERZONAL'
     }))
   ]
-  const participants: Participant[] = [
-    { type: 'team', teamId: fixedTeam.id, name: fixedTeam.name },
-    ...otherTeams.map((t) => ({
+  const participantes: Participante[] = [
+    { type: 'team', teamId: equipoFijo.id, name: equipoFijo.name },
+    ...otrosEquipos.map((t) => ({
       type: 'team' as const,
       teamId: t.id,
       name: t.name
     })),
-    ...phantoms
+    ...fantasmas
   ]
 
-  const idaDates = circleMethod(participants, T)
+  const fechasIda = metodoCirculo(participantes, T)
 
-  if (rounds === 'single') return idaDates
+  if (vueltas === 'single') return fechasIda
 
   // Vuelta: mismos partidos que ida (regular, libre, interzonal), con local/visitante invertidos
-  const vueltaDates: FixtureDate[] = idaDates.map((idaDate, idx) => {
-    const vueltaEntries: FixtureEntry[] = []
+  const fechasVuelta: FixtureDate[] = fechasIda.map((fechaIda, idx) => {
+    const entradasVuelta: FixtureEntry[] = []
     let matchIdx = 0
 
-    for (const e of idaDate.entries) {
+    for (const e of fechaIda.entries) {
       if (e.type === 'regular') {
-        vueltaEntries.push({
+        entradasVuelta.push({
           id: `vuelta-d${idx + 1}-m${matchIdx}`,
           type: 'regular',
           home: e.away,
@@ -288,7 +288,7 @@ export function generateFixture(
         })
         matchIdx++
       } else if (e.type === 'libre') {
-        vueltaEntries.push({
+        entradasVuelta.push({
           id: `vuelta-d${idx + 1}-m${matchIdx}`,
           type: 'libre',
           home: e.home,
@@ -298,7 +298,7 @@ export function generateFixture(
         })
         matchIdx++
       } else if (e.type === 'interzonal') {
-        vueltaEntries.push({
+        entradasVuelta.push({
           id: `vuelta-d${idx + 1}-m${matchIdx}`,
           type: 'interzonal',
           home: e.away,
@@ -312,43 +312,43 @@ export function generateFixture(
 
     return {
       dateNumber: T - 1 + idx + 1,
-      entries: vueltaEntries
+      entries: entradasVuelta
     }
   })
 
-  return [...idaDates, ...vueltaDates]
+  return [...fechasIda, ...fechasVuelta]
 }
 
 /**
  * Genera fixtures para todas las zonas.
- * Cada zona obtiene su propio round-robin (freeDates e interzonalDates por zona).
- * Requiere que todas las zonas tengan el mismo interzonalDates para emparejar.
+ * Cada zona obtiene su propio round-robin (fechasLibres y fechasInterzonales por zona).
+ * Requiere que todas las zonas tengan el mismo fechasInterzonales para emparejar.
  */
-export function generateAllFixtures(
-  zones: ZoneInput[],
-  rounds: 'single' | 'double'
+export function generarTodosLosFixtures(
+  zonas: ZoneInput[],
+  vueltas: 'single' | 'double'
 ): ZoneFixture[] {
-  return zones.map((zone) => {
-    const freeDates = zone.freeDates ?? 0
-    const interzonalDates = zone.interzonalDates ?? 0
-    const dates = generateFixture(
-      zone.teams,
-      freeDates,
-      interzonalDates,
-      rounds
+  return zonas.map((zona) => {
+    const fechasLibres = zona.freeDates ?? 0
+    const fechasInterzonales = zona.interzonalDates ?? 0
+    const fechas = generarFixture(
+      zona.teams,
+      fechasLibres,
+      fechasInterzonales,
+      vueltas
     )
-    const stats = calculateFixtureStats(
-      dates,
-      zone.teams,
-      freeDates,
-      interzonalDates,
-      rounds
+    const estadisticas = calculateFixtureStats(
+      fechas,
+      zona.teams,
+      fechasLibres,
+      fechasInterzonales,
+      vueltas
     )
     return {
-      zoneId: zone.id,
-      zoneName: zone.name,
-      dates,
-      stats
+      zoneId: zona.id,
+      zoneName: zona.name,
+      dates: fechas,
+      stats: estadisticas
     }
   })
 }
@@ -359,85 +359,90 @@ export function generateAllFixtures(
  * Para cada fecha: partidos regulares/libre de cada zona + partidos
  * interzonales (equipo zona A vs equipo zona B, etc.).
  */
-export function mergeAndResolveInterzonal(
-  zoneFixtures: ZoneFixture[]
+export function fusionarYResolverInterzonal(
+  fixturesPorZona: ZoneFixture[]
 ): FixtureDate[] {
-  if (zoneFixtures.length === 0) return []
+  if (fixturesPorZona.length === 0) return []
 
-  const maxDates = Math.max(...zoneFixtures.map((zf) => zf.dates.length))
+  const maxFechas = Math.max(...fixturesPorZona.map((zf) => zf.dates.length))
   type Slot = { teamId: number; teamName: string; isHome: boolean }
 
-  const datesByNumber = new Map<
+  const fechasPorNumero = new Map<
     number,
     {
-      regulars: FixtureEntry[]
+      regulares: FixtureEntry[]
       libres: FixtureEntry[]
       /** Slots agrupados por zona para emparejar zona0 con zona1, etc. */
-      interzonalSlotsByZone: Slot[][]
+      slotInterzonalesPorZona: Slot[][]
     }
   >()
 
-  for (let d = 1; d <= maxDates; d++) {
-    datesByNumber.set(d, {
-      regulars: [],
+  for (let d = 1; d <= maxFechas; d++) {
+    fechasPorNumero.set(d, {
+      regulares: [],
       libres: [],
-      interzonalSlotsByZone: zoneFixtures.map(() => [])
+      slotInterzonalesPorZona: fixturesPorZona.map(() => [])
     })
   }
 
-  for (let zi = 0; zi < zoneFixtures.length; zi++) {
-    const zf = zoneFixtures[zi]
+  for (let zi = 0; zi < fixturesPorZona.length; zi++) {
+    const zf = fixturesPorZona[zi]
     for (const fd of zf.dates) {
-      const bucket = datesByNumber.get(fd.dateNumber)
+      const bucket = fechasPorNumero.get(fd.dateNumber)
       if (!bucket) continue
 
-      for (const entry of fd.entries) {
-        if (entry.type === 'regular') {
-          bucket.regulars.push(entry)
-        } else if (entry.type === 'libre') {
-          bucket.libres.push(entry)
-        } else if (entry.type === 'interzonal') {
-          const teamId = entry.homeTeamId ?? entry.awayTeamId
-          const teamName = entry.home !== 'INTERZONAL' ? entry.home : entry.away
-          const isHome = entry.homeTeamId != null
+      for (const entrada of fd.entries) {
+        if (entrada.type === 'regular') {
+          bucket.regulares.push(entrada)
+        } else if (entrada.type === 'libre') {
+          bucket.libres.push(entrada)
+        } else if (entrada.type === 'interzonal') {
+          const teamId = entrada.homeTeamId ?? entrada.awayTeamId
+          const teamName =
+            entrada.home !== 'INTERZONAL' ? entrada.home : entrada.away
+          const isHome = entrada.homeTeamId != null
           if (teamId != null) {
-            bucket.interzonalSlotsByZone[zi].push({ teamId, teamName, isHome })
+            bucket.slotInterzonalesPorZona[zi].push({
+              teamId,
+              teamName,
+              isHome
+            })
           }
         }
       }
     }
   }
 
-  const result: FixtureDate[] = []
-  for (let d = 1; d <= maxDates; d++) {
-    const bucket = datesByNumber.get(d)!
-    const entries: FixtureEntry[] = [...bucket.regulars, ...bucket.libres]
+  const resultado: FixtureDate[] = []
+  for (let d = 1; d <= maxFechas; d++) {
+    const bucket = fechasPorNumero.get(d)!
+    const entradas: FixtureEntry[] = [...bucket.regulares, ...bucket.libres]
 
-    const byZone = bucket.interzonalSlotsByZone
-    const minSlots = Math.min(...byZone.map((s) => s.length))
+    const porZona = bucket.slotInterzonalesPorZona
+    const minSlots = Math.min(...porZona.map((s) => s.length))
 
-    if (byZone.length === 2) {
+    if (porZona.length === 2) {
       for (let i = 0; i < minSlots; i++) {
-        const a = byZone[0][i]
-        const b = byZone[1][i]
+        const a = porZona[0][i]
+        const b = porZona[1][i]
         if (a && b) {
-          const home = i % 2 === 0 ? a : b
-          const away = home === a ? b : a
-          entries.push({
+          const local = i % 2 === 0 ? a : b
+          const visitante = local === a ? b : a
+          entradas.push({
             id: `interzonal-d${d}-${i}`,
             type: 'interzonal',
-            home: home.teamName,
-            away: away.teamName,
-            homeTeamId: home.teamId,
-            awayTeamId: away.teamId
+            home: local.teamName,
+            away: visitante.teamName,
+            homeTeamId: local.teamId,
+            awayTeamId: visitante.teamId
           })
         }
       }
-    } else if (byZone.length === 3 && minSlots >= 2) {
-      const a = byZone[0][0]
-      const b = byZone[1][0]
+    } else if (porZona.length === 3 && minSlots >= 2) {
+      const a = porZona[0][0]
+      const b = porZona[1][0]
       if (a && b)
-        entries.push({
+        entradas.push({
           id: `interzonal-d${d}-01`,
           type: 'interzonal',
           home: a.teamName,
@@ -445,10 +450,10 @@ export function mergeAndResolveInterzonal(
           homeTeamId: a.teamId,
           awayTeamId: b.teamId
         })
-      const c = byZone[0][1]
-      const dZ2 = byZone[2][0]
+      const c = porZona[0][1]
+      const dZ2 = porZona[2][0]
       if (c && dZ2)
-        entries.push({
+        entradas.push({
           id: `interzonal-d${d}-02`,
           type: 'interzonal',
           home: c.teamName,
@@ -456,10 +461,10 @@ export function mergeAndResolveInterzonal(
           homeTeamId: c.teamId,
           awayTeamId: dZ2.teamId
         })
-      const e = byZone[1][1]
-      const f = byZone[2][1]
+      const e = porZona[1][1]
+      const f = porZona[2][1]
       if (e && f)
-        entries.push({
+        entradas.push({
           id: `interzonal-d${d}-12`,
           type: 'interzonal',
           home: e.teamName,
@@ -467,221 +472,228 @@ export function mergeAndResolveInterzonal(
           homeTeamId: e.teamId,
           awayTeamId: f.teamId
         })
-    } else if (byZone.length >= 3) {
+    } else if (porZona.length >= 3) {
       for (let i = 0; i < minSlots; i++) {
-        const slotFromEachZone = byZone.map((s) => s[i]).filter(Boolean)
-        for (let j = 0; j + 1 < slotFromEachZone.length; j += 2) {
-          const a = slotFromEachZone[j]
-          const b = slotFromEachZone[j + 1]
+        const slotsDeCadaZona = porZona.map((s) => s[i]).filter(Boolean)
+        for (let j = 0; j + 1 < slotsDeCadaZona.length; j += 2) {
+          const a = slotsDeCadaZona[j]
+          const b = slotsDeCadaZona[j + 1]
           if (a && b) {
-            const home = j % 2 === 0 ? a : b
-            const away = home === a ? b : a
-            entries.push({
+            const local = j % 2 === 0 ? a : b
+            const visitante = local === a ? b : a
+            entradas.push({
               id: `interzonal-d${d}-${i}-${j}`,
               type: 'interzonal',
-              home: home.teamName,
-              away: away.teamName,
-              homeTeamId: home.teamId,
-              awayTeamId: away.teamId
+              home: local.teamName,
+              away: visitante.teamName,
+              homeTeamId: local.teamId,
+              awayTeamId: visitante.teamId
             })
           }
         }
       }
     }
 
-    if (entries.length > 0) {
-      result.push({ dateNumber: d, entries })
+    if (entradas.length > 0) {
+      resultado.push({ dateNumber: d, entries: entradas })
     }
   }
 
-  return result
+  return resultado
 }
 
 // ─── Funciones públicas: estadísticas ───────────────────────────────────────
 
 /** Calcula estadísticas a partir de un fixture (posiblemente editado). */
 export function calculateFixtureStats(
-  dates: FixtureDate[],
-  teams: { id: number; name: string }[],
-  freeDates: number,
-  interzonalDates: number,
-  rounds: 'single' | 'double'
+  fechas: FixtureDate[],
+  equipos: { id: number; name: string }[],
+  fechasLibres: number,
+  fechasInterzonales: number,
+  vueltas: 'single' | 'double'
 ): FixtureStats {
-  const N = teams.length
+  const N = equipos.length
 
   // Acumular conteos por equipo
-  const home: Record<number, number> = {}
-  const away: Record<number, number> = {}
+  const local: Record<number, number> = {}
+  const visitante: Record<number, number> = {}
   const libre: Record<number, number> = {}
   const interzonal: Record<number, number> = {}
 
-  for (const t of teams) {
-    home[t.id] = 0
-    away[t.id] = 0
+  for (const t of equipos) {
+    local[t.id] = 0
+    visitante[t.id] = 0
     libre[t.id] = 0
     interzonal[t.id] = 0
   }
 
-  for (const date of dates) {
-    for (const entry of date.entries) {
-      if (entry.type === 'regular') {
-        if (entry.homeTeamId != null) home[entry.homeTeamId]++
-        if (entry.awayTeamId != null) away[entry.awayTeamId]++
-      } else if (entry.type === 'libre') {
-        if (entry.homeTeamId != null) libre[entry.homeTeamId]++
-      } else if (entry.type === 'interzonal') {
-        const tid = entry.homeTeamId ?? entry.awayTeamId
+  for (const fecha of fechas) {
+    for (const entrada of fecha.entries) {
+      if (entrada.type === 'regular') {
+        if (entrada.homeTeamId != null) local[entrada.homeTeamId]++
+        if (entrada.awayTeamId != null) visitante[entrada.awayTeamId]++
+      } else if (entrada.type === 'libre') {
+        if (entrada.homeTeamId != null) libre[entrada.homeTeamId]++
+      } else if (entrada.type === 'interzonal') {
+        const tid = entrada.homeTeamId ?? entrada.awayTeamId
         if (tid != null) interzonal[tid]++
       }
     }
   }
 
-  const teamStats: TeamStats[] = teams.map((t) => ({
+  const teamStats: TeamStats[] = equipos.map((t) => ({
     teamId: t.id,
     teamName: t.name,
-    homeGames: home[t.id],
-    awayGames: away[t.id],
+    homeGames: local[t.id],
+    awayGames: visitante[t.id],
     libreDates: libre[t.id],
     interzonalDates: interzonal[t.id]
   }))
 
   // Calcular valores esperados
-  const regularPerTeam = N - 1
+  const regularPorEquipo = N - 1
   const expectedHome =
-    rounds === 'double' ? regularPerTeam : Math.floor(regularPerTeam / 2)
+    vueltas === 'double' ? regularPorEquipo : Math.floor(regularPorEquipo / 2)
   const expectedAway =
-    rounds === 'double' ? regularPerTeam : Math.ceil(regularPerTeam / 2)
+    vueltas === 'double' ? regularPorEquipo : Math.ceil(regularPorEquipo / 2)
 
   // Detectar excepciones
-  const exceptions: string[] = []
+  const excepciones: string[] = []
 
   for (const ts of teamStats) {
-    if (rounds === 'single') {
+    if (vueltas === 'single') {
       const totalRegular = ts.homeGames + ts.awayGames
-      if (totalRegular !== regularPerTeam) {
-        exceptions.push(
-          `${ts.teamName} juega ${totalRegular} partidos regulares en vez de ${regularPerTeam}`
+      if (totalRegular !== regularPorEquipo) {
+        excepciones.push(
+          `${ts.teamName} juega ${totalRegular} partidos regulares en vez de ${regularPorEquipo}`
         )
       }
       if (ts.homeGames !== expectedHome && ts.homeGames !== expectedAway) {
-        exceptions.push(
+        excepciones.push(
           `${ts.teamName} juega ${ts.homeGames} de local (esperado ~${expectedHome})`
         )
       }
     } else {
       if (ts.homeGames !== expectedHome) {
-        exceptions.push(
+        excepciones.push(
           `${ts.teamName} juega ${ts.homeGames} de local en vez de ${expectedHome}`
         )
       }
       if (ts.awayGames !== expectedAway) {
-        exceptions.push(
+        excepciones.push(
           `${ts.teamName} juega ${ts.awayGames} de visitante en vez de ${expectedAway}`
         )
       }
     }
-    if (ts.libreDates !== freeDates) {
-      exceptions.push(
-        `${ts.teamName} queda libre ${ts.libreDates} fecha(s) en vez de ${freeDates}`
+    if (ts.libreDates !== fechasLibres) {
+      excepciones.push(
+        `${ts.teamName} queda libre ${ts.libreDates} fecha(s) en vez de ${fechasLibres}`
       )
     }
-    if (ts.interzonalDates !== interzonalDates) {
-      exceptions.push(
-        `${ts.teamName} juega ${ts.interzonalDates} interzonal(es) en vez de ${interzonalDates}`
+    if (ts.interzonalDates !== fechasInterzonales) {
+      excepciones.push(
+        `${ts.teamName} juega ${ts.interzonalDates} interzonal(es) en vez de ${fechasInterzonales}`
       )
     }
   }
 
   return {
-    totalDates: dates.length,
+    totalDates: fechas.length,
     teamStats,
     expectedHomeGames: expectedHome,
     expectedAwayGames: expectedAway,
-    exceptions
+    exceptions: excepciones
   }
 }
 
 // ─── Implementación interna: Circle method ──────────────────────────────────
 
-function circleMethod(participants: Participant[], T: number): FixtureDate[] {
-  const dates: FixtureDate[] = []
-  const fixed = participants[0]
-  const rotating = participants.slice(1)
+function metodoCirculo(
+  participantes: Participante[],
+  T: number
+): FixtureDate[] {
+  const fechas: FixtureDate[] = []
+  const fijo = participantes[0]
+  const rotantes = participantes.slice(1)
 
-  for (let round = 0; round < T - 1; round++) {
-    const regularEntries: FixtureEntry[] = []
-    const interzonalEntries: FixtureEntry[] = []
-    const libreEntries: FixtureEntry[] = []
+  for (let ronda = 0; ronda < T - 1; ronda++) {
+    const entradasRegulares: FixtureEntry[] = []
+    const entradasInterzonales: FixtureEntry[] = []
+    const entradasLibres: FixtureEntry[] = []
 
     let matchIdx = 0
 
-    // Emparejar: (fixed, último) y luego (i-ésimo, simétrico)
-    const pairings: [Participant, Participant, boolean][] = []
+    // Emparejar: (fijo, último) y luego (i-ésimo, simétrico)
+    const emparejamientos: [Participante, Participante, boolean][] = []
 
-    // Primera pareja: fixed vs último del arreglo rotante
-    pairings.push([fixed, rotating[T - 2], round % 2 === 0])
+    // Primera pareja: fijo vs último del arreglo rotante
+    emparejamientos.push([fijo, rotantes[T - 2], ronda % 2 === 0])
 
     // Resto de parejas
     for (let i = 0; i < (T - 2) / 2; i++) {
-      pairings.push([rotating[i], rotating[T - 3 - i], i % 2 === 0])
+      emparejamientos.push([rotantes[i], rotantes[T - 3 - i], i % 2 === 0])
     }
 
-    for (const [a, b, aIsHome] of pairings) {
+    for (const [a, b, aEsLocal] of emparejamientos) {
       // Descartar fantasma vs fantasma
       if (a.type !== 'team' && b.type !== 'team') continue
 
-      const homeP = aIsHome ? a : b
-      const awayP = aIsHome ? b : a
-      const entry = buildEntry(homeP, awayP, round + 1, matchIdx)
+      const localP = aEsLocal ? a : b
+      const visitanteP = aEsLocal ? b : a
+      const entrada = construirEntrada(localP, visitanteP, ronda + 1, matchIdx)
       matchIdx++
 
-      if (entry.type === 'regular') regularEntries.push(entry)
-      else if (entry.type === 'interzonal') interzonalEntries.push(entry)
-      else libreEntries.push(entry)
+      if (entrada.type === 'regular') entradasRegulares.push(entrada)
+      else if (entrada.type === 'interzonal') entradasInterzonales.push(entrada)
+      else entradasLibres.push(entrada)
     }
 
-    dates.push({
-      dateNumber: round + 1,
-      entries: [...regularEntries, ...interzonalEntries, ...libreEntries]
+    fechas.push({
+      dateNumber: ronda + 1,
+      entries: [
+        ...entradasRegulares,
+        ...entradasInterzonales,
+        ...entradasLibres
+      ]
     })
 
     // Rotar a la derecha: el último pasa al inicio
-    rotating.unshift(rotating.pop()!)
+    rotantes.unshift(rotantes.pop()!)
   }
 
-  return dates
+  return fechas
 }
 
-function buildEntry(
-  homeP: Participant,
-  awayP: Participant,
-  dateNum: number,
+function construirEntrada(
+  localP: Participante,
+  visitanteP: Participante,
+  numFecha: number,
   matchIdx: number
 ): FixtureEntry {
-  const id = `ida-d${dateNum}-m${matchIdx}`
+  const id = `ida-d${numFecha}-m${matchIdx}`
 
   // LIBRE: equipo siempre a la izquierda
-  if (homeP.type === 'libre' || awayP.type === 'libre') {
-    const realTeam = homeP.type === 'team' ? homeP : awayP
+  if (localP.type === 'libre' || visitanteP.type === 'libre') {
+    const equipoReal = localP.type === 'team' ? localP : visitanteP
     return {
       id,
       type: 'libre',
-      home: realTeam.name,
+      home: equipoReal.name,
       away: 'LIBRE',
-      homeTeamId: realTeam.teamId,
+      homeTeamId: equipoReal.teamId,
       awayTeamId: null
     }
   }
 
   // INTERZONAL: respetar posición del round-robin
-  if (homeP.type === 'interzonal' || awayP.type === 'interzonal') {
+  if (localP.type === 'interzonal' || visitanteP.type === 'interzonal') {
     return {
       id,
       type: 'interzonal',
-      home: homeP.type === 'team' ? homeP.name : 'INTERZONAL',
-      away: awayP.type === 'team' ? awayP.name : 'INTERZONAL',
-      homeTeamId: homeP.type === 'team' ? homeP.teamId : null,
-      awayTeamId: awayP.type === 'team' ? awayP.teamId : null
+      home: localP.type === 'team' ? localP.name : 'INTERZONAL',
+      away: visitanteP.type === 'team' ? visitanteP.name : 'INTERZONAL',
+      homeTeamId: localP.type === 'team' ? localP.teamId : null,
+      awayTeamId: visitanteP.type === 'team' ? visitanteP.teamId : null
     }
   }
 
@@ -689,9 +701,32 @@ function buildEntry(
   return {
     id,
     type: 'regular',
-    home: homeP.name,
-    away: awayP.name,
-    homeTeamId: homeP.teamId,
-    awayTeamId: awayP.teamId
+    home: localP.name,
+    away: visitanteP.name,
+    homeTeamId: localP.teamId,
+    awayTeamId: visitanteP.teamId
   }
 }
+
+// ─── Aliases de compatibilidad ───────────────────────────────────────────────
+
+/** @deprecated Usar esConfiguracionValida */
+export const isValidConfiguration = esConfiguracionValida
+
+/** @deprecated Usar esValidoParaEliminacion */
+export const isValidForElimination = esValidoParaEliminacion
+
+/** @deprecated Usar validarZonas */
+export const validateZones = validarZonas
+
+/** @deprecated Usar validarEmparejamientoInterzonal */
+export const validateInterzonalPairing = validarEmparejamientoInterzonal
+
+/** @deprecated Usar generarFixture */
+export const generateFixture = generarFixture
+
+/** @deprecated Usar generarTodosLosFixtures */
+export const generateAllFixtures = generarTodosLosFixtures
+
+/** @deprecated Usar fusionarYResolverInterzonal */
+export const mergeAndResolveInterzonal = fusionarYResolverInterzonal

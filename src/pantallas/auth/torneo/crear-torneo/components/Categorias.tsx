@@ -5,88 +5,88 @@ import TituloDeInput from '@/design-system/ykn-ui/titulo-de-input'
 import { Plus, X } from 'lucide-react'
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import type { Category, TournamentWizardData } from '../types'
+import type { Categoria, DatosWizardTorneo } from '../tipos'
 
 export function Categorias() {
-  const { watch, setValue } = useFormContext<TournamentWizardData>()
-  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
+  const { watch, setValue } = useFormContext<DatosWizardTorneo>()
+  const [editandoCategoriaId, setEditandoCategoriaId] = useState<string | null>(
     null
   )
 
-  const categories = watch('categories')
+  const categorias = watch('categorias')
 
-  const addCategory = () => {
-    const newCategory: Category = {
+  const agregarCategoria = () => {
+    const nuevaCategoria: Categoria = {
       id: Date.now().toString(),
-      name: '',
-      yearFrom: '',
-      yearTo: ''
+      nombre: '',
+      anioDesde: '',
+      anioHasta: ''
     }
     // Quitar categorías vacías antes de agregar: evita errores de validación
     // cuando el usuario agrega otra sin haber completado la anterior
-    const categoriesWithNames = categories.filter((c) => c.name.trim() !== '')
-    setValue('categories', [...categoriesWithNames, newCategory])
-    setEditingCategoryId(newCategory.id)
+    const categoriasConNombre = categorias.filter((c) => c.nombre.trim() !== '')
+    setValue('categorias', [...categoriasConNombre, nuevaCategoria])
+    setEditandoCategoriaId(nuevaCategoria.id)
   }
 
-  const removeCategory = (id: string) => {
+  const quitarCategoria = (id: string) => {
     setValue(
-      'categories',
-      categories.filter((c) => c.id !== id)
+      'categorias',
+      categorias.filter((c) => c.id !== id)
     )
-    if (editingCategoryId === id) {
-      setEditingCategoryId(null)
+    if (editandoCategoriaId === id) {
+      setEditandoCategoriaId(null)
     }
   }
 
-  const updateCategory = (id: string, field: Partial<Category>) => {
+  const actualizarCategoria = (id: string, campo: Partial<Categoria>) => {
     setValue(
-      'categories',
-      categories.map((c) => (c.id === id ? { ...c, ...field } : c))
+      'categorias',
+      categorias.map((c) => (c.id === id ? { ...c, ...campo } : c))
     )
   }
 
-  const handleCategoryClick = (id: string) => {
-    setEditingCategoryId(id)
+  const alClickearCategoria = (id: string) => {
+    setEditandoCategoriaId(id)
   }
 
-  const handleCategorySave = () => {
-    if (editingCategory && !editingCategory.name.trim()) {
-      removeCategory(editingCategory.id)
+  const alGuardarCategoria = () => {
+    if (categoriaEditando && !categoriaEditando.nombre.trim()) {
+      quitarCategoria(categoriaEditando.id)
     }
-    setEditingCategoryId(null)
+    setEditandoCategoriaId(null)
   }
 
-  const editingCategory = editingCategoryId
-    ? categories.find((c) => c.id === editingCategoryId)
+  const categoriaEditando = editandoCategoriaId
+    ? categorias.find((c) => c.id === editandoCategoriaId)
     : null
 
   return (
     <div>
       <TituloDeInput>Categorías *</TituloDeInput>
 
-      {categories.length > 0 && categories.some((c) => c.name) && (
+      {categorias.length > 0 && categorias.some((c) => c.nombre) && (
         <div className='flex flex-wrap gap-2 mb-3'>
-          {categories
-            .filter((c) => c.name)
-            .map((category) => (
+          {categorias
+            .filter((c) => c.nombre)
+            .map((categoria) => (
               <Badge
-                key={category.id}
+                key={categoria.id}
                 variant='secondary'
                 className='bg-primary/10 text-primary border-primary/20 pl-3 pr-1.5 py-1.5 text-sm cursor-pointer hover:bg-primary/20 transition-colors'
-                onClick={() => handleCategoryClick(category.id)}
+                onClick={() => alClickearCategoria(categoria.id)}
               >
-                {category.name}
-                {(category.yearFrom || category.yearTo) && (
+                {categoria.nombre}
+                {(categoria.anioDesde || categoria.anioHasta) && (
                   <span className='ml-1'>
-                    ({category.yearFrom || '—'}/{category.yearTo || '—'})
+                    ({categoria.anioDesde || '—'}/{categoria.anioHasta || '—'})
                   </span>
                 )}
                 <button
                   type='button'
                   onClick={(e) => {
                     e.stopPropagation()
-                    removeCategory(category.id)
+                    quitarCategoria(categoria.id)
                   }}
                   className='ml-1.5 hover:bg-muted rounded-full p-0.5'
                 >
@@ -97,14 +97,14 @@ export function Categorias() {
         </div>
       )}
 
-      {editingCategory && (
+      {categoriaEditando && (
         <div className='p-3 bg-muted rounded-lg mb-2 max-w-2xl'>
           <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2'>
             <Input
               type='text'
-              value={editingCategory.name}
+              value={categoriaEditando.nombre}
               onChange={(e) =>
-                updateCategory(editingCategory.id, { name: e.target.value })
+                actualizarCategoria(categoriaEditando.id, { nombre: e.target.value })
               }
               placeholder='Ej: +40, Sub 15, Mayores'
               className='flex-1 min-w-0'
@@ -113,10 +113,10 @@ export function Categorias() {
             <div className='flex items-center gap-2 sm:shrink-0'>
               <Input
                 type='text'
-                value={editingCategory.yearFrom}
+                value={categoriaEditando.anioDesde}
                 onChange={(e) =>
-                  updateCategory(editingCategory.id, {
-                    yearFrom: e.target.value
+                  actualizarCategoria(categoriaEditando.id, {
+                    anioDesde: e.target.value
                   })
                 }
                 placeholder='Desde'
@@ -125,16 +125,16 @@ export function Categorias() {
               <span className='text-muted-foreground'>-</span>
               <Input
                 type='text'
-                value={editingCategory.yearTo}
+                value={categoriaEditando.anioHasta}
                 onChange={(e) =>
-                  updateCategory(editingCategory.id, {
-                    yearTo: e.target.value
+                  actualizarCategoria(categoriaEditando.id, {
+                    anioHasta: e.target.value
                   })
                 }
                 placeholder='Hasta'
                 className='w-20 text-center'
               />
-              <Button type='button' size='sm' onClick={handleCategorySave}>
+              <Button type='button' size='sm' onClick={alGuardarCategoria}>
                 Guardar
               </Button>
             </div>
@@ -146,7 +146,7 @@ export function Categorias() {
         type='button'
         variant='outline'
         size='sm'
-        onClick={addCategory}
+        onClick={agregarCategoria}
         className='my-2'
       >
         <Plus className='w-3 h-3' />
