@@ -12,7 +12,7 @@ import BotonVolver from '@/components/ykn-ui/boton-volver'
 import Link from '@/components/ykn-ui/link'
 import { EstadoJugador } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
-import { Calendar, CreditCard, Trash2 } from 'lucide-react'
+import Icono from '@/components/ykn-ui/icono'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export default function DetalleJugador() {
@@ -89,7 +89,7 @@ export default function DetalleJugador() {
                         size='icon'
                         className='h-10 w-10 border-destructive text-destructive hover:bg-destructive/10'
                       >
-                        <Trash2 className='h-5 w-5' />
+                        <Icono nombre='Eliminar' className='h-5 w-5' />
                       </Button>
                     }
                   />
@@ -103,11 +103,11 @@ export default function DetalleJugador() {
             <CardContent>
               <div className='flex flex-col gap-1'>
                 <DetalleItem
-                  icon={<CreditCard className='h-5 w-5' />}
+                  icon={<Icono nombre='Carnet' className='h-5 w-5' />}
                   valor={jugador.dni!}
                 />
                 <DetalleItem
-                  icon={<Calendar className='h-5 w-5' />}
+                  icon={<Icono nombre='Calendario' className='h-5 w-5' />}
                   valor={jugador.fechaNacimiento!.toLocaleDateString('es-AR')}
                 />
               </div>

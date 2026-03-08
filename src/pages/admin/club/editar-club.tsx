@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
 import ContenedorBotones from '@/components/ykn-ui/contenedor-botones'
 import { rutasNavegacion } from '@/routes/rutas'
-import { Shield, Upload } from 'lucide-react'
+import Icono from '@/components/ykn-ui/icono'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -157,7 +157,10 @@ export default function EditarClub() {
                       className='h-full w-full object-contain'
                     />
                   ) : (
-                    <Shield className='h-12 w-12 text-muted-foreground' />
+                    <Icono
+                      nombre='Equipos'
+                      className='h-12 w-12 text-muted-foreground'
+                    />
                   )}
                 </div>
                 <div className='flex flex-col gap-2'>
@@ -175,7 +178,7 @@ export default function EditarClub() {
                     className='gap-2'
                     onClick={() => fileInputRef.current?.click()}
                   >
-                    <Upload className='h-4 w-4' />
+                    <Icono nombre='Subir' className='h-4 w-4' />
                     Cambiar escudo
                   </Button>
                   {escudoBase64 && (

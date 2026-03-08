@@ -4,30 +4,32 @@ import { Toaster } from '@/components/ui/sonner'
 import { useAuth } from '@/hooks/use-auth'
 import { cn } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
-import {
-  BarChart2,
-  LayoutDashboard,
-  LogOut,
-  Menu,
-  Shield,
-  Award,
-  User,
-  UserCheck,
-  Users
-} from 'lucide-react'
+import Icono from '@/components/ykn-ui/icono'
 import { useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 
 const baseMenuItems = [
-  { name: 'Torneos', path: rutasNavegacion.torneos, icon: Award },
-  { name: 'Clubes', path: rutasNavegacion.clubs, icon: LayoutDashboard },
-  { name: 'Equipos', path: rutasNavegacion.equipos, icon: Shield },
-  { name: 'Jugadores', path: rutasNavegacion.jugadores, icon: Users },
-  { name: 'Delegados', path: rutasNavegacion.delegados, icon: UserCheck }
+  { name: 'Torneos', path: rutasNavegacion.torneos, icono: 'Torneos' as const },
+  { name: 'Clubes', path: rutasNavegacion.clubs, icono: 'Clubes' as const },
+  { name: 'Equipos', path: rutasNavegacion.equipos, icono: 'Equipos' as const },
+  {
+    name: 'Jugadores',
+    path: rutasNavegacion.jugadores,
+    icono: 'Jugadores' as const
+  },
+  {
+    name: 'Delegados',
+    path: rutasNavegacion.delegados,
+    icono: 'Delegados' as const
+  }
 ]
 
 const adminMenuItems = [
-  { name: 'Reportes', path: rutasNavegacion.reportes, icon: BarChart2 }
+  {
+    name: 'Reportes',
+    path: rutasNavegacion.reportes,
+    icono: 'Reportes' as const
+  }
 ]
 
 export default function AdminLayout() {
@@ -51,7 +53,7 @@ export default function AdminLayout() {
       {/* Menú lateral */}
       <aside className='admin-sidebar hidden md:flex flex-col w-64 bg-gray-900 text-white p-4'>
         <nav className='space-y-2 flex-1'>
-          {menuItems.map(({ name, path, icon: Icon }) => (
+          {menuItems.map(({ name, path, icono }) => (
             <NavLink
               key={path}
               to={path}
@@ -64,7 +66,7 @@ export default function AdminLayout() {
                 )
               }
             >
-              <Icon className='w-5 h-5' />
+              <Icono nombre={icono} className='w-5 h-5' />
               {name}
             </NavLink>
           ))}
@@ -74,7 +76,7 @@ export default function AdminLayout() {
         <div className='mt-auto pt-4 border-t border-gray-700'>
           <div className='flex items-center gap-3 px-3 py-2 group'>
             <div className='w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center'>
-              <User className='w-5 h-5 text-gray-300' />
+              <Icono nombre='Usuario' className='w-5 h-5 text-gray-300' />
             </div>
             <div className='flex-1 min-w-0'>
               <div className='font-medium text-sm text-white truncate'>
@@ -88,7 +90,7 @@ export default function AdminLayout() {
               className='h-8 w-8 text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-full'
               onClick={handleLogout}
             >
-              <LogOut className='w-4 h-4' />
+              <Icono nombre='Cerrar sesión' className='w-4 h-4' />
             </Button>
           </div>
         </div>
@@ -101,7 +103,7 @@ export default function AdminLayout() {
             variant='ghost'
             className='md:hidden fixed top-4 left-4 z-50 bg-gray-900 text-white'
           >
-            <Menu className='w-6 h-6' />
+            <Icono nombre='Menú' className='w-6 h-6' />
           </Button>
         </SheetTrigger>
         <SheetContent
@@ -109,7 +111,7 @@ export default function AdminLayout() {
           className='admin-sidebar w-64 bg-gray-900 text-white p-4'
         >
           <nav className='space-y-2'>
-            {menuItems.map(({ name, path, icon: Icon }) => (
+            {menuItems.map(({ name, path, icono }) => (
               <NavLink
                 key={path}
                 to={path}
@@ -123,7 +125,7 @@ export default function AdminLayout() {
                   )
                 }
               >
-                <Icon className='w-5 h-5' />
+                <Icono nombre={icono} className='w-5 h-5' />
                 {name}
               </NavLink>
             ))}
@@ -133,7 +135,7 @@ export default function AdminLayout() {
           <div className='mt-auto pt-4 border-t border-gray-700'>
             <div className='flex items-center gap-3 px-3 py-2 group'>
               <div className='w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center'>
-                <User className='w-5 h-5 text-gray-300' />
+                <Icono nombre='Usuario' className='w-5 h-5 text-gray-300' />
               </div>
               <div className='flex-1 min-w-0'>
                 <div className='font-medium text-sm text-white truncate'>
@@ -147,7 +149,7 @@ export default function AdminLayout() {
                 className='h-8 w-8 text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-full'
                 onClick={handleLogout}
               >
-                <LogOut className='w-4 h-4' />
+                <Icono nombre='Cerrar sesión' className='w-4 h-4' />
               </Button>
             </div>
           </div>

@@ -7,15 +7,13 @@ import {
 import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import { cn } from '@/lib/utils'
 import { Boton } from '@/components/ykn-ui/boton'
+import Icono, { type NombreIcono } from '@/components/ykn-ui/icono'
 import * as React from 'react'
-
-/** Tipo para íconos de Lucide (ej. FileDown, Pencil, Trash2) */
-export type IconoBotoneraTipo = React.ComponentType<{ className?: string }>
 
 export interface IconoBotonera {
   alApretar: () => void
   tooltip: string
-  icono: IconoBotoneraTipo
+  icono: NombreIcono
   visibleSoloParaAdmin?: boolean
   esEliminar?: boolean
   /** Requerido cuando esEliminar es true */
@@ -36,7 +34,6 @@ export interface BotoneraProps {
 }
 
 function IconoBoton({ item }: { item: IconoBotonera }) {
-  const Icono = item.icono
   const boton = (
     <Boton
       variant='outline'
@@ -48,7 +45,7 @@ function IconoBoton({ item }: { item: IconoBotonera }) {
       onClick={item.esEliminar ? undefined : item.alApretar}
       estaCargando={item.modalEliminacion?.estaCargando}
     >
-      <Icono className='h-5 w-5 shrink-0' />
+      <Icono nombre={item.icono} className='h-5 w-5 shrink-0' />
     </Boton>
   )
 

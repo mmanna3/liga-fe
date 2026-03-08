@@ -13,7 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover'
-import { SlidersHorizontal } from 'lucide-react'
+import Icono from '@/components/ykn-ui/icono'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
@@ -83,7 +83,7 @@ export default function TablaJugador() {
           title='Filtrar por estado'
           className='inline-flex items-center justify-center gap-1 rounded-md border border-input bg-background p-2 text-sm hover:bg-accent cursor-pointer'
         >
-          <SlidersHorizontal className='h-4 w-4 shrink-0' />
+          <Icono nombre='Filtros' className='h-4 w-4 shrink-0' />
           {filtroEstados.length > 0 && (
             <span className='bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs'>
               {filtroEstados.length}

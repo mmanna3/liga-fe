@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../ui/button'
-import { ArrowLeft } from 'lucide-react'
+import Icono from '@/components/ykn-ui/icono'
 
 interface Props {
   /** Ruta específica a la que navegar. Si no se provee, usa navigate(-1) */
@@ -23,7 +23,7 @@ const BotonVolver: React.FC<Props> = ({ path, className }: Props) => {
       }}
       aria-label='Volver'
     >
-      <ArrowLeft className='h-5 w-5' />
+      <Icono nombre='Volver' className='h-5 w-5' />
     </Button>
   )
 }

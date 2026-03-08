@@ -7,7 +7,7 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { rutasNavegacion } from '@/routes/rutas'
-import { BarChart2 } from 'lucide-react'
+import Icono from '@/components/ykn-ui/icono'
 
 import { useNavigate } from 'react-router-dom'
 
@@ -17,14 +17,14 @@ export default function ReportesPage() {
   return (
     <div className='space-y-4'>
       <h1 className='text-2xl font-bold flex items-center gap-3'>
-        <BarChart2 className='h-8 w-8 text-primary' />
+        <Icono nombre='Reportes' className='h-8 w-8 text-primary' />
         Reportes
       </h1>
       <div className='grid gap-4 md:grid-cols-2'>
         <Card className='overflow-hidden'>
           <CardHeader className='bg-slate-50'>
             <CardTitle className='flex items-center gap-2'>
-              <BarChart2 className='h-5 w-5' />
+              <Icono nombre='Reportes' className='h-5 w-5' />
               Reporte de Pagos
             </CardTitle>
             <CardDescription>

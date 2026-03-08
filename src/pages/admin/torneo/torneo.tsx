@@ -2,7 +2,7 @@ import { api } from '@/api/api'
 import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useQuery } from '@tanstack/react-query'
-import { Award, Plus } from 'lucide-react'
+import Icono from '@/components/ykn-ui/icono'
 import { useNavigate } from 'react-router-dom'
 import TablaTorneo from './tabla'
 
@@ -20,14 +20,14 @@ export default function Torneo() {
   return (
     <FlujoHomeLayout
       titulo='Torneos'
-      iconoTitulo={<Award className='h-8 w-8 text-primary' />}
+      iconoTitulo={<Icono nombre='Torneos' className='h-8 w-8 text-primary' />}
       ocultarBotonVolver
       botonera={{
         iconos: [
           {
             alApretar: () => navigate(rutasNavegacion.crearTorneo),
             tooltip: 'Crear Torneo',
-            icono: Plus,
+            icono: 'Agregar',
             visibleSoloParaAdmin: true
           }
         ]

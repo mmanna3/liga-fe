@@ -1,12 +1,14 @@
 import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
-import { Users } from 'lucide-react'
+import Icono from '@/components/ykn-ui/icono'
 import TablaJugador from './tabla'
 
 export default function Jugador() {
   return (
     <FlujoHomeLayout
       titulo='Jugadores'
-      iconoTitulo={<Users className='h-8 w-8 text-primary' />}
+      iconoTitulo={
+        <Icono nombre='Jugadores' className='h-8 w-8 text-primary' />
+      }
       ocultarBotonVolver
       contenido={<TablaJugador />}
     />

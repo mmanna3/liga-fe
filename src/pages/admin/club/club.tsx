@@ -2,7 +2,7 @@ import { api } from '@/api/api'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
 import { rutasNavegacion } from '@/routes/rutas'
-import { LayoutDashboard, Plus } from 'lucide-react'
+import Icono from '@/components/ykn-ui/icono'
 import { useNavigate } from 'react-router-dom'
 import Tabla from './tabla'
 
@@ -17,14 +17,14 @@ export default function Club() {
   return (
     <FlujoHomeLayout
       titulo='Clubes'
-      iconoTitulo={<LayoutDashboard className='h-8 w-8 text-primary' />}
+      iconoTitulo={<Icono nombre='Clubes' className='h-8 w-8 text-primary' />}
       ocultarBotonVolver
       botonera={{
         iconos: [
           {
             alApretar: () => navigate(rutasNavegacion.crearClub),
             tooltip: 'Crear nuevo club',
-            icono: Plus,
+            icono: 'Agregar',
             visibleSoloParaAdmin: true
           }
         ]

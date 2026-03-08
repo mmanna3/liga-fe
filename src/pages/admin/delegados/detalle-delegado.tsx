@@ -16,15 +16,7 @@ import BotonVolver from '@/components/ykn-ui/boton-volver'
 import Link from '@/components/ykn-ui/link'
 import { estadoBadgeClassDelegado, EstadoDelegado } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
-import {
-  Calendar,
-  CreditCard,
-  Key,
-  Mail,
-  Phone,
-  Trash2,
-  User
-} from 'lucide-react'
+import Icono from '@/components/ykn-ui/icono'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import DialogoBlanquearClaveDelegado from './components/dialogo-blanquear-clave-delegado'
 import DialogoEliminarDelegado from './components/dialogo-eliminar-delegado'
@@ -98,7 +90,7 @@ export default function DetalleDelegado() {
                                   size='icon'
                                   className='h-10 w-10'
                                 >
-                                  <Key className='h-5 w-5' />
+                                  <Icono nombre='Clave' className='h-5 w-5' />
                                 </Button>
                               }
                             />
@@ -126,7 +118,7 @@ export default function DetalleDelegado() {
                         size='icon'
                         className='h-10 w-10 border-destructive text-destructive hover:bg-destructive/10'
                       >
-                        <Trash2 className='h-5 w-5' />
+                        <Icono nombre='Eliminar' className='h-5 w-5' />
                       </Button>
                     }
                   />
@@ -140,28 +132,28 @@ export default function DetalleDelegado() {
             <CardContent>
               <div className='flex flex-col gap-1'>
                 <DetalleItem
-                  icon={<CreditCard className='h-5 w-5' />}
+                  icon={<Icono nombre='Carnet' className='h-5 w-5' />}
                   valor={delegado.dni}
                 />
                 <DetalleItem
-                  icon={<User className='h-5 w-5' />}
+                  icon={<Icono nombre='Usuario' className='h-5 w-5' />}
                   valor={
                     delegado.usuario?.nombreUsuario ?? 'Usuario aún no generado'
                   }
                 />
                 <DetalleItem
-                  icon={<Calendar className='h-5 w-5' />}
+                  icon={<Icono nombre='Calendario' className='h-5 w-5' />}
                   valor={delegado.fechaNacimiento.toLocaleDateString('es-AR')}
                 />
                 {delegado.email && (
                   <DetalleItem
-                    icon={<Mail className='h-5 w-5' />}
+                    icon={<Icono nombre='Email' className='h-5 w-5' />}
                     valor={delegado.email}
                   />
                 )}
                 {delegado.telefonoCelular && (
                   <DetalleItem
-                    icon={<Phone className='h-5 w-5' />}
+                    icon={<Icono nombre='Teléfono' className='h-5 w-5' />}
                     valor={delegado.telefonoCelular}
                   />
                 )}
@@ -172,7 +164,7 @@ export default function DetalleDelegado() {
                     to={`${rutasNavegacion.detalleJugador}/${delegado.jugadorId}`}
                     className='inline-flex items-center gap-2'
                   >
-                    <User className='h-4 w-4' />
+                    <Icono nombre='Usuario' className='h-4 w-4' />
                     Este delegado es jugador →
                   </Link>
                 </div>

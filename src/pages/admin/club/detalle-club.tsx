@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
 import { rutasNavegacion } from '@/routes/rutas'
-import { Pencil, CirclePlus, Shield, UserCheck } from 'lucide-react'
+import Icono from '@/components/ykn-ui/icono'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export default function DetalleClub() {
@@ -58,7 +58,7 @@ export default function DetalleClub() {
     />
   ) : (
     <div className='h-16 w-16 rounded-lg border border-input bg-muted flex items-center justify-center'>
-      <Shield className='h-8 w-8 text-muted-foreground' />
+      <Icono nombre='Equipos' className='h-8 w-8 text-muted-foreground' />
     </div>
   )
 
@@ -72,7 +72,7 @@ export default function DetalleClub() {
           {
             alApretar: () => navigate(`${rutasNavegacion.editarClub}/${id}`),
             tooltip: 'Editar',
-            icono: Pencil,
+            icono: 'Editar',
             visibleSoloParaAdmin: true
           }
         ]
@@ -83,7 +83,7 @@ export default function DetalleClub() {
           <Card className='shadow-md'>
             <CardHeader className='pb-3'>
               <CardTitle className='text-xl font-semibold flex items-center gap-2'>
-                <UserCheck className='h-5 w-5' />
+                <Icono nombre='Delegados' className='h-5 w-5' />
                 Delegados
               </CardTitle>
             </CardHeader>
@@ -117,7 +117,7 @@ export default function DetalleClub() {
           <Card className='shadow-md'>
             <CardHeader className='pb-3 flex flex-row items-center justify-between'>
               <CardTitle className='text-xl font-semibold flex items-center gap-2'>
-                <Shield className='h-5 w-5' />
+                <Icono nombre='Equipos' className='h-5 w-5' />
                 Equipos
               </CardTitle>
               <VisibleSoloParaAdmin>
@@ -129,7 +129,7 @@ export default function DetalleClub() {
                   size='sm'
                   className='flex items-center gap-1'
                 >
-                  <CirclePlus className='h-4 w-4' />
+                  <Icono nombre='Agregar equipo' className='h-4 w-4' />
                   Nuevo
                 </Button>
               </VisibleSoloParaAdmin>

@@ -27,13 +27,7 @@ import {
   SortingState,
   useReactTable
 } from '@tanstack/react-table'
-import {
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronUp,
-  MoreVertical
-} from 'lucide-react'
+import Icono from '@/components/ykn-ui/icono'
 import { useState } from 'react'
 
 type TablaProps<T> = {
@@ -121,9 +115,15 @@ export default function Tabla<T>({
                         header.getContext()
                       )}
                       {header.column.getIsSorted() === 'asc' ? (
-                        <ChevronUp className='ml-1 inline h-4 w-4 shrink-0 align-middle' />
+                        <Icono
+                          nombre='Orden ascendente'
+                          className='ml-1 inline h-4 w-4 shrink-0 align-middle'
+                        />
                       ) : header.column.getIsSorted() === 'desc' ? (
-                        <ChevronDown className='ml-1 inline h-4 w-4 shrink-0 align-middle' />
+                        <Icono
+                          nombre='Orden descendente'
+                          className='ml-1 inline h-4 w-4 shrink-0 align-middle'
+                        />
                       ) : null}
                     </TableHead>
                   ))}
@@ -176,7 +176,7 @@ export default function Tabla<T>({
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
               >
-                <ChevronLeft className='w-4 h-4' />
+                <Icono nombre='Anterior' className='w-4 h-4' />
               </Button>
               <span>
                 {table.getState().pagination.pageIndex + 1} de{' '}
@@ -188,7 +188,7 @@ export default function Tabla<T>({
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}
               >
-                <ChevronRight className='w-4 h-4' />
+                <Icono nombre='Siguiente' className='w-4 h-4' />
               </Button>
             </div>
           </div>
@@ -207,7 +207,7 @@ Tabla.MenuContextual = function MenuContextual({ items }: MenuContextualProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant='ghost' size='icon'>
-          <MoreVertical className='w-5 h-5' />
+          <Icono nombre='Más opciones' className='w-5 h-5' />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent

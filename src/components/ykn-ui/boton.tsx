@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { Loader2 } from 'lucide-react'
+import Icono from '@/components/ykn-ui/icono'
 import * as React from 'react'
 
 type BotonProps = React.ComponentProps<typeof Button> & {
@@ -17,7 +17,7 @@ const Boton = React.forwardRef<HTMLButtonElement, BotonProps>(
         {...props}
       >
         {estaCargando ? (
-          <Loader2 className='size-4 shrink-0 animate-spin' />
+          <Icono nombre='Cargando' className='size-4 shrink-0 animate-spin' />
         ) : (
           children
         )}
