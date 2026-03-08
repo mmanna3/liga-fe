@@ -43,7 +43,7 @@ export default function FlujoHomeLayout({
     <div
       className={cn(
         'max-w-4xl mx-auto px-4',
-        ocultarBotonVolver ? 'mt-9' : '-mt-5',
+        ocultarBotonVolver ? 'mt-9' : '-mt-1',
         className
       )}
     >

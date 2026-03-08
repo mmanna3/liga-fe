@@ -151,7 +151,6 @@ export default function DetalleEquipo() {
           },
           { clave: 'Código', valor: equipo!.codigoAlfanumerico! }
         ]}
-        headerClassName='items-start gap-4'
         contenido={
           <>
             <Tabla
@@ -183,7 +182,6 @@ export default function DetalleEquipo() {
             </VisibleSoloParaAdmin>
           </>
         }
-        className='max-w-4xl mx-auto p-4'
       />
 
       {equipo && (
