@@ -1,12 +1,12 @@
-import CajitaConTick from '@/design-system/ykn-ui/cajita-con-tick'
-import { MiniResumen } from './mini-resumen'
-import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/base-ui/input'
+import { Boton } from '@/design-system/ykn-ui/boton'
+import CajitaConTick from '@/design-system/ykn-ui/cajita-con-tick'
 import { Pencil, Plus, Shuffle, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { toast } from 'sonner'
 import type { DatosWizardTorneo, EquipoWizard, Zona } from '../tipos'
+import { MiniResumen } from './mini-resumen'
 
 export function Paso4Zonas() {
   const {
@@ -347,7 +347,7 @@ export function Paso4Zonas() {
 
         <div className='mt-6 p-4 bg-muted rounded-lg'>
           <p className='text-sm text-muted-foreground'>
-            Arrastra y suelta los equipos entre zonas para organizarlos como
+            Arrastrá y soltá los equipos entre zonas para organizarlos como
             prefieras
           </p>
         </div>

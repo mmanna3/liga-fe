@@ -1,14 +1,13 @@
-import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/base-ui/input'
 import { Label } from '@/design-system/base-ui/label'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
 import { cn } from '@/logica-compartida/utils'
 import { ChevronDown, ChevronRight, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import type { Fase, DatosWizardTorneo } from '../tipos'
+import type { DatosWizardTorneo, Fase } from '../tipos'
 import { MiniResumen } from './mini-resumen'
-import { ReglasDeDesempate } from './reglas-de-desempate'
 
 export function Paso2Fases() {
   const { watch, setValue } = useFormContext<DatosWizardTorneo>()
@@ -109,20 +108,20 @@ export function Paso2Fases() {
     )
   }
 
-  const alReordenarDesempates = (
-    faseId: string,
-    desdeIndice: number,
-    hastaIndice: number
-  ) => {
-    const fase = datos.fases.find((p) => p.id === faseId)
-    if (!fase) return
+  // const alReordenarDesempates = (
+  //   faseId: string,
+  //   desdeIndice: number,
+  //   hastaIndice: number
+  // ) => {
+  //   const fase = datos.fases.find((p) => p.id === faseId)
+  //   if (!fase) return
 
-    const nuevosDesempates = [...fase.desempates]
-    const [movido] = nuevosDesempates.splice(desdeIndice, 1)
-    nuevosDesempates.splice(hastaIndice, 0, movido)
+  //   const nuevosDesempates = [...fase.desempates]
+  //   const [movido] = nuevosDesempates.splice(desdeIndice, 1)
+  //   nuevosDesempates.splice(hastaIndice, 0, movido)
 
-    actualizarFase(faseId, { desempates: nuevosDesempates })
-  }
+  //   actualizarFase(faseId, { desempates: nuevosDesempates })
+  // }
 
   const obtenerEtiquetaFormato = (formato: 'all-vs-all' | 'elimination') =>
     formato === 'all-vs-all' ? 'Todos contra todos' : 'Eliminación directa'
@@ -276,7 +275,7 @@ export function Paso2Fases() {
                       />
                     </div>
                   </div>
-                  {fase.formato === 'all-vs-all' && (
+                  {/* {fase.formato === 'all-vs-all' && (
                     <div className='mt-8'>
                       <ReglasDeDesempate
                         desempates={fase.desempates}
@@ -293,7 +292,7 @@ export function Paso2Fases() {
                         }
                       />
                     </div>
-                  )}
+                  )} */}
                 </div>
               )}
             </div>
