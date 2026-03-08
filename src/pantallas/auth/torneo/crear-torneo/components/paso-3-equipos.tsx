@@ -51,7 +51,7 @@ export function Paso3Equipos() {
   const torneos = Array.from(new Set(equiposMock.map((t) => t.torneo))).sort()
 
   const equiposFiltrados = equiposMock.filter((equipo) => {
-    if (datos.modoBusqueda === 'name') {
+    if (datos.modoBusqueda === 'nombre') {
       const coincideBusqueda =
         equipo.nombre.toLowerCase().includes(terminoBusqueda.toLowerCase()) ||
         equipo.club.toLowerCase().includes(terminoBusqueda.toLowerCase()) ||
@@ -194,8 +194,8 @@ export function Paso3Equipos() {
         </Label>
         <SelectorSimple
           opciones={[
-            { id: 'name', texto: 'Por Nombre/Código' },
-            { id: 'tournament', texto: 'Desde otro torneo' }
+            { id: 'nombre', texto: 'Por Nombre/Código' },
+            { id: 'torneo', texto: 'Desde otro torneo' }
           ]}
           valorActual={datos.modoBusqueda}
           alElegirOpcion={(id) =>
@@ -211,7 +211,7 @@ export function Paso3Equipos() {
             value={terminoBusqueda}
             onChange={(e) => alCambiarBusqueda(e.target.value)}
             placeholder={
-              datos.modoBusqueda === 'name'
+              datos.modoBusqueda === 'nombre'
                 ? 'Buscar por nombre o código...'
                 : 'Buscar equipos...'
             }
@@ -219,7 +219,7 @@ export function Paso3Equipos() {
           />
         </div>
 
-        {datos.modoBusqueda === 'tournament' && (
+        {datos.modoBusqueda === 'torneo' && (
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-4'>
             <div>
               <Label className='block mb-2 text-md font-semibold'>Año</Label>
@@ -346,7 +346,7 @@ export function Paso3Equipos() {
                   <th className='px-4 py-3 text-left text-xs font-medium text-muted-foreground'>
                     Club
                   </th>
-                  {datos.modoBusqueda === 'tournament' && (
+                  {datos.modoBusqueda === 'torneo' && (
                     <>
                       <th className='px-4 py-3 text-left text-xs font-medium text-muted-foreground'>
                         Torneo
@@ -376,7 +376,7 @@ export function Paso3Equipos() {
                     <td className='px-4 py-3 text-sm text-muted-foreground'>
                       {equipo.club}
                     </td>
-                    {datos.modoBusqueda === 'tournament' && (
+                    {datos.modoBusqueda === 'torneo' && (
                       <>
                         <td className='px-4 py-3 text-sm text-muted-foreground'>
                           {equipo.torneo}

@@ -2,10 +2,10 @@ import { Boton } from '@/design-system/ykn-ui/boton'
 import { cn } from '@/logica-compartida/utils'
 import { AlertTriangle, Info, Wand2 } from 'lucide-react'
 import type {
-  InterzonalPairingValidation,
-  ZoneInput,
-  ZoneValidation
-} from '../lib/fixture'
+  ValidacionEmparejamientoInterzonal,
+  EntradaDeZona,
+  ValidacionZona
+} from '../lib/fixture-tipos'
 
 interface PanelValidacionProps {
   configValida: boolean
@@ -13,11 +13,11 @@ interface PanelValidacionProps {
   esTodosContraTodos: boolean
   usarModoZona: boolean
   tieneMultiplesZonas: boolean
-  validacionesZona: ZoneValidation[]
-  emparejamientoInterzonal: InterzonalPairingValidation
-  entradasDeZona: ZoneInput[]
+  validacionesZona: ValidacionZona[]
+  emparejamientoInterzonal: ValidacionEmparejamientoInterzonal
+  entradasDeZona: EntradaDeZona[]
   totalFechas: number
-  vueltas: 'single' | 'double'
+  vueltas: 'ida' | 'ida-y-vuelta'
   cantidadEquipos: number
   fechasLibres: number
   fechasInterzonales: number
@@ -117,12 +117,12 @@ function ResumenValido({
 }: {
   usarModoZona: boolean
   tieneMultiplesZonas: boolean
-  validacionesZona: ZoneValidation[]
-  entradasDeZona: ZoneInput[]
-  emparejamientoInterzonal: InterzonalPairingValidation
+  validacionesZona: ValidacionZona[]
+  entradasDeZona: EntradaDeZona[]
+  emparejamientoInterzonal: ValidacionEmparejamientoInterzonal
   esEliminacion: boolean
   totalFechas: number
-  vueltas: 'single' | 'double'
+  vueltas: 'ida' | 'ida-y-vuelta'
   cantidadEquipos: number
   fechasLibres: number
   fechasInterzonales: number
@@ -132,16 +132,16 @@ function ResumenValido({
       {usarModoZona ? (
         <>
           {validacionesZona.map((vz) => {
-            const z = entradasDeZona.find((x) => x.id === vz.zoneId)
-            const libre = z?.freeDates ?? 0
-            const iz = z?.interzonalDates ?? 0
+            const z = entradasDeZona.find((x) => x.id === vz.idZona)
+            const libre = z?.fechasLibres ?? 0
+            const iz = z?.fechasInterzonales ?? 0
             return (
-              <p key={vz.zoneId} className='text-sm'>
+              <p key={vz.idZona} className='text-sm'>
                 <strong>
-                  {vz.zoneName}: {vz.teamCount} equipos + {libre} libre
+                  {vz.nombreZona}: {vz.cantidadEquipos} equipos + {libre} libre
                   {tieneMultiplesZonas &&
                     iz > 0 &&
-                    ` + ${iz} interzonal`} = {vz.totalParticipants}{' '}
+                    ` + ${iz} interzonal`} = {vz.totalParticipantes}{' '}
                   participantes
                 </strong>
               </p>
@@ -152,7 +152,7 @@ function ResumenValido({
               <>
                 Configuración válida para eliminación directa por zona.
                 {tieneMultiplesZonas &&
-                  entradasDeZona.some((z) => z.interzonalDates > 0) &&
+                  entradasDeZona.some((z) => z.fechasInterzonales > 0) &&
                   ' Los partidos interzonales cruzan equipos entre zonas.'}
               </>
             ) : (
@@ -161,9 +161,9 @@ function ResumenValido({
                 <strong className='text-foreground'>
                   {totalFechas} fechas
                 </strong>{' '}
-                ({vueltas === 'double' ? 'ida y vuelta' : 'solo ida'}).
+                ({vueltas === 'ida-y-vuelta' ? 'ida y vuelta' : 'solo ida'}).
                 {tieneMultiplesZonas &&
-                  entradasDeZona.some((z) => z.interzonalDates > 0) &&
+                  entradasDeZona.some((z) => z.fechasInterzonales > 0) &&
                   ' Los partidos interzonales cruzan equipos entre zonas.'}
               </>
             )}
@@ -188,7 +188,7 @@ function ResumenValido({
                 <strong className='text-foreground'>
                   {totalFechas} jornadas
                 </strong>{' '}
-                ({vueltas === 'double' ? 'ida y vuelta' : 'solo ida'}).
+                ({vueltas === 'ida-y-vuelta' ? 'ida y vuelta' : 'solo ida'}).
               </>
             )}
           </p>
@@ -210,8 +210,8 @@ function ResumenValido({
       )}
       {usarModoZona &&
         tieneMultiplesZonas &&
-        entradasDeZona.some((z) => z.interzonalDates > 0) &&
-        emparejamientoInterzonal.isValid && (
+        entradasDeZona.some((z) => z.fechasInterzonales > 0) &&
+        emparejamientoInterzonal.esValido && (
           <p className='text-xs text-muted-foreground flex items-center gap-1'>
             <Info className='w-3 h-3 shrink-0' />
             Todas las zonas tienen la misma cantidad interzonal: emparejamiento
@@ -233,8 +233,8 @@ function ResumenInvalido({
 }: {
   usarModoZona: boolean
   esEliminacion: boolean
-  validacionesZona: ZoneValidation[]
-  emparejamientoInterzonal: InterzonalPairingValidation
+  validacionesZona: ValidacionZona[]
+  emparejamientoInterzonal: ValidacionEmparejamientoInterzonal
   cantidadEquipos: number
   fechasLibres: number
   fechasInterzonales: number
@@ -250,13 +250,13 @@ function ResumenInvalido({
         </p>
         <p className='text-xs text-destructive/80 mt-0.5'>
           {usarModoZona
-            ? !emparejamientoInterzonal.isValid
-              ? emparejamientoInterzonal.message
+            ? !emparejamientoInterzonal.esValido
+              ? emparejamientoInterzonal.mensaje
               : validacionesZona
-                  .filter((v) => !v.isValid)
+                  .filter((v) => !v.esValida)
                   .map((v) => {
                     const mal = esEliminacion ? 'no es potencia de 2' : 'impar'
-                    return `${v.zoneName}: ${v.teamCount} + ${v.totalParticipants - v.teamCount} = ${v.totalParticipants} (${mal}). `
+                    return `${v.nombreZona}: ${v.cantidadEquipos} + ${v.totalParticipantes - v.cantidadEquipos} = ${v.totalParticipantes} (${mal}). `
                   })
                   .join(' ') || 'Ajustá libre o interzonal por zona.'
             : `Actualmente: ${cantidadEquipos} equipos + ${fechasLibres} libre + ${fechasInterzonales} interzonal = ${cantidadEquipos + fechasLibres + fechasInterzonales} (${esEliminacion ? 'no es potencia de 2' : 'impar'}). Ajustá la cantidad de fechas libre o interzonal.`}

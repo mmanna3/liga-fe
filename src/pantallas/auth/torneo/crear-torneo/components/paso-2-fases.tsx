@@ -31,12 +31,12 @@ export function Paso2Fases() {
 
   const crearFase = (
     nombre: string,
-    formato: 'all-vs-all' | 'elimination'
+    formato: 'todos-contra-todos' | 'eliminacion'
   ): Fase => ({
     id: Date.now().toString() + Math.random(),
     nombre,
     formato,
-    vueltas: 'single',
+    vueltas: 'ida',
     formatosPorZona: {},
     desempates: [
       'Diferencia de Goles',
@@ -45,14 +45,14 @@ export function Paso2Fases() {
       'Sorteo',
       'Manual'
     ],
-    modoTransicion: 'automatic',
+    modoTransicion: 'automatico',
     clasificadosPorZona: 2,
     posicionInicioClasificados: 1,
     posicionFinClasificados: 2,
     clasificadosCruzados: 0,
-    modoComparacion: 'total-points',
+    modoComparacion: 'puntos-totales',
     habilitarTriangular: false,
-    resolucionDesempate: 'penalties',
+    resolucionDesempate: 'penales',
     reglasTransicion: [
       'Diferencia de Goles',
       'Mejores de tabla general (Cross-Group)',
@@ -65,15 +65,15 @@ export function Paso2Fases() {
     const nuevasFases: Fase[] = []
 
     if (datos.formato === 'ANUAL') {
-      nuevasFases.push(crearFase('Apertura', 'all-vs-all'))
-      nuevasFases.push(crearFase('Clausura', 'all-vs-all'))
+      nuevasFases.push(crearFase('Apertura', 'todos-contra-todos'))
+      nuevasFases.push(crearFase('Clausura', 'todos-contra-todos'))
     } else if (datos.formato === 'MUNDIAL') {
-      nuevasFases.push(crearFase('Fase de grupos', 'all-vs-all'))
-      nuevasFases.push(crearFase('Playoffs', 'elimination'))
+      nuevasFases.push(crearFase('Fase de grupos', 'todos-contra-todos'))
+      nuevasFases.push(crearFase('Playoffs', 'eliminacion'))
     } else if (datos.formato === 'RELAMPAGO') {
-      nuevasFases.push(crearFase('Eliminación directa', 'elimination'))
+      nuevasFases.push(crearFase('Eliminación directa', 'eliminacion'))
     } else if (datos.formato === 'PERSONALIZADO') {
-      nuevasFases.push(crearFase('Fase 1', 'all-vs-all'))
+      nuevasFases.push(crearFase('Fase 1', 'todos-contra-todos'))
     }
 
     if (nuevasFases.length > 0) {
@@ -84,7 +84,7 @@ export function Paso2Fases() {
 
   const agregarFase = () => {
     const numeroDeFase = datos.fases.length + 1
-    const nuevaFase = crearFase(`Fase ${numeroDeFase}`, 'all-vs-all')
+    const nuevaFase = crearFase(`Fase ${numeroDeFase}`, 'todos-contra-todos')
     setValue('fases', [...datos.fases, nuevaFase])
     setFaseExpandida(nuevaFase.id)
   }
@@ -123,11 +123,15 @@ export function Paso2Fases() {
   //   actualizarFase(faseId, { desempates: nuevosDesempates })
   // }
 
-  const obtenerEtiquetaFormato = (formato: 'all-vs-all' | 'elimination') =>
-    formato === 'all-vs-all' ? 'Todos contra todos' : 'Eliminación directa'
+  const obtenerEtiquetaFormato = (
+    formato: 'todos-contra-todos' | 'eliminacion'
+  ) =>
+    formato === 'todos-contra-todos'
+      ? 'Todos contra todos'
+      : 'Eliminación directa'
 
-  const obtenerEtiquetaVueltas = (vueltas: 'single' | 'double') =>
-    vueltas === 'single' ? 'Solo ida' : 'Ida y vuelta'
+  const obtenerEtiquetaVueltas = (vueltas: 'ida' | 'ida-y-vuelta') =>
+    vueltas === 'ida' ? 'Solo ida' : 'Ida y vuelta'
 
   return (
     <div className='space-y-4'>
@@ -242,8 +246,11 @@ export function Paso2Fases() {
                       </Label>
                       <SelectorSimple
                         opciones={[
-                          { id: 'all-vs-all', texto: 'Todos contra todos' },
-                          { id: 'elimination', texto: 'Eliminación directa' }
+                          {
+                            id: 'todos-contra-todos',
+                            texto: 'Todos contra todos'
+                          },
+                          { id: 'eliminacion', texto: 'Eliminación directa' }
                         ]}
                         valorActual={fase.formato}
                         alElegirOpcion={(id) =>
@@ -262,8 +269,8 @@ export function Paso2Fases() {
                       </Label>
                       <SelectorSimple
                         opciones={[
-                          { id: 'single', texto: 'Solo ida' },
-                          { id: 'double', texto: 'Ida y vuelta' }
+                          { id: 'ida', texto: 'Solo ida' },
+                          { id: 'ida-y-vuelta', texto: 'Ida y vuelta' }
                         ]}
                         valorActual={fase.vueltas}
                         alElegirOpcion={(id) =>
@@ -275,7 +282,7 @@ export function Paso2Fases() {
                       />
                     </div>
                   </div>
-                  {/* {fase.formato === 'all-vs-all' && (
+                  {/* {fase.formato === 'todos-contra-todos' && (
                     <div className='mt-8'>
                       <ReglasDeDesempate
                         desempates={fase.desempates}

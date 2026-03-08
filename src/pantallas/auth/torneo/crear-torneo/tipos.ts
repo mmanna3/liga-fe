@@ -22,18 +22,18 @@ export interface Categoria {
 export interface Fase {
   id: string
   nombre: string
-  formato: 'all-vs-all' | 'elimination'
-  vueltas: 'single' | 'double'
-  formatosPorZona: Record<string, 'all-vs-all' | 'elimination'>
+  formato: 'todos-contra-todos' | 'eliminacion'
+  vueltas: 'ida' | 'ida-y-vuelta'
+  formatosPorZona: Record<string, 'todos-contra-todos' | 'eliminacion'>
   desempates: string[]
-  modoTransicion: 'manual' | 'automatic'
+  modoTransicion: 'manual' | 'automatico'
   clasificadosPorZona: number
   posicionInicioClasificados: number
   posicionFinClasificados: number
   clasificadosCruzados: number
-  modoComparacion: 'total-points' | 'average-points'
+  modoComparacion: 'puntos-totales' | 'promedio-puntos'
   habilitarTriangular: boolean
-  resolucionDesempate: 'penalties' | 'extra-time' | 'advantage'
+  resolucionDesempate: 'penales' | 'tiempo-extra' | 'ventaja'
   reglasTransicion: string[]
   completada: boolean
 }
@@ -62,7 +62,7 @@ export interface DatosWizardTorneo {
 
   cantidadEquipos: number
   equiposSeleccionados: EquipoWizard[]
-  modoBusqueda: 'name' | 'tournament'
+  modoBusqueda: 'nombre' | 'torneo'
   filtroAnio: string
   filtroTipo: string
   filtroTorneo: string
@@ -78,5 +78,5 @@ export interface DatosWizardTorneo {
   fixtureGenerado: boolean
   prevenirChoquesDeClub: boolean
 
-  estado: 'draft' | 'published'
+  estado: 'borrador' | 'publicado'
 }

@@ -12,18 +12,21 @@ const esquemaCategoria = z.object({
 const esquemaFase = z.object({
   id: z.string(),
   nombre: z.string().min(1, 'El nombre de la fase es requerido'),
-  formato: z.enum(['all-vs-all', 'elimination']),
-  vueltas: z.enum(['single', 'double']),
-  formatosPorZona: z.record(z.string(), z.enum(['all-vs-all', 'elimination'])),
+  formato: z.enum(['todos-contra-todos', 'eliminacion']),
+  vueltas: z.enum(['ida', 'ida-y-vuelta']),
+  formatosPorZona: z.record(
+    z.string(),
+    z.enum(['todos-contra-todos', 'eliminacion'])
+  ),
   desempates: z.array(z.string()),
-  modoTransicion: z.enum(['manual', 'automatic']),
+  modoTransicion: z.enum(['manual', 'automatico']),
   clasificadosPorZona: z.number(),
   posicionInicioClasificados: z.number(),
   posicionFinClasificados: z.number(),
   clasificadosCruzados: z.number(),
-  modoComparacion: z.enum(['total-points', 'average-points']),
+  modoComparacion: z.enum(['puntos-totales', 'promedio-puntos']),
   habilitarTriangular: z.boolean(),
-  resolucionDesempate: z.enum(['penalties', 'extra-time', 'advantage']),
+  resolucionDesempate: z.enum(['penales', 'tiempo-extra', 'ventaja']),
   reglasTransicion: z.array(z.string()),
   completada: z.boolean()
 })
@@ -78,7 +81,7 @@ export const esquemaTorneo = z.object({
   // Paso 3: Equipos
   cantidadEquipos: z.number().min(2, 'Debe haber al menos 2 equipos'),
   equiposSeleccionados: z.array(esquemaEquipoWizard),
-  modoBusqueda: z.enum(['name', 'tournament']),
+  modoBusqueda: z.enum(['nombre', 'torneo']),
   filtroAnio: z.string(),
   filtroTipo: z.string(),
   filtroTorneo: z.string(),
@@ -97,7 +100,7 @@ export const esquemaTorneo = z.object({
   prevenirChoquesDeClub: z.boolean(),
 
   // Paso 6: Estado
-  estado: z.enum(['draft', 'published'])
+  estado: z.enum(['borrador', 'publicado'])
 })
 
 // Esquemas de validación por paso

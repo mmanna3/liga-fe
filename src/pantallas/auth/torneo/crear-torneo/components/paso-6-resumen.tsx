@@ -57,10 +57,11 @@ export function Paso6Resumen({ alEditarPaso }: Paso6ResumenProps) {
     if (!fase) return ''
 
     const textoFormato =
-      fase.formato === 'all-vs-all'
+      fase.formato === 'todos-contra-todos'
         ? 'Todos contra todos'
         : 'Eliminación directa'
-    const textoVueltas = fase.vueltas === 'double' ? 'Ida y vuelta' : 'Solo ida'
+    const textoVueltas =
+      fase.vueltas === 'ida-y-vuelta' ? 'Ida y vuelta' : 'Solo ida'
 
     return `${textoFormato} - ${textoVueltas}`
   }
@@ -334,7 +335,7 @@ export function Paso6Resumen({ alEditarPaso }: Paso6ResumenProps) {
                 )
               )}
 
-              {faseActual?.formato === 'elimination' && (
+              {faseActual?.formato === 'eliminacion' && (
                 <div className='mt-3 bg-background rounded-lg p-3'>
                   <h5 className='font-semibold text-xs mb-2'>
                     Vista de llaves
@@ -383,10 +384,10 @@ export function Paso6Resumen({ alEditarPaso }: Paso6ResumenProps) {
         <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
           <button
             type='button'
-            onClick={() => setValue('estado', 'draft')}
+            onClick={() => setValue('estado', 'borrador')}
             className={cn(
               'px-6 py-4 rounded-xl font-semibold transition-all text-center',
-              datos.estado === 'draft'
+              datos.estado === 'borrador'
                 ? 'bg-primary text-primary-foreground shadow-lg scale-105'
                 : 'bg-background border-2 text-muted-foreground hover:bg-accent'
             )}
@@ -396,10 +397,10 @@ export function Paso6Resumen({ alEditarPaso }: Paso6ResumenProps) {
           </button>
           <button
             type='button'
-            onClick={() => setValue('estado', 'published')}
+            onClick={() => setValue('estado', 'publicado')}
             className={cn(
               'px-6 py-4 rounded-xl font-semibold transition-all text-center',
-              datos.estado === 'published'
+              datos.estado === 'publicado'
                 ? 'bg-primary text-primary-foreground shadow-lg scale-105'
                 : 'bg-background border-2 text-muted-foreground hover:bg-accent'
             )}

@@ -20,6 +20,6 @@ export const paso6: IPaso<DatosPaso6> = {
   },
 
   obtenerDefaults: (): DatosPaso6 => ({
-    estado: 'draft'
+    estado: 'borrador'
   })
 }

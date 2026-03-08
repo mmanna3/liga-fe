@@ -17,7 +17,7 @@ export function MiniResumen({ children }: MiniResumenProps) {
 
   const faseActual =
     fases.length > 0 ? (fases[indiceFaseActual] ?? fases[0]) : null
-  const esEliminacion = faseActual?.formato === 'elimination'
+  const esEliminacion = faseActual?.formato === 'eliminacion'
   const categoriasConNombre = categorias.filter((c) => c.nombre)
 
   const tieneDatosFase = faseActual != null
@@ -66,7 +66,7 @@ export function MiniResumen({ children }: MiniResumenProps) {
               </span>
               {' - '}
               <span>
-                {faseActual.vueltas === 'single' ? 'Ida' : 'Ida y vuelta'}
+                {faseActual.vueltas === 'ida' ? 'Ida' : 'Ida y vuelta'}
               </span>
             </>
           )}

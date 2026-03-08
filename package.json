@@ -16,6 +16,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "prepare": "husky",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "prepush": "npm run format && npm run lint:fix && npm run check:tsc"
   },
   "dependencies": {
@@ -70,6 +72,7 @@
     "prettier": "^3.4.2",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.54.0",
-    "vite": "^7.3.0"
+    "vite": "^7.3.0",
+    "vitest": "^4.0.18"
   }
 }

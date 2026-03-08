@@ -30,7 +30,7 @@ export const paso3: IPaso<DatosPaso3> = {
   obtenerDefaults: (): DatosPaso3 => ({
     cantidadEquipos: 16,
     equiposSeleccionados: [],
-    modoBusqueda: 'name',
+    modoBusqueda: 'nombre',
     filtroAnio: '',
     filtroTipo: '',
     filtroTorneo: '',

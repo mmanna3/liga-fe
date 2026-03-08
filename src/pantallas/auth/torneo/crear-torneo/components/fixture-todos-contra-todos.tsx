@@ -7,14 +7,14 @@ import {
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
-  calculateFixtureStats,
-  generarTodosLosFixtures,
-  generarFixture,
+  calcularEstadisticasFixture,
   esConfiguracionValida,
   fusionarYResolverInterzonal,
-  type FixtureDate,
-  type FixtureStats,
-  type ZoneInput
+  generarFixture,
+  generarTodosLosFixtures,
+  type EntradaDeZona,
+  type EstadisticasFixture,
+  type FechaFixture
 } from '../lib/fixture'
 import type { DatosWizardTorneo, Zona } from '../tipos'
 import { SelectorDeZona } from './selector-de-zona'
@@ -24,7 +24,7 @@ interface FixtureTodosContraTodosProps {
     fechasLibres?: number
     fechasInterzonales?: number
   })[]
-  entradasDeZona: ZoneInput[]
+  entradasDeZona: EntradaDeZona[]
   usarModoZona: boolean
   claveGeneracion: number
   fixtureGenerado: boolean
@@ -45,15 +45,17 @@ export function FixtureTodosContraTodos({
   const indiceFaseActual = watch('indiceFaseActual')
 
   const faseActual = fases[indiceFaseActual]
-  const vueltas = faseActual?.vueltas ?? 'single'
+  const vueltas = faseActual?.vueltas ?? 'ida'
   const cantidadEquipos = equiposSeleccionados.length
 
-  const [fechasFixture, setFechasFixture] = useState<FixtureDate[]>([])
+  const [fechasFixture, setFechasFixture] = useState<FechaFixture[]>([])
   const [fixturesPorZona, setFixturesPorZona] = useState<
-    Array<{ zoneId: string; zoneName: string; dates: FixtureDate[] }>
+    Array<{ idZona: string; nombreZona: string; fechas: FechaFixture[] }>
   >([])
-  const [fechasFusionadas, setFechasFusionadas] = useState<FixtureDate[]>([])
-  const [estadisticas, setEstadisticas] = useState<FixtureStats | null>(null)
+  const [fechasFusionadas, setFechasFusionadas] = useState<FechaFixture[]>([])
+  const [estadisticas, setEstadisticas] = useState<EstadisticasFixture | null>(
+    null
+  )
   const [idEntradaArrastrada, setIdEntradaArrastrada] = useState<string | null>(
     null
   )
@@ -62,7 +64,7 @@ export function FixtureTodosContraTodos({
   // Auto-seleccionar primera zona cuando se generan los fixtures
   useEffect(() => {
     if (usarModoZona && fixturesPorZona.length > 0 && !zonaSeleccionadaId) {
-      setZonaSeleccionadaId(fixturesPorZona[0].zoneId)
+      setZonaSeleccionadaId(fixturesPorZona[0].idZona)
     }
   }, [usarModoZona, fixturesPorZona, zonaSeleccionadaId])
 
@@ -80,7 +82,6 @@ export function FixtureTodosContraTodos({
   }, [cantidadEquipos, usarModoZona])
 
   const alGenerar = () => {
-    // Limpiar estado previo
     setFechasFixture([])
     setFixturesPorZona([])
     setFechasFusionadas([])
@@ -89,21 +90,21 @@ export function FixtureTodosContraTodos({
       const fixtures = generarTodosLosFixtures(entradasDeZona, vueltas)
       setFixturesPorZona(
         fixtures.map((f) => ({
-          zoneId: f.zoneId,
-          zoneName: f.zoneName,
-          dates: f.dates
+          idZona: f.idZona,
+          nombreZona: f.nombreZona,
+          fechas: f.fechas
         }))
       )
       const fusionadas = fusionarYResolverInterzonal(fixtures)
       setFechasFusionadas(fusionadas)
       setFechasFixture([])
 
-      const estadisticasPrimeraZona = fixtures[0]?.stats ?? null
+      const estadisticasPrimeraZona = fixtures[0]?.estadisticas ?? null
       setEstadisticas(estadisticasPrimeraZona)
     } else {
       const equipos = equiposSeleccionados.map((t) => ({
         id: t.id,
-        name: t.nombre
+        nombre: t.nombre
       }))
       const fechas = generarFixture(
         equipos,
@@ -115,7 +116,7 @@ export function FixtureTodosContraTodos({
       setFixturesPorZona([])
       setFechasFusionadas([])
 
-      const nuevasEstadisticas = calculateFixtureStats(
+      const nuevasEstadisticas = calcularEstadisticasFixture(
         fechas,
         equipos,
         fechasLibres,
@@ -163,31 +164,31 @@ export function FixtureTodosContraTodos({
       return
     }
 
-    const intercambiarEntradas = (prev: FixtureDate[]) => {
-      const fecha = prev.find((d) => d.dateNumber === numeroFecha)
+    const intercambiarEntradas = (prev: FechaFixture[]) => {
+      const fecha = prev.find((d) => d.numeroFecha === numeroFecha)
       if (!fecha) return prev
-      const idxArrastrada = fecha.entries.findIndex(
+      const idxArrastrada = fecha.entradas.findIndex(
         (e) => e.id === idEntradaArrastrada
       )
-      const idxObjetivo = fecha.entries.findIndex(
+      const idxObjetivo = fecha.entradas.findIndex(
         (e) => e.id === entradaObjetivoId
       )
       if (idxArrastrada < 0 || idxObjetivo < 0) return prev
       return prev.map((d) => {
-        if (d.dateNumber !== numeroFecha) return d
-        const nuevasEntradas = [...d.entries]
+        if (d.numeroFecha !== numeroFecha) return d
+        const nuevasEntradas = [...d.entradas]
         const temp = nuevasEntradas[idxArrastrada]
         nuevasEntradas[idxArrastrada] = nuevasEntradas[idxObjetivo]
         nuevasEntradas[idxObjetivo] = temp
-        return { ...d, entries: nuevasEntradas }
+        return { ...d, entradas: nuevasEntradas }
       })
     }
 
     if (enModoZona && zonaId) {
       setFixturesPorZona((prev) =>
         prev.map((zf) =>
-          zf.zoneId === zonaId
-            ? { ...zf, dates: intercambiarEntradas(zf.dates) }
+          zf.idZona === zonaId
+            ? { ...zf, fechas: intercambiarEntradas(zf.fechas) }
             : zf
         )
       )
@@ -209,24 +210,24 @@ export function FixtureTodosContraTodos({
 
   const fechasMostradas = usarModoZona
     ? (() => {
-        const zf = fixturesPorZona.find((f) => f.zoneId === zonaSeleccionadaId)
+        const zf = fixturesPorZona.find((f) => f.idZona === zonaSeleccionadaId)
         if (!zf) return []
-        return zf.dates.map((fd) => {
-          const regulares = fd.entries.filter((e) => e.type === 'regular')
-          const libres = fd.entries.filter((e) => e.type === 'libre')
+        return zf.fechas.map((fd) => {
+          const regulares = fd.entradas.filter((e) => e.tipo === 'regular')
+          const libres = fd.entradas.filter((e) => e.tipo === 'libre')
           const fechaFusionada = fechasFusionadas.find(
-            (m) => m.dateNumber === fd.dateNumber
+            (m) => m.numeroFecha === fd.numeroFecha
           )
           const interzonalesResueltos =
-            fechaFusionada?.entries.filter(
+            fechaFusionada?.entradas.filter(
               (e) =>
-                e.type === 'interzonal' &&
-                (e.homeTeamId != null
-                  ? idsEquiposEnZonaSeleccionada.has(e.homeTeamId)
-                  : idsEquiposEnZonaSeleccionada.has(e.awayTeamId!))
+                e.tipo === 'interzonal' &&
+                (e.idEquipoLocal != null
+                  ? idsEquiposEnZonaSeleccionada.has(e.idEquipoLocal)
+                  : idsEquiposEnZonaSeleccionada.has(e.idEquipoVisitante!))
             ) ?? []
-          const interzonalesCrudos = fd.entries.filter(
-            (e) => e.type === 'interzonal'
+          const interzonalesCrudos = fd.entradas.filter(
+            (e) => e.tipo === 'interzonal'
           )
           const interzonales =
             interzonalesResueltos.length > 0
@@ -234,7 +235,7 @@ export function FixtureTodosContraTodos({
               : interzonalesCrudos
           return {
             ...fd,
-            entries: [...regulares, ...libres, ...interzonales]
+            entradas: [...regulares, ...libres, ...interzonales]
           }
         })
       })()
@@ -259,9 +260,9 @@ export function FixtureTodosContraTodos({
             {usarModoZona && fixturesPorZona.length > 0 && (
               <SelectorDeZona
                 zonas={fixturesPorZona.map((zf) => ({
-                  id: zf.zoneId,
-                  nombre: zf.zoneName,
-                  detalle: `${zf.dates.length} fechas`
+                  id: zf.idZona,
+                  nombre: zf.nombreZona,
+                  detalle: `${zf.fechas.length} fechas`
                 }))}
                 zonaSeleccionadaId={zonaSeleccionadaId}
                 alCambiarZona={setZonaSeleccionadaId}
@@ -276,8 +277,8 @@ export function FixtureTodosContraTodos({
                   {' '}
                   (
                   {
-                    fixturesPorZona.find((z) => z.zoneId === zonaSeleccionadaId)
-                      ?.zoneName
+                    fixturesPorZona.find((z) => z.idZona === zonaSeleccionadaId)
+                      ?.nombreZona
                   }
                   )
                 </span>
@@ -285,13 +286,13 @@ export function FixtureTodosContraTodos({
             </h4>
 
             {fechasMostradas.map((fd) => (
-              <div key={fd.dateNumber} className='mb-6'>
+              <div key={fd.numeroFecha} className='mb-6'>
                 <div className='flex items-center gap-2 mb-2'>
                   <span className='w-6 h-6 bg-primary text-primary-foreground rounded flex items-center justify-center text-xs font-bold'>
-                    {fd.dateNumber}
+                    {fd.numeroFecha}
                   </span>
                   <h5 className='font-semibold text-sm'>
-                    Fecha {fd.dateNumber}
+                    Fecha {fd.numeroFecha}
                   </h5>
                 </div>
 
@@ -304,15 +305,15 @@ export function FixtureTodosContraTodos({
                 </div>
 
                 <div className='space-y-1.5'>
-                  {fd.entries.map((entrada) => (
+                  {fd.entradas.map((entrada) => (
                     <div
                       key={entrada.id}
                       className={cn(
                         'rounded-lg p-2.5 cursor-move hover:bg-accent transition-colors',
-                        entrada.type === 'regular' && 'bg-muted',
-                        entrada.type === 'libre' &&
+                        entrada.tipo === 'regular' && 'bg-muted',
+                        entrada.tipo === 'libre' &&
                           'bg-amber-50 border border-amber-200',
-                        entrada.type === 'interzonal' &&
+                        entrada.tipo === 'interzonal' &&
                           'bg-blue-50 border border-blue-200'
                       )}
                       draggable
@@ -321,7 +322,7 @@ export function FixtureTodosContraTodos({
                       onDrop={() =>
                         alSoltar(
                           entrada.id,
-                          fd.dateNumber,
+                          fd.numeroFecha,
                           usarModoZona,
                           zonaSeleccionadaId
                         )
@@ -334,22 +335,22 @@ export function FixtureTodosContraTodos({
                             <span
                               className={cn(
                                 'font-medium',
-                                entrada.home === 'INTERZONAL' &&
+                                entrada.local === 'INTERZONAL' &&
                                   'text-blue-700 italic'
                               )}
                             >
-                              {entrada.home}
+                              {entrada.local}
                             </span>
                           </div>
                           <div className='text-center'>
                             <span
                               className={cn(
                                 'px-2 py-0.5 rounded text-xs font-medium border',
-                                entrada.type === 'regular' &&
+                                entrada.tipo === 'regular' &&
                                   'bg-background text-muted-foreground',
-                                entrada.type === 'libre' &&
+                                entrada.tipo === 'libre' &&
                                   'bg-amber-100 text-amber-700 border-amber-300',
-                                entrada.type === 'interzonal' &&
+                                entrada.tipo === 'interzonal' &&
                                   'bg-blue-100 text-blue-700 border-blue-300'
                               )}
                             >
@@ -360,13 +361,13 @@ export function FixtureTodosContraTodos({
                             <span
                               className={cn(
                                 'font-medium',
-                                entrada.away === 'LIBRE' &&
+                                entrada.visitante === 'LIBRE' &&
                                   'text-amber-700 italic',
-                                entrada.away === 'INTERZONAL' &&
+                                entrada.visitante === 'INTERZONAL' &&
                                   'text-blue-700 italic'
                               )}
                             >
-                              {entrada.away}
+                              {entrada.visitante}
                             </span>
                           </div>
                         </div>
@@ -391,39 +392,43 @@ export function FixtureTodosContraTodos({
   )
 }
 
-function PanelEstadisticas({ estadisticas }: { estadisticas: FixtureStats }) {
+function PanelEstadisticas({
+  estadisticas
+}: {
+  estadisticas: EstadisticasFixture
+}) {
   return (
     <div className='p-3 bg-muted rounded-lg space-y-2'>
       <p className='text-sm font-medium'>
-        Fixture generado — {estadisticas.totalDates} fechas
+        Fixture generado — {estadisticas.totalFechas} fechas
       </p>
       <p className='text-sm text-muted-foreground'>
         Cada equipo juega{' '}
         <strong className='text-foreground'>
-          {estadisticas.expectedHomeGames}{' '}
-          {estadisticas.expectedHomeGames === 1 ? 'partido' : 'partidos'} de
-          local
+          {estadisticas.partidosLocalEsperados}{' '}
+          {estadisticas.partidosLocalEsperados === 1 ? 'partido' : 'partidos'}{' '}
+          de local
         </strong>{' '}
         y{' '}
         <strong className='text-foreground'>
-          {estadisticas.expectedAwayGames} de visitante
+          {estadisticas.partidosVisitanteEsperados} de visitante
         </strong>
         .
       </p>
-      {estadisticas.exceptions.length > 0 && (
+      {estadisticas.excepciones.length > 0 && (
         <div className='space-y-1'>
           <p className='text-xs font-medium text-amber-700 flex items-center gap-1'>
             <AlertTriangle className='w-3 h-3' />
             Excepciones en la distribución:
           </p>
-          {estadisticas.exceptions.map((ex, i) => (
+          {estadisticas.excepciones.map((ex, i) => (
             <p key={i} className='text-xs text-amber-700 pl-4'>
               • {ex}
             </p>
           ))}
         </div>
       )}
-      {estadisticas.exceptions.length === 0 && (
+      {estadisticas.excepciones.length === 0 && (
         <p className='text-xs text-muted-foreground'>
           Distribución equilibrada. Sin excepciones.
         </p>

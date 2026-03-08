@@ -11,7 +11,7 @@ export const datosIniciales: DatosWizardTorneo = {
   indiceFaseActual: 0,
   cantidadEquipos: 16,
   equiposSeleccionados: [],
-  modoBusqueda: 'name',
+  modoBusqueda: 'nombre',
   filtroAnio: '',
   filtroTipo: '',
   filtroTorneo: '',
@@ -24,5 +24,5 @@ export const datosIniciales: DatosWizardTorneo = {
   fechasInterzonales: 0,
   fixtureGenerado: false,
   prevenirChoquesDeClub: false,
-  estado: 'draft'
+  estado: 'borrador'
 }
