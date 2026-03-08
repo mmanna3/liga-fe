@@ -1,33 +1,26 @@
 import { api } from '@/api/api'
 import { EquipoDTO, JugadorDelEquipoDTO } from '@/api/clients'
-import useApiMutation from '@/api/custom-hooks/use-api-mutation'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
-import ModalEliminacion from '@/components/modal-eliminacion'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Skeleton } from '@/components/ui/skeleton'
 import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
-import { Boton } from '@/components/ykn-ui/boton'
-import BotonVolver from '@/components/ykn-ui/boton-volver'
 import DetalleItem from '@/components/ykn-ui/detalle-item'
 import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
 import Tabla from '@/components/ykn-ui/tabla'
 import { EstadoJugador } from '@/lib/utils'
+import Botonera from '@/pages/admin/equipo/components/botonera-detalle-equipo'
 import CambiarEstadoModal from '@/pages/admin/equipo/components/cambiar-estado-modal'
 import EfectuarPasesModal from '@/pages/admin/equipo/components/efectuar-pases-modal'
-import { generarReportePDF } from '@/pages/admin/equipo/components/reporte-jugadores-pdf'
-import { rutasNavegacion } from '@/routes/rutas'
 import { useQuery } from '@tanstack/react-query'
 import { ColumnDef, Row, RowSelectionState, Table } from '@tanstack/react-table'
-import { FileDown, Pencil, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
 export default function DetalleEquipo() {
   const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [selectedJugadores, setSelectedJugadores] = useState<number[]>([])
   const [pasesModalOpen, setPasesModalOpen] = useState(false)
@@ -58,26 +51,7 @@ export default function DetalleEquipo() {
     setSelectedJugadores(selectedIds as number[])
   }, [rowSelection, equipo?.jugadores])
 
-  const eliminarMutation = useApiMutation<void>({
-    fn: async () => {
-      await api.equipoDELETE(Number(id))
-    },
-    antesDeMensajeExito: () =>
-      navigate(
-        equipo?.clubId
-          ? `${rutasNavegacion.detalleClub}/${equipo.clubId}`
-          : rutasNavegacion.equipos
-      ),
-    mensajeDeExito: `El equipo '${equipo?.nombre}' fue eliminado.`
-  })
-
-  const handleGenerarReportePDF = async () => {
-    if (equipo) {
-      await generarReportePDF(equipo)
-    }
-  }
-
-  const listaJugadoresExclusivos = isLoadingJugadoresExclusivos
+  const jugadores = isLoadingJugadoresExclusivos
     ? 'Cargando...'
     : jugadoresExclusivos && jugadoresExclusivos.length > 0
       ? jugadoresExclusivos.map((j) => `${j.nombre} ${j.apellido}`).join(', ')
@@ -165,55 +139,7 @@ export default function DetalleEquipo() {
     <>
       <Card className='max-w-4xl mx-auto p-4'>
         <CardHeader className='flex flex-row items-start justify-between gap-4'>
-          <div className='flex flex-col gap-2'>
-            <BotonVolver className='-ml-2' />
-            <CardTitle>{equipo!.nombre}</CardTitle>
-          </div>
-          <div className='flex gap-2 shrink-0'>
-            <Boton
-              variant='outline'
-              className='group h-10 w-10 min-w-10 gap-0 overflow-hidden px-0 transition-[width,gap,padding] duration-200 hover:w-auto hover:min-w-40 hover:gap-2 hover:px-3'
-              onClick={handleGenerarReportePDF}
-            >
-              <FileDown className='h-5 w-5 shrink-0' />
-              <span className='max-w-0 overflow-hidden whitespace-nowrap transition-[max-width] duration-200 group-hover:max-w-40'>
-                Generar Reporte PDF
-              </span>
-            </Boton>
-            <VisibleSoloParaAdmin>
-              <Boton
-                variant='outline'
-                className='group h-10 w-10 min-w-10 gap-0 overflow-hidden px-0 transition-[width,gap,padding] duration-200 hover:w-auto hover:min-w-24 hover:gap-2 hover:px-3'
-                onClick={() =>
-                  navigate(`${rutasNavegacion.editarEquipo}/${equipo!.id}`)
-                }
-              >
-                <Pencil className='h-5 w-5 shrink-0' />
-                <span className='max-w-0 overflow-hidden whitespace-nowrap transition-[max-width] duration-200 group-hover:max-w-20'>
-                  Editar
-                </span>
-              </Boton>
-              <ModalEliminacion
-                titulo={`Eliminar definitivamente al equipo ${equipo!.nombre}`}
-                subtitulo={`Al eliminar el equipo, se eliminarán también los jugadores que solo jueguen en este equipo. Son: ${listaJugadoresExclusivos}`}
-                eliminarOnClick={() => eliminarMutation.mutate(undefined)}
-                eliminarTexto='Eliminar definitivamente equipo y jugadores'
-                trigger={
-                  <Boton
-                    variant='destructive'
-                    className='group h-10 w-10 min-w-10 gap-0 overflow-hidden px-0 transition-[width,gap,padding] duration-200 hover:w-auto hover:min-w-32 hover:gap-2 hover:px-3'
-                    estaCargando={eliminarMutation.isPending}
-                  >
-                    <Trash2 className='h-5 w-5 shrink-0' />
-                    <span className='max-w-0 overflow-hidden whitespace-nowrap transition-[max-width] duration-200 group-hover:max-w-32'>
-                      Eliminar equipo
-                    </span>
-                  </Boton>
-                }
-                estaCargando={eliminarMutation.isPending}
-              />
-            </VisibleSoloParaAdmin>
-          </div>
+          <Botonera equipo={equipo!} jugadores={jugadores} />
         </CardHeader>
         <CardContent>
           <div className='mb-4 space-y-2'>

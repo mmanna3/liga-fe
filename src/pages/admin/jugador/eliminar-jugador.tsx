@@ -3,7 +3,7 @@ import useApiMutation from '@/api/custom-hooks/use-api-mutation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
-import Botonera from '@/components/ykn-ui/botonera'
+import ContenedorBotones from '@/components/ykn-ui/contenedor-botones'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -38,11 +38,11 @@ export default function EliminarJugador() {
               Al eliminar el jugador, se lo desvinculará también de todos los
               equipos.
             </p>
-            <Botonera>
+            <ContenedorBotones>
               <Button type='submit' disabled={mutation.isPending}>
                 {mutation.isPending ? 'Eliminando...' : 'Eliminar jugador'}
               </Button>
-            </Botonera>
+            </ContenedorBotones>
           </form>
         </CardContent>
       </Card>

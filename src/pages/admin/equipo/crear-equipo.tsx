@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
-import Botonera from '@/components/ykn-ui/botonera'
+import ContenedorBotones from '@/components/ykn-ui/contenedor-botones'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
@@ -101,11 +101,11 @@ export default function CrearEquipo() {
               </select>
             </div>
 
-            <Botonera>
+            <ContenedorBotones>
               <Button type='submit' disabled={mutation.isPending}>
                 {mutation.isPending ? 'Guardando...' : 'Guardar'}
               </Button>
-            </Botonera>
+            </ContenedorBotones>
           </form>
         </CardContent>
       </Card>

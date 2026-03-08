@@ -4,7 +4,7 @@ import useApiMutation from '@/api/custom-hooks/use-api-mutation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
-import Botonera from '@/components/ykn-ui/botonera'
+import ContenedorBotones from '@/components/ykn-ui/contenedor-botones'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -51,13 +51,13 @@ export default function DesvincularJugadorDelEquipo() {
             </p>
             <p>Si es su único equipo, se lo eliminará del sistema.</p>
             <div className='mt-16'>
-              <Botonera>
+              <ContenedorBotones>
                 <Button type='submit' disabled={mutation.isPending}>
                   {mutation.isPending
                     ? 'Desvinculando...'
                     : 'Desvincular jugador del equipo'}
                 </Button>
-              </Botonera>
+              </ContenedorBotones>
             </div>
           </form>
         </CardContent>

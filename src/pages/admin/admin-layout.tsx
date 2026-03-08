@@ -16,7 +16,7 @@ import {
   Users
 } from 'lucide-react'
 import { useState } from 'react'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 
 const baseMenuItems = [
   { name: 'Torneos', path: rutasNavegacion.torneos, icon: Trophy },
@@ -37,6 +37,8 @@ export default function AdminLayout() {
   const navigate = useNavigate()
 
   const menuItems = [...baseMenuItems, ...(esAdmin() ? adminMenuItems : [])]
+  const { pathname } = useLocation()
+  const isHome = pathname === '/' || pathname === ''
 
   const handleLogout = () => {
     logout()
@@ -153,8 +155,18 @@ export default function AdminLayout() {
       </Sheet>
 
       {/* Contenido de la página */}
-      <main className='flex-1 w-full p-6 bg-slate-100 flex justify-center'>
-        <div className='w-full max-w-4xl mx-auto'>
+      <main
+        className={cn(
+          'flex-1 w-full min-h-0',
+          isHome ? 'flex flex-col p-0' : 'flex justify-center p-6 bg-slate-100'
+        )}
+      >
+        <div
+          className={cn(
+            'w-full mx-auto',
+            isHome ? 'flex-1 min-h-0 flex flex-col' : 'max-w-4xl'
+          )}
+        >
           <Outlet />
         </div>
       </main>

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
-import Botonera from '@/components/ykn-ui/botonera'
+import ContenedorBotones from '@/components/ykn-ui/contenedor-botones'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -45,11 +45,11 @@ export default function CrearClub() {
               onChange={(e) => setNombre(e.target.value)}
               required
             />
-            <Botonera>
+            <ContenedorBotones>
               <Button type='submit' disabled={mutation.isPending}>
                 {mutation.isPending ? 'Guardando...' : 'Guardar'}
               </Button>
-            </Botonera>
+            </ContenedorBotones>
           </form>
         </CardContent>
       </Card>

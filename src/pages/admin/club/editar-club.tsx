@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
-import Botonera from '@/components/ykn-ui/botonera'
+import ContenedorBotones from '@/components/ykn-ui/contenedor-botones'
 import { rutasNavegacion } from '@/routes/rutas'
 import { Shield, Upload } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
@@ -204,11 +204,11 @@ export default function EditarClub() {
               </div>
             </div>
 
-            <Botonera>
+            <ContenedorBotones>
               <Button type='submit' disabled={isPending || !hayCambios}>
                 {isPending ? 'Guardando...' : 'Guardar'}
               </Button>
-            </Botonera>
+            </ContenedorBotones>
           </form>
         </CardContent>
       </Card>

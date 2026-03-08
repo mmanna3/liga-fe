@@ -15,7 +15,7 @@ import { EstadoJugador } from '@/lib/utils'
 import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import BotonCambiarEstado from './components/boton-cambiar-estado'
-import Botonera from '@/components/ykn-ui/botonera'
+import ContenedorBotones from '@/components/ykn-ui/contenedor-botones'
 import { Boton } from '@/components/ykn-ui/boton'
 import { rutasNavegacion } from '@/routes/rutas'
 
@@ -133,7 +133,7 @@ export default function CambiarEstado() {
             )}
           </div>
           <div className='mt-12'>
-            <Botonera>
+            <ContenedorBotones>
               <Boton
                 variant='destructive'
                 onClick={() =>
@@ -144,7 +144,7 @@ export default function CambiarEstado() {
               >
                 Desvincular jugador del equipo
               </Boton>
-            </Botonera>
+            </ContenedorBotones>
           </div>
         </CardContent>
       </Card>
