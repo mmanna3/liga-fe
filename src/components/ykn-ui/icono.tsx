@@ -10,7 +10,7 @@ const MAPEO_ICONOS: Record<
   // Navegación / menú admin
   Torneos: LucideIcons.Trophy,
   Clubes: LucideIcons.Building2,
-  Equipos: LucideIcons.ShieldHalf,
+  Equipos: LucideIcons.Shield,
   Jugadores: LucideIcons.Users,
   Delegados: LucideIcons.UserCog,
   Reportes: LucideIcons.BarChart2,
