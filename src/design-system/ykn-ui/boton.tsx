@@ -1,6 +1,6 @@
 import { Button } from '@/design-system/base-ui/button'
-import { cn } from '@/logica-compartida/utils'
 import Icono from '@/design-system/ykn-ui/icono'
+import { cn } from '@/logica-compartida/utils'
 import * as React from 'react'
 
 type BotonProps = React.ComponentProps<typeof Button> & {
