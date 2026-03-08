@@ -3,7 +3,7 @@ import { ClubDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/base-ui/input'
-import LayoutABM from '@/design-system/ykn-ui/layout-abm'
+import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import ContenedorBotones from '@/design-system/ykn-ui/contenedor-botones'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useState } from 'react'
@@ -27,7 +27,7 @@ export default function CrearClub() {
   }
 
   return (
-    <LayoutABM
+    <LayoutSegundoNivel
       titulo='Crear Club'
       contenido={
         <form onSubmit={handleSubmit} className='space-y-4'>

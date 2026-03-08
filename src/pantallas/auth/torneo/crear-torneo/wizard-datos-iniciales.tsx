@@ -5,7 +5,7 @@ export const datosIniciales: DatosWizardTorneo = {
   temporada: new Date().getFullYear().toString(),
   tipo: '',
   categorias: [],
-  formato: '',
+  formato: 'PERSONALIZADO',
   fases: [],
   sumarPuntosAnuales: false,
   indiceFaseActual: 0,

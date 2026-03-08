@@ -55,7 +55,7 @@ export default function DetalleClub() {
     )
   }
 
-  const iconoTitulo = club!.escudo ? (
+  const imagenTitulo = club!.escudo ? (
     <img
       src={
         club!.escudo.startsWith('data:') || club!.escudo.startsWith('http')
@@ -65,16 +65,13 @@ export default function DetalleClub() {
       alt={`Escudo de ${club!.nombre}`}
       className='h-16 w-16 object-contain'
     />
-  ) : (
-    <div className='h-16 w-16 rounded-lg border border-input bg-muted flex items-center justify-center'>
-      <Icono nombre='Equipos' className='h-8 w-8 text-muted-foreground' />
-    </div>
-  )
+  ) : undefined
 
   return (
     <FlujoHomeLayout
       titulo={club!.nombre}
-      iconoTitulo={iconoTitulo}
+      iconoTitulo={imagenTitulo ? undefined : 'Clubes'}
+      imagenTitulo={imagenTitulo}
       pathBotonVolver={rutasNavegacion.clubs}
       botonera={{
         iconos: [

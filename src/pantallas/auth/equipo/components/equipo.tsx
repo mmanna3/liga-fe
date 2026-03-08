@@ -1,7 +1,6 @@
 import { api } from '@/api/api'
 import useApiQuery from '@/api/hooks/use-api-query'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
-import Icono from '@/design-system/ykn-ui/icono'
 import Tabla from './tabla'
 
 export default function EquipoHome() {
@@ -13,7 +12,7 @@ export default function EquipoHome() {
   return (
     <FlujoHomeLayout
       titulo='Equipos'
-      iconoTitulo={<Icono nombre='Equipos' className='h-8 w-8 text-primary' />}
+      iconoTitulo='Equipos'
       ocultarBotonVolver
       contenido={
         <Tabla data={data || []} isLoading={isLoading} isError={isError} />

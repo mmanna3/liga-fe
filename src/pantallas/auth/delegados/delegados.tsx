@@ -1,5 +1,4 @@
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
-import Icono from '@/design-system/ykn-ui/icono'
 import { useState } from 'react'
 import ModalSeleccionDelegados from './components/modal-seleccion-delegados'
 import TablaDelegados from './components/tabla'
@@ -12,9 +11,7 @@ export default function Delegados() {
       <FlujoHomeLayout
         titulo='Delegados'
         contenedorClassName='max-w-6xl'
-        iconoTitulo={
-          <Icono nombre='Delegados' className='h-8 w-8 text-primary' />
-        }
+        iconoTitulo='Delegados'
         ocultarBotonVolver
         botonera={{
           iconos: [

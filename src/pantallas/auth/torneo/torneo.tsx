@@ -2,7 +2,6 @@ import { api } from '@/api/api'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useQuery } from '@tanstack/react-query'
-import Icono from '@/design-system/ykn-ui/icono'
 import { useNavigate } from 'react-router-dom'
 import TablaTorneo from './components/tabla'
 
@@ -20,7 +19,7 @@ export default function Torneo() {
   return (
     <FlujoHomeLayout
       titulo='Torneos'
-      iconoTitulo={<Icono nombre='Torneos' className='h-8 w-8 text-primary' />}
+      iconoTitulo='Torneos'
       ocultarBotonVolver
       botonera={{
         iconos: [

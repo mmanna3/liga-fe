@@ -9,11 +9,32 @@ const OPCIONES_FORMATO: {
   id: FormatoTorneo
   label: string
   icono: NombreIcono
+  explicacion: string
 }[] = [
-  { id: 'ANUAL', label: 'Apertura/Clausura', icono: 'Apertura/Clausura' },
-  { id: 'MUNDIAL', label: 'Mundial', icono: 'Mundial' },
-  { id: 'RELAMPAGO', label: 'Eliminación directa', icono: 'Relámpago' },
-  { id: 'PERSONALIZADO', label: 'Personalizado', icono: 'Personalizado' }
+  {
+    id: 'ANUAL',
+    label: 'Apertura/Clausura',
+    icono: 'Apertura/Clausura',
+    explicacion: 'Se crearán dos fases: Apertura y Clausura.'
+  },
+  {
+    id: 'MUNDIAL',
+    label: 'Mundial',
+    icono: 'Mundial',
+    explicacion: 'Se crearán dos fases: Zona de grupos y Playoffs.'
+  },
+  {
+    id: 'RELAMPAGO',
+    label: 'Eliminación directa',
+    icono: 'Relámpago',
+    explicacion: 'Se creará una fase Eliminación Directa, una sola vuelta.'
+  },
+  {
+    id: 'PERSONALIZADO',
+    label: 'Personalizado',
+    icono: 'Personalizado',
+    explicacion: 'Vas a poder crear las fases que quieras.'
+  }
 ]
 
 interface SelectorFormatoProps {
@@ -62,6 +83,14 @@ export function SelectorFormato({
               )}
             >
               {formato.label}
+            </p>
+            <p
+              className={cn(
+                'text-xs',
+                valor === formato.id ? 'text-primary' : 'text-muted-foreground'
+              )}
+            >
+              {formato.explicacion}
             </p>
           </button>
         ))}

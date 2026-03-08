@@ -6,7 +6,7 @@ import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/base-ui/input'
 import { Label } from '@/design-system/base-ui/label'
 import { cn } from '@/logica-compartida/utils'
-import LayoutABM from '@/design-system/ykn-ui/layout-abm'
+import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import ContenedorBotones from '@/design-system/ykn-ui/contenedor-botones'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useQuery } from '@tanstack/react-query'
@@ -56,7 +56,7 @@ export default function CrearEquipo() {
       estaCargando={isLoadingTorneos}
       hayError={isErrorTorneos}
     >
-      <LayoutABM
+      <LayoutSegundoNivel
         titulo='Crear Equipo'
         contenido={
           <form onSubmit={handleSubmit} className='space-y-4'>

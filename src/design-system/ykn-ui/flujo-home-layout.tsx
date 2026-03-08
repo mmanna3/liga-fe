@@ -2,6 +2,7 @@ import { Card, CardContent } from '@/design-system/base-ui/card'
 import Cabecera from '@/design-system/ykn-ui/cabecera'
 import type { DetalleItemData } from '@/design-system/ykn-ui/cabecera'
 import type { BotoneraProps } from '@/design-system/ykn-ui/botonera'
+import type { NombreIcono } from '@/design-system/ykn-ui/icono'
 
 export type { DetalleItemData }
 
@@ -14,8 +15,10 @@ interface FlujoHomeLayoutProps {
   ocultarBotonVolver?: boolean
   /** Items de detalle para la card del header */
   detalleItems?: DetalleItemData[]
-  /** Icono o imagen al lado del título */
-  iconoTitulo?: React.ReactNode
+  /** Nombre del icono al lado del título (ej. 'Torneos'). Cabecera lo renderiza. */
+  iconoTitulo?: NombreIcono
+  /** Contenido personalizado (ej. imagen de escudo). Prioridad sobre iconoTitulo. */
+  imagenTitulo?: React.ReactNode
   /** Ruta del BotonVolver (ej. /clubs). Si no se provee, usa navigate(-1) */
   pathBotonVolver?: string
   /** Contenido principal */
@@ -32,6 +35,7 @@ export default function FlujoHomeLayout({
   ocultarBotonVolver = false,
   detalleItems,
   iconoTitulo,
+  imagenTitulo,
   pathBotonVolver,
   contenido,
   contenidoEnCard = true,
@@ -47,6 +51,7 @@ export default function FlujoHomeLayout({
         ocultarBotonVolver={ocultarBotonVolver}
         detalleItems={detalleItems}
         iconoTitulo={iconoTitulo}
+        imagenTitulo={imagenTitulo}
         pathBotonVolver={pathBotonVolver}
       />
 

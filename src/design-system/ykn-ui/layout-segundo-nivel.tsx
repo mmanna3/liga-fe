@@ -6,7 +6,7 @@ import {
 } from '@/design-system/base-ui/card'
 import BotonVolver from '@/design-system/ykn-ui/boton-volver'
 
-interface LayoutABMProps {
+interface LayoutSegundoNivelProps {
   /** Título del CardHeader (string) */
   titulo: string
   /** Contenido del CardContent */
@@ -21,14 +21,14 @@ interface LayoutABMProps {
   maxWidth?: 'md' | 'lg'
 }
 
-export default function LayoutABM({
+export default function LayoutSegundoNivel({
   titulo,
   contenido,
   pathBotonVolver,
   headerClassName,
   footer,
   maxWidth = 'lg'
-}: LayoutABMProps) {
+}: LayoutSegundoNivelProps) {
   const maxWidthClass = maxWidth === 'md' ? 'max-w-md' : 'max-w-lg'
 
   return (
