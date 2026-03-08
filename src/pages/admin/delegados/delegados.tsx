@@ -104,8 +104,8 @@ export default function Delegados() {
     <>
       <FlujoHomeLayout
         titulo='Delegados'
+        ocultarBotonVolver
         botonera={{
-          ocultarBotonVolver: true,
           iconos: [
             {
               alApretar: () => setModalSeleccionOpen(true),

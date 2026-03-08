@@ -6,7 +6,6 @@ import {
 } from '@/components/ui/tooltip'
 import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import { Boton } from '@/components/ykn-ui/boton'
-import BotonVolver from '@/components/ykn-ui/boton-volver'
 import * as React from 'react'
 
 /** Tipo para íconos de Lucide (ej. FileDown, Pencil, Trash2) */
@@ -28,10 +27,10 @@ export interface IconoBotonera {
 }
 
 export interface BotoneraProps {
-  ocultarBotonVolver?: boolean
   iconos: IconoBotonera[]
   /** Contenido que va a la izquierda (ej. título) */
   children?: React.ReactNode
+  /** Clase para el BotonVolver cuando FlujoHomeLayout lo renderiza */
   classNameBotonVolver?: string
 }
 
@@ -86,20 +85,10 @@ function IconoBoton({ item }: { item: IconoBotonera }) {
   )
 }
 
-export default function Botonera({
-  ocultarBotonVolver = false,
-  iconos,
-  children,
-  classNameBotonVolver
-}: BotoneraProps) {
+export default function Botonera({ iconos, children }: BotoneraProps) {
   return (
     <div className='flex flex-row items-start justify-between gap-4'>
-      <div className='flex flex-col gap-2'>
-        {!ocultarBotonVolver && (
-          <BotonVolver className={classNameBotonVolver} />
-        )}
-        {children}
-      </div>
+      <div className='flex flex-col gap-2'>{children}</div>
       <div className='flex gap-2 shrink-0'>
         {iconos.map((item, index) => {
           const boton = <IconoBoton key={index} item={item} />

@@ -106,8 +106,8 @@ export default function Jugador() {
   return (
     <FlujoHomeLayout
       titulo='Jugadores'
+      ocultarBotonVolver
       botonera={{
-        ocultarBotonVolver: true,
         iconos: [
           {
             alApretar: () => {},

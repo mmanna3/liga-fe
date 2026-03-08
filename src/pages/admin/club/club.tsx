@@ -17,8 +17,8 @@ export default function Club() {
   return (
     <FlujoHomeLayout
       titulo='Clubes'
+      ocultarBotonVolver
       botonera={{
-        ocultarBotonVolver: true,
         iconos: [
           {
             alApretar: () => navigate(rutasNavegacion.crearClub),

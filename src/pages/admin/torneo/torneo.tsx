@@ -20,8 +20,8 @@ export default function Torneo() {
   return (
     <FlujoHomeLayout
       titulo='Torneos'
+      ocultarBotonVolver
       botonera={{
-        ocultarBotonVolver: true,
         iconos: [
           {
             alApretar: () => navigate(rutasNavegacion.crearTorneo),
