@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { Button } from '../base-ui/button'
+import { Boton } from './boton'
 import Icono from '@/design-system/ykn-ui/icono'
 
 interface Props {
@@ -12,7 +12,7 @@ const BotonVolver: React.FC<Props> = ({ path, className }: Props) => {
   const navigate = useNavigate()
 
   return (
-    <Button
+    <Boton
       variant='ghost'
       size='icon'
       type='button'
@@ -24,7 +24,7 @@ const BotonVolver: React.FC<Props> = ({ path, className }: Props) => {
       aria-label='Volver'
     >
       <Icono nombre='Volver' className='h-5 w-5' />
-    </Button>
+    </Boton>
   )
 }
 

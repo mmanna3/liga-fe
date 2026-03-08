@@ -1,7 +1,7 @@
 import { api } from '@/api/api'
 import { CambiarEstadoDelJugadorDTO, EquipoDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import {
   Dialog,
   DialogContent,
@@ -128,30 +128,33 @@ export default function CambiarEstadoModal({
           </div>
         </div>
         <DialogFooter className='flex-row justify-between w-full sm:justify-between'>
-          <Button variant='outline' onClick={() => onOpenChange(false)}>
+          <Boton variant='outline' onClick={() => onOpenChange(false)}>
             Volver
-          </Button>
+          </Boton>
           <div className='flex gap-2'>
-            <Button
+            <Boton
               variant='destructive'
               onClick={() => handleAction(inhabilitarMutation)}
-              disabled={selectedJugadores.length === 0 || !motivo || isPending}
+              disabled={selectedJugadores.length === 0 || !motivo}
+              estaCargando={isPending}
             >
               Inhabilitar
-            </Button>
-            <Button
+            </Boton>
+            <Boton
               variant='destructive'
               onClick={() => handleAction(suspenderMutation)}
-              disabled={selectedJugadores.length === 0 || !motivo || isPending}
+              disabled={selectedJugadores.length === 0 || !motivo}
+              estaCargando={isPending}
             >
               Suspender
-            </Button>
-            <Button
+            </Boton>
+            <Boton
               onClick={() => handleAction(activarMutation)}
-              disabled={selectedJugadores.length === 0 || !motivo || isPending}
+              disabled={selectedJugadores.length === 0 || !motivo}
+              estaCargando={isPending}
             >
               Activar
-            </Button>
+            </Boton>
           </div>
         </DialogFooter>
       </DialogContent>

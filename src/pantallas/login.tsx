@@ -1,4 +1,4 @@
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import {
   Card,
   CardContent,
@@ -7,7 +7,6 @@ import {
 } from '@/design-system/base-ui/card'
 import { Input } from '@/design-system/base-ui/input'
 import { useAuth } from '@/logica-compartida/hooks/use-auth'
-import Icono from '@/design-system/ykn-ui/icono'
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -80,16 +79,9 @@ export default function Login() {
             {error && (
               <div className='text-sm text-red-500 text-center'>{error}</div>
             )}
-            <Button type='submit' className='w-full' disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Icono nombre='Cargando' className='animate-spin' />
-                  Ingresando...
-                </>
-              ) : (
-                'Ingresar'
-              )}
-            </Button>
+            <Boton type='submit' className='w-full' estaCargando={isLoading}>
+              Ingresar
+            </Boton>
           </form>
         </CardContent>
       </Card>

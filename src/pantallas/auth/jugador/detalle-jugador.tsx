@@ -2,7 +2,7 @@ import { api } from '@/api/api'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import {
   Card,
   CardContent,
@@ -89,13 +89,13 @@ export default function DetalleJugador() {
                     eliminarTexto='Eliminar jugador'
                     estaCargando={eliminarMutation.isPending}
                     trigger={
-                      <Button
+                      <Boton
                         variant='outline'
                         size='icon'
                         className='h-10 w-10 border-destructive text-destructive hover:bg-destructive/10'
                       >
                         <Icono nombre='Eliminar' className='h-5 w-5' />
-                      </Button>
+                      </Boton>
                     }
                   />
                 </div>
@@ -151,7 +151,7 @@ export default function DetalleJugador() {
                           estado={Number(equipo.estado)}
                         />
                         <VisibleSoloParaAdmin>
-                          <Button
+                          <Boton
                             variant='ghost'
                             className='text-blue-600'
                             onClick={() => {
@@ -171,7 +171,7 @@ export default function DetalleJugador() {
                             }}
                           >
                             Gestionar
-                          </Button>
+                          </Boton>
                         </VisibleSoloParaAdmin>
                       </div>
                     </div>

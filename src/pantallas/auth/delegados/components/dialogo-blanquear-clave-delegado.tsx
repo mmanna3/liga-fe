@@ -1,6 +1,6 @@
 import { api } from '@/api/api'
 import useApiMutation from '@/api/hooks/use-api-mutation'
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import {
   Dialog,
   DialogContent,
@@ -57,16 +57,16 @@ export default function DialogoBlanquearClaveDelegado({
             iniciar sesión en la APP se le pedirá una nueva.
           </p>
           <DialogFooter>
-            <Button
+            <Boton
               variant='outline'
               type='button'
               onClick={() => setOpen(false)}
             >
               Cancelar
-            </Button>
-            <Button type='submit' disabled={mutation.isPending}>
-              {mutation.isPending ? 'Blanqueando...' : 'Blanquear clave'}
-            </Button>
+            </Boton>
+            <Boton type='submit' estaCargando={mutation.isPending}>
+              Blanquear clave
+            </Boton>
           </DialogFooter>
         </form>
       </DialogContent>

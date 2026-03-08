@@ -1,7 +1,7 @@
 import { api } from '@/api/api'
 import { ClubDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/base-ui/input'
 import LayoutABM from '@/design-system/ykn-ui/layout-abm'
 import ContenedorBotones from '@/design-system/ykn-ui/contenedor-botones'
@@ -39,9 +39,9 @@ export default function CrearClub() {
             required
           />
           <ContenedorBotones>
-            <Button type='submit' disabled={mutation.isPending}>
-              {mutation.isPending ? 'Guardando...' : 'Guardar'}
-            </Button>
+            <Boton type='submit' estaCargando={mutation.isPending}>
+              Guardar
+            </Boton>
           </ContenedorBotones>
         </form>
       }

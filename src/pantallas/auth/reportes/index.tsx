@@ -1,4 +1,4 @@
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import {
   Card,
   CardContent,
@@ -32,12 +32,12 @@ export default function ReportesPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className='p-6'>
-            <Button
+            <Boton
               onClick={() => navigate(rutasNavegacion.reportePagos)}
               className='w-full'
             >
               Ver Reporte
-            </Button>
+            </Boton>
           </CardContent>
         </Card>
       </div>

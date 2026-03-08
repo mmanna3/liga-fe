@@ -1,4 +1,4 @@
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import {
   Sheet,
   SheetContent,
@@ -88,14 +88,14 @@ export default function AuthLayout() {
               </div>
               <div className='text-xs text-gray-400 truncate'>{userRole}</div>
             </div>
-            <Button
+            <Boton
               variant='ghost'
               size='icon'
               className='h-8 w-8 text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-full'
               onClick={handleLogout}
             >
               <Icono nombre='Cerrar sesión' className='w-4 h-4' />
-            </Button>
+            </Boton>
           </div>
         </div>
       </aside>
@@ -103,12 +103,12 @@ export default function AuthLayout() {
       {/* Menú lateral responsive */}
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
-          <Button
+          <Boton
             variant='ghost'
             className='md:hidden fixed top-4 left-4 z-50 bg-gray-900 text-white'
           >
             <Icono nombre='Menú' className='w-6 h-6' />
-          </Button>
+          </Boton>
         </SheetTrigger>
         <SheetContent
           side='left'
@@ -147,14 +147,14 @@ export default function AuthLayout() {
                 </div>
                 <div className='text-xs text-gray-400 truncate'>{userRole}</div>
               </div>
-              <Button
+              <Boton
                 variant='ghost'
                 size='icon'
                 className='h-8 w-8 text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-full'
                 onClick={handleLogout}
               >
                 <Icono nombre='Cerrar sesión' className='w-4 h-4' />
-              </Button>
+              </Boton>
             </div>
           </div>
         </SheetContent>

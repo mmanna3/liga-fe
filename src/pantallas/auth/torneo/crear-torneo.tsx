@@ -1,7 +1,7 @@
 import { api } from '@/api/api'
 import { TorneoDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import {
   Card,
   CardContent,
@@ -51,9 +51,9 @@ export default function CrearTorneo() {
               required
             />
             <ContenedorBotones>
-              <Button type='submit' disabled={mutation.isPending}>
-                {mutation.isPending ? 'Guardando...' : 'Guardar'}
-              </Button>
+              <Boton type='submit' estaCargando={mutation.isPending}>
+                Guardar
+              </Boton>
             </ContenedorBotones>
           </form>
         </CardContent>

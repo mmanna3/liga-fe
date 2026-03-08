@@ -2,7 +2,7 @@ import { api } from '@/api/api'
 import { EfectuarPaseDTO, EquipoDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
 import useApiMutation from '@/api/hooks/use-api-mutation'
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import {
   Dialog,
   DialogContent,
@@ -123,21 +123,16 @@ export default function EfectuarPasesModal({
           </div>
         </div>
         <DialogFooter>
-          <Button variant='outline' onClick={() => onOpenChange(false)}>
+          <Boton variant='outline' onClick={() => onOpenChange(false)}>
             Volver
-          </Button>
-          <Button
+          </Boton>
+          <Boton
             onClick={handleEfectuarPase}
-            disabled={
-              selectedJugadores.length === 0 ||
-              !equipoDestinoId ||
-              efectuarPasesMutation.isPending
-            }
+            disabled={selectedJugadores.length === 0 || !equipoDestinoId}
+            estaCargando={efectuarPasesMutation.isPending}
           >
-            {efectuarPasesMutation.isPending
-              ? 'Procesando...'
-              : 'Efectuar pase'}
-          </Button>
+            Efectuar pase
+          </Boton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

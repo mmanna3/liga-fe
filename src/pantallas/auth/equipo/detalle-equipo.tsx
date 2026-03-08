@@ -6,7 +6,7 @@ import {
   AlertDescription,
   AlertTitle
 } from '@/design-system/base-ui/alert'
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import { Checkbox } from '@/design-system/base-ui/checkbox'
 import { Skeleton } from '@/design-system/base-ui/skeleton'
 import { VisibleSoloParaAdmin } from '@/design-system/visible-solo-para-admin'
@@ -169,20 +169,20 @@ export default function DetalleEquipo() {
             />
             <VisibleSoloParaAdmin>
               <div className='mt-6 flex gap-2'>
-                <Button
+                <Boton
                   variant='outline'
                   disabled={selectedJugadores.length === 0}
                   onClick={() => setPasesModalOpen(true)}
                 >
                   Efectuar pases
-                </Button>
-                <Button
+                </Boton>
+                <Boton
                   variant='outline'
                   disabled={selectedJugadores.length === 0}
                   onClick={() => setCambioEstadoModalOpen(true)}
                 >
                   Cambiar estado
-                </Button>
+                </Boton>
               </div>
             </VisibleSoloParaAdmin>
           </>

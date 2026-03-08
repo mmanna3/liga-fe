@@ -2,7 +2,7 @@ import * as React from 'react'
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'
 
 import { cn } from '@/logica-compartida/utils'
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 
 function AlertDialog({
   ...props
@@ -148,15 +148,15 @@ function AlertDialogAction({
   size = 'default',
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Action> &
-  Pick<React.ComponentProps<typeof Button>, 'variant' | 'size'>) {
+  Pick<React.ComponentProps<typeof Boton>, 'variant' | 'size'>) {
   return (
-    <Button variant={variant} size={size} asChild>
+    <Boton variant={variant} size={size} asChild>
       <AlertDialogPrimitive.Action
         data-slot='alert-dialog-action'
         className={cn(className)}
         {...props}
       />
-    </Button>
+    </Boton>
   )
 }
 
@@ -166,15 +166,15 @@ function AlertDialogCancel({
   size = 'default',
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Cancel> &
-  Pick<React.ComponentProps<typeof Button>, 'variant' | 'size'>) {
+  Pick<React.ComponentProps<typeof Boton>, 'variant' | 'size'>) {
   return (
-    <Button variant={variant} size={size} asChild>
+    <Boton variant={variant} size={size} asChild>
       <AlertDialogPrimitive.Cancel
         data-slot='alert-dialog-cancel'
         className={cn(className)}
         {...props}
       />
-    </Button>
+    </Boton>
   )
 }
 

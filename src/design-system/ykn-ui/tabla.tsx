@@ -1,4 +1,4 @@
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/base-ui/input'
 import {
   Table,
@@ -170,26 +170,26 @@ export default function Tabla<T>({
               Registros: {data.length}
             </span>
             <div className='flex items-center space-x-2 text-gray-600 text-sm'>
-              <Button
+              <Boton
                 variant='outline'
                 className='w-3 h-7'
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
               >
                 <Icono nombre='Anterior' className='w-4 h-4' />
-              </Button>
+              </Boton>
               <span>
                 {table.getState().pagination.pageIndex + 1} de{' '}
                 {table.getPageCount()}
               </span>
-              <Button
+              <Boton
                 variant='outline'
                 className='w-3 h-7'
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}
               >
                 <Icono nombre='Siguiente' className='w-4 h-4' />
-              </Button>
+              </Boton>
             </div>
           </div>
         </>
@@ -206,9 +206,9 @@ Tabla.MenuContextual = function MenuContextual({ items }: MenuContextualProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant='ghost' size='icon'>
+        <Boton variant='ghost' size='icon'>
           <Icono nombre='Más opciones' className='w-5 h-5' />
-        </Button>
+        </Boton>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align='end'

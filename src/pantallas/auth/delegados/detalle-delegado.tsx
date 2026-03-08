@@ -3,7 +3,7 @@ import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
 import { Badge } from '@/design-system/base-ui/badge'
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import { Card, CardContent } from '@/design-system/base-ui/card'
 import {
   Tooltip,
@@ -88,13 +88,13 @@ export default function DetalleDelegado() {
                               delegadoId={delegado.id!}
                               nombreUsuario={delegado.usuario.nombreUsuario}
                               trigger={
-                                <Button
+                                <Boton
                                   variant='outline'
                                   size='icon'
                                   className='h-10 w-10'
                                 >
                                   <Icono nombre='Clave' className='h-5 w-5' />
-                                </Button>
+                                </Boton>
                               }
                             />
                           </span>
@@ -116,13 +116,13 @@ export default function DetalleDelegado() {
                     }
                     estaCargando={eliminarMutation.isPending}
                     trigger={
-                      <Button
+                      <Boton
                         variant='outline'
                         size='icon'
                         className='h-10 w-10 border-destructive text-destructive hover:bg-destructive/10'
                       >
                         <Icono nombre='Eliminar' className='h-5 w-5' />
-                      </Button>
+                      </Boton>
                     }
                   />
                 </div>
@@ -183,7 +183,7 @@ export default function DetalleDelegado() {
                   {delegado.delegadoClubs.map((dc) => (
                     <li key={dc.id ?? dc.clubId} className='pt-2 first:pt-0'>
                       <div className='flex items-center justify-between gap-2'>
-                        <Button
+                        <Boton
                           variant='ghost'
                           className='flex-1 justify-start font-normal hover:bg-gray-50'
                           onClick={() => {
@@ -203,7 +203,7 @@ export default function DetalleDelegado() {
                           }}
                         >
                           {dc.clubNombre ?? `Club ${dc.clubId}`}
-                        </Button>
+                        </Boton>
                         {dc.estadoDelegado && (
                           <Badge
                             className={`shrink-0 px-3 py-1 rounded-md ${estadoBadgeClassDelegado[dc.estadoDelegado.id!] ?? ''}`}

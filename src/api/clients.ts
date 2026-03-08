@@ -3989,9 +3989,7 @@ export interface IDelegadoDTO {
   jugadorId?: number | undefined
 }
 
-export class DesvincularJugadorDelEquipoDTO
-  implements IDesvincularJugadorDelEquipoDTO
-{
+export class DesvincularJugadorDelEquipoDTO implements IDesvincularJugadorDelEquipoDTO {
   jugadorId?: number
   equipoId?: number
 
@@ -4361,9 +4359,7 @@ export enum EstadoJugadorEnum {
   _6 = 6
 }
 
-export class FicharDelegadoSoloConDniYClubDTO
-  implements IFicharDelegadoSoloConDniYClubDTO
-{
+export class FicharDelegadoSoloConDniYClubDTO implements IFicharDelegadoSoloConDniYClubDTO {
   id?: number
   dni!: string
   clubId!: number
@@ -4842,9 +4838,7 @@ export interface IObtenerNombreEquipoDTO {
   respuesta?: string | undefined
 }
 
-export class ObtenerNombreUsuarioPorDniDTO
-  implements IObtenerNombreUsuarioPorDniDTO
-{
+export class ObtenerNombreUsuarioPorDniDTO implements IObtenerNombreUsuarioPorDniDTO {
   hayError?: boolean
   mensajeError?: string | undefined
   nombreUsuario?: string | undefined

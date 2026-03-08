@@ -8,19 +8,25 @@ type BotonProps = React.ComponentProps<typeof Button> & {
 }
 
 const Boton = React.forwardRef<HTMLButtonElement, BotonProps>(
-  ({ estaCargando = false, children, disabled, className, ...props }, ref) => {
+  (
+    { estaCargando = false, children, disabled, className, asChild, ...props },
+    ref
+  ) => {
+    const contenido =
+      asChild || !estaCargando ? (
+        children
+      ) : (
+        <Icono nombre='Cargando' className='size-4 shrink-0 animate-spin' />
+      )
     return (
       <Button
         ref={ref}
         disabled={disabled || estaCargando}
         className={cn('relative', className)}
+        asChild={asChild}
         {...props}
       >
-        {estaCargando ? (
-          <Icono nombre='Cargando' className='size-4 shrink-0 animate-spin' />
-        ) : (
-          children
-        )}
+        {contenido}
       </Button>
     )
   }

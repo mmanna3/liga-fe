@@ -3,7 +3,7 @@ import { CambiarEscudoDTO, ClubDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import {
   Card,
   CardContent,
@@ -176,7 +176,7 @@ export default function EditarClub() {
                     onChange={handleSelectFile}
                     className='hidden'
                   />
-                  <Button
+                  <Boton
                     type='button'
                     variant='outline'
                     size='sm'
@@ -185,9 +185,9 @@ export default function EditarClub() {
                   >
                     <Icono nombre='Subir' className='h-4 w-4' />
                     Cambiar escudo
-                  </Button>
+                  </Boton>
                   {escudoBase64 && (
-                    <Button
+                    <Boton
                       type='button'
                       variant='ghost'
                       size='sm'
@@ -206,16 +206,20 @@ export default function EditarClub() {
                       }}
                     >
                       Deshacer
-                    </Button>
+                    </Boton>
                   )}
                 </div>
               </div>
             </div>
 
             <ContenedorBotones>
-              <Button type='submit' disabled={isPending || !hayCambios}>
-                {isPending ? 'Guardando...' : 'Guardar'}
-              </Button>
+              <Boton
+                type='submit'
+                estaCargando={isPending}
+                disabled={!hayCambios}
+              >
+                Guardar
+              </Boton>
             </ContenedorBotones>
           </form>
         </CardContent>

@@ -1,7 +1,7 @@
 import { api } from '@/api/api'
 import { DesvincularJugadorDelEquipoDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import {
   Card,
   CardContent,
@@ -57,11 +57,9 @@ export default function DesvincularJugadorDelEquipo() {
             <p>Si es su único equipo, se lo eliminará del sistema.</p>
             <div className='mt-16'>
               <ContenedorBotones>
-                <Button type='submit' disabled={mutation.isPending}>
-                  {mutation.isPending
-                    ? 'Desvinculando...'
-                    : 'Desvincular jugador del equipo'}
-                </Button>
+                <Boton type='submit' estaCargando={mutation.isPending}>
+                  Desvincular jugador del equipo
+                </Boton>
               </ContenedorBotones>
             </div>
           </form>

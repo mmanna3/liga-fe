@@ -3,7 +3,7 @@ import Icono from '@/design-system/ykn-ui/icono'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 
 import { cn } from '@/logica-compartida/utils'
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 
 function Dialog({
   ...props
@@ -109,7 +109,7 @@ function DialogFooter({
       {children}
       {showCloseButton && (
         <DialogPrimitive.Close asChild>
-          <Button variant='outline'>Close</Button>
+          <Boton variant='outline'>Close</Boton>
         </DialogPrimitive.Close>
       )}
     </div>

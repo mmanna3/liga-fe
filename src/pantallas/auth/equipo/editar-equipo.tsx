@@ -3,7 +3,7 @@ import { EquipoDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import {
   Card,
   CardContent,
@@ -142,7 +142,7 @@ export default function EditarEquipo() {
               </div>
             </CardContent>
             <CardFooter className='flex justify-between'>
-              <Button type='submit'>Guardar</Button>
+              <Boton type='submit'>Guardar</Boton>
             </CardFooter>
           </form>
         </Card>

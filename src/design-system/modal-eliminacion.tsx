@@ -9,7 +9,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from '@/design-system/base-ui/alert-dialog'
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import {
   Card,
   CardContent,
@@ -53,17 +53,17 @@ export default function ModalEliminacion({
           {contenido}
           <div className='flex gap-2 justify-end mt-4'>
             {onCancelar && (
-              <Button variant='outline' onClick={onCancelar}>
+              <Boton variant='outline' onClick={onCancelar}>
                 Cancelar
-              </Button>
+              </Boton>
             )}
-            <Button
+            <Boton
               variant='destructive'
               onClick={eliminarOnClick}
-              disabled={estaCargando}
+              estaCargando={estaCargando}
             >
-              {estaCargando ? 'Eliminando...' : eliminarTexto}
-            </Button>
+              {eliminarTexto}
+            </Boton>
           </div>
         </CardContent>
       </Card>

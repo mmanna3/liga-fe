@@ -1,7 +1,7 @@
 import { api } from '@/api/api'
 import { ReportePagosDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import {
   Card,
   CardContent,
@@ -97,9 +97,9 @@ export default function ReportePagosPage() {
     <div className='space-y-4'>
       <div className='flex items-center justify-between'>
         <h1 className='text-2xl font-bold'>Reporte de Pagos</h1>
-        <Button variant='outline' onClick={() => navigate(-1)}>
+        <Boton variant='outline' onClick={() => navigate(-1)}>
           Volver
-        </Button>
+        </Boton>
       </div>
 
       <Card>
@@ -176,9 +176,9 @@ export default function ReportePagosPage() {
                 )}
               />
 
-              <Button type='submit' className='mt-auto'>
+              <Boton type='submit' className='mt-auto'>
                 Filtrar
-              </Button>
+              </Boton>
             </form>
           </Form>
         </CardContent>

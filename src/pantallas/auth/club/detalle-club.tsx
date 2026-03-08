@@ -5,7 +5,7 @@ import {
   AlertDescription,
   AlertTitle
 } from '@/design-system/base-ui/alert'
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import {
   Card,
   CardContent,
@@ -101,7 +101,7 @@ export default function DetalleClub() {
                 <ul className='space-y-2 divide-y divide-gray-100'>
                   {club!.delegados.map((delegado) => (
                     <li key={delegado.id} className='pt-2 first:pt-0'>
-                      <Button
+                      <Boton
                         variant='ghost'
                         className='w-full justify-start font-normal hover:bg-gray-50'
                         onClick={() =>
@@ -111,7 +111,7 @@ export default function DetalleClub() {
                         }
                       >
                         {delegado.nombre} {delegado.apellido}
-                      </Button>
+                      </Boton>
                     </li>
                   ))}
                 </ul>
@@ -130,7 +130,7 @@ export default function DetalleClub() {
                 Equipos
               </CardTitle>
               <VisibleSoloParaAdmin>
-                <Button
+                <Boton
                   onClick={() =>
                     navigate(`${rutasNavegacion.crearEquipo}/${id}`)
                   }
@@ -140,7 +140,7 @@ export default function DetalleClub() {
                 >
                   <Icono nombre='Agregar equipo' className='h-4 w-4' />
                   Nuevo
-                </Button>
+                </Boton>
               </VisibleSoloParaAdmin>
             </CardHeader>
             <CardContent>
@@ -151,7 +151,7 @@ export default function DetalleClub() {
                       key={equipo.id}
                       className='flex items-center justify-between bg-gray-50 rounded-lg p-3'
                     >
-                      <Button
+                      <Boton
                         variant='ghost'
                         className='p-0 h-auto text-left font-normal hover:bg-transparent'
                         onClick={() =>
@@ -161,7 +161,7 @@ export default function DetalleClub() {
                         }
                       >
                         {equipo.nombre}
-                      </Button>
+                      </Boton>
                       {equipo.torneoNombre ? (
                         <span className='text-sm px-3 py-1 bg-blue-100 text-blue-800 rounded-full'>
                           {equipo.torneoNombre}
