@@ -1,12 +1,7 @@
 import { api } from '@/api/api'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from '@/design-system/base-ui/card'
+import { Card, CardContent } from '@/design-system/base-ui/card'
 import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
 import ModalEliminacion from '@/design-system/modal-eliminacion'
 import { VisibleSoloParaAdmin } from '@/design-system/visible-solo-para-admin'
@@ -72,13 +67,13 @@ export default function DetalleJugador() {
           {/* Card1: nombre y foto */}
           <Card className='mb-4 p-6 rounded-xl border bg-white shadow-md'>
             <div className='flex flex-col items-center'>
-              <h1 className='text-base font-semibold text-gray-900'>
+              <h1 className='text-4xl! font-semibold text-gray-900'>
                 {jugador.nombre} {jugador.apellido}
               </h1>
               <img
                 src={jugador.fotoCarnet}
                 alt={`${jugador.nombre} ${jugador.apellido}`}
-                className='mt-4 w-40 h-40 rounded-lg object-cover'
+                className='my-8 w-40 h-40 rounded-lg object-cover'
               />
               <VisibleSoloParaAdmin>
                 <div className='mt-4 flex justify-end w-full'>
@@ -92,7 +87,7 @@ export default function DetalleJugador() {
                       <Boton
                         variant='outline'
                         size='icon'
-                        className='h-10 w-10 border-destructive text-destructive hover:bg-destructive/10'
+                        className='h-10 w-10 border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive'
                       >
                         <Icono nombre='Eliminar' className='h-5 w-5' />
                       </Boton>
@@ -127,9 +122,6 @@ export default function DetalleJugador() {
 
           {/* Card3: equipos */}
           <Card className='mb-4 p-6 rounded-xl border bg-white shadow-md'>
-            <CardHeader className='pb-3'>
-              <CardTitle className='text-xl font-semibold'>Equipos</CardTitle>
-            </CardHeader>
             <CardContent>
               <ul className='divide-y divide-gray-200'>
                 {jugador.equipos!.map((equipo) => (

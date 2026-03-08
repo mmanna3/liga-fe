@@ -62,13 +62,13 @@ export default function DetalleDelegado() {
           {/* Card1: nombre y foto */}
           <Card className='mb-4 p-6 rounded-xl border bg-white shadow-md'>
             <div className='flex flex-col items-center'>
-              <h1 className='text-base font-semibold text-gray-900'>
+              <h1 className='w-full text-center text-4xl! font-semibold text-gray-900 wrap-break-word'>
                 {delegado.nombre} {delegado.apellido}
               </h1>
               <img
                 src={delegado.fotoCarnet}
                 alt={`${delegado.nombre} ${delegado.apellido}`}
-                className='mt-4 w-40 h-40 rounded-lg object-cover'
+                className='my-8 w-40 h-40 rounded-lg object-cover'
               />
               {delegado.blanqueoPendiente && (
                 <div className='mt-3 flex flex-wrap gap-2 justify-center'>
