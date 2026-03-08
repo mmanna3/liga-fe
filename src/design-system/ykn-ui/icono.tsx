@@ -44,8 +44,8 @@ const MAPEO_ICONOS: Record<
   'Más opciones': LucideIcons.MoreVertical,
 
   // Datos personales
-  Calendario: LucideIcons.Calendar,
-  Carnet: LucideIcons.CreditCard,
+  Calendario: LucideIcons.CalendarDays,
+  Carnet: LucideIcons.IdCard,
   Clave: LucideIcons.Key,
   Email: LucideIcons.Mail,
   Teléfono: LucideIcons.Phone

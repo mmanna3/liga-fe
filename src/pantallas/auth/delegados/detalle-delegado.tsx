@@ -1,25 +1,25 @@
 import { api } from '@/api/api'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
-import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
 import { Badge } from '@/design-system/base-ui/badge'
-import { Boton } from '@/design-system/ykn-ui/boton'
 import { Card, CardContent } from '@/design-system/base-ui/card'
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger
 } from '@/design-system/base-ui/tooltip'
+import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
 import { VisibleSoloParaAdmin } from '@/design-system/visible-solo-para-admin'
-import DetalleItem from '@/design-system/ykn-ui/detalle-item'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import BotonVolver from '@/design-system/ykn-ui/boton-volver'
+import DetalleItem from '@/design-system/ykn-ui/detalle-item'
+import Icono from '@/design-system/ykn-ui/icono'
 import Link from '@/design-system/ykn-ui/link'
 import {
   estadoBadgeClassDelegado,
   EstadoDelegado
 } from '@/logica-compartida/utils'
 import { rutasNavegacion } from '@/ruteo/rutas'
-import Icono from '@/design-system/ykn-ui/icono'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import DialogoBlanquearClaveDelegado from './components/dialogo-blanquear-clave-delegado'
 import DialogoEliminarDelegado from './components/dialogo-eliminar-delegado'
@@ -133,30 +133,24 @@ export default function DetalleDelegado() {
           {/* Card2: datos */}
           <Card className='mb-4 p-6 rounded-xl border bg-white shadow-md'>
             <CardContent>
-              <div className='flex flex-col gap-1'>
+              <div className='flex flex-col gap-3'>
+                <DetalleItem icono='Carnet' valor={delegado.dni} />
                 <DetalleItem
-                  icon={<Icono nombre='Carnet' className='h-5 w-5' />}
-                  valor={delegado.dni}
-                />
-                <DetalleItem
-                  icon={<Icono nombre='Usuario' className='h-5 w-5' />}
+                  icono='Usuario'
                   valor={
                     delegado.usuario?.nombreUsuario ?? 'Usuario aún no generado'
                   }
                 />
                 <DetalleItem
-                  icon={<Icono nombre='Calendario' className='h-5 w-5' />}
+                  icono='Calendario'
                   valor={delegado.fechaNacimiento.toLocaleDateString('es-AR')}
                 />
                 {delegado.email && (
-                  <DetalleItem
-                    icon={<Icono nombre='Email' className='h-5 w-5' />}
-                    valor={delegado.email}
-                  />
+                  <DetalleItem icono='Email' valor={delegado.email} />
                 )}
                 {delegado.telefonoCelular && (
                   <DetalleItem
-                    icon={<Icono nombre='Teléfono' className='h-5 w-5' />}
+                    icono='Teléfono'
                     valor={delegado.telefonoCelular}
                   />
                 )}

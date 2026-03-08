@@ -1,23 +1,23 @@
 import { api } from '@/api/api'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
-import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
-import { Boton } from '@/design-system/ykn-ui/boton'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle
 } from '@/design-system/base-ui/card'
+import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
 import ModalEliminacion from '@/design-system/modal-eliminacion'
 import { VisibleSoloParaAdmin } from '@/design-system/visible-solo-para-admin'
-import DetalleItem from '@/design-system/ykn-ui/detalle-item'
-import JugadorEquipoEstadoBadge from '@/design-system/ykn-ui/jugador-equipo-estado-badge'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import BotonVolver from '@/design-system/ykn-ui/boton-volver'
+import DetalleItem from '@/design-system/ykn-ui/detalle-item'
+import Icono from '@/design-system/ykn-ui/icono'
+import JugadorEquipoEstadoBadge from '@/design-system/ykn-ui/jugador-equipo-estado-badge'
 import Link from '@/design-system/ykn-ui/link'
 import { EstadoJugador } from '@/logica-compartida/utils'
 import { rutasNavegacion } from '@/ruteo/rutas'
-import Icono from '@/design-system/ykn-ui/icono'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export default function DetalleJugador() {
@@ -106,13 +106,10 @@ export default function DetalleJugador() {
           {/* Card2: datos */}
           <Card className='mb-4 p-6 rounded-xl border bg-white shadow-md'>
             <CardContent>
-              <div className='flex flex-col gap-1'>
+              <div className='flex flex-col gap-3'>
+                <DetalleItem icono='Carnet' valor={jugador.dni!} />
                 <DetalleItem
-                  icon={<Icono nombre='Carnet' className='h-5 w-5' />}
-                  valor={jugador.dni!}
-                />
-                <DetalleItem
-                  icon={<Icono nombre='Calendario' className='h-5 w-5' />}
+                  icono='Calendario'
                   valor={jugador.fechaNacimiento!.toLocaleDateString('es-AR')}
                 />
               </div>
