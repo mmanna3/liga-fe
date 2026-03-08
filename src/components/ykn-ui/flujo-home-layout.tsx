@@ -16,8 +16,12 @@ interface FlujoHomeLayoutProps {
   detalleItems?: DetalleItemData[]
   /** Icono o imagen al lado del título */
   iconoTitulo?: React.ReactNode
+  /** Ruta del BotonVolver (ej. /clubs). Si no se provee, usa navigate(-1) */
+  pathBotonVolver?: string
   /** Contenido principal */
   contenido: React.ReactNode
+  /** Si false, el contenido no se envuelve en una Card (ej. cuando es un grid de cards) */
+  contenidoEnCard?: boolean
 }
 
 export default function FlujoHomeLayout({
@@ -26,7 +30,9 @@ export default function FlujoHomeLayout({
   ocultarBotonVolver = false,
   detalleItems,
   iconoTitulo,
-  contenido
+  pathBotonVolver,
+  contenido,
+  contenidoEnCard = true
 }: FlujoHomeLayoutProps) {
   return (
     <div
@@ -38,11 +44,16 @@ export default function FlujoHomeLayout({
         ocultarBotonVolver={ocultarBotonVolver}
         detalleItems={detalleItems}
         iconoTitulo={iconoTitulo}
+        pathBotonVolver={pathBotonVolver}
       />
 
-      <Card className='shadow-md'>
-        <CardContent>{contenido}</CardContent>
-      </Card>
+      {contenidoEnCard ? (
+        <Card className='shadow-md'>
+          <CardContent>{contenido}</CardContent>
+        </Card>
+      ) : (
+        contenido
+      )}
     </div>
   )
 }

@@ -15,6 +15,8 @@ interface CabeceraProps {
   ocultarBotonVolver?: boolean
   detalleItems?: DetalleItemData[]
   iconoTitulo?: React.ReactNode
+  /** Ruta del BotonVolver (ej. /clubs). Si no se provee, usa navigate(-1) */
+  pathBotonVolver?: string
 }
 
 export default function Cabecera({
@@ -22,13 +24,17 @@ export default function Cabecera({
   botonera,
   ocultarBotonVolver = false,
   detalleItems,
-  iconoTitulo
+  iconoTitulo,
+  pathBotonVolver
 }: CabeceraProps) {
   return (
     <>
       {!ocultarBotonVolver && (
         <div className='mb-4'>
-          <BotonVolver className={botonera?.classNameBotonVolver} />
+          <BotonVolver
+            path={pathBotonVolver}
+            className={botonera?.classNameBotonVolver}
+          />
         </div>
       )}
       <Card className='mb-6 shadow-md'>
