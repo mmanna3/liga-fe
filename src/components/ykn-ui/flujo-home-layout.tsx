@@ -15,7 +15,7 @@ interface FlujoHomeLayoutProps {
   /** Items de detalle para la card del header */
   detalleItems?: DetalleItemData[]
   /** Icono o imagen al lado del título */
-  iconoOImagen?: React.ReactNode
+  iconoTitulo?: React.ReactNode
   /** Contenido principal */
   contenido: React.ReactNode
 }
@@ -25,7 +25,7 @@ export default function FlujoHomeLayout({
   botonera,
   ocultarBotonVolver = false,
   detalleItems,
-  iconoOImagen,
+  iconoTitulo,
   contenido
 }: FlujoHomeLayoutProps) {
   return (
@@ -37,7 +37,7 @@ export default function FlujoHomeLayout({
         botonera={botonera}
         ocultarBotonVolver={ocultarBotonVolver}
         detalleItems={detalleItems}
-        iconoOImagen={iconoOImagen}
+        iconoTitulo={iconoTitulo}
       />
 
       <Card className='shadow-md'>
