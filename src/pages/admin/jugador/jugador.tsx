@@ -1,7 +1,6 @@
 import { api } from '@/api/api'
 import { EstadoJugadorEnum } from '@/api/clients'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
-import { Button } from '@/components/ui/button'
 import {
   Popover,
   PopoverContent,
@@ -73,37 +72,50 @@ export default function Jugador() {
       await api.listarConFiltro(filtroEstados as unknown as EstadoJugadorEnum[])
   })
 
+  const FilterIconConPopover = ({ className }: { className?: string }) => (
+    <Popover>
+      <PopoverTrigger asChild>
+        <span
+          className={className}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+        >
+          <FilterIcon className='h-5 w-5 shrink-0' />
+          {filtroEstados.length > 0 && (
+            <span className='bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs'>
+              {filtroEstados.length}
+            </span>
+          )}
+        </span>
+      </PopoverTrigger>
+      <PopoverContent className='w-60 flex flex-col gap-1'>
+        {estadoConfigArray.map(({ key }) => (
+          <div
+            key={key}
+            className={`cursor-pointer flex items-center gap-2 p-2 rounded-md ${
+              filtroEstados.includes(key) ? 'bg-blue-100' : ''
+            }`}
+            onClick={() => toggleFiltro(key)}
+          >
+            <JugadorEquipoEstadoBadge estado={key} />
+          </div>
+        ))}
+      </PopoverContent>
+    </Popover>
+  )
+
   return (
     <FlujoHomeLayout
       titulo='Jugadores'
-      panelDerecho={
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant='outline'>
-              <FilterIcon className='w-4 h-4 mr-1' />
-              Filtrar por estado
-              {filtroEstados.length > 0 && (
-                <span className='ml-1 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs'>
-                  {filtroEstados.length}
-                </span>
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className='w-60 flex flex-col gap-1'>
-            {estadoConfigArray.map(({ key }) => (
-              <div
-                key={key}
-                className={`cursor-pointer flex items-center gap-2 p-2 rounded-md ${
-                  filtroEstados.includes(key) ? 'bg-blue-100' : ''
-                }`}
-                onClick={() => toggleFiltro(key)}
-              >
-                <JugadorEquipoEstadoBadge estado={key} />
-              </div>
-            ))}
-          </PopoverContent>
-        </Popover>
-      }
+      botonera={{
+        ocultarBotonVolver: true,
+        iconos: [
+          {
+            alApretar: () => {},
+            tooltip: 'Filtrar por estado',
+            icono: FilterIconConPopover
+          }
+        ]
+      }}
       contenido={
         <Tabla data={data || []} isLoading={isLoading} isError={isError} />
       }

@@ -1,9 +1,8 @@
 import { api } from '@/api/api'
-import { Button } from '@/components/ui/button'
 import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
-import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useQuery } from '@tanstack/react-query'
+import { Plus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import TablaTorneo from './tabla'
 
@@ -21,13 +20,17 @@ export default function Torneo() {
   return (
     <FlujoHomeLayout
       titulo='Torneos'
-      panelDerecho={
-        <VisibleSoloParaAdmin>
-          <Button onClick={() => navigate(rutasNavegacion.crearTorneo)}>
-            Crear Torneo
-          </Button>
-        </VisibleSoloParaAdmin>
-      }
+      botonera={{
+        ocultarBotonVolver: true,
+        iconos: [
+          {
+            alApretar: () => navigate(rutasNavegacion.crearTorneo),
+            tooltip: 'Crear Torneo',
+            icono: Plus,
+            visibleSoloParaAdmin: true
+          }
+        ]
+      }}
       contenido={
         <TablaTorneo
           data={data || []}

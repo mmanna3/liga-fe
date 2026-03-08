@@ -10,11 +10,9 @@ export interface DetalleItemData {
 }
 
 interface FlujoHomeLayoutProps {
-  /** Título principal (para listas; si hay botonera, se ignora) */
+  /** Título principal (para listas; si hay botonera como header completo, se ignora) */
   titulo?: React.ReactNode
-  /** Panel derecho (botones, filtros, etc.) */
-  panelDerecho?: React.ReactNode
-  /** Props de Botonera (BotonVolver + título + iconos de acción para vistas de detalle) */
+  /** Props de Botonera: a la derecha cuando hay titulo, o header completo cuando no hay titulo */
   botonera?: BotoneraProps
   /** Items de detalle para la card del header (ej. Club, Torneo, Código) */
   detalleItems?: DetalleItemData[]
@@ -28,7 +26,6 @@ interface FlujoHomeLayoutProps {
 
 export default function FlujoHomeLayout({
   titulo,
-  panelDerecho,
   botonera,
   detalleItems,
   iconoOImagen,
@@ -45,13 +42,21 @@ export default function FlujoHomeLayout({
           <CardHeader
             className={cn(
               'pb-4',
-              botonera
-                ? undefined
-                : 'flex flex-row items-center justify-between',
+              titulo && botonera
+                ? 'flex flex-row items-center justify-between'
+                : undefined,
               headerClassName
             )}
           >
-            {botonera ? (
+            {titulo && botonera ? (
+              <>
+                <div className='flex items-center gap-4'>
+                  {iconoOImagen}
+                  <CardTitle>{titulo}</CardTitle>
+                </div>
+                <Botonera {...botonera} />
+              </>
+            ) : botonera ? (
               <Botonera {...botonera} />
             ) : (
               <div className='flex items-center gap-4'>
@@ -59,7 +64,6 @@ export default function FlujoHomeLayout({
                 <CardTitle>{titulo}</CardTitle>
               </div>
             )}
-            {!botonera && panelDerecho}
           </CardHeader>
           {detalleItems && detalleItems.length > 0 && (
             <CardContent className='pt-0'>
