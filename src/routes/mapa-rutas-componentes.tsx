@@ -19,9 +19,6 @@ import CrearTorneo from '@/pages/admin/torneo/crear-torneo'
 import DetalleTorneo from '@/pages/admin/torneo/detalle-torneo'
 import Torneo from '@/pages/admin/torneo/torneo'
 import ErrorPage from '@/pages/error'
-import FichajeEnOtroEquipo from '@/pages/fichaje/fichaje-en-otro-equipo'
-import FichajeError from '@/pages/fichaje/fichaje-error'
-import FichajeExitoso from '@/pages/fichaje/fichaje-exitoso'
 import Login from '@/pages/login'
 import PoliticaDePrivacidad from '@/pages/politica-de-privacidad'
 import AdminLayout from '../pages/admin/admin-layout'
@@ -29,7 +26,6 @@ import HomePlaceholder from '../pages/admin/home-placeholder'
 import Club from '../pages/admin/club/club'
 import CrearClub from '../pages/admin/club/crear-club'
 import EditarClub from '../pages/admin/club/editar-club'
-import FichajeHome from '../pages/fichaje/home'
 import PaginaNoEncontrada from '../pages/pagina-no-encontrada'
 import { rutas } from './rutas'
 import DesvincularJugadorDelEquipo from '@/pages/admin/jugador/desvincular-jugador-del-equipo'
@@ -42,30 +38,6 @@ export const mapaRutasComponentes = [
         <Login />
       </div>
     )
-  },
-  {
-    path: '/fichaje',
-    element: (
-      <div className='w-screen'>
-        <FichajeHome />
-      </div>
-    )
-  },
-  {
-    path: '/fichaje-en-otro-equipo',
-    element: (
-      <div className='w-screen'>
-        <FichajeEnOtroEquipo />
-      </div>
-    )
-  },
-  {
-    path: '/fichaje-exitoso',
-    element: <FichajeExitoso />
-  },
-  {
-    path: '/fichaje-error',
-    element: <FichajeError />
   },
   {
     path: '/politica-de-privacidad',
