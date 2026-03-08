@@ -7,7 +7,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '@/components/ui/select'
+} from '@/ui/base-ui/select'
 
 interface ComboboxClubProps {
   value: number | null

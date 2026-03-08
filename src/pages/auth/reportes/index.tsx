@@ -1,13 +1,13 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@/ui/base-ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '@/components/ui/card'
+} from '@/ui/base-ui/card'
 import { rutasNavegacion } from '@/routes/rutas'
-import Icono from '@/components/ykn-ui/icono'
+import Icono from '@/ui/ykn-ui/icono'
 
 import { useNavigate } from 'react-router-dom'
 

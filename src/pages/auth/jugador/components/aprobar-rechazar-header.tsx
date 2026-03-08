@@ -1,8 +1,8 @@
 import { EquipoDelJugadorDTO, JugadorDTO } from '@/api/clients'
-import { CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Skeleton } from '@/components/ui/skeleton'
-import Icono from '@/components/ykn-ui/icono'
+import { CardTitle } from '@/ui/base-ui/card'
+import { Input } from '@/ui/base-ui/input'
+import { Skeleton } from '@/ui/base-ui/skeleton'
+import Icono from '@/ui/ykn-ui/icono'
 import { useEffect, useRef, useState } from 'react'
 import InputFecha from './fecha-input-editable'
 

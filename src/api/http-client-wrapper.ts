@@ -1,4 +1,4 @@
-import { useAuth } from '@/hooks/use-auth'
+import { useAuth } from '@/utils/hooks/use-auth'
 import { toast } from 'sonner'
 
 export class HttpClientWrapper {

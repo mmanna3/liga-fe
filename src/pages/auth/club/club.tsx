@@ -1,10 +1,10 @@
 import { api } from '@/api/api'
 import useApiQuery from '@/api/hooks/use-api-query'
-import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
+import FlujoHomeLayout from '@/ui/ykn-ui/flujo-home-layout'
 import { rutasNavegacion } from '@/routes/rutas'
-import Icono from '@/components/ykn-ui/icono'
+import Icono from '@/ui/ykn-ui/icono'
 import { useNavigate } from 'react-router-dom'
-import Tabla from './tabla'
+import Tabla from './components/tabla'
 
 export default function Club() {
   const navigate = useNavigate()

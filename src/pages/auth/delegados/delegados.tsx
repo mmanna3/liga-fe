@@ -1,8 +1,8 @@
-import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
-import Icono from '@/components/ykn-ui/icono'
+import FlujoHomeLayout from '@/ui/ykn-ui/flujo-home-layout'
+import Icono from '@/ui/ykn-ui/icono'
 import { useState } from 'react'
 import ModalSeleccionDelegados from './components/modal-seleccion-delegados'
-import TablaDelegados from './tabla'
+import TablaDelegados from './components/tabla'
 
 export default function Delegados() {
   const [modalSeleccionOpen, setModalSeleccionOpen] = useState(false)

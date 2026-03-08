@@ -1,10 +1,10 @@
 import { api } from '@/api/api'
-import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
+import FlujoHomeLayout from '@/ui/ykn-ui/flujo-home-layout'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useQuery } from '@tanstack/react-query'
-import Icono from '@/components/ykn-ui/icono'
+import Icono from '@/ui/ykn-ui/icono'
 import { useNavigate } from 'react-router-dom'
-import TablaTorneo from './tabla'
+import TablaTorneo from './components/tabla'
 
 export default function Torneo() {
   const navigate = useNavigate()

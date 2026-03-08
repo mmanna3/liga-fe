@@ -1,6 +1,6 @@
 import { api } from '@/api/api'
 import useApiMutation from '@/api/hooks/use-api-mutation'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/ui/base-ui/button'
 import {
   Dialog,
   DialogContent,
@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger
-} from '@/components/ui/dialog'
+} from '@/ui/base-ui/dialog'
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 

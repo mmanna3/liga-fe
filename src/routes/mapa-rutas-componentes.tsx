@@ -1,18 +1,18 @@
-import { RequiereAutenticacion } from '@/components/requiere-autenticacion'
 import DetalleClub from '@/pages/auth/club/detalle-club'
 import AprobarRechazarDelegado from '@/pages/auth/delegados/aprobar-rechazar-delegado'
 import Delegados from '@/pages/auth/delegados/delegados'
 import DetalleDelegado from '@/pages/auth/delegados/detalle-delegado'
 import EliminarDelegado from '@/pages/auth/delegados/eliminar-delegado'
+import Equipo from '@/pages/auth/equipo/components/equipo'
 import CrearEquipo from '@/pages/auth/equipo/crear-equipo'
 import DetalleEquipo from '@/pages/auth/equipo/detalle-equipo'
 import EditarEquipo from '@/pages/auth/equipo/editar-equipo'
-import Equipo from '@/pages/auth/equipo/equipo'
 import AprobarRechazarJugador from '@/pages/auth/jugador/aprobar-rechazar-jugador'
 import CambiarEstado from '@/pages/auth/jugador/cambiar-estado-jugador'
+import DesvincularJugadorDelEquipo from '@/pages/auth/jugador/desvincular-jugador-del-equipo'
 import DetalleJugador from '@/pages/auth/jugador/detalle-jugador'
-import EliminarJugador from '@/pages/auth/jugador/eliminar-jugador'
 import Jugador from '@/pages/auth/jugador/jugador'
+import SuspenderActivar from '@/pages/auth/jugador/suspender-activar'
 import ReportesPage from '@/pages/auth/reportes'
 import ReportePagosPage from '@/pages/auth/reportes/pagos'
 import CrearTorneo from '@/pages/auth/torneo/crear-torneo'
@@ -21,15 +21,14 @@ import Torneo from '@/pages/auth/torneo/torneo'
 import ErrorPage from '@/pages/error'
 import Login from '@/pages/login'
 import PoliticaDePrivacidad from '@/pages/politica-de-privacidad'
+import { RequiereAutenticacion } from '@/ui/requiere-autenticacion'
 import AuthLayout from '../pages/auth/auth-layout'
-import HomePlaceholder from '../pages/auth/home-placeholder'
 import Club from '../pages/auth/club/club'
 import CrearClub from '../pages/auth/club/crear-club'
 import EditarClub from '../pages/auth/club/editar-club'
+import Home from '../pages/auth/home'
 import PaginaNoEncontrada from '../pages/pagina-no-encontrada'
 import { rutas } from './rutas'
-import DesvincularJugadorDelEquipo from '@/pages/auth/jugador/desvincular-jugador-del-equipo'
-import SuspenderActivar from '@/pages/auth/jugador/suspender-activar'
 export const mapaRutasComponentes = [
   {
     path: '/login',
@@ -52,7 +51,7 @@ export const mapaRutasComponentes = [
       </RequiereAutenticacion>
     ),
     children: [
-      { path: '', element: <HomePlaceholder /> },
+      { path: '', element: <Home /> },
       { path: rutas.clubs, element: <Club /> },
       { path: rutas.crearClub, element: <CrearClub /> },
       { path: `${rutas.detalleClub}/:id`, element: <DetalleClub /> },
@@ -63,10 +62,6 @@ export const mapaRutasComponentes = [
       { path: `${rutas.editarEquipo}/:id`, element: <EditarEquipo /> },
       { path: rutas.jugadores, element: <Jugador /> },
       { path: `${rutas.detalleJugador}/:id`, element: <DetalleJugador /> },
-      {
-        path: `${rutas.eliminarJugador}/:id/:dni`,
-        element: <EliminarJugador />
-      },
       {
         path: `${rutas.desvincularJugadorDelEquipo}/:id/:dni/:equipoId/:equipoNombre`,
         element: <DesvincularJugadorDelEquipo />

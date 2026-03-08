@@ -1,6 +1,6 @@
-import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
-import Icono from '@/components/ykn-ui/icono'
-import TablaJugador from './tabla'
+import FlujoHomeLayout from '@/ui/ykn-ui/flujo-home-layout'
+import Icono from '@/ui/ykn-ui/icono'
+import TablaJugador from './components/tabla'
 
 export default function Jugador() {
   return (

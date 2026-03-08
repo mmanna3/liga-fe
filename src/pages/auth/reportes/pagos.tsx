@@ -1,22 +1,22 @@
 import { api } from '@/api/api'
 import { ReportePagosDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/ui/base-ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/ui/base-ui/card'
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel
-} from '@/components/ui/form'
+} from '@/ui/base-ui/form'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '@/components/ui/select'
+} from '@/ui/base-ui/select'
 import {
   Table,
   TableBody,
@@ -24,7 +24,7 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from '@/components/ui/table'
+} from '@/ui/base-ui/table'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 

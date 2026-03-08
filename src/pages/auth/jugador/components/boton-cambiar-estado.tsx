@@ -1,6 +1,6 @@
 import { CambiarEstadoDelJugadorDTO } from '@/api/clients'
-import { Boton } from '@/components/ykn-ui/boton'
-import { AccionTipo } from '@/lib/estado-jugador-lib'
+import { Boton } from '@/ui/ykn-ui/boton'
+import { AccionTipo } from '@/utils/estado-jugador-lib'
 import { useCambiarEstadoMutation } from '../hooks/use-cambiar-estado'
 
 interface Props {

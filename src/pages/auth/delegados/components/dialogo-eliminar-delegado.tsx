@@ -1,4 +1,4 @@
-import ModalEliminacion from '@/components/modal-eliminacion'
+import ModalEliminacion from '@/ui/modal-eliminacion'
 
 interface DialogoEliminarDelegadoProps {
   descripcion: string

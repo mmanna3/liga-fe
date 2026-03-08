@@ -1,7 +1,7 @@
 import { api } from '@/api/api'
 import { EquipoDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
-import type { BotoneraProps } from '@/components/ykn-ui/botonera'
+import type { BotoneraProps } from '@/ui/ykn-ui/botonera'
 import { generarReportePDF } from '@/pages/auth/equipo/components/reporte-jugadores-pdf'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useNavigate, useParams } from 'react-router-dom'

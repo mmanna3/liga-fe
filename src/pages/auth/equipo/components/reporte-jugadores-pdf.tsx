@@ -1,8 +1,8 @@
 import { EquipoDTO, JugadorDelEquipoDTO } from '@/api/clients'
 import roboto400 from '@fontsource/roboto/files/roboto-latin-400-normal.woff?url'
 import roboto600 from '@fontsource/roboto/files/roboto-latin-600-normal.woff?url'
-import { estadoConfig } from '@/components/ykn-ui/jugador-equipo-estado-badge'
-import { EstadoJugador } from '@/lib/utils'
+import { estadoConfig } from '@/ui/ykn-ui/jugador-equipo-estado-badge'
+import { EstadoJugador } from '@/utils/utils'
 import {
   Document,
   Font,

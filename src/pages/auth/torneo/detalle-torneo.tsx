@@ -1,6 +1,6 @@
 import { api } from '@/api/api'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import BotonVolver from '@/components/ykn-ui/boton-volver'
+import { Card, CardContent, CardHeader, CardTitle } from '@/ui/base-ui/card'
+import BotonVolver from '@/ui/ykn-ui/boton-volver'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate, useParams } from 'react-router-dom'

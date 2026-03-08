@@ -1,8 +1,8 @@
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { useAuth } from '@/hooks/use-auth'
-import Icono from '@/components/ykn-ui/icono'
+import { Button } from '@/ui/base-ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/ui/base-ui/card'
+import { Input } from '@/ui/base-ui/input'
+import { useAuth } from '@/utils/hooks/use-auth'
+import Icono from '@/ui/ykn-ui/icono'
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 

@@ -1,6 +1,6 @@
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { cn } from '@/lib/utils'
+import { Input } from '@/ui/base-ui/input'
+import { Label } from '@/ui/base-ui/label'
+import { cn } from '@/utils/utils'
 import { useState } from 'react'
 
 interface IProps {

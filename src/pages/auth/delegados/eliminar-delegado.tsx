@@ -1,6 +1,6 @@
 import { api } from '@/api/api'
 import useApiMutation from '@/api/hooks/use-api-mutation'
-import ModalEliminacion from '@/components/modal-eliminacion'
+import ModalEliminacion from '@/ui/modal-eliminacion'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 

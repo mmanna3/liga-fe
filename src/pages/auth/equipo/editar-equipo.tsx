@@ -2,24 +2,24 @@ import { api } from '@/api/api'
 import { EquipoDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
-import { ContenedorCargandoYError } from '@/components/cargando-y-error-contenedor'
-import { Button } from '@/components/ui/button'
+import { ContenedorCargandoYError } from '@/ui/cargando-y-error-contenedor'
+import { Button } from '@/ui/base-ui/button'
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle
-} from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
+} from '@/ui/base-ui/card'
+import { Input } from '@/ui/base-ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '@/components/ui/select'
-import BotonVolver from '@/components/ykn-ui/boton-volver'
+} from '@/ui/base-ui/select'
+import BotonVolver from '@/ui/ykn-ui/boton-volver'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'

@@ -1,16 +1,16 @@
 import { api } from '@/api/api'
 import { DelegadoClubDTO, DelegadoDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
-import { Checkbox } from '@/components/ui/checkbox'
+import { Checkbox } from '@/ui/base-ui/checkbox'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle
-} from '@/components/ui/dialog'
-import { Boton } from '@/components/ykn-ui/boton'
-import Tabla from '@/components/ykn-ui/tabla'
-import { estadoBadgeClassDelegado } from '@/lib/utils'
+} from '@/ui/base-ui/dialog'
+import { Boton } from '@/ui/ykn-ui/boton'
+import Tabla from '@/ui/ykn-ui/tabla'
+import { estadoBadgeClassDelegado } from '@/utils/utils'
 import { ColumnDef, Row, RowSelectionState } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
 import { generarCarnetsDelegadosPDF } from './generar-carnets-delegados-pdf'

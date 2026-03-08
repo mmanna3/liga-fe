@@ -2,21 +2,21 @@ import { api } from '@/api/api'
 import { EfectuarPaseDTO, EquipoDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
 import useApiMutation from '@/api/hooks/use-api-mutation'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/ui/base-ui/button'
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle
-} from '@/components/ui/dialog'
+} from '@/ui/base-ui/dialog'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '@/components/ui/select'
+} from '@/ui/base-ui/select'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 

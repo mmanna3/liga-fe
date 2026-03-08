@@ -1,22 +1,22 @@
 import { api } from '@/api/api'
 import { CambiarEstadoDelJugadorDTO, JugadorDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
-import { ContenedorCargandoYError } from '@/components/cargando-y-error-contenedor'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Textarea } from '@/components/ui/textarea'
-import BotonVolver from '@/components/ykn-ui/boton-volver'
-import DetalleItem from '@/components/ykn-ui/detalle-item'
-import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
+import { ContenedorCargandoYError } from '@/ui/cargando-y-error-contenedor'
+import { Card, CardContent, CardHeader, CardTitle } from '@/ui/base-ui/card'
+import { Textarea } from '@/ui/base-ui/textarea'
+import BotonVolver from '@/ui/ykn-ui/boton-volver'
+import DetalleItem from '@/ui/ykn-ui/detalle-item'
+import JugadorEquipoEstadoBadge from '@/ui/ykn-ui/jugador-equipo-estado-badge'
 import {
   estadoTransiciones,
   obtenerNombreEstado
-} from '@/lib/estado-jugador-lib'
-import { EstadoJugador } from '@/lib/utils'
+} from '@/utils/estado-jugador-lib'
+import { EstadoJugador } from '@/utils/utils'
 import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import BotonCambiarEstado from './components/boton-cambiar-estado'
-import ContenedorBotones from '@/components/ykn-ui/contenedor-botones'
-import { Boton } from '@/components/ykn-ui/boton'
+import ContenedorBotones from '@/ui/ykn-ui/contenedor-botones'
+import { Boton } from '@/ui/ykn-ui/boton'
 import { rutasNavegacion } from '@/routes/rutas'
 
 export default function CambiarEstado() {
