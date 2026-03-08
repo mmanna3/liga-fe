@@ -45,6 +45,8 @@ type TablaProps<T> = {
   onRowSelectionChange?: OnChangeFn<RowSelectionState>
   pageSizeDefault?: number
   onRowClick?: (row: Row<T>) => void
+  /** Contenido del filtro (ej. botón con Popover) alineado con la búsqueda */
+  filtro?: React.ReactNode
 }
 
 export default function Tabla<T>({
@@ -55,7 +57,8 @@ export default function Tabla<T>({
   rowSelection,
   onRowSelectionChange,
   pageSizeDefault = 10,
-  onRowClick
+  onRowClick,
+  filtro
 }: TablaProps<T>) {
   const [globalFilter, setGlobalFilter] = useState('')
   const [sorting, setSorting] = useState<SortingState>([])
@@ -85,12 +88,15 @@ export default function Tabla<T>({
 
   return (
     <div className='space-y-4'>
-      <Input
-        placeholder='Buscar...'
-        value={globalFilter}
-        onChange={(e) => setGlobalFilter(e.target.value)}
-        className='w-64'
-      />
+      <div className='flex items-center gap-2'>
+        <Input
+          placeholder='Buscar...'
+          value={globalFilter}
+          onChange={(e) => setGlobalFilter(e.target.value)}
+          className='w-64'
+        />
+        {filtro}
+      </div>
 
       {estaCargando ? (
         <p className='text-center text-gray-500'>Cargando datos...</p>
