@@ -10,7 +10,7 @@ import BotonVolver from '@/components/ykn-ui/boton-volver'
 import DetalleItem from '@/components/ykn-ui/detalle-item'
 import { estadoBadgeClassDelegado, EstadoDelegado } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
-import { Building2, User } from 'lucide-react'
+import { Briefcase, User } from 'react-feather'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import DialogoBlanquearClaveDelegado from './components/dialogo-blanquear-clave-delegado'
 import DialogoEliminarDelegado from './components/dialogo-eliminar-delegado'
@@ -96,7 +96,7 @@ export default function DetalleDelegado() {
                 <Card className='mb-4 shadow-md'>
                   <CardHeader className='pb-3'>
                     <CardTitle className='text-xl font-semibold flex items-center gap-2'>
-                      <Building2 className='h-5 w-5' />
+                      <Briefcase className='h-5 w-5' />
                       {delegado.delegadoClubs.length === 1 ? 'Club' : 'Clubs'}
                     </CardTitle>
                   </CardHeader>

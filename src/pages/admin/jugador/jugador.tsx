@@ -9,7 +9,7 @@ import {
 import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
 import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
 import { EstadoJugador } from '@/lib/utils'
-import { FilterIcon } from 'lucide-react'
+import { Filter } from 'react-feather'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import Tabla from './tabla'
@@ -72,14 +72,14 @@ export default function Jugador() {
       await api.listarConFiltro(filtroEstados as unknown as EstadoJugadorEnum[])
   })
 
-  const FilterIconConPopover = ({ className }: { className?: string }) => (
+  const FilterConPopover = ({ className }: { className?: string }) => (
     <Popover>
       <PopoverTrigger asChild>
         <span
           className={className}
           style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
         >
-          <FilterIcon className='h-5 w-5 shrink-0' />
+          <Filter className='h-5 w-5 shrink-0' />
           {filtroEstados.length > 0 && (
             <span className='bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs'>
               {filtroEstados.length}
@@ -112,7 +112,7 @@ export default function Jugador() {
           {
             alApretar: () => {},
             tooltip: 'Filtrar por estado',
-            icono: FilterIconConPopover
+            icono: FilterConPopover
           }
         ]
       }}

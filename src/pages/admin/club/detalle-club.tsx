@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import BotonVolver from '@/components/ykn-ui/boton-volver'
 import { rutasNavegacion } from '@/routes/rutas'
-import { PlusCircle, Shield, UserCog } from 'lucide-react'
+import { PlusCircle, Shield, UserCheck } from 'react-feather'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export default function DetalleClub() {
@@ -81,7 +81,7 @@ export default function DetalleClub() {
         <Card className='shadow-md'>
           <CardHeader className='pb-3'>
             <CardTitle className='text-xl font-semibold flex items-center gap-2'>
-              <UserCog className='h-5 w-5' />
+              <UserCheck className='h-5 w-5' />
               Delegados
             </CardTitle>
           </CardHeader>

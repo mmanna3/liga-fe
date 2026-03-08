@@ -7,7 +7,7 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { rutasNavegacion } from '@/routes/rutas'
-import { BarChart } from 'lucide-react'
+import { BarChart2 } from 'react-feather'
 import { useNavigate } from 'react-router-dom'
 
 export default function ReportesPage() {
@@ -20,7 +20,7 @@ export default function ReportesPage() {
         <Card className='overflow-hidden'>
           <CardHeader className='bg-slate-50'>
             <CardTitle className='flex items-center gap-2'>
-              <BarChart className='h-5 w-5' />
+              <BarChart2 className='h-5 w-5' />
               Reporte de Pagos
             </CardTitle>
             <CardDescription>

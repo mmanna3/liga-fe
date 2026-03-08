@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../ui/button'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft } from 'react-feather'
 
 interface Props {
   /** Ruta específica a la que navegar. Si no se provee, usa navigate(-1) */

@@ -5,29 +5,29 @@ import { useAuth } from '@/hooks/use-auth'
 import { cn } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
 import {
-  BarChart,
-  LayoutDashboard,
+  BarChart2,
+  Layout,
   LogOut,
   Menu,
   Shield,
-  Trophy,
+  Award,
   User,
-  UserCog,
+  UserCheck,
   Users
-} from 'lucide-react'
+} from 'react-feather'
 import { useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 
 const baseMenuItems = [
-  { name: 'Torneos', path: rutasNavegacion.torneos, icon: Trophy },
-  { name: 'Clubes', path: rutasNavegacion.clubs, icon: LayoutDashboard },
+  { name: 'Torneos', path: rutasNavegacion.torneos, icon: Award },
+  { name: 'Clubes', path: rutasNavegacion.clubs, icon: Layout },
   { name: 'Equipos', path: rutasNavegacion.equipos, icon: Shield },
   { name: 'Jugadores', path: rutasNavegacion.jugadores, icon: Users },
-  { name: 'Delegados', path: rutasNavegacion.delegados, icon: UserCog }
+  { name: 'Delegados', path: rutasNavegacion.delegados, icon: UserCheck }
 ]
 
 const adminMenuItems = [
-  { name: 'Reportes', path: rutasNavegacion.reportes, icon: BarChart }
+  { name: 'Reportes', path: rutasNavegacion.reportes, icon: BarChart2 }
 ]
 
 export default function AdminLayout() {
