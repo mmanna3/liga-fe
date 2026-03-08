@@ -1,16 +1,6 @@
 import { api } from '@/api/api'
 import { TorneoDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from '@/design-system/base-ui/alert-dialog'
 import { Button } from '@/design-system/base-ui/button'
 import {
   Card,
@@ -34,6 +24,7 @@ import { Paso2Fases } from './crear-torneo/components/paso-2-fases'
 import { Paso3Equipos } from './crear-torneo/components/paso-3-equipos'
 import { Paso4Zonas } from './crear-torneo/components/paso-4-zonas'
 import { Paso5Fixture } from './crear-torneo/components/paso-5-fixture'
+import ModalCambiosDetectadosEnEdicion from './crear-torneo/components/ModalCambiosDetectadosEnEdicion'
 import { Paso6Resumen } from './crear-torneo/components/paso-6-resumen'
 import {
   esquemaPaso1,
@@ -400,31 +391,15 @@ export default function CrearTorneo() {
             {pasoActual === 6 && <Paso6Resumen alEditarPaso={alEditarPaso} />}
           </div>
 
-          <AlertDialog
+          <ModalCambiosDetectadosEnEdicion
             open={confirmacionAbierta}
             onOpenChange={(open) => {
               if (!open) accionPendienteRef.current = null
               setConfirmacionAbierta(open)
             }}
-          >
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Cambios detectados</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Realizaste cambios en este paso y por lo tanto todos los pasos
-                  siguientes se limpiarán.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel onClick={alRevertir}>
-                  Revertir cambios
-                </AlertDialogCancel>
-                <AlertDialogAction onClick={alConfirmarYLimpiar}>
-                  Confirmar cambios y limpiar pasos siguientes
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+            onRevertir={alRevertir}
+            onConfirmarYLimpiar={alConfirmarYLimpiar}
+          />
 
           <div className='flex justify-between pt-4 border-t'>
             {pasoActual === 1 ? (
