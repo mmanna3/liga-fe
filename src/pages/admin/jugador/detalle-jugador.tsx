@@ -3,12 +3,11 @@ import useApiMutation from '@/api/custom-hooks/use-api-mutation'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/components/cargando-y-error-contenedor'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import ModalEliminacion from '@/components/modal-eliminacion'
 import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
-import BotonVolver from '@/components/ykn-ui/boton-volver'
 import DetalleItem from '@/components/ykn-ui/detalle-item'
 import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
+import LayoutABM from '@/components/ykn-ui/layout-abm'
 import { EstadoJugador } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -57,23 +56,18 @@ export default function DetalleJugador() {
       mensajeDeError='No se pudieron recuperar los datos del jugador'
     >
       {jugador && (
-        <>
-          <div className='mb-4'>
-            <BotonVolver />
-          </div>
-          <Card className='max-w-lg mx-auto p-6 rounded-xl border bg-white'>
-            <CardHeader className='flex flex-col items-center text-center'>
-              <img
-                src={jugador.fotoCarnet}
-                alt={`${jugador.nombre} ${jugador.apellido}`}
-                className='w-32 h-32 rounded-lg object-cover'
-              />
-              <CardTitle className='mt-4 text-3xl font-semibold text-gray-900'>
-                {jugador.nombre} {jugador.apellido}
-              </CardTitle>
-            </CardHeader>
-
-            <CardContent>
+        <LayoutABM
+          titulo={`${jugador.nombre} ${jugador.apellido}`}
+          headerClassName='flex flex-col items-center text-center'
+          contenido={
+            <>
+              <div className='flex justify-center mb-6'>
+                <img
+                  src={jugador.fotoCarnet}
+                  alt={`${jugador.nombre} ${jugador.apellido}`}
+                  className='w-32 h-32 rounded-lg object-cover'
+                />
+              </div>
               <div className='flex flex-col gap-1 bg-gray-50 p-5 rounded-lg mb-6'>
                 <DetalleItem clave='DNI' valor={jugador.dni!} />
                 <DetalleItem
@@ -165,9 +159,9 @@ export default function DetalleJugador() {
                   />
                 </div>
               </VisibleSoloParaAdmin>
-            </CardContent>
-          </Card>
-        </>
+            </>
+          }
+        />
       )}
     </ContenedorCargandoYError>
   )

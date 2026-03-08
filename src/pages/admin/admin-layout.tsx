@@ -163,8 +163,8 @@ export default function AdminLayout() {
       >
         <div
           className={cn(
-            'w-full mx-auto',
-            isHome ? 'flex-1 min-h-0 flex flex-col' : 'max-w-4xl'
+            'w-full',
+            isHome ? 'flex-1 min-h-0 flex flex-col' : 'flex-1'
           )}
         >
           <Outlet />

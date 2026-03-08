@@ -11,6 +11,7 @@ export default function Delegados() {
     <>
       <FlujoHomeLayout
         titulo='Delegados'
+        contenedorClassName='max-w-6xl'
         iconoTitulo={<UserCheck className='h-8 w-8 text-primary' />}
         ocultarBotonVolver
         botonera={{

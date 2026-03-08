@@ -22,6 +22,8 @@ interface FlujoHomeLayoutProps {
   contenido: React.ReactNode
   /** Si false, el contenido no se envuelve en una Card (ej. cuando es un grid de cards) */
   contenidoEnCard?: boolean
+  /** Clases del contenedor (reemplaza max-w-4xl por defecto). Ej: max-w-6xl */
+  contenedorClassName?: string
 }
 
 export default function FlujoHomeLayout({
@@ -32,11 +34,12 @@ export default function FlujoHomeLayout({
   iconoTitulo,
   pathBotonVolver,
   contenido,
-  contenidoEnCard = true
+  contenidoEnCard = true,
+  contenedorClassName
 }: FlujoHomeLayoutProps) {
   return (
     <div
-      className={`max-w-4xl mx-auto px-4 ${ocultarBotonVolver ? 'pt-13' : '-pt-1'}`}
+      className={`${contenedorClassName ?? 'max-w-4xl'} mx-auto px-4 ${ocultarBotonVolver ? 'pt-13' : '-pt-1'}`}
     >
       <Cabecera
         titulo={titulo}

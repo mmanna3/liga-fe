@@ -6,8 +6,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
-import BotonVolver from '@/components/ykn-ui/boton-volver'
 import DetalleItem from '@/components/ykn-ui/detalle-item'
+import LayoutABM from '@/components/ykn-ui/layout-abm'
 import { estadoBadgeClassDelegado, EstadoDelegado } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
 import { Briefcase, User } from 'react-feather'
@@ -45,30 +45,26 @@ export default function DetalleDelegado() {
       mensajeDeError='No se pudieron recuperar los datos del delegado'
     >
       {delegado && (
-        <>
-          <div className='mb-4'>
-            <BotonVolver path={pathDelegados} />
-          </div>
-          <Card className='max-w-lg mx-auto p-6 rounded-xl border bg-white'>
-            <CardHeader className='flex flex-col items-center text-center'>
-              <img
-                src={delegado.fotoCarnet}
-                alt={`${delegado.nombre} ${delegado.apellido}`}
-                className='w-32 h-32 rounded-lg object-cover'
-              />
-              <CardTitle className='mt-4 text-3xl font-semibold text-gray-900'>
-                {delegado.nombre} {delegado.apellido}
-              </CardTitle>
-              <div className='mt-3 flex flex-wrap gap-2 justify-center'>
+        <LayoutABM
+          pathBotonVolver={pathDelegados}
+          titulo={`${delegado.nombre} ${delegado.apellido}`}
+          headerClassName='flex flex-col items-center text-center'
+          contenido={
+            <>
+              <div className='flex flex-col items-center mb-6'>
+                <img
+                  src={delegado.fotoCarnet}
+                  alt={`${delegado.nombre} ${delegado.apellido}`}
+                  className='w-32 h-32 rounded-lg object-cover'
+                />
                 {delegado.blanqueoPendiente && (
-                  <Badge className='px-3 py-1 rounded-md border-gray-700 bg-white text-gray-700'>
-                    Blanqueo pendiente
-                  </Badge>
+                  <div className='mt-3 flex flex-wrap gap-2 justify-center'>
+                    <Badge className='px-3 py-1 rounded-md border-gray-700 bg-white text-gray-700'>
+                      Blanqueo pendiente
+                    </Badge>
+                  </div>
                 )}
               </div>
-            </CardHeader>
-
-            <CardContent>
               <div className='flex flex-col gap-1 bg-gray-50 p-5 rounded-lg mb-6'>
                 <DetalleItem clave='DNI' valor={delegado.dni} />
                 <DetalleItem
@@ -160,9 +156,10 @@ export default function DetalleDelegado() {
                   </Button>
                 </div>
               )}
-            </CardContent>
-
-            <div className='flex gap-2 justify-end mt-6'>
+            </>
+          }
+          footer={
+            <div className='flex gap-2 justify-end mt-6 px-6'>
               <VisibleSoloParaAdmin>
                 {delegado.usuario?.nombreUsuario && (
                   <DialogoBlanquearClaveDelegado
@@ -184,8 +181,8 @@ export default function DetalleDelegado() {
                 />
               </VisibleSoloParaAdmin>
             </div>
-          </Card>
-        </>
+          }
+        />
       )}
     </ContenedorCargandoYError>
   )

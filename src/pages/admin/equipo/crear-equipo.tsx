@@ -3,11 +3,10 @@ import { EquipoDTO } from '@/api/clients'
 import useApiMutation from '@/api/custom-hooks/use-api-mutation'
 import { ContenedorCargandoYError } from '@/components/cargando-y-error-contenedor'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
-import BotonVolver from '@/components/ykn-ui/boton-volver'
+import LayoutABM from '@/components/ykn-ui/layout-abm'
 import ContenedorBotones from '@/components/ykn-ui/contenedor-botones'
 import { rutasNavegacion } from '@/routes/rutas'
 import { useQuery } from '@tanstack/react-query'
@@ -57,14 +56,9 @@ export default function CrearEquipo() {
       estaCargando={isLoadingTorneos}
       hayError={isErrorTorneos}
     >
-      <div className='mb-4'>
-        <BotonVolver />
-      </div>
-      <Card className='max-w-md mx-auto p-4'>
-        <CardHeader>
-          <CardTitle>Crear Equipo</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <LayoutABM
+        titulo='Crear Equipo'
+        contenido={
           <form onSubmit={handleSubmit} className='space-y-4'>
             <div className='space-y-2'>
               <Label htmlFor='nombre'>Nombre</Label>
@@ -107,8 +101,9 @@ export default function CrearEquipo() {
               </Button>
             </ContenedorBotones>
           </form>
-        </CardContent>
-      </Card>
+        }
+        maxWidth='md'
+      />
     </ContenedorCargandoYError>
   )
 }

@@ -3,16 +3,11 @@ import { DelegadoClubDTO, DelegadoDTO } from '@/api/clients'
 import { EstadoDelegadoEnum } from '@/api/clients'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { Badge } from '@/components/ui/badge'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from '@/components/ui/popover'
+import Filtro from './filtro'
 import Tabla from '@/components/ykn-ui/tabla'
 import { estadoBadgeClassDelegado, EstadoDelegado } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
 import { ColumnDef } from '@tanstack/react-table'
-import { Sliders } from 'react-feather'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
@@ -71,38 +66,6 @@ export default function TablaDelegados() {
   })
 
   const search = searchParams.toString() ? `?${searchParams.toString()}` : ''
-
-  const filtro = (
-    <Popover>
-      <PopoverTrigger asChild>
-        <button
-          type='button'
-          title='Filtrar por estado'
-          className='inline-flex items-center justify-center gap-1 rounded-md border border-input bg-background p-2 text-sm hover:bg-accent cursor-pointer'
-        >
-          <Sliders className='h-4 w-4 shrink-0' />
-          {filtroEstados.length > 0 && (
-            <span className='bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs'>
-              {filtroEstados.length}
-            </span>
-          )}
-        </button>
-      </PopoverTrigger>
-      <PopoverContent className='w-48 flex flex-col gap-1'>
-        {estadoConfigArray.map(({ key, label }) => (
-          <div
-            key={key}
-            className={`cursor-pointer flex items-center gap-2 p-2 rounded-md ${
-              filtroEstados.includes(key) ? 'bg-blue-100' : ''
-            }`}
-            onClick={() => toggleFiltro(key)}
-          >
-            <span className='text-sm'>{label}</span>
-          </div>
-        ))}
-      </PopoverContent>
-    </Popover>
-  )
 
   const columnas: ColumnDef<DelegadoDTO>[] = [
     {
@@ -192,7 +155,13 @@ export default function TablaDelegados() {
       data={data || []}
       estaCargando={isLoading}
       hayError={isError}
-      filtro={filtro}
+      filtro={
+        <Filtro
+          filtroEstados={filtroEstados}
+          onToggle={toggleFiltro}
+          opciones={estadoConfigArray}
+        />
+      }
       onRowClick={(row) =>
         navigate(
           `${rutasNavegacion.detalleDelegado}/${row.original.id}${search}`

@@ -22,25 +22,6 @@ export default function TablaTorneo({
       accessorKey: 'nombre',
       header: 'Nombre',
       cell: ({ row }) => <span>{row.getValue('nombre')}</span>
-    },
-    {
-      id: 'acciones',
-      header: '',
-      cell: ({ row }) => (
-        <div onClick={(e) => e.stopPropagation()}>
-          <Tabla.MenuContextual
-            items={[
-              {
-                texto: 'Detalle',
-                onClick: () =>
-                  navigate(
-                    `${rutasNavegacion.detalleTorneo}/${row.original.id}`
-                  )
-              }
-            ]}
-          />
-        </div>
-      )
     }
   ]
 
