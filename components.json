@@ -11,11 +11,11 @@
     "prefix": ""
   },
   "aliases": {
-    "components": "@/ui",
-    "utils": "@/utils/utils",
-    "ui": "@/ui/base-ui",
-    "lib": "@/utils",
-    "hooks": "@/utils/hooks"
+    "components": "@/design-system",
+    "utils": "@/logica-compartida/utils",
+    "ui": "@/design-system/base-ui",
+    "lib": "@/logica-compartida",
+    "hooks": "@/logica-compartida/hooks"
   },
   "iconLibrary": "lucide"
 }

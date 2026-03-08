@@ -1,4 +1,4 @@
-import { useAuth } from '@/utils/hooks/use-auth'
+import { useAuth } from '@/logica-compartida/hooks/use-auth'
 import { toast } from 'sonner'
 
 export class HttpClientWrapper {
