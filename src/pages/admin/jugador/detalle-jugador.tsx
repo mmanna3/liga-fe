@@ -3,14 +3,16 @@ import useApiMutation from '@/api/custom-hooks/use-api-mutation'
 import useApiQuery from '@/api/custom-hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/components/cargando-y-error-contenedor'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import ModalEliminacion from '@/components/modal-eliminacion'
 import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
 import DetalleItem from '@/components/ykn-ui/detalle-item'
 import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
-import LayoutABM from '@/components/ykn-ui/layout-abm'
+import BotonVolver from '@/components/ykn-ui/boton-volver'
+import Link from '@/components/ykn-ui/link'
 import { EstadoJugador } from '@/lib/utils'
 import { rutasNavegacion } from '@/routes/rutas'
-import { Calendar, CreditCard } from 'react-feather'
+import { Calendar, CreditCard, Trash2 } from 'react-feather'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export default function DetalleJugador() {
@@ -57,19 +59,49 @@ export default function DetalleJugador() {
       mensajeDeError='No se pudieron recuperar los datos del jugador'
     >
       {jugador && (
-        <LayoutABM
-          titulo={`${jugador.nombre} ${jugador.apellido}`}
-          headerClassName='flex flex-col items-center text-center'
-          contenido={
-            <>
-              <div className='flex justify-center mb-6'>
-                <img
-                  src={jugador.fotoCarnet}
-                  alt={`${jugador.nombre} ${jugador.apellido}`}
-                  className='w-32 h-32 rounded-lg object-cover'
-                />
-              </div>
-              <div className='flex flex-col gap-1 bg-gray-50 p-5 rounded-lg mb-6'>
+        <div className='max-w-lg mx-auto px-4'>
+          <div className='mb-4'>
+            <BotonVolver />
+          </div>
+
+          {/* Card1: nombre y foto */}
+          <Card className='mb-4 p-6 rounded-xl border bg-white shadow-md'>
+            <div className='flex flex-col items-center'>
+              <h1 className='text-base font-semibold text-gray-900'>
+                {jugador.nombre} {jugador.apellido}
+              </h1>
+              <img
+                src={jugador.fotoCarnet}
+                alt={`${jugador.nombre} ${jugador.apellido}`}
+                className='mt-4 w-40 h-40 rounded-lg object-cover'
+              />
+              <VisibleSoloParaAdmin>
+                <div className='mt-4 flex justify-end w-full'>
+                  <ModalEliminacion
+                    titulo='Eliminar jugador'
+                    subtitulo='Al eliminar el jugador, se lo desvinculará también de todos los equipos.'
+                    eliminarOnClick={() => eliminarMutation.mutate(jugador.id!)}
+                    eliminarTexto='Eliminar jugador'
+                    estaCargando={eliminarMutation.isPending}
+                    trigger={
+                      <Button
+                        variant='outline'
+                        size='icon'
+                        className='h-10 w-10 border-destructive text-destructive hover:bg-destructive/10'
+                      >
+                        <Trash2 className='h-5 w-5' />
+                      </Button>
+                    }
+                  />
+                </div>
+              </VisibleSoloParaAdmin>
+            </div>
+          </Card>
+
+          {/* Card2: datos */}
+          <Card className='mb-4 p-6 rounded-xl border bg-white shadow-md'>
+            <CardContent>
+              <div className='flex flex-col gap-1'>
                 <DetalleItem
                   icon={<CreditCard className='h-5 w-5' />}
                   valor={jugador.dni!}
@@ -79,25 +111,24 @@ export default function DetalleJugador() {
                   valor={jugador.fechaNacimiento!.toLocaleDateString('es-AR')}
                 />
               </div>
-
               {jugador.delegadoId != null && (
-                <div className='mb-4'>
-                  <button
-                    className='text-blue-600 hover:underline text-sm'
-                    onClick={() =>
-                      navigate(
-                        `${rutasNavegacion.detalleDelegado}/${jugador.delegadoId}`
-                      )
-                    }
+                <div className='mt-4'>
+                  <Link
+                    to={`${rutasNavegacion.detalleDelegado}/${jugador.delegadoId}`}
                   >
                     Este jugador es delegado →
-                  </button>
+                  </Link>
                 </div>
               )}
+            </CardContent>
+          </Card>
 
-              <h2 className='text-lg font-medium mt-6 mb-4 text-gray-700'>
-                Equipos
-              </h2>
+          {/* Card3: equipos */}
+          <Card className='mb-4 p-6 rounded-xl border bg-white shadow-md'>
+            <CardHeader className='pb-3'>
+              <CardTitle className='text-xl font-semibold'>Equipos</CardTitle>
+            </CardHeader>
+            <CardContent>
               <ul className='divide-y divide-gray-200'>
                 {jugador.equipos!.map((equipo) => (
                   <li key={equipo.id} className='py-3 flex flex-col'>
@@ -114,31 +145,29 @@ export default function DetalleJugador() {
                         <JugadorEquipoEstadoBadge
                           estado={Number(equipo.estado)}
                         />
-                        {
-                          <VisibleSoloParaAdmin>
-                            <Button
-                              variant='ghost'
-                              className='text-blue-600'
-                              onClick={() => {
-                                if (
-                                  Number(equipo.estado) ===
-                                    EstadoJugador.FichajePendienteDeAprobacion ||
-                                  Number(equipo.estado) ===
-                                    EstadoJugador.FichajeRechazado
+                        <VisibleSoloParaAdmin>
+                          <Button
+                            variant='ghost'
+                            className='text-blue-600'
+                            onClick={() => {
+                              if (
+                                Number(equipo.estado) ===
+                                  EstadoJugador.FichajePendienteDeAprobacion ||
+                                Number(equipo.estado) ===
+                                  EstadoJugador.FichajeRechazado
+                              )
+                                navigate(
+                                  `${rutasNavegacion.aprobarRechazarJugador}/${equipo.id}/${jugador.id}`
                                 )
-                                  navigate(
-                                    `${rutasNavegacion.aprobarRechazarJugador}/${equipo.id}/${jugador.id}`
-                                  )
-                                else
-                                  navigate(
-                                    `${rutasNavegacion.cambiarEstadoJugador}/${equipo.id}/${jugador.id}`
-                                  )
-                              }}
-                            >
-                              Gestionar
-                            </Button>
-                          </VisibleSoloParaAdmin>
-                        }
+                              else
+                                navigate(
+                                  `${rutasNavegacion.cambiarEstadoJugador}/${equipo.id}/${jugador.id}`
+                                )
+                            }}
+                          >
+                            Gestionar
+                          </Button>
+                        </VisibleSoloParaAdmin>
                       </div>
                     </div>
                     <div className='text-sm text-gray-400 mt-1'>
@@ -149,23 +178,9 @@ export default function DetalleJugador() {
                   </li>
                 ))}
               </ul>
-              <VisibleSoloParaAdmin>
-                <div className='mb-6 flex justify-end'>
-                  <ModalEliminacion
-                    titulo='Eliminar jugador'
-                    subtitulo='Al eliminar el jugador, se lo desvinculará también de todos los equipos.'
-                    eliminarOnClick={() => eliminarMutation.mutate(jugador.id!)}
-                    eliminarTexto='Eliminar jugador'
-                    estaCargando={eliminarMutation.isPending}
-                    trigger={
-                      <Button variant='destructive'>Eliminar jugador</Button>
-                    }
-                  />
-                </div>
-              </VisibleSoloParaAdmin>
-            </>
-          }
-        />
+            </CardContent>
+          </Card>
+        </div>
       )}
     </ContenedorCargandoYError>
   )

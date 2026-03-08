@@ -5,6 +5,7 @@ import {
   TooltipTrigger
 } from '@/components/ui/tooltip'
 import { VisibleSoloParaAdmin } from '@/components/visible-solo-para-admin'
+import { cn } from '@/lib/utils'
 import { Boton } from '@/components/ykn-ui/boton'
 import * as React from 'react'
 
@@ -38,8 +39,12 @@ function IconoBoton({ item }: { item: IconoBotonera }) {
   const Icono = item.icono
   const boton = (
     <Boton
-      variant={item.esEliminar ? 'destructive' : 'outline'}
-      className='h-10 w-10 min-w-10 p-0'
+      variant='outline'
+      className={cn(
+        'h-10 w-10 min-w-10 p-0',
+        item.esEliminar &&
+          'border-destructive text-destructive hover:bg-destructive/10'
+      )}
       onClick={item.esEliminar ? undefined : item.alApretar}
       estaCargando={item.modalEliminacion?.estaCargando}
     >
