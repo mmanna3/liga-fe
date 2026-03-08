@@ -27,7 +27,7 @@ export interface IconoBotonera {
   }
 }
 
-interface BotoneraProps {
+export interface BotoneraProps {
   ocultarBotonVolver?: boolean
   iconos: IconoBotonera[]
   /** Contenido que va a la izquierda (ej. título) */

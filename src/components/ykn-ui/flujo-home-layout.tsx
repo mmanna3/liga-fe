@@ -1,5 +1,7 @@
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import Botonera from '@/components/ykn-ui/botonera'
+import type { BotoneraProps } from '@/components/ykn-ui/botonera'
 import DetalleItem from '@/components/ykn-ui/detalle-item'
 
 export interface DetalleItemData {
@@ -12,8 +14,8 @@ interface FlujoHomeLayoutProps {
   titulo?: React.ReactNode
   /** Panel derecho (botones, filtros, etc.) */
   panelDerecho?: React.ReactNode
-  /** Botonera con BotonVolver + título + iconos de acción (para vistas de detalle) */
-  botonera?: React.ReactNode
+  /** Props de Botonera (BotonVolver + título + iconos de acción para vistas de detalle) */
+  botonera?: BotoneraProps
   /** Items de detalle para la card del header (ej. Club, Torneo, Código) */
   detalleItems?: DetalleItemData[]
   /** Icono o imagen al lado del título (ej. escudo del club) */
@@ -50,7 +52,7 @@ export default function FlujoHomeLayout({
             )}
           >
             {botonera ? (
-              botonera
+              <Botonera {...botonera} />
             ) : (
               <div className='flex items-center gap-4'>
                 {iconoOImagen}

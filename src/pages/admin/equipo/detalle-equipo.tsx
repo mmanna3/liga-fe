@@ -10,7 +10,7 @@ import FlujoHomeLayout from '@/components/ykn-ui/flujo-home-layout'
 import JugadorEquipoEstadoBadge from '@/components/ykn-ui/jugador-equipo-estado-badge'
 import Tabla from '@/components/ykn-ui/tabla'
 import { EstadoJugador } from '@/lib/utils'
-import BotoneraDetalleEquipo from '@/pages/admin/equipo/components/botonera-detalle-equipo'
+import { useBotoneraDetalleEquipo } from '@/pages/admin/equipo/components/botonera-detalle-equipo'
 import CambiarEstadoModal from '@/pages/admin/equipo/components/cambiar-estado-modal'
 import EfectuarPasesModal from '@/pages/admin/equipo/components/efectuar-pases-modal'
 import { useQuery } from '@tanstack/react-query'
@@ -55,6 +55,11 @@ export default function DetalleEquipo() {
     : jugadoresExclusivos && jugadoresExclusivos.length > 0
       ? jugadoresExclusivos.map((j) => `${j.nombre} ${j.apellido}`).join(', ')
       : 'Ninguno'
+
+  const botoneraProps = useBotoneraDetalleEquipo({
+    equipo: equipo ?? ({} as EquipoDTO),
+    jugadores
+  })
 
   const columnas: ColumnDef<JugadorDelEquipoDTO>[] = [
     {
@@ -137,9 +142,7 @@ export default function DetalleEquipo() {
   return (
     <>
       <FlujoHomeLayout
-        botonera={
-          <BotoneraDetalleEquipo equipo={equipo!} jugadores={jugadores} />
-        }
+        botonera={botoneraProps}
         detalleItems={[
           { clave: 'Club', valor: equipo!.clubNombre! },
           {
