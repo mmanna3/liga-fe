@@ -40,10 +40,16 @@ export default function FlujoHomeLayout({
   const tieneHeader = titulo ?? botonera
 
   return (
-    <div className={cn('max-w-4xl mx-auto px-4', className)}>
-      {botonera && !ocultarBotonVolver && (
-        <div className='mb-4'>
-          <BotonVolver className={botonera.classNameBotonVolver} />
+    <div
+      className={cn(
+        'max-w-4xl mx-auto px-4',
+        ocultarBotonVolver ? 'mt-9' : '-mt-5',
+        className
+      )}
+    >
+      {!ocultarBotonVolver && (
+        <div className='mb-1'>
+          <BotonVolver />
         </div>
       )}
       {tieneHeader && (

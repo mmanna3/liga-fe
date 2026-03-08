@@ -68,7 +68,6 @@ export function useBotoneraDetalleEquipo({
         }
       }
     ],
-    classNameBotonVolver: '-ml-2',
     children: <CardTitle>{equipo.nombre}</CardTitle>
   }
 }

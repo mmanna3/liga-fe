@@ -80,7 +80,7 @@ export default function TablaDelegados({
     },
     {
       id: 'esJugador',
-      header: 'Es jugador',
+      header: () => <span className='whitespace-nowrap'>Es jugador</span>,
       cell: ({ row }) =>
         row.original.jugadorId != null ? (
           <span className='flex justify-center text-green-600 font-bold'>

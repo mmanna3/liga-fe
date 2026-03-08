@@ -12,6 +12,7 @@ export default function EquipoHome() {
   return (
     <FlujoHomeLayout
       titulo='Equipos'
+      ocultarBotonVolver
       contenido={
         <Tabla data={data || []} isLoading={isLoading} isError={isError} />
       }
