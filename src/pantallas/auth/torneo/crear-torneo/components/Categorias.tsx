@@ -4,16 +4,24 @@ import { Input } from '@/design-system/base-ui/input'
 import { Label } from '@/design-system/base-ui/label'
 import { Plus, X } from 'lucide-react'
 import { useState } from 'react'
-import { useFormContext } from 'react-hook-form'
-import type { Categoria, DatosWizardTorneo } from '../tipos'
+import type { Categoria } from '../tipos'
 
-export function Categorias() {
-  const { watch, setValue } = useFormContext<DatosWizardTorneo>()
+interface CategoriasProps {
+  valor: Categoria[]
+  alCambiar: (categorias: Categoria[]) => void
+  error?: string
+  titulo?: string
+}
+
+export function Categorias({
+  valor,
+  alCambiar,
+  error,
+  titulo = 'Categorías *'
+}: CategoriasProps) {
   const [editandoCategoriaId, setEditandoCategoriaId] = useState<string | null>(
     null
   )
-
-  const categorias = watch('categorias')
 
   const agregarCategoria = () => {
     const nuevaCategoria: Categoria = {
@@ -24,26 +32,20 @@ export function Categorias() {
     }
     // Quitar categorías vacías antes de agregar: evita errores de validación
     // cuando el usuario agrega otra sin haber completado la anterior
-    const categoriasConNombre = categorias.filter((c) => c.nombre.trim() !== '')
-    setValue('categorias', [...categoriasConNombre, nuevaCategoria])
+    const categoriasConNombre = valor.filter((c) => c.nombre.trim() !== '')
+    alCambiar([...categoriasConNombre, nuevaCategoria])
     setEditandoCategoriaId(nuevaCategoria.id)
   }
 
   const quitarCategoria = (id: string) => {
-    setValue(
-      'categorias',
-      categorias.filter((c) => c.id !== id)
-    )
+    alCambiar(valor.filter((c) => c.id !== id))
     if (editandoCategoriaId === id) {
       setEditandoCategoriaId(null)
     }
   }
 
   const actualizarCategoria = (id: string, campo: Partial<Categoria>) => {
-    setValue(
-      'categorias',
-      categorias.map((c) => (c.id === id ? { ...c, ...campo } : c))
-    )
+    alCambiar(valor.map((c) => (c.id === id ? { ...c, ...campo } : c)))
   }
 
   const alClickearCategoria = (id: string) => {
@@ -58,16 +60,16 @@ export function Categorias() {
   }
 
   const categoriaEditando = editandoCategoriaId
-    ? categorias.find((c) => c.id === editandoCategoriaId)
+    ? valor.find((c) => c.id === editandoCategoriaId)
     : null
 
   return (
     <div>
-      <Label className='block mb-2 text-md font-semibold'>Categorías *</Label>
+      <Label className='block mb-2 text-md font-semibold'>{titulo}</Label>
 
-      {categorias.length > 0 && categorias.some((c) => c.nombre) && (
+      {valor.length > 0 && valor.some((c) => c.nombre) && (
         <div className='flex flex-wrap gap-2 mb-3'>
-          {categorias
+          {valor
             .filter((c) => c.nombre)
             .map((categoria) => (
               <Badge
@@ -154,6 +156,7 @@ export function Categorias() {
         <Plus className='w-3 h-3' />
         Agregar
       </Button>
+      {error && <p className='text-sm text-destructive mt-2'>{error}</p>}
     </div>
   )
 }

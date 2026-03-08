@@ -18,6 +18,7 @@ export function Paso1Informacion() {
     nombre: watch('nombre'),
     temporada: watch('temporada'),
     tipo: watch('tipo'),
+    categorias: watch('categorias'),
     formato: watch('formato')
   }
 
@@ -48,7 +49,11 @@ export function Paso1Informacion() {
         error={errors.tipo?.message}
       />
 
-      <Categorias />
+      <Categorias
+        valor={datos.categorias}
+        alCambiar={(categorias) => setValue('categorias', categorias)}
+        error={errors.categorias?.message}
+      />
 
       <div>
         <Label className='block mb-2 text-md font-semibold'>Formato *</Label>
