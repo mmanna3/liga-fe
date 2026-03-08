@@ -1,7 +1,6 @@
 import { api } from '@/api/api'
 import { TorneoDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
-import { Button } from '@/design-system/base-ui/button'
 import {
   Card,
   CardContent,
@@ -103,24 +102,24 @@ export default function CrearTorneo() {
             {pasoActual === 1 ? (
               <div />
             ) : (
-              <Button
+              <Boton
                 type='button'
                 className='h-11 w-28 text-sm'
                 variant='outline'
                 onClick={alAnterior}
               >
                 Anterior
-              </Button>
+              </Boton>
             )}
 
             {pasoActual < ULTIMO_PASO ? (
-              <Button
+              <Boton
                 type='button'
                 className='h-11 w-28 text-sm'
                 onClick={alSiguiente}
               >
                 Siguiente
-              </Button>
+              </Boton>
             ) : (
               <Boton
                 type='button'

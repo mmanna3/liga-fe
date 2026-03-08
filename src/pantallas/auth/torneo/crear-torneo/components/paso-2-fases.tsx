@@ -1,4 +1,4 @@
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/base-ui/input'
 import { Label } from '@/design-system/base-ui/label'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
@@ -217,7 +217,7 @@ export function Paso2Fases() {
                 </button>
                 <div className='flex items-center gap-2'>
                   {datos.fases.length > 1 && editable && (
-                    <Button
+                    <Boton
                       type='button'
                       variant='ghost'
                       size='icon'
@@ -228,7 +228,7 @@ export function Paso2Fases() {
                       }}
                     >
                       <Trash2 className='w-4 h-4' />
-                    </Button>
+                    </Boton>
                   )}
                 </div>
               </div>
@@ -301,10 +301,10 @@ export function Paso2Fases() {
         })}
       </div>
 
-      <Button type='button' onClick={agregarFase} className='w-full'>
+      <Boton type='button' onClick={agregarFase} className='w-full'>
         <Plus className='w-4 h-4' />
         Agregar fase
-      </Button>
+      </Boton>
     </div>
   )
 }

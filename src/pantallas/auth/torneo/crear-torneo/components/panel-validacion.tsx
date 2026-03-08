@@ -1,4 +1,4 @@
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import { cn } from '@/logica-compartida/utils'
 import { AlertTriangle, Info, Wand2 } from 'lucide-react'
 import type {
@@ -83,7 +83,7 @@ export function PanelValidacion({
       </div>
 
       {/* Botón generar */}
-      <Button
+      <Boton
         type='button'
         onClick={alGenerar}
         className='w-full'
@@ -91,7 +91,7 @@ export function PanelValidacion({
       >
         <Wand2 className='w-5 h-5' />
         {fixtureGenerado ? 'Regenerar fixture' : 'Generar fixture'}
-      </Button>
+      </Boton>
 
       {errorFixture && (
         <div className='p-3 bg-destructive/10 border border-destructive/30 rounded-lg'>

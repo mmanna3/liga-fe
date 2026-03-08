@@ -1,5 +1,5 @@
 import { Badge } from '@/design-system/base-ui/badge'
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/base-ui/input'
 import { Label } from '@/design-system/base-ui/label'
 import { Plus, X } from 'lucide-react'
@@ -138,15 +138,15 @@ export function Categorias({
                 placeholder='Hasta'
                 className='w-20 text-center'
               />
-              <Button type='button' size='sm' onClick={alGuardarCategoria}>
+              <Boton type='button' size='sm' onClick={alGuardarCategoria}>
                 Guardar
-              </Button>
+              </Boton>
             </div>
           </div>
         </div>
       )}
 
-      <Button
+      <Boton
         type='button'
         variant='outline'
         size='sm'
@@ -155,7 +155,7 @@ export function Categorias({
       >
         <Plus className='w-3 h-3' />
         Agregar
-      </Button>
+      </Boton>
       {error && <p className='text-sm text-destructive mt-2'>{error}</p>}
     </div>
   )

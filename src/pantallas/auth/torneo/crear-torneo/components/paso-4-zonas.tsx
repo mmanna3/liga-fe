@@ -1,6 +1,6 @@
 import CajitaConTick from '@/design-system/ykn-ui/cajita-con-tick'
 import { MiniResumen } from './mini-resumen'
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/base-ui/input'
 import { Pencil, Plus, Shuffle, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -188,10 +188,10 @@ export function Paso4Zonas() {
 
       <div>
         <div className='flex flex-wrap items-center gap-3 mb-6'>
-          <Button type='button' onClick={sortearEquipos}>
+          <Boton type='button' onClick={sortearEquipos}>
             <Shuffle className='w-4 h-4' />
             Sortear
-          </Button>
+          </Boton>
           <CajitaConTick
             id='prevenir-mismo-club'
             checked={datos.prevenirMismoClub}
@@ -209,7 +209,7 @@ export function Paso4Zonas() {
         )}
 
         <div className='flex justify-end mb-3'>
-          <Button
+          <Boton
             type='button'
             variant='ghost'
             size='sm'
@@ -218,7 +218,7 @@ export function Paso4Zonas() {
           >
             <Plus className='w-4 h-4' />
             Agregar zona
-          </Button>
+          </Boton>
         </div>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
           {datos.zonas.map((zona) => (
@@ -268,7 +268,7 @@ export function Paso4Zonas() {
                     </span>
                   </>
                 )}
-                <Button
+                <Boton
                   type='button'
                   variant='ghost'
                   size='icon'
@@ -280,7 +280,7 @@ export function Paso4Zonas() {
                   disabled={cantidadZonas <= 1}
                 >
                   <Trash2 className='w-4 h-4' />
-                </Button>
+                </Boton>
               </div>
 
               <div className='text-xs text-muted-foreground mb-3'>

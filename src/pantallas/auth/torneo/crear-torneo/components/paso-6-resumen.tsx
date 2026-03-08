@@ -1,4 +1,4 @@
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import { cn } from '@/logica-compartida/utils'
 import {
   Calendar,
@@ -87,7 +87,7 @@ export function Paso6Resumen({ alEditarPaso }: Paso6ResumenProps) {
             </div>
             <h4 className='font-semibold text-sm'>Información general</h4>
           </div>
-          <Button
+          <Boton
             type='button'
             variant='ghost'
             size='icon'
@@ -95,7 +95,7 @@ export function Paso6Resumen({ alEditarPaso }: Paso6ResumenProps) {
             onClick={() => editarPaso(1)}
           >
             <Edit className='w-4 h-4' />
-          </Button>
+          </Boton>
         </div>
         <div className='grid grid-cols-2 gap-3 text-sm'>
           <div>
@@ -140,7 +140,7 @@ export function Paso6Resumen({ alEditarPaso }: Paso6ResumenProps) {
               </div>
               <h4 className='font-semibold text-sm'>Fases del torneo</h4>
             </div>
-            <Button
+            <Boton
               type='button'
               variant='ghost'
               size='icon'
@@ -148,7 +148,7 @@ export function Paso6Resumen({ alEditarPaso }: Paso6ResumenProps) {
               onClick={() => editarPaso(2)}
             >
               <Edit className='w-4 h-4' />
-            </Button>
+            </Boton>
           </div>
           <div className='space-y-2'>
             {datos.fases.map((fase, idx) => (
@@ -179,7 +179,7 @@ export function Paso6Resumen({ alEditarPaso }: Paso6ResumenProps) {
               Equipos participantes de la fase {nombrePrimeraFase}
             </h4>
           </div>
-          <Button
+          <Boton
             type='button'
             variant='ghost'
             size='icon'
@@ -187,7 +187,7 @@ export function Paso6Resumen({ alEditarPaso }: Paso6ResumenProps) {
             onClick={() => editarPaso(3)}
           >
             <Edit className='w-4 h-4' />
-          </Button>
+          </Boton>
         </div>
         <div className='space-y-2'>
           <div className='flex items-center gap-2 text-sm'>
@@ -231,7 +231,7 @@ export function Paso6Resumen({ alEditarPaso }: Paso6ResumenProps) {
                 Zonas de la fase {nombrePrimeraFase}
               </h4>
             </div>
-            <Button
+            <Boton
               type='button'
               variant='ghost'
               size='icon'
@@ -239,7 +239,7 @@ export function Paso6Resumen({ alEditarPaso }: Paso6ResumenProps) {
               onClick={() => editarPaso(4)}
             >
               <Edit className='w-4 h-4' />
-            </Button>
+            </Boton>
           </div>
           <div className='grid grid-cols-2 gap-2'>
             {datos.zonas.map((zona) => (
@@ -284,7 +284,7 @@ export function Paso6Resumen({ alEditarPaso }: Paso6ResumenProps) {
               Fixture de la fase {nombrePrimeraFase}
             </h4>
           </div>
-          <Button
+          <Boton
             type='button'
             variant='ghost'
             size='icon'
@@ -292,7 +292,7 @@ export function Paso6Resumen({ alEditarPaso }: Paso6ResumenProps) {
             onClick={() => editarPaso(5)}
           >
             <Edit className='w-4 h-4' />
-          </Button>
+          </Boton>
         </div>
         <div className='space-y-2'>
           {datos.fixtureGenerado ? (
@@ -359,10 +359,10 @@ export function Paso6Resumen({ alEditarPaso }: Paso6ResumenProps) {
                   <p className='text-xs text-muted-foreground mb-2'>
                     Es necesario generar el fixture antes de crear el torneo.
                   </p>
-                  <Button type='button' size='sm' onClick={() => editarPaso(5)}>
+                  <Boton type='button' size='sm' onClick={() => editarPaso(5)}>
                     <Target className='w-3 h-3' />
                     Ir al paso 5 para generar fixture
-                  </Button>
+                  </Boton>
                 </div>
               </div>
             </div>

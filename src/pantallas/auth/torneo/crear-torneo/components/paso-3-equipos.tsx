@@ -1,4 +1,4 @@
-import { Button } from '@/design-system/base-ui/button'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import { Checkbox } from '@/design-system/base-ui/checkbox'
 import { Input } from '@/design-system/base-ui/input'
 import { Label } from '@/design-system/base-ui/label'
@@ -387,7 +387,7 @@ export function Paso3Equipos() {
                       </>
                     )}
                     <td className='px-4 py-3'>
-                      <Button
+                      <Boton
                         type='button'
                         size='sm'
                         onClick={() => alSeleccionarEquipo(equipo)}
@@ -397,7 +397,7 @@ export function Paso3Equipos() {
                         }
                       >
                         Seleccionar
-                      </Button>
+                      </Boton>
                     </td>
                   </tr>
                 ))}
