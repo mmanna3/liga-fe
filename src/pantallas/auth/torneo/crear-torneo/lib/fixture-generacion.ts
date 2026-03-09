@@ -345,7 +345,9 @@ export function calcularEstadisticasFixture(
     vueltas === 'ida-y-vuelta'
       ? regularPorEquipo
       : Math.ceil(regularPorEquipo / 2)
-  const excepciones: string[] = []
+  const excLocalVisitante: string[] = []
+  const excJornadasLibres: string[] = []
+  const excJornadasInterzonales: string[] = []
 
   for (let i = 0; i < equipos.length; i++) {
     for (let j = i + 1; j < equipos.length; j++) {
@@ -353,7 +355,7 @@ export function calcularEstadisticasFixture(
       const clave = `${a}-${b}`
       const encuentros = encuentrosPorPar[clave] ?? 0
       if (encuentros !== encuentrosEsperados) {
-        excepciones.push(
+        excLocalVisitante.push(
           `${equipos[i].nombre} vs ${equipos[j].nombre}: ${encuentros} ${encuentros === 1 ? 'encuentro' : 'encuentros'} (esperado ${encuentrosEsperados})`
         )
       }
@@ -363,12 +365,12 @@ export function calcularEstadisticasFixture(
   for (const est of estadisticasPorEquipo) {
     if (vueltas === 'ida-y-vuelta') {
       if (est.partidosDeLocal !== localEsperado) {
-        excepciones.push(
+        excLocalVisitante.push(
           `${est.nombreEquipo} juega ${est.partidosDeLocal} de local en vez de ${localEsperado}`
         )
       }
       if (est.partidosDeVisitante !== visitanteEsperado) {
-        excepciones.push(
+        excLocalVisitante.push(
           `${est.nombreEquipo} juega ${est.partidosDeVisitante} de visitante en vez de ${visitanteEsperado}`
         )
       }
@@ -377,18 +379,18 @@ export function calcularEstadisticasFixture(
         est.partidosDeLocal !== localEsperado &&
         est.partidosDeLocal !== visitanteEsperado
       ) {
-        excepciones.push(
+        excLocalVisitante.push(
           `${est.nombreEquipo} juega ${est.partidosDeLocal} de local (esperado ~${localEsperado})`
         )
       }
     }
     if (est.fechasLibre !== fechasLibres) {
-      excepciones.push(
+      excJornadasLibres.push(
         `${est.nombreEquipo} queda libre ${est.fechasLibre} fecha(s) en vez de ${fechasLibres}`
       )
     }
     if (est.fechasInterzonal !== fechasInterzonales) {
-      excepciones.push(
+      excJornadasInterzonales.push(
         `${est.nombreEquipo} juega ${est.fechasInterzonal} interzonal(es) en vez de ${fechasInterzonales}`
       )
     }
@@ -400,7 +402,11 @@ export function calcularEstadisticasFixture(
     encuentrosPorParEsperados: encuentrosEsperados,
     partidosLocalEsperados: localEsperado,
     partidosVisitanteEsperados: visitanteEsperado,
-    excepciones
+    excepciones: {
+      localVisitante: excLocalVisitante,
+      jornadasLibres: excJornadasLibres,
+      jornadasInterzonales: excJornadasInterzonales
+    }
   }
 }
 

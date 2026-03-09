@@ -200,6 +200,7 @@ export function FixtureTodosContraTodos({
     setSlotSobreEl(null)
 
     if (!origen) return
+    if (origen.numeroFecha !== numeroFecha) return
     if (
       origen.entradaId === entradaObjetivoId &&
       origen.posicion === posicionObjetivo
@@ -410,7 +411,7 @@ export function FixtureTodosContraTodos({
                         >
                           <span
                             className={cn(
-                              'font-medium cursor-grab select-none',
+                              'font-medium cursor-grab select-none rounded px-0.5 hover:outline hover:outline-1 hover:outline-dashed hover:outline-green-800',
                               entrada.local === 'INTERZONAL' &&
                                 'text-blue-700 italic'
                             )}
@@ -492,7 +493,7 @@ export function FixtureTodosContraTodos({
                             )}
                           <span
                             className={cn(
-                              'font-medium cursor-grab select-none',
+                              'font-medium cursor-grab select-none rounded px-0.5 hover:outline hover:outline-1 hover:outline-dashed hover:outline-green-800',
                               entrada.visitante === 'LIBRE' &&
                                 'text-amber-700 italic',
                               entrada.visitante === 'INTERZONAL' &&
@@ -567,24 +568,48 @@ function PanelEstadisticas({
           (y el complemento de visitante).
         </p>
       )}
-      {estadisticas.excepciones.length > 0 && (
-        <div className='space-y-1'>
-          <p className='text-xs font-medium text-amber-700 flex items-center gap-1'>
-            <AlertTriangle className='w-3 h-3' />
-            Excepciones en la distribución:
-          </p>
-          {estadisticas.excepciones.map((ex, i) => (
-            <p key={i} className='text-xs text-amber-700 pl-4'>
-              • {ex}
+      {(() => {
+        const { localVisitante, jornadasLibres, jornadasInterzonales } =
+          estadisticas.excepciones
+        const hayExcepciones =
+          localVisitante.length > 0 ||
+          jornadasLibres.length > 0 ||
+          jornadasInterzonales.length > 0
+        if (!hayExcepciones) {
+          return (
+            <p className='text-xs text-muted-foreground'>
+              Distribución equilibrada. Sin excepciones.
             </p>
-          ))}
-        </div>
-      )}
-      {estadisticas.excepciones.length === 0 && (
-        <p className='text-xs text-muted-foreground'>
-          Distribución equilibrada. Sin excepciones.
-        </p>
-      )}
+          )
+        }
+        const grupos: { titulo: string; items: string[] }[] = [
+          { titulo: 'Excepciones Local/Visitante', items: localVisitante },
+          { titulo: 'Excepciones Jornadas Libres', items: jornadasLibres },
+          {
+            titulo: 'Excepciones Jornadas Interzonales',
+            items: jornadasInterzonales
+          }
+        ]
+        return (
+          <div className='space-y-2'>
+            {grupos
+              .filter((g) => g.items.length > 0)
+              .map((g) => (
+                <div key={g.titulo} className='space-y-1'>
+                  <p className='text-xs font-medium text-amber-700 flex items-center gap-1'>
+                    <AlertTriangle className='w-3 h-3' />
+                    {g.titulo}
+                  </p>
+                  {g.items.map((ex, i) => (
+                    <p key={i} className='text-xs text-amber-700 pl-4'>
+                      • {ex}
+                    </p>
+                  ))}
+                </div>
+              ))}
+          </div>
+        )
+      })()}
     </div>
   )
 }

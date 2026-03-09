@@ -11,6 +11,18 @@ import type { EntradaDeZona, FechaFixture } from '../fixture-tipos'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
+const todasLasExcepciones = (stats: {
+  excepciones: {
+    localVisitante: string[]
+    jornadasLibres: string[]
+    jornadasInterzonales: string[]
+  }
+}) => [
+  ...stats.excepciones.localVisitante,
+  ...stats.excepciones.jornadasLibres,
+  ...stats.excepciones.jornadasInterzonales
+]
+
 const equipos = (n: number) =>
   Array.from({ length: n }, (_, i) => ({ id: i + 1, nombre: `E${i + 1}` }))
 
@@ -268,7 +280,7 @@ describe('generarTodosLosFixtures', () => {
 
   it('incluye estadisticas con 0 excepciones para un fixture correcto', () => {
     const result = generarTodosLosFixtures([zonaInput('A', 4)], 'ida')
-    expect(result[0].estadisticas.excepciones).toHaveLength(0)
+    expect(todasLasExcepciones(result[0].estadisticas)).toHaveLength(0)
   })
 })
 
@@ -329,14 +341,14 @@ describe('calcularEstadisticasFixture', () => {
     const eq = equipos(4)
     const fechas = generarFixture(eq, 0, 0, 'ida')
     const stats = calcularEstadisticasFixture(fechas, eq, 0, 0, 'ida')
-    expect(stats.excepciones).toHaveLength(0)
+    expect(todasLasExcepciones(stats)).toHaveLength(0)
   })
 
   it('4 equipos ida-y-vuelta: sin excepciones', () => {
     const eq = equipos(4)
     const fechas = generarFixture(eq, 0, 0, 'ida-y-vuelta')
     const stats = calcularEstadisticasFixture(fechas, eq, 0, 0, 'ida-y-vuelta')
-    expect(stats.excepciones).toHaveLength(0)
+    expect(todasLasExcepciones(stats)).toHaveLength(0)
   })
 
   it('ida: encuentrosPorParEsperados = 1', () => {
@@ -377,7 +389,7 @@ describe('calcularEstadisticasFixture', () => {
     const eq = equipos(8)
     const fechas = generarFixture(eq, 0, 0, 'ida')
     const stats = calcularEstadisticasFixture(fechas, eq, 0, 0, 'ida')
-    expect(stats.excepciones).toHaveLength(0)
+    expect(todasLasExcepciones(stats)).toHaveLength(0)
   })
 
   it('5 equipos con 1 libre, ida (N par): partidosLocalEsperados = partidosVisitanteEsperados = 2', () => {
@@ -415,7 +427,7 @@ describe('calcularEstadisticasFixture', () => {
     for (const est of stats.estadisticasPorEquipo) {
       expect(est.fechasLibre).toBe(1)
     }
-    expect(stats.excepciones).toHaveLength(0)
+    expect(todasLasExcepciones(stats)).toHaveLength(0)
   })
 
   it('con 2 interzonales: cada equipo tiene fechasInterzonal = 2 en estadisticas', () => {
@@ -432,7 +444,7 @@ describe('calcularEstadisticasFixture', () => {
     const eq = equipos(6)
     const fechas = generarFixture(eq, 0, 0, 'ida')
     const stats = calcularEstadisticasFixture(fechas, eq, 0, 0, 'ida')
-    expect(stats.excepciones).toHaveLength(0)
+    expect(todasLasExcepciones(stats)).toHaveLength(0)
   })
 
   it('par que no se enfrenta genera excepción', () => {
@@ -459,7 +471,9 @@ describe('calcularEstadisticasFixture', () => {
       0,
       'ida'
     )
-    expect(stats.excepciones.some((e) => e.includes('vs'))).toBe(true)
+    expect(stats.excepciones.localVisitante.some((e) => e.includes('vs'))).toBe(
+      true
+    )
   })
 
   it('ida-y-vuelta: par que juega 3 veces genera excepción', () => {
@@ -482,7 +496,7 @@ describe('calcularEstadisticasFixture', () => {
       0,
       'ida-y-vuelta'
     )
-    expect(stats.excepciones.length).toBeGreaterThan(0)
+    expect(todasLasExcepciones(stats).length).toBeGreaterThan(0)
   })
 
   // ── Regresión: IDs no ordenados ──────────────────────────────────────────────
@@ -498,7 +512,7 @@ describe('calcularEstadisticasFixture', () => {
     ]
     const fechas = generarFixture(eq, 0, 0, 'ida')
     const stats = calcularEstadisticasFixture(fechas, eq, 0, 0, 'ida')
-    expect(stats.excepciones).toHaveLength(0)
+    expect(todasLasExcepciones(stats)).toHaveLength(0)
   })
 
   it('equipos con IDs no ordenados, ida-y-vuelta: sin falsas excepciones', () => {
@@ -510,7 +524,7 @@ describe('calcularEstadisticasFixture', () => {
     ]
     const fechas = generarFixture(eq, 0, 0, 'ida-y-vuelta')
     const stats = calcularEstadisticasFixture(fechas, eq, 0, 0, 'ida-y-vuelta')
-    expect(stats.excepciones).toHaveLength(0)
+    expect(todasLasExcepciones(stats)).toHaveLength(0)
   })
 
   // ── Excepciones de local/visitante ───────────────────────────────────────────
@@ -553,13 +567,13 @@ describe('calcularEstadisticasFixture', () => {
     const stats = calcularEstadisticasFixture(fechas, eq, 0, 0, 'ida-y-vuelta')
     // Equipo 1: 2 local + 0 visitante (esperado 1/1) → excepción
     expect(
-      stats.excepciones.some(
+      stats.excepciones.localVisitante.some(
         (e) => e.includes('Equipo 1') && e.includes('local')
       )
     ).toBe(true)
     // Equipo 2: 0 local + 2 visitante → excepción
     expect(
-      stats.excepciones.some(
+      stats.excepciones.localVisitante.some(
         (e) => e.includes('Equipo 2') && e.includes('visitante')
       )
     ).toBe(true)
@@ -642,7 +656,7 @@ describe('calcularEstadisticasFixture', () => {
     // Equipo 1: 3 local + 0 visitante → fuera de [1, 2] → excepción
     const stats = calcularEstadisticasFixture(fechas, eq, 0, 0, 'ida')
     expect(
-      stats.excepciones.some(
+      stats.excepciones.localVisitante.some(
         (e) => e.includes('Equipo 1') && e.includes('local')
       )
     ).toBe(true)
@@ -1017,12 +1031,12 @@ describe('intercambiar local↔visitante y recalcular estadísticas', () => {
     const nombreVisitante = eq.find((e) => e.id === equipoVisitanteId)!.nombre
 
     expect(
-      stats.excepciones.some(
+      stats.excepciones.localVisitante.some(
         (e) => e.includes(nombreLocal) && e.includes('local')
       )
     ).toBe(true)
     expect(
-      stats.excepciones.some(
+      stats.excepciones.localVisitante.some(
         (e) => e.includes(nombreVisitante) && e.includes('local')
       )
     ).toBe(true)

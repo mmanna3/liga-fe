@@ -23,6 +23,12 @@ export interface EstadisticasEquipo {
   fechasInterzonal: number
 }
 
+export interface ExcepcionesFixture {
+  localVisitante: string[]
+  jornadasLibres: string[]
+  jornadasInterzonales: string[]
+}
+
 export interface EstadisticasFixture {
   totalFechas: number
   estadisticasPorEquipo: EstadisticasEquipo[]
@@ -30,8 +36,8 @@ export interface EstadisticasFixture {
   encuentrosPorParEsperados: number
   partidosLocalEsperados: number
   partidosVisitanteEsperados: number
-  /** Diferencias respecto a la distribución ideal */
-  excepciones: string[]
+  /** Diferencias respecto a la distribución ideal, agrupadas por categoría */
+  excepciones: ExcepcionesFixture
 }
 
 export interface FixturePorZona {
