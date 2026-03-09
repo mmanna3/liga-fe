@@ -60,11 +60,8 @@ export const paso4: IPaso<DatosPaso4> = {
       id: z.id,
       nombre: z.nombre,
       equipos: z.equipos.map((t) => ({ id: t.id, nombre: t.nombre })),
-      fechasLibres:
-        (z as typeof z & { fechasLibres?: number }).fechasLibres ?? 0,
-      fechasInterzonales:
-        (z as typeof z & { fechasInterzonales?: number }).fechasInterzonales ??
-        0
+      fechasLibres: z.fechasLibres,
+      fechasInterzonales: z.fechasInterzonales
     }))
 
     const esEliminacion = faseActual.formato === 'eliminacion'

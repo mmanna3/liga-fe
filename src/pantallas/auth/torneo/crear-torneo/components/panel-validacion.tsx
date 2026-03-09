@@ -1,6 +1,7 @@
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { cn } from '@/logica-compartida/utils'
-import { AlertTriangle, Info, Wand2 } from 'lucide-react'
+import { AlertTriangle, Wand2 } from 'lucide-react'
+import { calcularTotalFechas } from '../lib/fixture'
 import type {
   ValidacionEmparejamientoInterzonal,
   EntradaDeZona,
@@ -61,7 +62,6 @@ export function PanelValidacion({
             tieneMultiplesZonas={tieneMultiplesZonas}
             validacionesZona={validacionesZona}
             entradasDeZona={entradasDeZona}
-            emparejamientoInterzonal={emparejamientoInterzonal}
             esEliminacion={esEliminacion}
             totalFechas={totalFechas}
             vueltas={vueltas}
@@ -107,7 +107,6 @@ function ResumenValido({
   tieneMultiplesZonas,
   validacionesZona,
   entradasDeZona,
-  emparejamientoInterzonal,
   esEliminacion,
   totalFechas,
   vueltas,
@@ -119,7 +118,6 @@ function ResumenValido({
   tieneMultiplesZonas: boolean
   validacionesZona: ValidacionZona[]
   entradasDeZona: EntradaDeZona[]
-  emparejamientoInterzonal: ValidacionEmparejamientoInterzonal
   esEliminacion: boolean
   totalFechas: number
   vueltas: 'ida' | 'ida-y-vuelta'
@@ -135,89 +133,44 @@ function ResumenValido({
             const z = entradasDeZona.find((x) => x.id === vz.idZona)
             const libre = z?.fechasLibres ?? 0
             const iz = z?.fechasInterzonales ?? 0
+            const fechas = calcularTotalFechas(
+              vz.cantidadEquipos,
+              libre,
+              iz,
+              vueltas
+            )
             return (
               <p key={vz.idZona} className='text-sm'>
                 <strong>
                   {vz.nombreZona}: {vz.cantidadEquipos} equipos + {libre} libre
                   {tieneMultiplesZonas &&
                     iz > 0 &&
-                    ` + ${iz} interzonal`} = {vz.totalParticipantes}{' '}
-                  participantes
+                    ` + ${iz} interzonal`} = {fechas} fechas
                 </strong>
               </p>
             )
           })}
-          <p className='text-sm text-muted-foreground'>
-            {esEliminacion ? (
-              <>
-                Configuración válida para eliminación directa por zona.
-                {tieneMultiplesZonas &&
-                  entradasDeZona.some((z) => z.fechasInterzonales > 0) &&
-                  ' Los partidos interzonales cruzan equipos entre zonas.'}
-              </>
-            ) : (
-              <>
-                Cada zona tendrá hasta{' '}
-                <strong className='text-foreground'>
-                  {totalFechas} fechas
-                </strong>{' '}
-                ({vueltas === 'ida-y-vuelta' ? 'ida y vuelta' : 'solo ida'}).
-                {tieneMultiplesZonas &&
-                  entradasDeZona.some((z) => z.fechasInterzonales > 0) &&
-                  ' Los partidos interzonales cruzan equipos entre zonas.'}
-              </>
-            )}
-          </p>
+          {esEliminacion && (
+            <p className='text-sm text-muted-foreground'>
+              Configuración válida para eliminación directa por zona.
+            </p>
+          )}
         </>
       ) : (
         <>
           <p className='text-sm'>
             <strong>
               {cantidadEquipos} equipos + {fechasLibres} libre +{' '}
-              {fechasInterzonales} interzonal ={' '}
-              {cantidadEquipos + fechasLibres + fechasInterzonales}{' '}
-              participantes
+              {fechasInterzonales} interzonal = {totalFechas} fechas
             </strong>
           </p>
-          <p className='text-sm text-muted-foreground'>
-            {esEliminacion ? (
-              <>Configuración válida para eliminación directa.</>
-            ) : (
-              <>
-                El torneo tendrá{' '}
-                <strong className='text-foreground'>
-                  {totalFechas} jornadas
-                </strong>{' '}
-                ({vueltas === 'ida-y-vuelta' ? 'ida y vuelta' : 'solo ida'}).
-              </>
-            )}
-          </p>
+          {esEliminacion && (
+            <p className='text-sm text-muted-foreground'>
+              Configuración válida para eliminación directa.
+            </p>
+          )}
         </>
       )}
-      {!usarModoZona && fechasLibres > 0 && (
-        <p className='text-xs text-muted-foreground flex items-center gap-1'>
-          <Info className='w-3 h-3 shrink-0' />
-          Cada equipo descansa {fechasLibres} jornada
-          {fechasLibres !== 1 ? 's' : ''}.
-        </p>
-      )}
-      {!usarModoZona && fechasInterzonales > 0 && (
-        <p className='text-xs text-muted-foreground flex items-center gap-1'>
-          <Info className='w-3 h-3 shrink-0' />
-          Cada equipo juega {fechasInterzonales} jornada
-          {fechasInterzonales !== 1 ? 's' : ''} interzonal.
-        </p>
-      )}
-      {usarModoZona &&
-        tieneMultiplesZonas &&
-        entradasDeZona.some((z) => z.fechasInterzonales > 0) &&
-        emparejamientoInterzonal.esValido && (
-          <p className='text-xs text-muted-foreground flex items-center gap-1'>
-            <Info className='w-3 h-3 shrink-0' />
-            Todas las zonas tienen la misma cantidad interzonal: emparejamiento
-            correcto.
-          </p>
-        )}
     </div>
   )
 }

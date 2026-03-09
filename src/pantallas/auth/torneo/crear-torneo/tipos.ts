@@ -43,9 +43,9 @@ export interface Zona {
   nombre: string
   equipos: EquipoWizard[]
   idFase: string
-  /** Cantidad de fechas en que cada equipo de esta zona queda libre (por zona) */
+  /** Cantidad de fechas en que cada equipo de esta zona queda libre (0, 1 o 2). */
   fechasLibres: number
-  /** Cantidad de fechas interzonales por equipo en esta zona. Todas las zonas deben tener el mismo valor para poder emparejar. */
+  /** Cantidad de fechas interzonales por equipo en esta zona (0, 1 o 2). */
   fechasInterzonales: number
 }
 

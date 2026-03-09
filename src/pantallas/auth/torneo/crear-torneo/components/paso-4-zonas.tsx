@@ -7,6 +7,7 @@ import {
 } from '@/design-system/base-ui/tooltip'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import CajitaConTick from '@/design-system/ykn-ui/cajita-con-tick'
+import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
 import { Info, Pencil, Plus, Shuffle, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -58,29 +59,6 @@ export function Paso4Zonas() {
   useEffect(() => {
     setValue('cantidadZonas', datos.zonas.length)
   }, [datos.zonas.length, setValue])
-
-  useEffect(() => {
-    const necesitaMigracion = datos.zonas.some(
-      (z) =>
-        (z as Zona & { fechasLibres?: number; fechasInterzonales?: number })
-          .fechasLibres === undefined ||
-        (z as Zona & { fechasLibres?: number; fechasInterzonales?: number })
-          .fechasInterzonales === undefined
-    )
-    if (necesitaMigracion) {
-      setValue(
-        'zonas',
-        datos.zonas.map((z) => ({
-          ...z,
-          fechasLibres:
-            (z as Zona & { fechasLibres?: number }).fechasLibres ?? 0,
-          fechasInterzonales:
-            (z as Zona & { fechasInterzonales?: number }).fechasInterzonales ??
-            0
-        }))
-      )
-    }
-  }, [datos.zonas])
 
   const agregarZona = () => {
     const letras = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -313,20 +291,17 @@ export function Paso4Zonas() {
                         </TooltipContent>
                       </Tooltip>
                     </div>
-                    <Input
-                      type='number'
-                      min={0}
-                      className='h-7 w-16 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
-                      value={
-                        (zona as Zona & { fechasLibres?: number })
-                          .fechasLibres ?? 0
-                      }
-                      onChange={(e) =>
+                    <SelectorSimple
+                      tamano='sm'
+                      opciones={[
+                        { id: '0', texto: '0' },
+                        { id: '1', texto: '1' },
+                        { id: '2', texto: '2' }
+                      ]}
+                      valorActual={String(zona.fechasLibres)}
+                      alElegirOpcion={(v) =>
                         actualizarFechasZona(zona.id, {
-                          fechasLibres: Math.max(
-                            0,
-                            parseInt(e.target.value) || 0
-                          )
+                          fechasLibres: Number(v)
                         })
                       }
                     />
@@ -348,20 +323,17 @@ export function Paso4Zonas() {
                           </TooltipContent>
                         </Tooltip>
                       </div>
-                      <Input
-                        type='number'
-                        min={0}
-                        className='h-7 w-16 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
-                        value={
-                          (zona as Zona & { fechasInterzonales?: number })
-                            .fechasInterzonales ?? 0
-                        }
-                        onChange={(e) =>
+                      <SelectorSimple
+                        tamano='sm'
+                        opciones={[
+                          { id: '0', texto: '0' },
+                          { id: '1', texto: '1' },
+                          { id: '2', texto: '2' }
+                        ]}
+                        valorActual={String(zona.fechasInterzonales)}
+                        alElegirOpcion={(v) =>
                           actualizarFechasZona(zona.id, {
-                            fechasInterzonales: Math.max(
-                              0,
-                              parseInt(e.target.value) || 0
-                            )
+                            fechasInterzonales: Number(v)
                           })
                         }
                       />

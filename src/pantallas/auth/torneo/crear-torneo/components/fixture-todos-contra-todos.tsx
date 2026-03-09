@@ -138,12 +138,13 @@ export function FixtureTodosContraTodos({
     if (!fixtureGenerado) return
 
     if (usarModoZona && fixturesPorZona.length > 0) {
-      const primeraZona = fixturesPorZona[0]
-      const zonaInput = entradasDeZona.find((z) => z.id === primeraZona.idZona)
-      if (!zonaInput) return
+      const idZona = zonaSeleccionadaId || fixturesPorZona[0].idZona
+      const zonaFixture = fixturesPorZona.find((f) => f.idZona === idZona)
+      const zonaInput = entradasDeZona.find((z) => z.id === idZona)
+      if (!zonaFixture || !zonaInput) return
       setEstadisticas(
         calcularEstadisticasFixture(
-          primeraZona.fechas,
+          zonaFixture.fechas,
           zonaInput.equipos,
           zonaInput.fechasLibres,
           zonaInput.fechasInterzonales,
@@ -165,7 +166,7 @@ export function FixtureTodosContraTodos({
         )
       )
     }
-  }, [fechasFixture, fixturesPorZona])
+  }, [fechasFixture, fixturesPorZona, zonaSeleccionadaId])
 
   // ─── Drag and drop a nivel de equipo individual ──────────────────────────
 
@@ -280,11 +281,6 @@ export function FixtureTodosContraTodos({
 
   return (
     <>
-      {/* Estadísticas */}
-      {estadisticas && fixtureGenerado && (
-        <PanelEstadisticas estadisticas={estadisticas} />
-      )}
-
       {/* Vista del fixture */}
       <div
         key={claveGeneracion}
@@ -303,6 +299,11 @@ export function FixtureTodosContraTodos({
                 alCambiarZona={setZonaSeleccionadaId}
                 etiqueta='Ver fechas de:'
               />
+            )}
+
+            {/* Estadísticas de la zona seleccionada */}
+            {estadisticas && fixtureGenerado && (
+              <PanelEstadisticas estadisticas={estadisticas} />
             )}
 
             <h4 className='font-semibold mb-4'>
