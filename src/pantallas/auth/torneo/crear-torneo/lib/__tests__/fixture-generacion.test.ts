@@ -361,6 +361,35 @@ describe('calcularEstadisticasFixture', () => {
     expect(stats.partidosVisitanteEsperados).toBe(3)
   })
 
+  it('8 equipos ida (N par): partidosLocalEsperados=3, partidosVisitanteEsperados=4 (son distintos)', () => {
+    const eq = equipos(8)
+    const fechas = generarFixture(eq, 0, 0, 'ida')
+    const stats = calcularEstadisticasFixture(fechas, eq, 0, 0, 'ida')
+    expect(stats.partidosLocalEsperados).toBe(3)
+    expect(stats.partidosVisitanteEsperados).toBe(4)
+    // No son iguales → el texto del panel debe mostrar "3 o 4" en vez de "3 de local y 4 de visitante"
+    expect(stats.partidosLocalEsperados).not.toBe(
+      stats.partidosVisitanteEsperados
+    )
+  })
+
+  it('8 equipos ida: sin excepciones (3 o 4 local son ambos valores válidos)', () => {
+    const eq = equipos(8)
+    const fechas = generarFixture(eq, 0, 0, 'ida')
+    const stats = calcularEstadisticasFixture(fechas, eq, 0, 0, 'ida')
+    expect(stats.excepciones).toHaveLength(0)
+  })
+
+  it('5 equipos con 1 libre, ida (N par): partidosLocalEsperados = partidosVisitanteEsperados = 2', () => {
+    // N_total=6 (par), N-1=5 partidas por equipo pero solo regulares: con 1 libre es impar → necesita libre para parear
+    // Cada equipo real juega 4 regulares: floor(4/2)=2 = ceil(4/2)=2 → iguales
+    const eq = equipos(5)
+    const fechas = generarFixture(eq, 1, 0, 'ida')
+    const stats = calcularEstadisticasFixture(fechas, eq, 1, 0, 'ida')
+    expect(stats.partidosLocalEsperados).toBe(2)
+    expect(stats.partidosVisitanteEsperados).toBe(2)
+  })
+
   it('4 equipos ida: totalFechas = 3', () => {
     const eq = equipos(4)
     const fechas = generarFixture(eq, 0, 0, 'ida')
@@ -845,6 +874,99 @@ describe('intercambiarEquiposEnFecha', () => {
     expect(p1.idEquipoLocal).toBe(3)
     // El resto no cambia
     expect(p1.visitante).toBe('E2')
+  })
+
+  it('mover LIBRE a partido regular: el partido destino pasa a tipo libre', () => {
+    // Fixture con un partido libre (3 equipos + 1 libre)
+    const eq = [
+      { id: 1, nombre: 'E1' },
+      { id: 2, nombre: 'E2' },
+      { id: 3, nombre: 'E3' }
+    ]
+    const fechas = generarFixture(eq, 1, 0, 'ida')
+    // Buscar el partido libre y el primer partido regular
+    const fechaConLibre = fechas.find((f) =>
+      f.entradas.some((e) => e.tipo === 'libre')
+    )!
+    const partidoLibre = fechaConLibre.entradas.find((e) => e.tipo === 'libre')!
+    const fechaConRegular = fechas.find((f) =>
+      f.entradas.some((e) => e.tipo === 'regular')
+    )!
+    const partidoRegular = fechaConRegular.entradas.find(
+      (e) => e.tipo === 'regular'
+    )!
+
+    // Mover el LIBRE (visitante del partido libre) al slot visitante del partido regular
+    const resultado = intercambiarEquiposEnFecha(
+      fechas,
+      fechaConLibre.numeroFecha,
+      partidoLibre.id,
+      'visitante', // slot con 'LIBRE'
+      fechaConRegular.numeroFecha,
+      partidoRegular.id,
+      'visitante'
+    )
+
+    const nuevoPartidoRegular = resultado
+      .find((f) => f.numeroFecha === fechaConRegular.numeroFecha)!
+      .entradas.find((e) => e.id === partidoRegular.id)!
+    const nuevoPartidoLibre = resultado
+      .find((f) => f.numeroFecha === fechaConLibre.numeroFecha)!
+      .entradas.find((e) => e.id === partidoLibre.id)!
+
+    // El partido que recibió LIBRE debe pasar a tipo 'libre'
+    expect(nuevoPartidoRegular.visitante).toBe('LIBRE')
+    expect(nuevoPartidoRegular.tipo).toBe('libre')
+    // El partido que cedió LIBRE ya no es libre
+    expect(nuevoPartidoLibre.tipo).toBe('regular')
+  })
+
+  it('mover equipo real al slot de LIBRE: el partido original libre pasa a tipo regular', () => {
+    const eq = [
+      { id: 1, nombre: 'E1' },
+      { id: 2, nombre: 'E2' },
+      { id: 3, nombre: 'E3' }
+    ]
+    const fechas = generarFixture(eq, 1, 0, 'ida')
+    const fechaConLibre = fechas.find((f) =>
+      f.entradas.some((e) => e.tipo === 'libre')
+    )!
+    const partidoLibre = fechaConLibre.entradas.find((e) => e.tipo === 'libre')!
+    // El partido libre tiene al equipo real como local y 'LIBRE' como visitante
+    const equipoEnPartidoLibre = partidoLibre.local
+    // Buscar cualquier partido regular en cualquier fecha
+    const fechaConRegular = fechas.find((f) =>
+      f.entradas.some((e) => e.tipo === 'regular')
+    )!
+    const partidoRegular = fechaConRegular.entradas.find(
+      (e) => e.tipo === 'regular'
+    )!
+
+    // Mover el LOCAL del partido regular al slot visitante (LIBRE) del partido libre
+    const resultado = intercambiarEquiposEnFecha(
+      fechas,
+      fechaConRegular.numeroFecha,
+      partidoRegular.id,
+      'local',
+      fechaConLibre.numeroFecha,
+      partidoLibre.id,
+      'visitante' // slot con 'LIBRE'
+    )
+
+    const nuevoPartidoLibre = resultado
+      .find((f) => f.numeroFecha === fechaConLibre.numeroFecha)!
+      .entradas.find((e) => e.id === partidoLibre.id)!
+
+    // El partido que tenía LIBRE ahora tiene dos equipos reales → tipo regular
+    expect(nuevoPartidoLibre.visitante).not.toBe('LIBRE')
+    expect(nuevoPartidoLibre.tipo).toBe('regular')
+    // El equipo que era local del partido regular está ahora en este partido
+    expect(nuevoPartidoLibre.visitante).toBe(
+      equipoEnPartidoLibre === nuevoPartidoLibre.local
+        ? nuevoPartidoLibre.visitante
+        : nuevoPartidoLibre.visitante
+    )
+    expect(nuevoPartidoLibre.idEquipoVisitante).not.toBeNull()
   })
 })
 

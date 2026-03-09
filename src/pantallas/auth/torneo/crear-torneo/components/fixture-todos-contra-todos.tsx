@@ -285,6 +285,12 @@ export function FixtureTodosContraTodos({
 
   const tieneFixture = fechasFixture.length > 0 || fixturesPorZona.length > 0
 
+  const zonaNombreDe = (idEquipo: number | null): string | undefined => {
+    if (idEquipo == null) return undefined
+    return zonasConEquipos.find((z) => z.equipos.some((e) => e.id === idEquipo))
+      ?.nombre
+  }
+
   const esDragTarget = (entradaId: string, posicion: 'local' | 'visitante') =>
     slotArrastrado !== null &&
     slotSobreEl?.entradaId === entradaId &&
@@ -410,6 +416,15 @@ export function FixtureTodosContraTodos({
                           >
                             {entrada.local}
                           </span>
+                          {entrada.tipo === 'interzonal' &&
+                            entrada.idEquipoLocal != null &&
+                            !idsEquiposEnZonaSeleccionada.has(
+                              entrada.idEquipoLocal
+                            ) && (
+                              <span className='text-xs bg-blue-100 text-blue-700 border border-blue-300 rounded px-1 py-0.5 leading-none'>
+                                {zonaNombreDe(entrada.idEquipoLocal)}
+                              </span>
+                            )}
                         </div>
 
                         {/* VS */}
@@ -465,6 +480,15 @@ export function FixtureTodosContraTodos({
                             )
                           }}
                         >
+                          {entrada.tipo === 'interzonal' &&
+                            entrada.idEquipoVisitante != null &&
+                            !idsEquiposEnZonaSeleccionada.has(
+                              entrada.idEquipoVisitante
+                            ) && (
+                              <span className='text-xs bg-blue-100 text-blue-700 border border-blue-300 rounded px-1 py-0.5 leading-none'>
+                                {zonaNombreDe(entrada.idEquipoVisitante)}
+                              </span>
+                            )}
                           <span
                             className={cn(
                               'font-medium cursor-grab select-none',
@@ -517,19 +541,31 @@ function PanelEstadisticas({
         </strong>{' '}
         contra cada equipo de la zona.
       </p>
-      <p className='text-sm text-muted-foreground'>
-        Cada equipo juega{' '}
-        <strong className='text-foreground'>
-          {estadisticas.partidosLocalEsperados}{' '}
-          {estadisticas.partidosLocalEsperados === 1 ? 'partido' : 'partidos'}{' '}
-          de local
-        </strong>{' '}
-        y{' '}
-        <strong className='text-foreground'>
-          {estadisticas.partidosVisitanteEsperados} de visitante
-        </strong>
-        .
-      </p>
+      {estadisticas.partidosLocalEsperados ===
+      estadisticas.partidosVisitanteEsperados ? (
+        <p className='text-sm text-muted-foreground'>
+          Cada equipo juega{' '}
+          <strong className='text-foreground'>
+            {estadisticas.partidosLocalEsperados}{' '}
+            {estadisticas.partidosLocalEsperados === 1 ? 'partido' : 'partidos'}{' '}
+            de local
+          </strong>{' '}
+          y{' '}
+          <strong className='text-foreground'>
+            {estadisticas.partidosVisitanteEsperados} de visitante
+          </strong>
+          .
+        </p>
+      ) : (
+        <p className='text-sm text-muted-foreground'>
+          Cada equipo juega{' '}
+          <strong className='text-foreground'>
+            {estadisticas.partidosLocalEsperados} o{' '}
+            {estadisticas.partidosVisitanteEsperados} partidos de local
+          </strong>{' '}
+          (y el complemento de visitante).
+        </p>
+      )}
       {estadisticas.excepciones.length > 0 && (
         <div className='space-y-1'>
           <p className='text-xs font-medium text-amber-700 flex items-center gap-1'>

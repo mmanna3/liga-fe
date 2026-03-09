@@ -479,6 +479,15 @@ export function construirParticipantesEliminacion(
 
 // ─── Movimiento de equipos ───────────────────────────────────────────────────
 
+function inferirTipo(
+  local: string,
+  visitante: string
+): 'regular' | 'libre' | 'interzonal' {
+  if (local === 'LIBRE' || visitante === 'LIBRE') return 'libre'
+  if (local === 'INTERZONAL' || visitante === 'INTERZONAL') return 'interzonal'
+  return 'regular'
+}
+
 /**
  * Intercambia dos slots (local o visitante) entre fechas (pueden ser la misma o distintas).
  * Si los ids o las fechas no existen, retorna el array sin cambios.
@@ -547,29 +556,44 @@ export function intercambiarEquiposEnFecha(
             resultado.visitante = datosOrigen.nombre
             resultado.idEquipoVisitante = datosOrigen.id
           }
+          resultado.tipo = inferirTipo(resultado.local, resultado.visitante)
           return resultado
         }
         if (esOrigen && e.id === origenId) {
-          return origenPosicion === 'local'
-            ? {
-                ...e,
-                local: datosDestino.nombre,
-                idEquipoLocal: datosDestino.id
-              }
-            : {
-                ...e,
-                visitante: datosDestino.nombre,
-                idEquipoVisitante: datosDestino.id
-              }
+          const newLocal =
+            origenPosicion === 'local' ? datosDestino.nombre : e.local
+          const newVisitante =
+            origenPosicion === 'visitante' ? datosDestino.nombre : e.visitante
+          return {
+            ...e,
+            tipo: inferirTipo(newLocal, newVisitante),
+            local: newLocal,
+            idEquipoLocal:
+              origenPosicion === 'local' ? datosDestino.id : e.idEquipoLocal,
+            visitante: newVisitante,
+            idEquipoVisitante:
+              origenPosicion === 'visitante'
+                ? datosDestino.id
+                : e.idEquipoVisitante
+          }
         }
         if (esDestino && e.id === destinoId) {
-          return destinoPosicion === 'local'
-            ? { ...e, local: datosOrigen.nombre, idEquipoLocal: datosOrigen.id }
-            : {
-                ...e,
-                visitante: datosOrigen.nombre,
-                idEquipoVisitante: datosOrigen.id
-              }
+          const newLocal =
+            destinoPosicion === 'local' ? datosOrigen.nombre : e.local
+          const newVisitante =
+            destinoPosicion === 'visitante' ? datosOrigen.nombre : e.visitante
+          return {
+            ...e,
+            tipo: inferirTipo(newLocal, newVisitante),
+            local: newLocal,
+            idEquipoLocal:
+              destinoPosicion === 'local' ? datosOrigen.id : e.idEquipoLocal,
+            visitante: newVisitante,
+            idEquipoVisitante:
+              destinoPosicion === 'visitante'
+                ? datosOrigen.id
+                : e.idEquipoVisitante
+          }
         }
         return e
       })
