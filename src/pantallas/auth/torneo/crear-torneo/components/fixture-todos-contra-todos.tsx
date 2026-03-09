@@ -264,9 +264,10 @@ export function FixtureTodosContraTodos({
             fechaFusionada?.entradas.filter(
               (e) =>
                 e.tipo === 'interzonal' &&
-                (e.idEquipoLocal != null
-                  ? idsEquiposEnZonaSeleccionada.has(e.idEquipoLocal)
-                  : idsEquiposEnZonaSeleccionada.has(e.idEquipoVisitante!))
+                ((e.idEquipoLocal != null &&
+                  idsEquiposEnZonaSeleccionada.has(e.idEquipoLocal)) ||
+                  (e.idEquipoVisitante != null &&
+                    idsEquiposEnZonaSeleccionada.has(e.idEquipoVisitante)))
             ) ?? []
           const interzonalesCrudos = fd.entradas.filter(
             (e) => e.tipo === 'interzonal'
