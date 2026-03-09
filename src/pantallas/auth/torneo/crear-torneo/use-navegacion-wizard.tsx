@@ -52,10 +52,13 @@ export function useNavegacionWizard() {
                 </span>
               ))}
             </span>
-          )
+          ),
+          { duration: 8000 }
         )
       } else {
-        toast.error('Por favor, completa todos los campos requeridos')
+        toast.error('Por favor, completa todos los campos requeridos', {
+          duration: 8000
+        })
       }
       return false
     }
@@ -116,7 +119,8 @@ export function useNavegacionWizard() {
     if (!(await validarPasoActual())) return
     if (pasoDestino > maxPasoAlcanzado) {
       toast.error(
-        'Completa el paso actual y avanza con "Siguiente" para desbloquear más pasos'
+        'Completa el paso actual y avanza con "Siguiente" para desbloquear más pasos',
+        { duration: 8000 }
       )
       return
     }
