@@ -19,6 +19,7 @@ const MAPEO_ICONOS: Record<
   Menú: LucideIcons.Menu,
 
   // Acciones
+  Sortear: LucideIcons.Shuffle,
   Descargar: LucideIcons.Download,
   Editar: LucideIcons.Pencil,
   Eliminar: LucideIcons.Trash2,

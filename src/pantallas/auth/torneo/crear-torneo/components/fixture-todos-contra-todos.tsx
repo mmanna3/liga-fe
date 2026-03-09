@@ -1,6 +1,6 @@
 import { cn } from '@/logica-compartida/utils'
 import { AlertTriangle, Calendar as CalendarIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
   calcularEstadisticasFixture,
@@ -61,13 +61,50 @@ export function FixtureTodosContraTodos({
     Array<{ idZona: string; nombreZona: string; fechas: FechaFixture[] }>
   >([])
   const [fechasFusionadas, setFechasFusionadas] = useState<FechaFixture[]>([])
-  const [estadisticas, setEstadisticas] = useState<EstadisticasFixture | null>(
-    null
-  )
+  const [zonaSeleccionadaId, setZonaSeleccionadaId] = useState<string>('')
   const [slotArrastrado, setSlotArrastrado] = useState<SlotArrastrado>(null)
   const [slotSobreEl, setSlotSobreEl] = useState<SlotHover>(null)
-  const [zonaSeleccionadaId, setZonaSeleccionadaId] = useState<string>('')
 
+  const estadisticas = useMemo<EstadisticasFixture | null>(() => {
+    if (!fixtureGenerado) return null
+    if (usarModoZona && fixturesPorZona.length > 0) {
+      const idZona = zonaSeleccionadaId || fixturesPorZona[0].idZona
+      const zonaFixture = fixturesPorZona.find((f) => f.idZona === idZona)
+      const zonaInput = entradasDeZona.find((z) => z.id === idZona)
+      if (!zonaFixture || !zonaInput) return null
+      return calcularEstadisticasFixture(
+        zonaFixture.fechas,
+        zonaInput.equipos,
+        zonaInput.fechasLibres,
+        zonaInput.fechasInterzonales,
+        vueltas
+      )
+    } else if (!usarModoZona && fechasFixture.length > 0) {
+      const equipos = equiposSeleccionados.map((t) => ({
+        id: t.id,
+        nombre: t.nombre
+      }))
+      return calcularEstadisticasFixture(
+        fechasFixture,
+        equipos,
+        fechasLibres,
+        fechasInterzonales,
+        vueltas
+      )
+    }
+    return null
+  }, [
+    fixtureGenerado,
+    usarModoZona,
+    fixturesPorZona,
+    zonaSeleccionadaId,
+    entradasDeZona,
+    fechasFixture,
+    equiposSeleccionados,
+    fechasLibres,
+    fechasInterzonales,
+    vueltas
+  ])
   // Auto-seleccionar primera zona cuando se generan los fixtures
   useEffect(() => {
     if (usarModoZona && fixturesPorZona.length > 0 && !zonaSeleccionadaId) {
@@ -138,41 +175,6 @@ export function FixtureTodosContraTodos({
       }
     }
   }, [claveGeneracion])
-
-  // Recalcular estadísticas cuando el fixture cambia (generación o movimiento de equipos)
-  useEffect(() => {
-    if (!fixtureGenerado) return
-
-    if (usarModoZona && fixturesPorZona.length > 0) {
-      const idZona = zonaSeleccionadaId || fixturesPorZona[0].idZona
-      const zonaFixture = fixturesPorZona.find((f) => f.idZona === idZona)
-      const zonaInput = entradasDeZona.find((z) => z.id === idZona)
-      if (!zonaFixture || !zonaInput) return
-      setEstadisticas(
-        calcularEstadisticasFixture(
-          zonaFixture.fechas,
-          zonaInput.equipos,
-          zonaInput.fechasLibres,
-          zonaInput.fechasInterzonales,
-          vueltas
-        )
-      )
-    } else if (!usarModoZona && fechasFixture.length > 0) {
-      const equipos = equiposSeleccionados.map((t) => ({
-        id: t.id,
-        nombre: t.nombre
-      }))
-      setEstadisticas(
-        calcularEstadisticasFixture(
-          fechasFixture,
-          equipos,
-          fechasLibres,
-          fechasInterzonales,
-          vueltas
-        )
-      )
-    }
-  }, [fechasFixture, fixturesPorZona, zonaSeleccionadaId])
 
   // ─── Drag and drop a nivel de equipo individual ──────────────────────────
 

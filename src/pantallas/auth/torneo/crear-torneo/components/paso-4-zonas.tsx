@@ -1,19 +1,15 @@
-import { Input } from '@/design-system/base-ui/input'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from '@/design-system/base-ui/tooltip'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import CajitaConTick from '@/design-system/ykn-ui/cajita-con-tick'
-import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
-import { Info, Pencil, Plus, Shuffle, Trash2 } from 'lucide-react'
+import Icono from '@/design-system/ykn-ui/icono'
+import { Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { toast } from 'sonner'
 import type { DatosWizardTorneo, EquipoWizard, Zona } from '../tipos'
+import { TextoAyuda } from '@/design-system/ykn-ui/texto-ayuda'
+import { EquiposSinAsignar } from './equipos-sin-asignar'
 import { MiniResumen } from './mini-resumen'
+import { ZonaConEquiposArrastrables } from './zona-con-equipos-arrastrables'
 
 export function Paso4Zonas() {
   const {
@@ -170,6 +166,11 @@ export function Paso4Zonas() {
     setValue('fixtureGenerado', false)
   }
 
+  const equiposSinAsignar = datos.equiposSeleccionados.filter(
+    (equipo) =>
+      !datos.zonas.some((zona) => zona.equipos.some((t) => t.id === equipo.id))
+  )
+
   return (
     <div className='space-y-6'>
       <MiniResumen>
@@ -181,7 +182,7 @@ export function Paso4Zonas() {
       <div>
         <div className='flex flex-wrap items-center gap-3 mb-6'>
           <Boton type='button' onClick={sortearEquipos}>
-            <Shuffle className='w-4 h-4' />
+            <Icono nombre='Sortear' className='w-4 h-4' />
             Sortear
           </Boton>
           <CajitaConTick
@@ -214,201 +215,35 @@ export function Paso4Zonas() {
         </div>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
           {datos.zonas.map((zona) => (
-            <div
+            <ZonaConEquiposArrastrables
               key={zona.id}
-              onDragOver={alArrastrarSobre}
-              onDrop={() => alSoltar(zona.id)}
-              className='bg-muted rounded-xl p-4 border-2 border-dashed min-h-[300px]'
-            >
-              <div className='flex items-center justify-between mb-4 gap-2'>
-                {editandoZonaId === zona.id ? (
-                  <Input
-                    type='text'
-                    value={zona.nombre}
-                    onChange={(e) =>
-                      actualizarZona(zona.id, { nombre: e.target.value })
-                    }
-                    onBlur={() => setEditandoZonaId(null)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') setEditandoZonaId(null)
-                    }}
-                    autoFocus
-                    onClick={(e) => e.stopPropagation()}
-                    className='flex-1 min-w-0'
-                  />
-                ) : (
-                  <>
-                    <h4
-                      className='font-bold cursor-pointer hover:text-primary transition-colors flex-1 min-w-0'
-                      onClick={() => setEditandoZonaId(zona.id)}
-                    >
-                      {zona.nombre}
-                    </h4>
-                    <span
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setEditandoZonaId(zona.id)
-                      }}
-                      role='button'
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') setEditandoZonaId(zona.id)
-                      }}
-                      className='p-1 hover:bg-accent rounded transition-colors cursor-pointer'
-                    >
-                      <Pencil className='w-3 h-3 text-muted-foreground' />
-                    </span>
-                  </>
-                )}
-                <Boton
-                  type='button'
-                  variant='ghost'
-                  size='icon'
-                  className='h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0'
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    quitarZona(zona.id)
-                  }}
-                  disabled={cantidadZonas <= 1}
-                >
-                  <Trash2 className='w-4 h-4' />
-                </Boton>
-              </div>
-
-              {/* Fechas libres e interzonales por zona */}
-              <TooltipProvider delayDuration={300}>
-                <div className='space-y-2 mb-3'>
-                  <div className='flex items-center justify-between gap-2'>
-                    <div className='flex items-center gap-1'>
-                      <span className='text-xs font-medium'>Fechas LIBRES</span>
-                      <Tooltip>
-                        <TooltipTrigger type='button'>
-                          <Info className='w-3 h-3 text-muted-foreground' />
-                        </TooltipTrigger>
-                        <TooltipContent className='max-w-[200px] text-xs'>
-                          Cantidad de fechas en las que cada equipo de la zona
-                          quedará libre
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                    <SelectorSimple
-                      tamano='sm'
-                      opciones={[
-                        { id: '0', texto: '0' },
-                        { id: '1', texto: '1' },
-                        { id: '2', texto: '2' }
-                      ]}
-                      valorActual={String(zona.fechasLibres)}
-                      alElegirOpcion={(v) =>
-                        actualizarFechasZona(zona.id, {
-                          fechasLibres: Number(v)
-                        })
-                      }
-                    />
-                  </div>
-
-                  {cantidadZonas > 1 && (
-                    <div className='flex items-center justify-between gap-2'>
-                      <div className='flex items-center gap-1'>
-                        <span className='text-xs font-medium'>
-                          Fechas INTERZONALES
-                        </span>
-                        <Tooltip>
-                          <TooltipTrigger type='button'>
-                            <Info className='w-3 h-3 text-muted-foreground' />
-                          </TooltipTrigger>
-                          <TooltipContent className='max-w-[200px] text-xs'>
-                            Cantidad de fechas en las que cada equipo jugará
-                            contra un rival de otra zona
-                          </TooltipContent>
-                        </Tooltip>
-                      </div>
-                      <SelectorSimple
-                        tamano='sm'
-                        opciones={[
-                          { id: '0', texto: '0' },
-                          { id: '1', texto: '1' },
-                          { id: '2', texto: '2' }
-                        ]}
-                        valorActual={String(zona.fechasInterzonales)}
-                        alElegirOpcion={(v) =>
-                          actualizarFechasZona(zona.id, {
-                            fechasInterzonales: Number(v)
-                          })
-                        }
-                      />
-                    </div>
-                  )}
-                </div>
-              </TooltipProvider>
-
-              <div className='text-xs text-muted-foreground mb-3'>
-                {zona.equipos.length} equipo
-                {zona.equipos.length !== 1 ? 's' : ''}
-              </div>
-
-              <div className='space-y-2'>
-                {zona.equipos.map((equipo) => (
-                  <div
-                    key={equipo.id}
-                    draggable
-                    onDragStart={() => alIniciarArrastre(equipo, zona.id)}
-                    className='bg-background p-3 rounded-lg shadow-sm border cursor-move hover:shadow-md hover:border-primary/30 transition-all'
-                  >
-                    <div className='font-medium text-sm'>{equipo.nombre}</div>
-                    <div className='text-xs text-muted-foreground mt-1'>
-                      {equipo.club}
-                    </div>
-                  </div>
-                ))}
-
-                {zona.equipos.length === 0 && (
-                  <div className='text-center py-8 text-muted-foreground text-sm'>
-                    Arrastra equipos aquí
-                  </div>
-                )}
-              </div>
-            </div>
+              zona={zona}
+              editandoZonaId={editandoZonaId}
+              setEditandoZonaId={setEditandoZonaId}
+              cantidadZonas={cantidadZonas}
+              alArrastrarSobre={alArrastrarSobre}
+              alSoltar={() => alSoltar(zona.id)}
+              onIniciarArrastre={alIniciarArrastre}
+              onActualizarZona={actualizarZona}
+              onActualizarFechasZona={actualizarFechasZona}
+              onQuitarZona={quitarZona}
+            />
           ))}
         </div>
 
-        {datos.zonas.length > 0 &&
-          datos.equiposSeleccionados.length >
-            datos.zonas.reduce((acc, z) => acc + z.equipos.length, 0) && (
-            <div className='mt-6 bg-amber-50 rounded-xl p-4 border border-amber-200'>
-              <h4 className='font-bold mb-3'>Equipos sin asignar</h4>
-              <div className='grid grid-cols-2 md:grid-cols-4 gap-2'>
-                {datos.equiposSeleccionados
-                  .filter(
-                    (equipo) =>
-                      !datos.zonas.some((zona) =>
-                        zona.equipos.some((t) => t.id === equipo.id)
-                      )
-                  )
-                  .map((equipo) => (
-                    <div
-                      key={equipo.id}
-                      draggable
-                      onDragStart={() =>
-                        alIniciarArrastre(equipo, ID_ZONA_SIN_ASIGNAR)
-                      }
-                      className='bg-background p-2 rounded-lg shadow-sm border text-sm cursor-move hover:shadow-md hover:border-primary/30 transition-all'
-                    >
-                      <div className='font-medium'>{equipo.nombre}</div>
-                      <div className='text-xs text-muted-foreground'>
-                        {equipo.club}
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            </div>
-          )}
+        {datos.zonas.length > 0 && equiposSinAsignar.length > 0 && (
+          <EquiposSinAsignar
+            equipos={equiposSinAsignar}
+            idZonaSinAsignar={ID_ZONA_SIN_ASIGNAR}
+            onIniciarArrastre={alIniciarArrastre}
+          />
+        )}
 
-        <div className='mt-6 p-4 bg-muted rounded-lg'>
-          <p className='text-sm text-muted-foreground'>
+        <div className='mt-6'>
+          <TextoAyuda>
             Arrastrá y soltá los equipos entre zonas para organizarlos como
             prefieras
-          </p>
+          </TextoAyuda>
         </div>
       </div>
     </div>

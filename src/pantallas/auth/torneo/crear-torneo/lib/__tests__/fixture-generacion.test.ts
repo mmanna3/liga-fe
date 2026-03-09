@@ -848,6 +848,65 @@ describe('intercambiarEquiposEnFecha', () => {
   })
 })
 
+// ─── Integración: intercambiar local/visitante → calcularEstadisticasFixture ──
+
+describe('intercambiar local↔visitante y recalcular estadísticas', () => {
+  it('ida-y-vuelta: swap local↔visitante en mismo partido genera excepciones de local y visitante', () => {
+    // 4 equipos, ida-y-vuelta: cada equipo debe jugar 3 de local y 3 de visitante.
+    // Tras intercambiar local y visitante en un partido, el equipo que pierde
+    // el turno de local pasa a 2 local (excepción) y el que lo gana pasa a 4 (excepción).
+    const eq = [
+      { id: 1, nombre: 'Equipo 1' },
+      { id: 2, nombre: 'Equipo 2' },
+      { id: 3, nombre: 'Equipo 3' },
+      { id: 4, nombre: 'Equipo 4' }
+    ]
+    const fechas = generarFixture(eq, 0, 0, 'ida-y-vuelta')
+
+    // Encontrar el primer partido regular para saber qué equipos intercambiar
+    const primeraFecha = fechas[0]
+    const primerPartido = primeraFecha.entradas.find(
+      (e) => e.tipo === 'regular'
+    )!
+    const equipoLocalId = primerPartido.idEquipoLocal!
+    const equipoVisitanteId = primerPartido.idEquipoVisitante!
+
+    // Intercambiar local ↔ visitante del mismo partido
+    const fechasEditadas = intercambiarEquiposEnFecha(
+      fechas,
+      primeraFecha.numeroFecha,
+      primerPartido.id,
+      'local',
+      primeraFecha.numeroFecha,
+      primerPartido.id,
+      'visitante'
+    )
+
+    const stats = calcularEstadisticasFixture(
+      fechasEditadas,
+      eq,
+      0,
+      0,
+      'ida-y-vuelta'
+    )
+
+    // El equipo que ERA local ahora juega un partido menos de local
+    const nombreLocal = eq.find((e) => e.id === equipoLocalId)!.nombre
+    const nombreVisitante = eq.find((e) => e.id === equipoVisitanteId)!.nombre
+
+    expect(
+      stats.excepciones.some(
+        (e) => e.includes(nombreLocal) && e.includes('local')
+      )
+    ).toBe(true)
+    expect(
+      stats.excepciones.some(
+        (e) => e.includes(nombreVisitante) && e.includes('local')
+      )
+    ).toBe(true)
+  })
+})
+
 // ─── intercambiarParticipantesEnBracket ──────────────────────────────────────
 
 describe('intercambiarParticipantesEnBracket', () => {
