@@ -1,5 +1,3 @@
-import { Input } from '@/design-system/base-ui/input'
-import { Label } from '@/design-system/base-ui/label'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
@@ -17,7 +15,6 @@ import { FixtureEliminacionDirecta } from './fixture-eliminacion-directa'
 import { FixtureTodosContraTodos } from './fixture-todos-contra-todos'
 import { MiniResumen } from './mini-resumen'
 import { PanelValidacion } from './panel-validacion'
-import { TablaConfigZonas } from './tabla-config-zonas'
 
 export function Paso5Fixture() {
   const {
@@ -160,56 +157,6 @@ export function Paso5Fixture() {
 
       {(esTodosContraTodos || esEliminacion) && (
         <div className='space-y-4'>
-          {/* Inputs de configuración de zonas */}
-          {usarModoZona ? (
-            <TablaConfigZonas
-              zonasConEquipos={zonasConEquipos}
-              tieneMultiplesZonas={tieneMultiplesZonas}
-            />
-          ) : (
-            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-              <div>
-                <Label htmlFor='fechasLibres' className='block mb-1.5'>
-                  Fechas libre por equipo
-                </Label>
-                <Input
-                  id='fechasLibres'
-                  type='number'
-                  min={0}
-                  value={fechasLibres}
-                  onChange={(e) => {
-                    const v = Math.max(0, parseInt(e.target.value) || 0)
-                    setValue('fechasLibres', v)
-                    setValue('fixtureGenerado', false)
-                  }}
-                />
-                <p className='text-xs text-muted-foreground mt-1'>
-                  Cada equipo descansa esta cantidad de jornadas
-                </p>
-              </div>
-
-              <div>
-                <Label htmlFor='fechasInterzonales' className='block mb-1.5'>
-                  Fechas interzonal por equipo
-                </Label>
-                <Input
-                  id='fechasInterzonales'
-                  type='number'
-                  min={0}
-                  value={fechasInterzonales}
-                  onChange={(e) => {
-                    const v = Math.max(0, parseInt(e.target.value) || 0)
-                    setValue('fechasInterzonales', v)
-                    setValue('fixtureGenerado', false)
-                  }}
-                />
-                <p className='text-xs text-muted-foreground mt-1'>
-                  Cada equipo juega interzonal esta cantidad de jornadas
-                </p>
-              </div>
-            </div>
-          )}
-
           {/* Panel de validación + botón generar */}
           <PanelValidacion
             configValida={configValida}

@@ -54,46 +54,41 @@ export function validarZonas(
 }
 
 /**
- * Valida que el emparejamiento interzonal sea posible.
- * Para que cada equipo tenga rival en cada fecha, TODAS las zonas deben tener
- * la misma cantidad de fechasInterzonales (o todas 0).
+ * Valida que el emparejamiento interzonal sea globalmente posible.
+ *
+ * Condiciones necesarias y suficientes:
+ *   1. El total de slots interzonales (equipos × fechasInterzonales sumado de
+ *      todas las zonas) debe ser par — cada partido consume 2 slots.
+ *   2. Ninguna zona puede tener más slots que la suma del resto — de lo
+ *      contrario, esa zona no tendría suficientes rivales de otras zonas.
+ *
+ * Slots de una zona = equipos.length × fechasInterzonales
  */
 export function validarEmparejamientoInterzonal(
   zonas: EntradaDeZona[]
 ): ValidacionEmparejamientoInterzonal {
   if (zonas.length <= 1) return { esValido: true, mensaje: '' }
 
-  const valores = zonas.map((z) => z.fechasInterzonales)
-  const conInterzonal = valores.filter((v) => v > 0)
+  const slots = zonas.map((z) => z.equipos.length * z.fechasInterzonales)
+  const total = slots.reduce((a, b) => a + b, 0)
 
-  if (conInterzonal.length === 0) return { esValido: true, mensaje: '' }
+  if (total === 0) return { esValido: true, mensaje: '' }
 
-  const primero = conInterzonal[0]
-  const todosIguales = conInterzonal.every((v) => v === primero)
-
-  if (!todosIguales) {
-    const porZona = zonas
-      .filter((z) => z.fechasInterzonales > 0)
-      .map((z) => `${z.nombre}: ${z.fechasInterzonales}`)
-      .join(', ')
+  if (total % 2 !== 0) {
     return {
       esValido: false,
-      mensaje: `Todas las zonas deben tener la misma cantidad de fechas interzonales por equipo para que cada equipo tenga rival en cada fecha. Actual: ${porZona}`
+      mensaje: `El total de slots interzonales (${total}) debe ser par para poder emparejar todos los partidos.`
     }
   }
 
-  const zonasConCero = zonas.filter((z) => z.fechasInterzonales === 0)
-  if (zonasConCero.length > 0) {
-    return {
-      esValido: false,
-      mensaje: `Las zonas ${zonasConCero.map((z) => z.nombre).join(', ')} tienen 0 interzonal mientras otras tienen ${primero}. Todas deben ser iguales.`
-    }
-  }
+  const maxIdx = slots.indexOf(Math.max(...slots))
+  const maxSlots = slots[maxIdx]
+  const resto = total - maxSlots
 
-  if (zonas.length >= 3 && primero % 2 !== 0) {
+  if (maxSlots > resto) {
     return {
       esValido: false,
-      mensaje: `Con 3 o más zonas, la cantidad interzonal debe ser par para que cada equipo tenga rival en cada fecha (actual: ${primero}).`
+      mensaje: `${zonas[maxIdx].nombre} tiene ${maxSlots} slots interzonales pero solo hay ${resto} disponibles en las demás zonas. Reducí sus fechas interzonales o aumentá las del resto.`
     }
   }
 

@@ -1,7 +1,13 @@
 import { Input } from '@/design-system/base-ui/input'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/design-system/base-ui/tooltip'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import CajitaConTick from '@/design-system/ykn-ui/cajita-con-tick'
-import { Pencil, Plus, Shuffle, Trash2 } from 'lucide-react'
+import { Info, Pencil, Plus, Shuffle, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -178,6 +184,14 @@ export function Paso4Zonas() {
     )
   }
 
+  const actualizarFechasZona = (
+    zonaId: string,
+    campo: { fechasLibres?: number; fechasInterzonales?: number }
+  ) => {
+    actualizarZona(zonaId, campo)
+    setValue('fixtureGenerado', false)
+  }
+
   return (
     <div className='space-y-6'>
       <MiniResumen>
@@ -282,6 +296,79 @@ export function Paso4Zonas() {
                   <Trash2 className='w-4 h-4' />
                 </Boton>
               </div>
+
+              {/* Fechas libres e interzonales por zona */}
+              <TooltipProvider delayDuration={300}>
+                <div className='space-y-2 mb-3'>
+                  <div className='flex items-center justify-between gap-2'>
+                    <div className='flex items-center gap-1'>
+                      <span className='text-xs font-medium'>Fechas LIBRES</span>
+                      <Tooltip>
+                        <TooltipTrigger type='button'>
+                          <Info className='w-3 h-3 text-muted-foreground' />
+                        </TooltipTrigger>
+                        <TooltipContent className='max-w-[200px] text-xs'>
+                          Cantidad de fechas en las que cada equipo de la zona
+                          quedará libre
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <Input
+                      type='number'
+                      min={0}
+                      className='h-7 w-16 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
+                      value={
+                        (zona as Zona & { fechasLibres?: number })
+                          .fechasLibres ?? 0
+                      }
+                      onChange={(e) =>
+                        actualizarFechasZona(zona.id, {
+                          fechasLibres: Math.max(
+                            0,
+                            parseInt(e.target.value) || 0
+                          )
+                        })
+                      }
+                    />
+                  </div>
+
+                  {cantidadZonas > 1 && (
+                    <div className='flex items-center justify-between gap-2'>
+                      <div className='flex items-center gap-1'>
+                        <span className='text-xs font-medium'>
+                          Fechas INTERZONALES
+                        </span>
+                        <Tooltip>
+                          <TooltipTrigger type='button'>
+                            <Info className='w-3 h-3 text-muted-foreground' />
+                          </TooltipTrigger>
+                          <TooltipContent className='max-w-[200px] text-xs'>
+                            Cantidad de fechas en las que cada equipo jugará
+                            contra un rival de otra zona
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                      <Input
+                        type='number'
+                        min={0}
+                        className='h-7 w-16 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
+                        value={
+                          (zona as Zona & { fechasInterzonales?: number })
+                            .fechasInterzonales ?? 0
+                        }
+                        onChange={(e) =>
+                          actualizarFechasZona(zona.id, {
+                            fechasInterzonales: Math.max(
+                              0,
+                              parseInt(e.target.value) || 0
+                            )
+                          })
+                        }
+                      />
+                    </div>
+                  )}
+                </div>
+              </TooltipProvider>
 
               <div className='text-xs text-muted-foreground mb-3'>
                 {zona.equipos.length} equipo

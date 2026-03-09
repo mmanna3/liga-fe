@@ -183,19 +183,24 @@ describe('validarZonas / eliminacion', () => {
 })
 
 // ─── validarEmparejamientoInterzonal ─────────────────────────────────────────
+// Regla: slots_i = equipos_i × fechasInterzonales_i
+//   1. sum(slots) debe ser par
+//   2. max(slots) ≤ sum(slots) / 2  (ninguna zona domina)
 
 describe('validarEmparejamientoInterzonal', () => {
+  // ── Casos base ──────────────────────────────────────────────────────────────
+
   it('0 zonas → válido', () => {
-    const r = validarEmparejamientoInterzonal([])
-    expect(r.esValido).toBe(true)
+    expect(validarEmparejamientoInterzonal([]).esValido).toBe(true)
   })
 
   it('1 zona → siempre válido', () => {
-    const r = validarEmparejamientoInterzonal([zona('A', 4, 0, 2)])
-    expect(r.esValido).toBe(true)
+    expect(validarEmparejamientoInterzonal([zona('A', 4, 0, 2)]).esValido).toBe(
+      true
+    )
   })
 
-  it('2 zonas con 0 interzonales → válido', () => {
+  it('todas las zonas con 0 interzonales → válido', () => {
     const r = validarEmparejamientoInterzonal([
       zona('A', 4, 0, 0),
       zona('B', 4, 0, 0)
@@ -203,49 +208,115 @@ describe('validarEmparejamientoInterzonal', () => {
     expect(r.esValido).toBe(true)
   })
 
-  it('2 zonas con el mismo valor de interzonales → válido', () => {
+  // ── Casos de éxito del enunciado ────────────────────────────────────────────
+
+  it('CASO 1: 2 zonas × 8 eq × 1 int → slots [8,8] → válido', () => {
+    // total=16, max=8 ≤ 8
     const r = validarEmparejamientoInterzonal([
-      zona('A', 4, 0, 2),
-      zona('B', 4, 0, 2)
+      zona('A', 8, 0, 1),
+      zona('B', 8, 0, 1)
     ])
     expect(r.esValido).toBe(true)
   })
 
-  it('2 zonas con distinto valor de interzonales → inválido', () => {
+  it('CASO 2: 2 zonas × 8 eq × 2 int → slots [16,16] → válido', () => {
+    // total=32, max=16 ≤ 16
     const r = validarEmparejamientoInterzonal([
-      zona('A', 4, 0, 1),
-      zona('B', 4, 0, 2)
+      zona('A', 8, 0, 2),
+      zona('B', 8, 0, 2)
     ])
-    expect(r.esValido).toBe(false)
-    expect(r.mensaje).toMatch(/misma cantidad/)
+    expect(r.esValido).toBe(true)
   })
 
-  it('2 zonas: una con interzonales y otra sin → inválido', () => {
+  it('CASO 3: 4 zonas × 8 eq × 1 int → slots [8,8,8,8] → válido', () => {
+    // total=32, max=8 ≤ 24
+    const r = validarEmparejamientoInterzonal([
+      zona('A', 8, 0, 1),
+      zona('B', 8, 0, 1),
+      zona('C', 8, 0, 1),
+      zona('D', 8, 0, 1)
+    ])
+    expect(r.esValido).toBe(true)
+  })
+
+  it('CASO 4: zona 4eq×2int y zona 8eq×1int → slots [8,8] → válido', () => {
+    // total=16, max=8 ≤ 8
     const r = validarEmparejamientoInterzonal([
       zona('A', 4, 0, 2),
-      zona('B', 4, 0, 0)
+      zona('B', 8, 0, 1)
     ])
-    expect(r.esValido).toBe(false)
-    expect(r.mensaje).toMatch(/0 interzonal/)
+    expect(r.esValido).toBe(true)
   })
 
-  it('3+ zonas con valor impar de interzonales → inválido', () => {
+  it('CASO 5: zonas 4eq×1, 4eq×1, 8eq×1 → slots [4,4,8] → válido', () => {
+    // total=16, max=8 ≤ 8
+    const r = validarEmparejamientoInterzonal([
+      zona('A', 4, 0, 1),
+      zona('B', 4, 0, 1),
+      zona('C', 8, 0, 1)
+    ])
+    expect(r.esValido).toBe(true)
+  })
+
+  it('3 zonas iguales con 1 interzonal → slots [4,4,4] → válido', () => {
+    // total=12, max=4 ≤ 8
     const r = validarEmparejamientoInterzonal([
       zona('A', 4, 0, 1),
       zona('B', 4, 0, 1),
       zona('C', 4, 0, 1)
     ])
+    expect(r.esValido).toBe(true)
+  })
+
+  // ── Casos de error: zona dominante ──────────────────────────────────────────
+
+  it('zona con más slots que el resto combinado → inválido', () => {
+    // slots [16, 4]: max=16 > resto=4
+    const r = validarEmparejamientoInterzonal([
+      zona('A', 8, 0, 2), // 8×2 = 16
+      zona('B', 4, 0, 1) // 4×1 = 4
+    ])
+    expect(r.esValido).toBe(false)
+    expect(r.mensaje).toMatch(/Zona A/)
+  })
+
+  it('zona con interzonales y otra con 0 → inválido', () => {
+    // slots [8, 0]: max=8 > resto=0
+    const r = validarEmparejamientoInterzonal([
+      zona('A', 4, 0, 2), // 4×2 = 8
+      zona('B', 4, 0, 0) // 0
+    ])
+    expect(r.esValido).toBe(false)
+  })
+
+  it('3 zonas donde una domina → inválido', () => {
+    // slots [16, 2, 2]: max=16 > resto=4
+    const r = validarEmparejamientoInterzonal([
+      zona('A', 8, 0, 2), // 16
+      zona('B', 2, 0, 1), // 2
+      zona('C', 2, 0, 1) // 2
+    ])
+    expect(r.esValido).toBe(false)
+  })
+
+  // ── Casos de error: total impar ──────────────────────────────────────────────
+
+  it('total de slots impar → inválido', () => {
+    // slots [3, 2]: total=5 impar (3 equipos × 1 int, 2 equipos × 1 int)
+    const r = validarEmparejamientoInterzonal([
+      zona('A', 3, 0, 1), // 3×1 = 3
+      zona('B', 2, 0, 1) // 2×1 = 2
+    ])
     expect(r.esValido).toBe(false)
     expect(r.mensaje).toMatch(/par/)
   })
 
-  it('3+ zonas con valor par de interzonales → válido', () => {
+  it('slots [6, 3]: total=9 impar → inválido', () => {
     const r = validarEmparejamientoInterzonal([
-      zona('A', 4, 0, 2),
-      zona('B', 4, 0, 2),
-      zona('C', 4, 0, 2)
+      zona('A', 6, 0, 1), // 6
+      zona('B', 3, 0, 1) // 3
     ])
-    expect(r.esValido).toBe(true)
+    expect(r.esValido).toBe(false)
   })
 })
 
