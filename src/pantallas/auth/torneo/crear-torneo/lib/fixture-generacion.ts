@@ -461,6 +461,120 @@ export function construirParticipantesEliminacion(
   return resultado
 }
 
+// ─── Movimiento de equipos ───────────────────────────────────────────────────
+
+/**
+ * Intercambia dos slots (local o visitante) dentro de una fecha específica.
+ * Solo modifica las entradas de esa fecha; el resto queda intacto.
+ * Si los ids o la fecha no existen, retorna el array sin cambios.
+ */
+export function intercambiarEquiposEnFecha(
+  fechas: FechaFixture[],
+  numeroFecha: number,
+  origenId: string,
+  origenPosicion: 'local' | 'visitante',
+  destinoId: string,
+  destinoPosicion: 'local' | 'visitante'
+): FechaFixture[] {
+  if (origenId === destinoId && origenPosicion === destinoPosicion)
+    return fechas
+
+  const fecha = fechas.find((d) => d.numeroFecha === numeroFecha)
+  if (!fecha) return fechas
+
+  const entradaOrigen = fecha.entradas.find((e) => e.id === origenId)
+  const entradaDestino = fecha.entradas.find((e) => e.id === destinoId)
+  if (!entradaOrigen || !entradaDestino) return fechas
+
+  const datosOrigen =
+    origenPosicion === 'local'
+      ? { nombre: entradaOrigen.local, id: entradaOrigen.idEquipoLocal }
+      : { nombre: entradaOrigen.visitante, id: entradaOrigen.idEquipoVisitante }
+
+  const datosDestino =
+    destinoPosicion === 'local'
+      ? { nombre: entradaDestino.local, id: entradaDestino.idEquipoLocal }
+      : {
+          nombre: entradaDestino.visitante,
+          id: entradaDestino.idEquipoVisitante
+        }
+
+  return fechas.map((d) => {
+    if (d.numeroFecha !== numeroFecha) return d
+    return {
+      ...d,
+      entradas: d.entradas.map((e) => {
+        // Mismo partido: cada slot recibe los datos del otro
+        if (e.id === origenId && e.id === destinoId) {
+          const resultado = { ...e }
+          if (origenPosicion === 'local') {
+            resultado.local = datosDestino.nombre
+            resultado.idEquipoLocal = datosDestino.id
+          } else {
+            resultado.visitante = datosDestino.nombre
+            resultado.idEquipoVisitante = datosDestino.id
+          }
+          if (destinoPosicion === 'local') {
+            resultado.local = datosOrigen.nombre
+            resultado.idEquipoLocal = datosOrigen.id
+          } else {
+            resultado.visitante = datosOrigen.nombre
+            resultado.idEquipoVisitante = datosOrigen.id
+          }
+          return resultado
+        }
+        if (e.id === origenId) {
+          return origenPosicion === 'local'
+            ? {
+                ...e,
+                local: datosDestino.nombre,
+                idEquipoLocal: datosDestino.id
+              }
+            : {
+                ...e,
+                visitante: datosDestino.nombre,
+                idEquipoVisitante: datosDestino.id
+              }
+        }
+        if (e.id === destinoId) {
+          return destinoPosicion === 'local'
+            ? { ...e, local: datosOrigen.nombre, idEquipoLocal: datosOrigen.id }
+            : {
+                ...e,
+                visitante: datosOrigen.nombre,
+                idEquipoVisitante: datosOrigen.id
+              }
+        }
+        return e
+      })
+    }
+  })
+}
+
+/**
+ * Intercambia dos participantes en la lista plana del bracket de eliminación.
+ * Si los índices son iguales o inválidos, retorna el mismo array sin cambios.
+ */
+export function intercambiarParticipantesEnBracket(
+  participantes: string[],
+  indexA: number,
+  indexB: number
+): string[] {
+  if (indexA === indexB) return participantes
+  if (
+    indexA < 0 ||
+    indexB < 0 ||
+    indexA >= participantes.length ||
+    indexB >= participantes.length
+  ) {
+    return participantes
+  }
+  const resultado = [...participantes]
+  resultado[indexA] = participantes[indexB]
+  resultado[indexB] = participantes[indexA]
+  return resultado
+}
+
 // ─── Implementación interna: método círculo ──────────────────────────────────
 
 function metodoCirculo(

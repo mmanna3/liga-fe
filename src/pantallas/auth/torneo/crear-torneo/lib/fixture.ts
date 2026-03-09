@@ -37,7 +37,9 @@ export {
   generarTodosLosFixtures,
   fusionarYResolverInterzonal,
   calcularEstadisticasFixture,
-  construirParticipantesEliminacion
+  construirParticipantesEliminacion,
+  intercambiarEquiposEnFecha,
+  intercambiarParticipantesEnBracket
 } from './fixture-generacion'
 
 // ─── Aliases de compatibilidad con el código anterior ────────────────────────

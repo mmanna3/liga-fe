@@ -1,7 +1,10 @@
 import { Calendar as CalendarIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { esValidoParaEliminacion } from '../lib/fixture'
+import {
+  esValidoParaEliminacion,
+  intercambiarParticipantesEnBracket
+} from '../lib/fixture'
 import type { DatosWizardTorneo, EquipoWizard, Zona } from '../tipos'
 import { VistaBracket } from './vista-bracket'
 import { SelectorDeZona } from './selector-de-zona'
@@ -91,6 +94,13 @@ export function FixtureEliminacionDirecta({
   const [zonaEliminacionSeleccionadaId, setZonaEliminacionSeleccionadaId] =
     useState<string>('')
 
+  // Nombres editables de participantes por clave (id de zona o '_global')
+  const [participantesEditables, setParticipantesEditables] = useState<
+    Record<string, string[]>
+  >({})
+  const [slotArrastrado, setSlotArrastrado] = useState<number | null>(null)
+  const [slotSobreEl, setSlotSobreEl] = useState<number | null>(null)
+
   // Auto-seleccionar primera zona
   useEffect(() => {
     if (zonasConEquipos.length > 0) {
@@ -102,6 +112,13 @@ export function FixtureEliminacionDirecta({
       }
     }
   }, [zonasConEquipos, zonaEliminacionSeleccionadaId])
+
+  // Resetear posiciones editadas al regenerar el fixture
+  useEffect(() => {
+    setParticipantesEditables({})
+    setSlotArrastrado(null)
+    setSlotSobreEl(null)
+  }, [claveGeneracion])
 
   // Auto-sugerir fechasLibres para alcanzar la siguiente potencia de 2
   useEffect(() => {
@@ -130,7 +147,7 @@ export function FixtureEliminacionDirecta({
     (z) => z.id === zonaEliminacionSeleccionadaId
   )
 
-  const participantesParaMostrar = usarModoZona
+  const participantesBase = usarModoZona
     ? zonaSeleccionada
       ? (participantesBracketPorZona[zonaSeleccionada.id] ??
         construirParticipantesFallback(
@@ -145,6 +162,32 @@ export function FixtureEliminacionDirecta({
         fechasLibres,
         fechasInterzonales
       ))
+
+  const claveEdicion = usarModoZona ? zonaEliminacionSeleccionadaId : '_global'
+  const nombresEditables =
+    participantesEditables[claveEdicion] ??
+    participantesBase.map((p) => p.nombre)
+
+  const alIniciarArrastre = (index: number) => setSlotArrastrado(index)
+
+  const alSoltarEnBracket = (indexDestino: number) => {
+    const origen = slotArrastrado
+    setSlotArrastrado(null)
+    setSlotSobreEl(null)
+    if (origen === null || origen === indexDestino) return
+    setParticipantesEditables((prev) => {
+      const actual =
+        prev[claveEdicion] ?? participantesBase.map((p) => p.nombre)
+      return {
+        ...prev,
+        [claveEdicion]: intercambiarParticipantesEnBracket(
+          actual,
+          origen,
+          indexDestino
+        )
+      }
+    })
+  }
 
   const totalSlots = usarModoZona
     ? zonaSeleccionada
@@ -186,23 +229,29 @@ export function FixtureEliminacionDirecta({
               />
               {zonaEliminacionSeleccionadaId &&
                 zonaSeleccionada &&
-                participantesParaMostrar.length > 0 && (
+                participantesBase.length > 0 && (
                   <VistaBracket
                     totalSlots={totalSlots}
-                    equipos={participantesParaMostrar.map((p) => ({
-                      nombre: p.nombre
-                    }))}
+                    equipos={nombresEditables.map((nombre) => ({ nombre }))}
                     zonas={zonas}
+                    alIniciarArrastre={alIniciarArrastre}
+                    alSoltar={alSoltarEnBracket}
+                    alEntrar={setSlotSobreEl}
+                    alSalir={() => setSlotSobreEl(null)}
+                    indexSobreEl={slotSobreEl}
                   />
                 )}
             </>
           ) : (
             <VistaBracket
               totalSlots={totalSlots}
-              equipos={participantesParaMostrar.map((p) => ({
-                nombre: p.nombre
-              }))}
+              equipos={nombresEditables.map((nombre) => ({ nombre }))}
               zonas={zonas}
+              alIniciarArrastre={alIniciarArrastre}
+              alSoltar={alSoltarEnBracket}
+              alEntrar={setSlotSobreEl}
+              alSalir={() => setSlotSobreEl(null)}
+              indexSobreEl={slotSobreEl}
             />
           )}
         </div>

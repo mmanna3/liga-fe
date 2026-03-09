@@ -6,9 +6,23 @@ interface VistaBracketProps {
   totalSlots: number
   equipos: Array<Pick<EquipoWizard, 'nombre'>>
   zonas: Zona[]
+  // Drag & drop opcional para slots de la primera ronda
+  alIniciarArrastre?: (index: number) => void
+  alSoltar?: (index: number) => void
+  alEntrar?: (index: number) => void
+  alSalir?: () => void
+  indexSobreEl?: number | null
 }
 
-export function VistaBracket({ totalSlots, equipos }: VistaBracketProps) {
+export function VistaBracket({
+  totalSlots,
+  equipos,
+  alIniciarArrastre,
+  alSoltar,
+  alEntrar,
+  alSalir,
+  indexSobreEl
+}: VistaBracketProps) {
   const rondas = Math.ceil(Math.log2(totalSlots))
   const partidosPorRonda: number[] = []
 
@@ -66,19 +80,52 @@ export function VistaBracket({ totalSlots, equipos }: VistaBracketProps) {
                         const indexEquipo1 = indexPartido * 2
                         const indexEquipo2 = indexPartido * 2 + 1
 
+                        const esDraggable =
+                          indexRonda === 0 && !!alIniciarArrastre
+
                         return (
                           <div key={indexPartido} className='relative'>
                             <div className='bg-background rounded-lg border-2 overflow-hidden shadow-sm hover:shadow-md transition-shadow w-40'>
                               <div
                                 className={cn(
-                                  'flex items-center justify-between px-3 py-2.5 border-b hover:bg-accent transition-colors group',
+                                  'flex items-center justify-between px-3 py-2.5 border-b transition-colors group',
+                                  !esDraggable && 'hover:bg-accent',
                                   indexRonda === 0 &&
-                                    obtenerClaseSlotEquipo(indexEquipo1)
+                                    obtenerClaseSlotEquipo(indexEquipo1),
+                                  esDraggable && 'cursor-grab',
+                                  esDraggable &&
+                                    indexSobreEl === indexEquipo1 &&
+                                    'bg-primary/15 ring-1 ring-primary/40'
                                 )}
+                                draggable={esDraggable}
+                                onDragStart={
+                                  esDraggable
+                                    ? () => alIniciarArrastre!(indexEquipo1)
+                                    : undefined
+                                }
+                                onDragOver={
+                                  esDraggable
+                                    ? (e) => e.preventDefault()
+                                    : undefined
+                                }
+                                onDragEnter={
+                                  esDraggable
+                                    ? () => alEntrar!(indexEquipo1)
+                                    : undefined
+                                }
+                                onDragLeave={esDraggable ? alSalir : undefined}
+                                onDrop={
+                                  esDraggable
+                                    ? (e) => {
+                                        e.preventDefault()
+                                        alSoltar!(indexEquipo1)
+                                      }
+                                    : undefined
+                                }
                               >
                                 <span
                                   className={cn(
-                                    'text-sm font-medium truncate',
+                                    'text-sm font-medium truncate select-none',
                                     equipos[indexEquipo1]?.nombre === 'LIBRE' &&
                                       'text-amber-700 italic',
                                     equipos[indexEquipo1]?.nombre ===
@@ -96,14 +143,44 @@ export function VistaBracket({ totalSlots, equipos }: VistaBracketProps) {
                               </div>
                               <div
                                 className={cn(
-                                  'flex items-center justify-between px-3 py-2.5 hover:bg-accent transition-colors group',
+                                  'flex items-center justify-between px-3 py-2.5 transition-colors group',
+                                  !esDraggable && 'hover:bg-accent',
                                   indexRonda === 0 &&
-                                    obtenerClaseSlotEquipo(indexEquipo2)
+                                    obtenerClaseSlotEquipo(indexEquipo2),
+                                  esDraggable && 'cursor-grab',
+                                  esDraggable &&
+                                    indexSobreEl === indexEquipo2 &&
+                                    'bg-primary/15 ring-1 ring-primary/40'
                                 )}
+                                draggable={esDraggable}
+                                onDragStart={
+                                  esDraggable
+                                    ? () => alIniciarArrastre!(indexEquipo2)
+                                    : undefined
+                                }
+                                onDragOver={
+                                  esDraggable
+                                    ? (e) => e.preventDefault()
+                                    : undefined
+                                }
+                                onDragEnter={
+                                  esDraggable
+                                    ? () => alEntrar!(indexEquipo2)
+                                    : undefined
+                                }
+                                onDragLeave={esDraggable ? alSalir : undefined}
+                                onDrop={
+                                  esDraggable
+                                    ? (e) => {
+                                        e.preventDefault()
+                                        alSoltar!(indexEquipo2)
+                                      }
+                                    : undefined
+                                }
                               >
                                 <span
                                   className={cn(
-                                    'text-sm font-medium truncate',
+                                    'text-sm font-medium truncate select-none',
                                     equipos[indexEquipo2]?.nombre === 'LIBRE' &&
                                       'text-amber-700 italic',
                                     equipos[indexEquipo2]?.nombre ===

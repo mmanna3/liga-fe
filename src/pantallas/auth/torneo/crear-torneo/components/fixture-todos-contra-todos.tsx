@@ -1,9 +1,5 @@
 import { cn } from '@/logica-compartida/utils'
-import {
-  AlertTriangle,
-  Calendar as CalendarIcon,
-  GripVertical
-} from 'lucide-react'
+import { AlertTriangle, Calendar as CalendarIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
@@ -12,6 +8,7 @@ import {
   fusionarYResolverInterzonal,
   generarFixture,
   generarTodosLosFixtures,
+  intercambiarEquiposEnFecha,
   type EntradaDeZona,
   type EstadisticasFixture,
   type FechaFixture
@@ -29,6 +26,11 @@ interface FixtureTodosContraTodosProps {
   claveGeneracion: number
   fixtureGenerado: boolean
 }
+
+type SlotArrastrado = {
+  entradaId: string
+  posicion: 'local' | 'visitante'
+} | null
 
 export function FixtureTodosContraTodos({
   zonasConEquipos,
@@ -56,9 +58,8 @@ export function FixtureTodosContraTodos({
   const [estadisticas, setEstadisticas] = useState<EstadisticasFixture | null>(
     null
   )
-  const [idEntradaArrastrada, setIdEntradaArrastrada] = useState<string | null>(
-    null
-  )
+  const [slotArrastrado, setSlotArrastrado] = useState<SlotArrastrado>(null)
+  const [slotSobreEl, setSlotSobreEl] = useState<SlotArrastrado>(null)
   const [zonaSeleccionadaId, setZonaSeleccionadaId] = useState<string>('')
 
   // Auto-seleccionar primera zona cuando se generan los fixtures
@@ -98,9 +99,6 @@ export function FixtureTodosContraTodos({
       const fusionadas = fusionarYResolverInterzonal(fixtures)
       setFechasFusionadas(fusionadas)
       setFechasFixture([])
-
-      const estadisticasPrimeraZona = fixtures[0]?.estadisticas ?? null
-      setEstadisticas(estadisticasPrimeraZona)
     } else {
       const equipos = equiposSeleccionados.map((t) => ({
         id: t.id,
@@ -115,15 +113,6 @@ export function FixtureTodosContraTodos({
       setFechasFixture(fechas)
       setFixturesPorZona([])
       setFechasFusionadas([])
-
-      const nuevasEstadisticas = calcularEstadisticasFixture(
-        fechas,
-        equipos,
-        fechasLibres,
-        fechasInterzonales,
-        vueltas
-      )
-      setEstadisticas(nuevasEstadisticas)
     }
     setValue('fixtureGenerado', true, { shouldValidate: true })
   }
@@ -144,62 +133,103 @@ export function FixtureTodosContraTodos({
     }
   }, [claveGeneracion])
 
-  // Drag and drop
-  const alIniciarArrastre = (entradaId: string) => {
-    setIdEntradaArrastrada(entradaId)
-  }
+  // Recalcular estadísticas cuando el fixture cambia (generación o movimiento de equipos)
+  useEffect(() => {
+    if (!fixtureGenerado) return
 
-  const alArrastrarSobre = (e: React.DragEvent) => {
-    e.preventDefault()
+    if (usarModoZona && fixturesPorZona.length > 0) {
+      const primeraZona = fixturesPorZona[0]
+      const zonaInput = entradasDeZona.find((z) => z.id === primeraZona.idZona)
+      if (!zonaInput) return
+      setEstadisticas(
+        calcularEstadisticasFixture(
+          primeraZona.fechas,
+          zonaInput.equipos,
+          zonaInput.fechasLibres,
+          zonaInput.fechasInterzonales,
+          vueltas
+        )
+      )
+    } else if (!usarModoZona && fechasFixture.length > 0) {
+      const equipos = equiposSeleccionados.map((t) => ({
+        id: t.id,
+        nombre: t.nombre
+      }))
+      setEstadisticas(
+        calcularEstadisticasFixture(
+          fechasFixture,
+          equipos,
+          fechasLibres,
+          fechasInterzonales,
+          vueltas
+        )
+      )
+    }
+  }, [fechasFixture, fixturesPorZona])
+
+  // ─── Drag and drop a nivel de equipo individual ──────────────────────────
+
+  const alIniciarArrastre = (
+    e: React.DragEvent,
+    entradaId: string,
+    posicion: 'local' | 'visitante'
+  ) => {
+    e.stopPropagation()
+    setSlotArrastrado({ entradaId, posicion })
   }
 
   const alSoltar = (
     entradaObjetivoId: string,
+    posicionObjetivo: 'local' | 'visitante',
     numeroFecha: number,
     enModoZona?: boolean,
     zonaId?: string
   ) => {
-    if (!idEntradaArrastrada || idEntradaArrastrada === entradaObjetivoId) {
-      setIdEntradaArrastrada(null)
-      return
-    }
+    const origen = slotArrastrado
+    setSlotArrastrado(null)
+    setSlotSobreEl(null)
 
-    const intercambiarEntradas = (prev: FechaFixture[]) => {
-      const fecha = prev.find((d) => d.numeroFecha === numeroFecha)
-      if (!fecha) return prev
-      const idxArrastrada = fecha.entradas.findIndex(
-        (e) => e.id === idEntradaArrastrada
-      )
-      const idxObjetivo = fecha.entradas.findIndex(
-        (e) => e.id === entradaObjetivoId
-      )
-      if (idxArrastrada < 0 || idxObjetivo < 0) return prev
-      return prev.map((d) => {
-        if (d.numeroFecha !== numeroFecha) return d
-        const nuevasEntradas = [...d.entradas]
-        const temp = nuevasEntradas[idxArrastrada]
-        nuevasEntradas[idxArrastrada] = nuevasEntradas[idxObjetivo]
-        nuevasEntradas[idxObjetivo] = temp
-        return { ...d, entradas: nuevasEntradas }
-      })
-    }
+    if (!origen) return
+    if (
+      origen.entradaId === entradaObjetivoId &&
+      origen.posicion === posicionObjetivo
+    )
+      return
 
     if (enModoZona && zonaId) {
       setFixturesPorZona((prev) =>
         prev.map((zf) =>
           zf.idZona === zonaId
-            ? { ...zf, fechas: intercambiarEntradas(zf.fechas) }
+            ? {
+                ...zf,
+                fechas: intercambiarEquiposEnFecha(
+                  zf.fechas,
+                  numeroFecha,
+                  origen.entradaId,
+                  origen.posicion,
+                  entradaObjetivoId,
+                  posicionObjetivo
+                )
+              }
             : zf
         )
       )
     } else {
-      setFechasFixture(intercambiarEntradas)
+      setFechasFixture((prev) =>
+        intercambiarEquiposEnFecha(
+          prev,
+          numeroFecha,
+          origen.entradaId,
+          origen.posicion,
+          entradaObjetivoId,
+          posicionObjetivo
+        )
+      )
     }
-
-    setIdEntradaArrastrada(null)
   }
 
-  // Calcular fechas a mostrar
+  // ─── Calcular fechas a mostrar ───────────────────────────────────────────
+
   const idsEquiposEnZonaSeleccionada = usarModoZona
     ? new Set(
         zonasConEquipos
@@ -242,6 +272,11 @@ export function FixtureTodosContraTodos({
     : fechasFixture
 
   const tieneFixture = fechasFixture.length > 0 || fixturesPorZona.length > 0
+
+  const esDragTarget = (entradaId: string, posicion: 'local' | 'visitante') =>
+    slotArrastrado !== null &&
+    slotSobreEl?.entradaId === entradaId &&
+    slotSobreEl?.posicion === posicion
 
   return (
     <>
@@ -309,67 +344,116 @@ export function FixtureTodosContraTodos({
                     <div
                       key={entrada.id}
                       className={cn(
-                        'rounded-lg p-2.5 cursor-move hover:bg-accent transition-colors',
+                        'rounded-lg p-2.5',
                         entrada.tipo === 'regular' && 'bg-muted',
                         entrada.tipo === 'libre' &&
                           'bg-amber-50 border border-amber-200',
                         entrada.tipo === 'interzonal' &&
                           'bg-blue-50 border border-blue-200'
                       )}
-                      draggable
-                      onDragStart={() => alIniciarArrastre(entrada.id)}
-                      onDragOver={alArrastrarSobre}
-                      onDrop={() =>
-                        alSoltar(
-                          entrada.id,
-                          fd.numeroFecha,
-                          usarModoZona,
-                          zonaSeleccionadaId
-                        )
-                      }
                     >
-                      <div className='flex items-center gap-2'>
-                        <GripVertical className='w-4 h-4 text-muted-foreground shrink-0' />
-                        <div className='grid grid-cols-3 items-center gap-3 text-sm flex-1'>
-                          <div className='text-right'>
-                            <span
-                              className={cn(
-                                'font-medium',
-                                entrada.local === 'INTERZONAL' &&
-                                  'text-blue-700 italic'
-                              )}
-                            >
-                              {entrada.local}
-                            </span>
-                          </div>
-                          <div className='text-center'>
-                            <span
-                              className={cn(
-                                'px-2 py-0.5 rounded text-xs font-medium border',
-                                entrada.tipo === 'regular' &&
-                                  'bg-background text-muted-foreground',
-                                entrada.tipo === 'libre' &&
-                                  'bg-amber-100 text-amber-700 border-amber-300',
-                                entrada.tipo === 'interzonal' &&
-                                  'bg-blue-100 text-blue-700 border-blue-300'
-                              )}
-                            >
-                              vs
-                            </span>
-                          </div>
-                          <div className='text-left'>
-                            <span
-                              className={cn(
-                                'font-medium',
-                                entrada.visitante === 'LIBRE' &&
-                                  'text-amber-700 italic',
-                                entrada.visitante === 'INTERZONAL' &&
-                                  'text-blue-700 italic'
-                              )}
-                            >
-                              {entrada.visitante}
-                            </span>
-                          </div>
+                      <div className='grid grid-cols-3 items-center gap-3 text-sm'>
+                        {/* Local */}
+                        <div
+                          className={cn(
+                            'flex items-center justify-end gap-1 px-2 py-1 rounded transition-colors',
+                            slotArrastrado !== null && 'cursor-copy',
+                            esDragTarget(entrada.id, 'local') &&
+                              'bg-primary/15 ring-1 ring-primary/40'
+                          )}
+                          draggable
+                          onDragStart={(e) =>
+                            alIniciarArrastre(e, entrada.id, 'local')
+                          }
+                          onDragOver={(e) => e.preventDefault()}
+                          onDragEnter={() =>
+                            setSlotSobreEl({
+                              entradaId: entrada.id,
+                              posicion: 'local'
+                            })
+                          }
+                          onDragLeave={() => setSlotSobreEl(null)}
+                          onDrop={(e) => {
+                            e.preventDefault()
+                            alSoltar(
+                              entrada.id,
+                              'local',
+                              fd.numeroFecha,
+                              usarModoZona,
+                              zonaSeleccionadaId
+                            )
+                          }}
+                        >
+                          <span
+                            className={cn(
+                              'font-medium cursor-grab select-none',
+                              entrada.local === 'INTERZONAL' &&
+                                'text-blue-700 italic'
+                            )}
+                          >
+                            {entrada.local}
+                          </span>
+                        </div>
+
+                        {/* VS */}
+                        <div className='text-center'>
+                          <span
+                            className={cn(
+                              'px-2 py-0.5 rounded text-xs font-medium border',
+                              entrada.tipo === 'regular' &&
+                                'bg-background text-muted-foreground',
+                              entrada.tipo === 'libre' &&
+                                'bg-amber-100 text-amber-700 border-amber-300',
+                              entrada.tipo === 'interzonal' &&
+                                'bg-blue-100 text-blue-700 border-blue-300'
+                            )}
+                          >
+                            vs
+                          </span>
+                        </div>
+
+                        {/* Visitante */}
+                        <div
+                          className={cn(
+                            'flex items-center gap-1 px-2 py-1 rounded transition-colors',
+                            slotArrastrado !== null && 'cursor-copy',
+                            esDragTarget(entrada.id, 'visitante') &&
+                              'bg-primary/15 ring-1 ring-primary/40'
+                          )}
+                          draggable
+                          onDragStart={(e) =>
+                            alIniciarArrastre(e, entrada.id, 'visitante')
+                          }
+                          onDragOver={(e) => e.preventDefault()}
+                          onDragEnter={() =>
+                            setSlotSobreEl({
+                              entradaId: entrada.id,
+                              posicion: 'visitante'
+                            })
+                          }
+                          onDragLeave={() => setSlotSobreEl(null)}
+                          onDrop={(e) => {
+                            e.preventDefault()
+                            alSoltar(
+                              entrada.id,
+                              'visitante',
+                              fd.numeroFecha,
+                              usarModoZona,
+                              zonaSeleccionadaId
+                            )
+                          }}
+                        >
+                          <span
+                            className={cn(
+                              'font-medium cursor-grab select-none',
+                              entrada.visitante === 'LIBRE' &&
+                                'text-amber-700 italic',
+                              entrada.visitante === 'INTERZONAL' &&
+                                'text-blue-700 italic'
+                            )}
+                          >
+                            {entrada.visitante}
+                          </span>
                         </div>
                       </div>
                     </div>

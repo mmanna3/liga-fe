@@ -3,9 +3,11 @@ import {
   calcularEstadisticasFixture,
   fusionarYResolverInterzonal,
   generarFixture,
-  generarTodosLosFixtures
+  generarTodosLosFixtures,
+  intercambiarEquiposEnFecha,
+  intercambiarParticipantesEnBracket
 } from '../fixture-generacion'
-import type { EntradaDeZona } from '../fixture-tipos'
+import type { EntradaDeZona, FechaFixture } from '../fixture-tipos'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -390,5 +392,228 @@ describe('calcularEstadisticasFixture', () => {
     const fechas = generarFixture(eq, 0, 0, 'ida')
     const stats = calcularEstadisticasFixture(fechas, eq, 0, 0, 'ida')
     expect(stats.excepciones).toHaveLength(0)
+  })
+})
+
+// ─── intercambiarEquiposEnFecha ───────────────────────────────────────────────
+
+// Fixture mínimo para tests: 2 partidos en la fecha 1
+const crearFechasTest = (): FechaFixture[] => [
+  {
+    numeroFecha: 1,
+    entradas: [
+      {
+        id: 'p1',
+        tipo: 'regular',
+        local: 'E1',
+        visitante: 'E2',
+        idEquipoLocal: 1,
+        idEquipoVisitante: 2
+      },
+      {
+        id: 'p2',
+        tipo: 'regular',
+        local: 'E3',
+        visitante: 'E4',
+        idEquipoLocal: 3,
+        idEquipoVisitante: 4
+      }
+    ]
+  },
+  {
+    numeroFecha: 2,
+    entradas: [
+      {
+        id: 'p3',
+        tipo: 'regular',
+        local: 'E1',
+        visitante: 'E3',
+        idEquipoLocal: 1,
+        idEquipoVisitante: 3
+      }
+    ]
+  }
+]
+
+describe('intercambiarEquiposEnFecha', () => {
+  it('intercambia local ↔ visitante del mismo partido', () => {
+    const fechas = crearFechasTest()
+    const resultado = intercambiarEquiposEnFecha(
+      fechas,
+      1,
+      'p1',
+      'local',
+      'p1',
+      'visitante'
+    )
+    const partido = resultado[0].entradas.find((e) => e.id === 'p1')!
+    expect(partido.local).toBe('E2')
+    expect(partido.visitante).toBe('E1')
+    expect(partido.idEquipoLocal).toBe(2)
+    expect(partido.idEquipoVisitante).toBe(1)
+  })
+
+  it('intercambia local de un partido con local de otro partido en la misma fecha', () => {
+    const fechas = crearFechasTest()
+    const resultado = intercambiarEquiposEnFecha(
+      fechas,
+      1,
+      'p1',
+      'local',
+      'p2',
+      'local'
+    )
+    const p1 = resultado[0].entradas.find((e) => e.id === 'p1')!
+    const p2 = resultado[0].entradas.find((e) => e.id === 'p2')!
+    expect(p1.local).toBe('E3')
+    expect(p1.idEquipoLocal).toBe(3)
+    expect(p2.local).toBe('E1')
+    expect(p2.idEquipoLocal).toBe(1)
+    // Los visitantes no cambian
+    expect(p1.visitante).toBe('E2')
+    expect(p2.visitante).toBe('E4')
+  })
+
+  it('intercambia local de un partido con visitante de otro partido en la misma fecha', () => {
+    const fechas = crearFechasTest()
+    const resultado = intercambiarEquiposEnFecha(
+      fechas,
+      1,
+      'p1',
+      'local',
+      'p2',
+      'visitante'
+    )
+    const p1 = resultado[0].entradas.find((e) => e.id === 'p1')!
+    const p2 = resultado[0].entradas.find((e) => e.id === 'p2')!
+    expect(p1.local).toBe('E4')
+    expect(p1.idEquipoLocal).toBe(4)
+    expect(p2.visitante).toBe('E1')
+    expect(p2.idEquipoVisitante).toBe(1)
+  })
+
+  it('no modifica otras fechas', () => {
+    const fechas = crearFechasTest()
+    const resultado = intercambiarEquiposEnFecha(
+      fechas,
+      1,
+      'p1',
+      'local',
+      'p2',
+      'local'
+    )
+    // Fecha 2 no se toca
+    expect(resultado[1]).toEqual(fechas[1])
+  })
+
+  it('retorna el mismo array si origen y destino son el mismo slot', () => {
+    const fechas = crearFechasTest()
+    const resultado = intercambiarEquiposEnFecha(
+      fechas,
+      1,
+      'p1',
+      'local',
+      'p1',
+      'local'
+    )
+    expect(resultado).toBe(fechas) // referencia idéntica
+  })
+
+  it('retorna sin cambios si el numeroFecha no existe', () => {
+    const fechas = crearFechasTest()
+    const resultado = intercambiarEquiposEnFecha(
+      fechas,
+      99,
+      'p1',
+      'local',
+      'p2',
+      'local'
+    )
+    expect(resultado).toBe(fechas)
+  })
+
+  it('no intercambia si el id pertenece a otra zona (id no encontrado)', () => {
+    // Zona A tiene 'p1', zona B tiene 'p-zona-b'
+    // Intentar intercambiar p1 con p-zona-b en las fechas de zona A → sin cambios
+    const fechasZonaA = crearFechasTest()
+    const resultado = intercambiarEquiposEnFecha(
+      fechasZonaA,
+      1,
+      'p1',
+      'local',
+      'p-zona-b',
+      'local'
+    )
+    expect(resultado).toBe(fechasZonaA)
+  })
+
+  it('las fechas de una zona no afectan las fechas de otra zona', () => {
+    const fechasZonaA = crearFechasTest()
+    const fechasZonaB: FechaFixture[] = [
+      {
+        numeroFecha: 1,
+        entradas: [
+          {
+            id: 'pB1',
+            tipo: 'regular',
+            local: 'E5',
+            visitante: 'E6',
+            idEquipoLocal: 5,
+            idEquipoVisitante: 6
+          }
+        ]
+      }
+    ]
+    // Intercambiar en zona A
+    intercambiarEquiposEnFecha(fechasZonaA, 1, 'p1', 'local', 'p2', 'local')
+    // Zona B no se modifica (cada zona tiene su propio array)
+    expect(fechasZonaB[0].entradas[0].local).toBe('E5')
+    expect(fechasZonaB[0].entradas[0].visitante).toBe('E6')
+  })
+})
+
+// ─── intercambiarParticipantesEnBracket ──────────────────────────────────────
+
+describe('intercambiarParticipantesEnBracket', () => {
+  it('intercambia dos participantes por índice', () => {
+    const participantes = ['E1', 'E2', 'E3', 'E4']
+    const resultado = intercambiarParticipantesEnBracket(participantes, 0, 3)
+    expect(resultado).toEqual(['E4', 'E2', 'E3', 'E1'])
+  })
+
+  it('intercambia dos participantes del mismo partido (índices 0 y 1)', () => {
+    const participantes = ['E1', 'E2', 'E3', 'E4']
+    const resultado = intercambiarParticipantesEnBracket(participantes, 0, 1)
+    expect(resultado).toEqual(['E2', 'E1', 'E3', 'E4'])
+  })
+
+  it('no modifica el array original', () => {
+    const participantes = ['E1', 'E2', 'E3', 'E4']
+    intercambiarParticipantesEnBracket(participantes, 0, 3)
+    expect(participantes).toEqual(['E1', 'E2', 'E3', 'E4'])
+  })
+
+  it('retorna el mismo array si los índices son iguales', () => {
+    const participantes = ['E1', 'E2', 'E3', 'E4']
+    const resultado = intercambiarParticipantesEnBracket(participantes, 2, 2)
+    expect(resultado).toBe(participantes)
+  })
+
+  it('retorna sin cambios si un índice está fuera de rango', () => {
+    const participantes = ['E1', 'E2', 'E3', 'E4']
+    expect(intercambiarParticipantesEnBracket(participantes, 0, 10)).toBe(
+      participantes
+    )
+    expect(intercambiarParticipantesEnBracket(participantes, -1, 2)).toBe(
+      participantes
+    )
+  })
+
+  it('intercambiar no afecta a zonas distintas (arrays independientes)', () => {
+    const participantesZonaA = ['E1', 'E2', 'E3', 'E4']
+    const participantesZonaB = ['E5', 'E6', 'E7', 'E8']
+    intercambiarParticipantesEnBracket(participantesZonaA, 0, 3)
+    // Zona B permanece intacta
+    expect(participantesZonaB).toEqual(['E5', 'E6', 'E7', 'E8'])
   })
 })
