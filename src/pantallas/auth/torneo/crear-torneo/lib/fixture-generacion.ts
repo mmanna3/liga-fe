@@ -289,12 +289,11 @@ export function calcularEstadisticasFixture(
   fechasInterzonales: number,
   vueltas: 'ida' | 'ida-y-vuelta'
 ): EstadisticasFixture {
-  const N = equipos.length
-
   const local: Record<number, number> = {}
   const visitante: Record<number, number> = {}
   const libre: Record<number, number> = {}
   const interzonal: Record<number, number> = {}
+  const encuentrosPorPar: Record<string, number> = {}
 
   for (const t of equipos) {
     local[t.id] = 0
@@ -309,6 +308,15 @@ export function calcularEstadisticasFixture(
         if (entrada.idEquipoLocal != null) local[entrada.idEquipoLocal]++
         if (entrada.idEquipoVisitante != null)
           visitante[entrada.idEquipoVisitante]++
+        if (
+          entrada.idEquipoLocal != null &&
+          entrada.idEquipoVisitante != null
+        ) {
+          const clave = [entrada.idEquipoLocal, entrada.idEquipoVisitante]
+            .sort((a, b) => a - b)
+            .join('-')
+          encuentrosPorPar[clave] = (encuentrosPorPar[clave] ?? 0) + 1
+        }
       } else if (entrada.tipo === 'libre') {
         if (entrada.idEquipoLocal != null) libre[entrada.idEquipoLocal]++
       } else if (entrada.tipo === 'interzonal') {
@@ -327,7 +335,8 @@ export function calcularEstadisticasFixture(
     fechasInterzonal: interzonal[t.id]
   }))
 
-  const regularPorEquipo = N - 1
+  const encuentrosEsperados = vueltas === 'ida-y-vuelta' ? 2 : 1
+  const regularPorEquipo = equipos.length - 1
   const localEsperado =
     vueltas === 'ida-y-vuelta'
       ? regularPorEquipo
@@ -336,26 +345,23 @@ export function calcularEstadisticasFixture(
     vueltas === 'ida-y-vuelta'
       ? regularPorEquipo
       : Math.ceil(regularPorEquipo / 2)
-
   const excepciones: string[] = []
 
+  for (let i = 0; i < equipos.length; i++) {
+    for (let j = i + 1; j < equipos.length; j++) {
+      const [a, b] = [equipos[i].id, equipos[j].id].sort((x, y) => x - y)
+      const clave = `${a}-${b}`
+      const encuentros = encuentrosPorPar[clave] ?? 0
+      if (encuentros !== encuentrosEsperados) {
+        excepciones.push(
+          `${equipos[i].nombre} vs ${equipos[j].nombre}: ${encuentros} ${encuentros === 1 ? 'encuentro' : 'encuentros'} (esperado ${encuentrosEsperados})`
+        )
+      }
+    }
+  }
+
   for (const est of estadisticasPorEquipo) {
-    if (vueltas === 'ida') {
-      const totalRegular = est.partidosDeLocal + est.partidosDeVisitante
-      if (totalRegular !== regularPorEquipo) {
-        excepciones.push(
-          `${est.nombreEquipo} juega ${totalRegular} partidos regulares en vez de ${regularPorEquipo}`
-        )
-      }
-      if (
-        est.partidosDeLocal !== localEsperado &&
-        est.partidosDeLocal !== visitanteEsperado
-      ) {
-        excepciones.push(
-          `${est.nombreEquipo} juega ${est.partidosDeLocal} de local (esperado ~${localEsperado})`
-        )
-      }
-    } else {
+    if (vueltas === 'ida-y-vuelta') {
       if (est.partidosDeLocal !== localEsperado) {
         excepciones.push(
           `${est.nombreEquipo} juega ${est.partidosDeLocal} de local en vez de ${localEsperado}`
@@ -364,6 +370,15 @@ export function calcularEstadisticasFixture(
       if (est.partidosDeVisitante !== visitanteEsperado) {
         excepciones.push(
           `${est.nombreEquipo} juega ${est.partidosDeVisitante} de visitante en vez de ${visitanteEsperado}`
+        )
+      }
+    } else {
+      if (
+        est.partidosDeLocal !== localEsperado &&
+        est.partidosDeLocal !== visitanteEsperado
+      ) {
+        excepciones.push(
+          `${est.nombreEquipo} juega ${est.partidosDeLocal} de local (esperado ~${localEsperado})`
         )
       }
     }
@@ -382,6 +397,7 @@ export function calcularEstadisticasFixture(
   return {
     totalFechas: fechas.length,
     estadisticasPorEquipo,
+    encuentrosPorParEsperados: encuentrosEsperados,
     partidosLocalEsperados: localEsperado,
     partidosVisitanteEsperados: visitanteEsperado,
     excepciones
@@ -464,26 +480,31 @@ export function construirParticipantesEliminacion(
 // ─── Movimiento de equipos ───────────────────────────────────────────────────
 
 /**
- * Intercambia dos slots (local o visitante) dentro de una fecha específica.
- * Solo modifica las entradas de esa fecha; el resto queda intacto.
- * Si los ids o la fecha no existen, retorna el array sin cambios.
+ * Intercambia dos slots (local o visitante) entre fechas (pueden ser la misma o distintas).
+ * Si los ids o las fechas no existen, retorna el array sin cambios.
  */
 export function intercambiarEquiposEnFecha(
   fechas: FechaFixture[],
-  numeroFecha: number,
+  origenNumeroFecha: number,
   origenId: string,
   origenPosicion: 'local' | 'visitante',
+  destinoNumeroFecha: number,
   destinoId: string,
   destinoPosicion: 'local' | 'visitante'
 ): FechaFixture[] {
-  if (origenId === destinoId && origenPosicion === destinoPosicion)
+  if (
+    origenNumeroFecha === destinoNumeroFecha &&
+    origenId === destinoId &&
+    origenPosicion === destinoPosicion
+  )
     return fechas
 
-  const fecha = fechas.find((d) => d.numeroFecha === numeroFecha)
-  if (!fecha) return fechas
+  const fechaOrigen = fechas.find((d) => d.numeroFecha === origenNumeroFecha)
+  const fechaDestino = fechas.find((d) => d.numeroFecha === destinoNumeroFecha)
+  if (!fechaOrigen || !fechaDestino) return fechas
 
-  const entradaOrigen = fecha.entradas.find((e) => e.id === origenId)
-  const entradaDestino = fecha.entradas.find((e) => e.id === destinoId)
+  const entradaOrigen = fechaOrigen.entradas.find((e) => e.id === origenId)
+  const entradaDestino = fechaDestino.entradas.find((e) => e.id === destinoId)
   if (!entradaOrigen || !entradaDestino) return fechas
 
   const datosOrigen =
@@ -499,13 +520,18 @@ export function intercambiarEquiposEnFecha(
           id: entradaDestino.idEquipoVisitante
         }
 
+  const mismaFecha = origenNumeroFecha === destinoNumeroFecha
+
   return fechas.map((d) => {
-    if (d.numeroFecha !== numeroFecha) return d
+    const esOrigen = d.numeroFecha === origenNumeroFecha
+    const esDestino = d.numeroFecha === destinoNumeroFecha
+    if (!esOrigen && !esDestino) return d
+
     return {
       ...d,
       entradas: d.entradas.map((e) => {
-        // Mismo partido: cada slot recibe los datos del otro
-        if (e.id === origenId && e.id === destinoId) {
+        // Mismo partido en la misma fecha: cada slot recibe los datos del otro
+        if (mismaFecha && e.id === origenId && e.id === destinoId) {
           const resultado = { ...e }
           if (origenPosicion === 'local') {
             resultado.local = datosDestino.nombre
@@ -523,7 +549,7 @@ export function intercambiarEquiposEnFecha(
           }
           return resultado
         }
-        if (e.id === origenId) {
+        if (esOrigen && e.id === origenId) {
           return origenPosicion === 'local'
             ? {
                 ...e,
@@ -536,7 +562,7 @@ export function intercambiarEquiposEnFecha(
                 idEquipoVisitante: datosDestino.id
               }
         }
-        if (e.id === destinoId) {
+        if (esDestino && e.id === destinoId) {
           return destinoPosicion === 'local'
             ? { ...e, local: datosOrigen.nombre, idEquipoLocal: datosOrigen.id }
             : {

@@ -24,18 +24,6 @@ export interface Fase {
   nombre: string
   formato: 'todos-contra-todos' | 'eliminacion'
   vueltas: 'ida' | 'ida-y-vuelta'
-  formatosPorZona: Record<string, 'todos-contra-todos' | 'eliminacion'>
-  desempates: string[]
-  modoTransicion: 'manual' | 'automatico'
-  clasificadosPorZona: number
-  posicionInicioClasificados: number
-  posicionFinClasificados: number
-  clasificadosCruzados: number
-  modoComparacion: 'puntos-totales' | 'promedio-puntos'
-  habilitarTriangular: boolean
-  resolucionDesempate: 'penales' | 'tiempo-extra' | 'ventaja'
-  reglasTransicion: string[]
-  completada: boolean
 }
 
 export interface Zona {

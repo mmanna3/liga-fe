@@ -30,6 +30,12 @@ interface FixtureTodosContraTodosProps {
 type SlotArrastrado = {
   entradaId: string
   posicion: 'local' | 'visitante'
+  numeroFecha: number
+} | null
+
+type SlotHover = {
+  entradaId: string
+  posicion: 'local' | 'visitante'
 } | null
 
 export function FixtureTodosContraTodos({
@@ -59,7 +65,7 @@ export function FixtureTodosContraTodos({
     null
   )
   const [slotArrastrado, setSlotArrastrado] = useState<SlotArrastrado>(null)
-  const [slotSobreEl, setSlotSobreEl] = useState<SlotArrastrado>(null)
+  const [slotSobreEl, setSlotSobreEl] = useState<SlotHover>(null)
   const [zonaSeleccionadaId, setZonaSeleccionadaId] = useState<string>('')
 
   // Auto-seleccionar primera zona cuando se generan los fixtures
@@ -173,10 +179,11 @@ export function FixtureTodosContraTodos({
   const alIniciarArrastre = (
     e: React.DragEvent,
     entradaId: string,
-    posicion: 'local' | 'visitante'
+    posicion: 'local' | 'visitante',
+    numeroFecha: number
   ) => {
     e.stopPropagation()
-    setSlotArrastrado({ entradaId, posicion })
+    setSlotArrastrado({ entradaId, posicion, numeroFecha })
   }
 
   const alSoltar = (
@@ -205,9 +212,10 @@ export function FixtureTodosContraTodos({
                 ...zf,
                 fechas: intercambiarEquiposEnFecha(
                   zf.fechas,
-                  numeroFecha,
+                  origen.numeroFecha,
                   origen.entradaId,
                   origen.posicion,
+                  numeroFecha,
                   entradaObjetivoId,
                   posicionObjetivo
                 )
@@ -219,9 +227,10 @@ export function FixtureTodosContraTodos({
       setFechasFixture((prev) =>
         intercambiarEquiposEnFecha(
           prev,
-          numeroFecha,
+          origen.numeroFecha,
           origen.entradaId,
           origen.posicion,
+          numeroFecha,
           entradaObjetivoId,
           posicionObjetivo
         )
@@ -364,7 +373,12 @@ export function FixtureTodosContraTodos({
                           )}
                           draggable
                           onDragStart={(e) =>
-                            alIniciarArrastre(e, entrada.id, 'local')
+                            alIniciarArrastre(
+                              e,
+                              entrada.id,
+                              'local',
+                              fd.numeroFecha
+                            )
                           }
                           onDragOver={(e) => e.preventDefault()}
                           onDragEnter={() =>
@@ -423,7 +437,12 @@ export function FixtureTodosContraTodos({
                           )}
                           draggable
                           onDragStart={(e) =>
-                            alIniciarArrastre(e, entrada.id, 'visitante')
+                            alIniciarArrastre(
+                              e,
+                              entrada.id,
+                              'visitante',
+                              fd.numeroFecha
+                            )
                           }
                           onDragOver={(e) => e.preventDefault()}
                           onDragEnter={() =>
@@ -486,6 +505,15 @@ function PanelEstadisticas({
     <div className='p-3 bg-muted rounded-lg space-y-2'>
       <p className='text-sm font-medium'>
         Fixture generado — {estadisticas.totalFechas} fechas
+      </p>
+      <p className='text-sm text-muted-foreground'>
+        Cada equipo juega{' '}
+        <strong className='text-foreground'>
+          {estadisticas.encuentrosPorParEsperados === 1
+            ? 'una vez'
+            : 'dos veces'}
+        </strong>{' '}
+        contra cada equipo de la zona.
       </p>
       <p className='text-sm text-muted-foreground'>
         Cada equipo juega{' '}

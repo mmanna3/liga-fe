@@ -1,4 +1,3 @@
-import { Boton } from '@/design-system/ykn-ui/boton'
 import { Checkbox } from '@/design-system/base-ui/checkbox'
 import { Input } from '@/design-system/base-ui/input'
 import { Label } from '@/design-system/base-ui/label'
@@ -10,6 +9,7 @@ import { useFormContext } from 'react-hook-form'
 import { equiposMock } from '../data/equipos-mock'
 import type { DatosWizardTorneo, EquipoWizard } from '../tipos'
 import { MiniResumen } from './mini-resumen'
+import { TablaEquipos } from './tabla-equipos-paso-3'
 
 export function Paso3Equipos() {
   const {
@@ -329,81 +329,13 @@ export function Paso3Equipos() {
             )}
         </div>
         <div className='max-h-96 overflow-y-auto'>
-          {equiposFiltrados.length === 0 ? (
-            <div className='p-8 text-center text-muted-foreground'>
-              No se encontraron equipos
-            </div>
-          ) : (
-            <table className='w-full'>
-              <thead className='bg-muted sticky top-0'>
-                <tr>
-                  <th className='px-4 py-3 text-left text-xs font-medium text-muted-foreground'>
-                    Código
-                  </th>
-                  <th className='px-4 py-3 text-left text-xs font-medium text-muted-foreground'>
-                    Nombre
-                  </th>
-                  <th className='px-4 py-3 text-left text-xs font-medium text-muted-foreground'>
-                    Club
-                  </th>
-                  {datos.modoBusqueda === 'torneo' && (
-                    <>
-                      <th className='px-4 py-3 text-left text-xs font-medium text-muted-foreground'>
-                        Torneo
-                      </th>
-                      <th className='px-4 py-3 text-left text-xs font-medium text-muted-foreground'>
-                        Zona
-                      </th>
-                    </>
-                  )}
-                  <th className='px-4 py-3 text-left text-xs font-medium text-muted-foreground'>
-                    Acción
-                  </th>
-                </tr>
-              </thead>
-              <tbody className='divide-y'>
-                {equiposFiltrados.slice(0, 50).map((equipo) => (
-                  <tr
-                    key={equipo.id}
-                    className='hover:bg-muted/50 transition-colors'
-                  >
-                    <td className='px-4 py-3 text-sm text-muted-foreground'>
-                      {equipo.id}
-                    </td>
-                    <td className='px-4 py-3 text-sm font-medium'>
-                      {equipo.nombre}
-                    </td>
-                    <td className='px-4 py-3 text-sm text-muted-foreground'>
-                      {equipo.club}
-                    </td>
-                    {datos.modoBusqueda === 'torneo' && (
-                      <>
-                        <td className='px-4 py-3 text-sm text-muted-foreground'>
-                          {equipo.torneo}
-                        </td>
-                        <td className='px-4 py-3 text-sm text-muted-foreground'>
-                          {equipo.zona || '-'}
-                        </td>
-                      </>
-                    )}
-                    <td className='px-4 py-3'>
-                      <Boton
-                        type='button'
-                        size='sm'
-                        onClick={() => alSeleccionarEquipo(equipo)}
-                        disabled={
-                          datos.equiposSeleccionados.length >=
-                          datos.cantidadEquipos
-                        }
-                      >
-                        Seleccionar
-                      </Boton>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+          <TablaEquipos
+            equipos={equiposFiltrados}
+            mostrarColumnasTorneo={datos.modoBusqueda === 'torneo'}
+            cantidadEquipos={datos.cantidadEquipos}
+            cantidadSeleccionados={datos.equiposSeleccionados.length}
+            alSeleccionarEquipo={alSeleccionarEquipo}
+          />
         </div>
       </div>
     </div>

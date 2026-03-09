@@ -1,7 +1,7 @@
 import { Input } from '@/design-system/base-ui/input'
-import { Label } from '@/design-system/base-ui/label'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
+import { TextoAyuda } from '@/design-system/ykn-ui/texto-ayuda'
 import { cn } from '@/logica-compartida/utils'
 import { ChevronDown, ChevronRight, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -36,29 +36,7 @@ export function Paso2Fases() {
     id: Date.now().toString() + Math.random(),
     nombre,
     formato,
-    vueltas: 'ida',
-    formatosPorZona: {},
-    desempates: [
-      'Diferencia de Goles',
-      'Goles a Favor',
-      'Resultado entre sí',
-      'Sorteo',
-      'Manual'
-    ],
-    modoTransicion: 'automatico',
-    clasificadosPorZona: 2,
-    posicionInicioClasificados: 1,
-    posicionFinClasificados: 2,
-    clasificadosCruzados: 0,
-    modoComparacion: 'puntos-totales',
-    habilitarTriangular: false,
-    resolucionDesempate: 'penales',
-    reglasTransicion: [
-      'Diferencia de Goles',
-      'Mejores de tabla general (Cross-Group)',
-      'Sorteo'
-    ],
-    completada: false
+    vueltas: 'ida'
   })
 
   const inicializarFasesParaFormato = () => {
@@ -108,21 +86,6 @@ export function Paso2Fases() {
     )
   }
 
-  // const alReordenarDesempates = (
-  //   faseId: string,
-  //   desdeIndice: number,
-  //   hastaIndice: number
-  // ) => {
-  //   const fase = datos.fases.find((p) => p.id === faseId)
-  //   if (!fase) return
-
-  //   const nuevosDesempates = [...fase.desempates]
-  //   const [movido] = nuevosDesempates.splice(desdeIndice, 1)
-  //   nuevosDesempates.splice(hastaIndice, 0, movido)
-
-  //   actualizarFase(faseId, { desempates: nuevosDesempates })
-  // }
-
   const obtenerEtiquetaFormato = (
     formato: 'todos-contra-todos' | 'eliminacion'
   ) =>
@@ -137,14 +100,12 @@ export function Paso2Fases() {
     <div className='space-y-4'>
       <MiniResumen />
 
-      <div className='p-3 bg-amber-50 rounded-lg border border-amber-200'>
-        <p className='text-sm text-foreground'>
-          <strong>Importante:</strong> En este paso, podés configurar los datos
-          generales de todas las fases, pero en los pasos siguientes vas a
-          elegir equipos, zonas y fixture SOLO de la primera. Luego de creado el
-          torneo, vas a poder editar toda la información de todas las fases.
-        </p>
-      </div>
+      <TextoAyuda>
+        <strong>Importante:</strong> En este paso, podés configurar los datos
+        generales de todas las fases, pero en los pasos siguientes vas a elegir
+        equipos, zonas y fixture SOLO de la primera. Luego de creado el torneo,
+        vas a poder editar toda la información de todas las fases.
+      </TextoAyuda>
 
       <div className='space-y-2'>
         {datos.fases.map((fase, indiceFase) => {
@@ -239,67 +200,38 @@ export function Paso2Fases() {
               {faseExpandida === fase.id && (
                 <div className='p-4 space-y-6'>
                   <div className='flex gap-8 my-3'>
-                    {/* Formato de la fase */}
-                    <div className='flex-1'>
-                      <Label className='block mb-2 text-md font-semibold'>
-                        Formato de la fase
-                      </Label>
-                      <SelectorSimple
-                        opciones={[
-                          {
-                            id: 'todos-contra-todos',
-                            texto: 'Todos contra todos'
-                          },
-                          { id: 'eliminacion', texto: 'Eliminación directa' }
-                        ]}
-                        valorActual={fase.formato}
-                        alElegirOpcion={(id) =>
-                          actualizarFase(fase.id, {
-                            formato: id as Fase['formato']
-                          })
-                        }
-                        deshabilitado={!editable}
-                      />
-                    </div>
-
-                    {/* Tipo de vuelta */}
-                    <div className='flex-1'>
-                      <Label className='block mb-2 text-md font-semibold'>
-                        Tipo de vuelta
-                      </Label>
-                      <SelectorSimple
-                        opciones={[
-                          { id: 'ida', texto: 'Solo ida' },
-                          { id: 'ida-y-vuelta', texto: 'Ida y vuelta' }
-                        ]}
-                        valorActual={fase.vueltas}
-                        alElegirOpcion={(id) =>
-                          actualizarFase(fase.id, {
-                            vueltas: id as Fase['vueltas']
-                          })
-                        }
-                        deshabilitado={!editable}
-                      />
-                    </div>
+                    <SelectorSimple
+                      titulo='Formato de la fase'
+                      opciones={[
+                        {
+                          id: 'todos-contra-todos',
+                          texto: 'Todos contra todos'
+                        },
+                        { id: 'eliminacion', texto: 'Eliminación directa' }
+                      ]}
+                      valorActual={fase.formato}
+                      alElegirOpcion={(id) =>
+                        actualizarFase(fase.id, {
+                          formato: id as Fase['formato']
+                        })
+                      }
+                      deshabilitado={!editable}
+                    />
+                    <SelectorSimple
+                      titulo='Tipo de vuelta'
+                      opciones={[
+                        { id: 'ida', texto: 'Solo ida' },
+                        { id: 'ida-y-vuelta', texto: 'Ida y vuelta' }
+                      ]}
+                      valorActual={fase.vueltas}
+                      alElegirOpcion={(id) =>
+                        actualizarFase(fase.id, {
+                          vueltas: id as Fase['vueltas']
+                        })
+                      }
+                      deshabilitado={!editable}
+                    />
                   </div>
-                  {/* {fase.formato === 'todos-contra-todos' && (
-                    <div className='mt-8'>
-                      <ReglasDeDesempate
-                        desempates={fase.desempates}
-                        editable={editable}
-                        alReordenar={(
-                          desdeIndice: number,
-                          hastaIndice: number
-                        ) =>
-                          alReordenarDesempates(
-                            fase.id,
-                            desdeIndice,
-                            hastaIndice
-                          )
-                        }
-                      />
-                    </div>
-                  )} */}
                 </div>
               )}
             </div>

@@ -339,6 +339,20 @@ describe('calcularEstadisticasFixture', () => {
     expect(stats.excepciones).toHaveLength(0)
   })
 
+  it('ida: encuentrosPorParEsperados = 1', () => {
+    const eq = equipos(4)
+    const fechas = generarFixture(eq, 0, 0, 'ida')
+    const stats = calcularEstadisticasFixture(fechas, eq, 0, 0, 'ida')
+    expect(stats.encuentrosPorParEsperados).toBe(1)
+  })
+
+  it('ida-y-vuelta: encuentrosPorParEsperados = 2', () => {
+    const eq = equipos(4)
+    const fechas = generarFixture(eq, 0, 0, 'ida-y-vuelta')
+    const stats = calcularEstadisticasFixture(fechas, eq, 0, 0, 'ida-y-vuelta')
+    expect(stats.encuentrosPorParEsperados).toBe(2)
+  })
+
   it('4 equipos ida y vuelta: partidosLocalEsperados = partidosVisitanteEsperados = 3', () => {
     const eq = equipos(4)
     const fechas = generarFixture(eq, 0, 0, 'ida-y-vuelta')
@@ -383,8 +397,6 @@ describe('calcularEstadisticasFixture', () => {
     for (const est of stats.estadisticasPorEquipo) {
       expect(est.fechasInterzonal).toBe(2)
     }
-    // No se verifica excepciones vacías: el mix de partidos regulares/interzonales
-    // puede generar distribuciones no perfectamente balanceadas de local/visitante
   })
 
   it('6 equipos ida: sin excepciones', () => {
@@ -392,6 +404,219 @@ describe('calcularEstadisticasFixture', () => {
     const fechas = generarFixture(eq, 0, 0, 'ida')
     const stats = calcularEstadisticasFixture(fechas, eq, 0, 0, 'ida')
     expect(stats.excepciones).toHaveLength(0)
+  })
+
+  it('par que no se enfrenta genera excepción', () => {
+    const eq = equipos(4)
+    const fechas = generarFixture(eq, 0, 0, 'ida')
+    // Modificamos para que equipo 1 vs equipo 2 nunca se enfrenten:
+    // reemplazamos todas las entradas donde participen ambos por un placeholder
+    const fechasModificadas = fechas.map((f) => ({
+      ...f,
+      entradas: f.entradas.map((e) => {
+        if (
+          (e.idEquipoLocal === 1 && e.idEquipoVisitante === 2) ||
+          (e.idEquipoLocal === 2 && e.idEquipoVisitante === 1)
+        ) {
+          return { ...e, idEquipoLocal: null, idEquipoVisitante: null }
+        }
+        return e
+      })
+    }))
+    const stats = calcularEstadisticasFixture(
+      fechasModificadas,
+      eq,
+      0,
+      0,
+      'ida'
+    )
+    expect(stats.excepciones.some((e) => e.includes('vs'))).toBe(true)
+  })
+
+  it('ida-y-vuelta: par que juega 3 veces genera excepción', () => {
+    const eq = equipos(4)
+    const fechas = generarFixture(eq, 0, 0, 'ida-y-vuelta')
+    // Duplicamos la primera entrada regular encontrada
+    const fechasModificadas = fechas.map((f, fi) => {
+      if (fi !== 0) return f
+      const primera = f.entradas.find((e) => e.tipo === 'regular')
+      if (!primera) return f
+      return {
+        ...f,
+        entradas: [...f.entradas, { ...primera, id: primera.id + '-dup' }]
+      }
+    })
+    const stats = calcularEstadisticasFixture(
+      fechasModificadas,
+      eq,
+      0,
+      0,
+      'ida-y-vuelta'
+    )
+    expect(stats.excepciones.length).toBeGreaterThan(0)
+  })
+
+  // ── Regresión: IDs no ordenados ──────────────────────────────────────────────
+
+  it('equipos con IDs no ordenados: sin falsas excepciones de encuentros', () => {
+    // Bug: la clave del par se calculaba como "equipos[i].id-equipos[j].id" sin
+    // ordenar, pero al registrar sí se ordenaba → claves distintas → 0 encuentros
+    const eq = [
+      { id: 10, nombre: 'Equipo A' },
+      { id: 3, nombre: 'Equipo B' },
+      { id: 7, nombre: 'Equipo C' },
+      { id: 1, nombre: 'Equipo D' }
+    ]
+    const fechas = generarFixture(eq, 0, 0, 'ida')
+    const stats = calcularEstadisticasFixture(fechas, eq, 0, 0, 'ida')
+    expect(stats.excepciones).toHaveLength(0)
+  })
+
+  it('equipos con IDs no ordenados, ida-y-vuelta: sin falsas excepciones', () => {
+    const eq = [
+      { id: 10, nombre: 'Equipo A' },
+      { id: 3, nombre: 'Equipo B' },
+      { id: 7, nombre: 'Equipo C' },
+      { id: 1, nombre: 'Equipo D' }
+    ]
+    const fechas = generarFixture(eq, 0, 0, 'ida-y-vuelta')
+    const stats = calcularEstadisticasFixture(fechas, eq, 0, 0, 'ida-y-vuelta')
+    expect(stats.excepciones).toHaveLength(0)
+  })
+
+  // ── Excepciones de local/visitante ───────────────────────────────────────────
+
+  it('ida-y-vuelta: equipo con demasiados partidos de local → excepción', () => {
+    // 2 equipos ida-y-vuelta: cada uno debe jugar 1 local y 1 visitante.
+    // Construimos ambas fechas con el mismo equipo siempre de local.
+    const eq = [
+      { id: 1, nombre: 'Equipo 1' },
+      { id: 2, nombre: 'Equipo 2' }
+    ]
+    const fechas: FechaFixture[] = [
+      {
+        numeroFecha: 1,
+        entradas: [
+          {
+            id: 'p1',
+            tipo: 'regular',
+            local: 'Equipo 1',
+            visitante: 'Equipo 2',
+            idEquipoLocal: 1,
+            idEquipoVisitante: 2
+          }
+        ]
+      },
+      {
+        numeroFecha: 2,
+        entradas: [
+          {
+            id: 'p2',
+            tipo: 'regular',
+            local: 'Equipo 1', // debería ser visitante en la vuelta
+            visitante: 'Equipo 2',
+            idEquipoLocal: 1,
+            idEquipoVisitante: 2
+          }
+        ]
+      }
+    ]
+    const stats = calcularEstadisticasFixture(fechas, eq, 0, 0, 'ida-y-vuelta')
+    // Equipo 1: 2 local + 0 visitante (esperado 1/1) → excepción
+    expect(
+      stats.excepciones.some(
+        (e) => e.includes('Equipo 1') && e.includes('local')
+      )
+    ).toBe(true)
+    // Equipo 2: 0 local + 2 visitante → excepción
+    expect(
+      stats.excepciones.some(
+        (e) => e.includes('Equipo 2') && e.includes('visitante')
+      )
+    ).toBe(true)
+  })
+
+  it('ida: equipo con distribución local/visitante fuera del rango esperado → excepción', () => {
+    // 4 equipos ida: N-1=3, localEsperado=1, visitanteEsperado=2.
+    // Construimos un fixture donde Equipo 1 juega siempre de local (3 local, 0 visitante).
+    const eq = [
+      { id: 1, nombre: 'Equipo 1' },
+      { id: 2, nombre: 'Equipo 2' },
+      { id: 3, nombre: 'Equipo 3' },
+      { id: 4, nombre: 'Equipo 4' }
+    ]
+    const fechas: FechaFixture[] = [
+      {
+        numeroFecha: 1,
+        entradas: [
+          {
+            id: 'p1',
+            tipo: 'regular',
+            local: 'Equipo 1',
+            visitante: 'Equipo 2',
+            idEquipoLocal: 1,
+            idEquipoVisitante: 2
+          },
+          {
+            id: 'p2',
+            tipo: 'regular',
+            local: 'Equipo 3',
+            visitante: 'Equipo 4',
+            idEquipoLocal: 3,
+            idEquipoVisitante: 4
+          }
+        ]
+      },
+      {
+        numeroFecha: 2,
+        entradas: [
+          {
+            id: 'p3',
+            tipo: 'regular',
+            local: 'Equipo 1',
+            visitante: 'Equipo 3',
+            idEquipoLocal: 1,
+            idEquipoVisitante: 3
+          },
+          {
+            id: 'p4',
+            tipo: 'regular',
+            local: 'Equipo 2',
+            visitante: 'Equipo 4',
+            idEquipoLocal: 2,
+            idEquipoVisitante: 4
+          }
+        ]
+      },
+      {
+        numeroFecha: 3,
+        entradas: [
+          {
+            id: 'p5',
+            tipo: 'regular',
+            local: 'Equipo 1',
+            visitante: 'Equipo 4',
+            idEquipoLocal: 1,
+            idEquipoVisitante: 4
+          },
+          {
+            id: 'p6',
+            tipo: 'regular',
+            local: 'Equipo 2',
+            visitante: 'Equipo 3',
+            idEquipoLocal: 2,
+            idEquipoVisitante: 3
+          }
+        ]
+      }
+    ]
+    // Equipo 1: 3 local + 0 visitante → fuera de [1, 2] → excepción
+    const stats = calcularEstadisticasFixture(fechas, eq, 0, 0, 'ida')
+    expect(
+      stats.excepciones.some(
+        (e) => e.includes('Equipo 1') && e.includes('local')
+      )
+    ).toBe(true)
   })
 })
 
@@ -443,6 +668,7 @@ describe('intercambiarEquiposEnFecha', () => {
       1,
       'p1',
       'local',
+      1,
       'p1',
       'visitante'
     )
@@ -460,6 +686,7 @@ describe('intercambiarEquiposEnFecha', () => {
       1,
       'p1',
       'local',
+      1,
       'p2',
       'local'
     )
@@ -481,6 +708,7 @@ describe('intercambiarEquiposEnFecha', () => {
       1,
       'p1',
       'local',
+      1,
       'p2',
       'visitante'
     )
@@ -499,6 +727,7 @@ describe('intercambiarEquiposEnFecha', () => {
       1,
       'p1',
       'local',
+      1,
       'p2',
       'local'
     )
@@ -513,19 +742,35 @@ describe('intercambiarEquiposEnFecha', () => {
       1,
       'p1',
       'local',
+      1,
       'p1',
       'local'
     )
     expect(resultado).toBe(fechas) // referencia idéntica
   })
 
-  it('retorna sin cambios si el numeroFecha no existe', () => {
+  it('retorna sin cambios si el numeroFecha origen no existe', () => {
     const fechas = crearFechasTest()
     const resultado = intercambiarEquiposEnFecha(
       fechas,
       99,
       'p1',
       'local',
+      1,
+      'p2',
+      'local'
+    )
+    expect(resultado).toBe(fechas)
+  })
+
+  it('retorna sin cambios si el numeroFecha destino no existe', () => {
+    const fechas = crearFechasTest()
+    const resultado = intercambiarEquiposEnFecha(
+      fechas,
+      1,
+      'p1',
+      'local',
+      99,
       'p2',
       'local'
     )
@@ -541,6 +786,7 @@ describe('intercambiarEquiposEnFecha', () => {
       1,
       'p1',
       'local',
+      1,
       'p-zona-b',
       'local'
     )
@@ -565,10 +811,40 @@ describe('intercambiarEquiposEnFecha', () => {
       }
     ]
     // Intercambiar en zona A
-    intercambiarEquiposEnFecha(fechasZonaA, 1, 'p1', 'local', 'p2', 'local')
+    intercambiarEquiposEnFecha(fechasZonaA, 1, 'p1', 'local', 1, 'p2', 'local')
     // Zona B no se modifica (cada zona tiene su propio array)
     expect(fechasZonaB[0].entradas[0].local).toBe('E5')
     expect(fechasZonaB[0].entradas[0].visitante).toBe('E6')
+  })
+
+  it('intercambio entre fechas distintas: mueve equipo de fecha 2 a fecha 1', () => {
+    // Arrastrar local de p3 (fecha 2: E1) y soltar en local de p1 (fecha 1: E1 → resultado: E1 en ambas)
+    // Usamos visitante de p3 (E3) → soltar en local de p1 (E1)
+    // Después: p3.visitante = E1, p1.local = E3
+    const fechas = crearFechasTest()
+    const resultado = intercambiarEquiposEnFecha(
+      fechas,
+      2, // origenNumeroFecha
+      'p3', // origenId (fecha 2)
+      'visitante',
+      1, // destinoNumeroFecha
+      'p1', // destinoId (fecha 1)
+      'local'
+    )
+    const p3 = resultado
+      .find((d) => d.numeroFecha === 2)!
+      .entradas.find((e) => e.id === 'p3')!
+    const p1 = resultado
+      .find((d) => d.numeroFecha === 1)!
+      .entradas.find((e) => e.id === 'p1')!
+    // p3.visitante recibe los datos que tenía p1.local (E1, id 1)
+    expect(p3.visitante).toBe('E1')
+    expect(p3.idEquipoVisitante).toBe(1)
+    // p1.local recibe los datos que tenía p3.visitante (E3, id 3)
+    expect(p1.local).toBe('E3')
+    expect(p1.idEquipoLocal).toBe(3)
+    // El resto no cambia
+    expect(p1.visitante).toBe('E2')
   })
 })
 

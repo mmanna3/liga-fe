@@ -1,3 +1,4 @@
+import { Label } from '@/design-system/base-ui/label'
 import { cn } from '@/logica-compartida/utils'
 
 export interface OpcionSelector {
@@ -12,6 +13,7 @@ interface SelectorSimpleProps {
   deshabilitado?: boolean
   tamano?: 'default' | 'sm'
   className?: string
+  titulo?: string
 }
 
 export default function SelectorSimple({
@@ -20,9 +22,10 @@ export default function SelectorSimple({
   alElegirOpcion,
   deshabilitado = false,
   tamano = 'default',
-  className
+  className,
+  titulo
 }: SelectorSimpleProps) {
-  return (
+  const contenido = (
     <div
       className={cn(
         opciones.length === 4
@@ -57,4 +60,15 @@ export default function SelectorSimple({
       })}
     </div>
   )
+
+  if (titulo) {
+    return (
+      <div className={cn('flex-1', className)}>
+        <Label className='block mb-2 text-md font-semibold'>{titulo}</Label>
+        {contenido}
+      </div>
+    )
+  }
+
+  return contenido
 }

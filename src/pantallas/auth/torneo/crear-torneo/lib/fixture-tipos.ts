@@ -26,6 +26,8 @@ export interface EstadisticasEquipo {
 export interface EstadisticasFixture {
   totalFechas: number
   estadisticasPorEquipo: EstadisticasEquipo[]
+  /** Cuántas veces debe enfrentarse cada par: 1 (ida) o 2 (ida-y-vuelta) */
+  encuentrosPorParEsperados: number
   partidosLocalEsperados: number
   partidosVisitanteEsperados: number
   /** Diferencias respecto a la distribución ideal */

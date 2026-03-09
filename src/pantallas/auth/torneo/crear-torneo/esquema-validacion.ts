@@ -13,22 +13,7 @@ const esquemaFase = z.object({
   id: z.string(),
   nombre: z.string().min(1, 'El nombre de la fase es requerido'),
   formato: z.enum(['todos-contra-todos', 'eliminacion']),
-  vueltas: z.enum(['ida', 'ida-y-vuelta']),
-  formatosPorZona: z.record(
-    z.string(),
-    z.enum(['todos-contra-todos', 'eliminacion'])
-  ),
-  desempates: z.array(z.string()),
-  modoTransicion: z.enum(['manual', 'automatico']),
-  clasificadosPorZona: z.number(),
-  posicionInicioClasificados: z.number(),
-  posicionFinClasificados: z.number(),
-  clasificadosCruzados: z.number(),
-  modoComparacion: z.enum(['puntos-totales', 'promedio-puntos']),
-  habilitarTriangular: z.boolean(),
-  resolucionDesempate: z.enum(['penales', 'tiempo-extra', 'ventaja']),
-  reglasTransicion: z.array(z.string()),
-  completada: z.boolean()
+  vueltas: z.enum(['ida', 'ida-y-vuelta'])
 })
 
 // Esquema para equipo
