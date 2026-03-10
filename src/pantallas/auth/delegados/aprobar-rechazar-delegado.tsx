@@ -3,12 +3,13 @@ import { AprobarDelegadoEnElClubDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
+import AprobarRechazarHeaderDelegado from './components/aprobar-rechazar-header-delegado'
 import DialogoEliminarDelegado from './components/dialogo-eliminar-delegado'
 import { Card, CardContent, CardHeader } from '@/design-system/base-ui/card'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import BotonVolver from '@/design-system/ykn-ui/boton-volver'
-import DetalleItem from '@/design-system/ykn-ui/detalle-item'
 import { rutasNavegacion } from '@/ruteo/rutas'
+import { useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 const AprobarRechazarDelegado: React.FC = () => {
@@ -18,6 +19,8 @@ const AprobarRechazarDelegado: React.FC = () => {
     id: string
     delegadoClubId: string
   }>()
+  const [datosCabecera, setDatosCabecera] =
+    useState<AprobarDelegadoEnElClubDTO>()
   const volverADelegados = () =>
     navigate(`${rutasNavegacion.delegados}${location.search}`)
 
@@ -54,34 +57,16 @@ const AprobarRechazarDelegado: React.FC = () => {
       {delegado && (
         <Card className='max-w-3xl mx-auto mt-10 p-6 rounded-xl border bg-white'>
           <CardHeader className='flex flex-col items-center text-center'>
-            <img
-              src={delegado.fotoCarnet}
-              alt={`${delegado.nombre} ${delegado.apellido}`}
-              className='w-32 h-32 rounded-lg object-cover'
+            <AprobarRechazarHeaderDelegado
+              delegado={delegado}
+              delegadoClubId={
+                delegadoClubId ? Number(delegadoClubId) : undefined
+              }
+              onChange={setDatosCabecera}
             />
-            <h2 className='mt-4 text-3xl font-semibold text-gray-900'>
-              {delegado.nombre} {delegado.apellido}
-            </h2>
           </CardHeader>
 
           <CardContent>
-            <div className='flex flex-col gap-1 bg-gray-50 p-5 rounded-lg mb-6'>
-              <DetalleItem clave='DNI' valor={delegado.dni} />
-              <DetalleItem
-                clave='Fecha de nacimiento'
-                valor={delegado.fechaNacimiento.toLocaleDateString('es-AR')}
-              />
-              {delegado.email && (
-                <DetalleItem clave='Email' valor={delegado.email} />
-              )}
-              {delegado.telefonoCelular && (
-                <DetalleItem
-                  clave='Teléfono'
-                  valor={delegado.telefonoCelular}
-                />
-              )}
-            </div>
-
             {delegado.fotoDNIFrente && delegado.fotoDNIDorso && (
               <div className='mb-6'>
                 <h2 className='text-xl font-semibold mb-6 text-gray-700'>
@@ -115,15 +100,11 @@ const AprobarRechazarDelegado: React.FC = () => {
                 estaCargando={
                   aprobarMutation.isPending || rechazarMutation.isPending
                 }
-                disabled={!delegadoClubId}
-                onClick={() =>
-                  delegadoClubId &&
-                  aprobarMutation.mutate(
-                    new AprobarDelegadoEnElClubDTO({
-                      delegadoClubId: Number(delegadoClubId)
-                    })
-                  )
-                }
+                disabled={!delegadoClubId || !datosCabecera}
+                onClick={() => {
+                  if (!datosCabecera) return
+                  aprobarMutation.mutate(datosCabecera)
+                }}
               >
                 Aprobar
               </Boton>

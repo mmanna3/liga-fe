@@ -4310,6 +4310,287 @@ export class Client {
   /**
    * @return OK
    */
+  fechasAll(padreId: number): Promise<TorneoFechaDTO[]> {
+    let url_ = this.baseUrl + '/api/TorneoZona/{padreId}/fechas'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processFechasAll(_response)
+    })
+  }
+
+  protected processFechasAll(response: Response): Promise<TorneoFechaDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(TorneoFechaDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<TorneoFechaDTO[]>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  fechasPOST(
+    padreId: number,
+    body: TorneoFechaDTO | undefined
+  ): Promise<TorneoFechaDTO> {
+    let url_ = this.baseUrl + '/api/TorneoZona/{padreId}/fechas'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processFechasPOST(_response)
+    })
+  }
+
+  protected processFechasPOST(response: Response): Promise<TorneoFechaDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = TorneoFechaDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<TorneoFechaDTO>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  fechasGET(padreId: number, id: number): Promise<TorneoFechaDTO> {
+    let url_ = this.baseUrl + '/api/TorneoZona/{padreId}/fechas/{id}'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processFechasGET(_response)
+    })
+  }
+
+  protected processFechasGET(response: Response): Promise<TorneoFechaDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = TorneoFechaDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<TorneoFechaDTO>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  fechasPUT(
+    padreId: number,
+    id: number,
+    body: TorneoFechaDTO | undefined
+  ): Promise<void> {
+    let url_ = this.baseUrl + '/api/TorneoZona/{padreId}/fechas/{id}'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processFechasPUT(_response)
+    })
+  }
+
+  protected processFechasPUT(response: Response): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  fechasDELETE(padreId: number, id: number): Promise<number> {
+    let url_ = this.baseUrl + '/api/TorneoZona/{padreId}/fechas/{id}'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'DELETE',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processFechasDELETE(_response)
+    })
+  }
+
+  protected processFechasDELETE(response: Response): Promise<number> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = resultData200 !== undefined ? resultData200 : <any>null
+
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<number>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
   zonasAll(padreId: number): Promise<TorneoZonaDTO[]> {
     let url_ = this.baseUrl + '/api/TorneoFase/{padreId}/zonas'
     if (padreId === undefined || padreId === null)
@@ -4590,6 +4871,13 @@ export class Client {
 }
 
 export class AprobarDelegadoEnElClubDTO implements IAprobarDelegadoEnElClubDTO {
+  id?: number
+  dni!: string
+  nombre!: string
+  apellido!: string
+  fechaNacimiento!: Date
+  telefonoCelular?: string | undefined
+  email?: string | undefined
   delegadoClubId?: number
 
   constructor(data?: IAprobarDelegadoEnElClubDTO) {
@@ -4603,6 +4891,15 @@ export class AprobarDelegadoEnElClubDTO implements IAprobarDelegadoEnElClubDTO {
 
   init(_data?: any) {
     if (_data) {
+      this.id = _data['id']
+      this.dni = _data['dni']
+      this.nombre = _data['nombre']
+      this.apellido = _data['apellido']
+      this.fechaNacimiento = _data['fechaNacimiento']
+        ? new Date(_data['fechaNacimiento'].toString())
+        : <any>undefined
+      this.telefonoCelular = _data['telefonoCelular']
+      this.email = _data['email']
       this.delegadoClubId = _data['delegadoClubId']
     }
   }
@@ -4616,12 +4913,28 @@ export class AprobarDelegadoEnElClubDTO implements IAprobarDelegadoEnElClubDTO {
 
   toJSON(data?: any) {
     data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['dni'] = this.dni
+    data['nombre'] = this.nombre
+    data['apellido'] = this.apellido
+    data['fechaNacimiento'] = this.fechaNacimiento
+      ? this.fechaNacimiento.toISOString()
+      : <any>undefined
+    data['telefonoCelular'] = this.telefonoCelular
+    data['email'] = this.email
     data['delegadoClubId'] = this.delegadoClubId
     return data
   }
 }
 
 export interface IAprobarDelegadoEnElClubDTO {
+  id?: number
+  dni: string
+  nombre: string
+  apellido: string
+  fechaNacimiento: Date
+  telefonoCelular?: string | undefined
+  email?: string | undefined
   delegadoClubId?: number
 }
 
@@ -6508,6 +6821,71 @@ export interface ITorneoFaseDTO {
   esVisibleEnApp?: boolean
 }
 
+export class TorneoFechaDTO implements ITorneoFechaDTO {
+  id?: number
+  dia!: Date
+  numero!: number
+  zonaId?: number
+  instanciaEliminacionDirectaId?: number | undefined
+  instanciaEliminacionDirectaNombre?: string | undefined
+  esVisibleEnApp!: boolean
+
+  constructor(data?: ITorneoFechaDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.dia = _data['dia']
+        ? new Date(_data['dia'].toString())
+        : <any>undefined
+      this.numero = _data['numero']
+      this.zonaId = _data['zonaId']
+      this.instanciaEliminacionDirectaId =
+        _data['instanciaEliminacionDirectaId']
+      this.instanciaEliminacionDirectaNombre =
+        _data['instanciaEliminacionDirectaNombre']
+      this.esVisibleEnApp = _data['esVisibleEnApp']
+    }
+  }
+
+  static fromJS(data: any): TorneoFechaDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new TorneoFechaDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['dia'] = this.dia ? formatDate(this.dia) : <any>undefined
+    data['numero'] = this.numero
+    data['zonaId'] = this.zonaId
+    data['instanciaEliminacionDirectaId'] = this.instanciaEliminacionDirectaId
+    data['instanciaEliminacionDirectaNombre'] =
+      this.instanciaEliminacionDirectaNombre
+    data['esVisibleEnApp'] = this.esVisibleEnApp
+    return data
+  }
+}
+
+export interface ITorneoFechaDTO {
+  id?: number
+  dia: Date
+  numero: number
+  zonaId?: number
+  instanciaEliminacionDirectaId?: number | undefined
+  instanciaEliminacionDirectaNombre?: string | undefined
+  esVisibleEnApp: boolean
+}
+
 export class TorneoZonaDTO implements ITorneoZonaDTO {
   id?: number
   nombre!: string
@@ -6594,6 +6972,16 @@ export interface IUsuarioDTO {
   id?: number
   nombreUsuario?: string | undefined
   delegadoId?: number | undefined
+}
+
+function formatDate(d: Date) {
+  return (
+    d.getFullYear() +
+    '-' +
+    (d.getMonth() < 9 ? '0' + (d.getMonth() + 1) : d.getMonth() + 1) +
+    '-' +
+    (d.getDate() < 10 ? '0' + d.getDate() : d.getDate())
+  )
 }
 
 export class ApiException extends Error {
