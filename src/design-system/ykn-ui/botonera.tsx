@@ -1,13 +1,13 @@
-import ModalEliminacion from '@/design-system/modal-eliminacion'
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger
 } from '@/design-system/base-ui/tooltip'
+import ModalEliminacion from '@/design-system/modal-eliminacion'
 import { VisibleSoloParaAdmin } from '@/design-system/visible-solo-para-admin'
-import { cn } from '@/logica-compartida/utils'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import Icono, { type NombreIcono } from '@/design-system/ykn-ui/icono'
+import { cn } from '@/logica-compartida/utils'
 import * as React from 'react'
 
 export interface IconoBotonera {
@@ -40,7 +40,7 @@ function IconoBoton({ item }: { item: IconoBotonera }) {
       className={cn(
         'h-10 w-10 min-w-10 p-0',
         item.esEliminar &&
-          'border-destructive text-destructive hover:bg-destructive/10'
+          'border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive'
       )}
       onClick={item.esEliminar ? undefined : item.alApretar}
       estaCargando={item.modalEliminacion?.estaCargando}

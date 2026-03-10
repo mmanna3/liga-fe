@@ -1,10 +1,20 @@
 import { api } from '@/api/api'
+import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
 import {
   Alert,
   AlertDescription,
   AlertTitle
 } from '@/design-system/base-ui/alert'
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/design-system/base-ui/alert-dialog'
 import {
   Card,
   CardContent,
@@ -17,11 +27,13 @@ import { Boton } from '@/design-system/ykn-ui/boton'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
 import Icono from '@/design-system/ykn-ui/icono'
 import { rutasNavegacion } from '@/ruteo/rutas'
+import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export default function DetalleClub() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const [abrirModalEliminar, setAbrirModalEliminar] = useState(false)
 
   const {
     data: club,
@@ -30,6 +42,14 @@ export default function DetalleClub() {
   } = useApiQuery({
     key: ['club', id],
     fn: async () => await api.clubGET(Number(id))
+  })
+
+  const eliminarMutation = useApiMutation<void>({
+    fn: async () => {
+      await api.clubDELETE(Number(id))
+    },
+    antesDeMensajeExito: () => navigate(rutasNavegacion.clubs),
+    mensajeDeExito: `El club "${club?.nombre ?? ''}" fue eliminado.`
   })
 
   if (isError) {
@@ -68,153 +88,197 @@ export default function DetalleClub() {
   ) : undefined
 
   return (
-    <FlujoHomeLayout
-      titulo={club!.nombre}
-      iconoTitulo={imagenTitulo ? undefined : 'Clubes'}
-      imagenTitulo={imagenTitulo}
-      pathBotonVolver={rutasNavegacion.clubs}
-      botonera={{
-        iconos: [
-          {
-            alApretar: () => navigate(`${rutasNavegacion.editarClub}/${id}`),
-            tooltip: 'Editar',
-            icono: 'Editar',
-            visibleSoloParaAdmin: true
-          }
-        ]
-      }}
-      contenidoEnCard={false}
-      contenido={
-        <div className='space-y-6'>
-          <Card className='shadow-md'>
-            <CardContent className='space-y-2'>
-              <p className='flex items-center gap-2'>
-                <Icono
-                  nombre='Casa'
-                  className='h-5 w-5 shrink-0 text-primary'
-                />
-                {[club!.direccion, club!.localidad]
-                  .filter(Boolean)
-                  .join(', ') || '—'}
-              </p>
-              <p className='flex items-baseline gap-1 pl-1'>
-                {club!.esTechado ? (
-                  <>
-                    Tiene techo
-                    <Icono
-                      nombre='Verificado'
-                      className='h-3.5 w-3.5 shrink-0 translate-y-[2px] text-primary'
-                    />
-                  </>
-                ) : (
-                  <>
-                    No tiene techo
-                    <Icono
-                      nombre='Cruz'
-                      className='h-3.5 w-3.5 shrink-0 translate-y-[2px] text-destructive'
-                    />
-                  </>
-                )}
-              </p>
-            </CardContent>
-          </Card>
-
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-            <Card className='shadow-md'>
-              <CardHeader className='pb-3'>
-                <CardTitle className='text-xl font-semibold flex items-center gap-2'>
-                  <Icono nombre='Delegados' className='h-5 w-5' />
-                  Delegados
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {club!.delegados && club!.delegados.length > 0 ? (
-                  <ul className='space-y-2 divide-y divide-gray-100'>
-                    {club!.delegados.map((delegado) => (
-                      <li key={delegado.id} className='pt-2 first:pt-0'>
-                        <Boton
-                          variant='ghost'
-                          className='w-full justify-start font-normal hover:bg-gray-50'
-                          onClick={() =>
-                            navigate(
-                              `${rutasNavegacion.detalleDelegado}/${delegado.id}`
-                            )
-                          }
-                        >
-                          {delegado.nombre} {delegado.apellido}
-                        </Boton>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className='text-gray-500 text-sm italic text-center py-4'>
-                    No hay delegados registrados
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-
-            <Card className='shadow-md'>
-              <CardHeader className='pb-3 flex flex-row items-center justify-between'>
-                <CardTitle className='text-xl font-semibold flex items-center gap-2'>
-                  <Icono nombre='Equipos' className='h-5 w-5' />
-                  Equipos
-                </CardTitle>
-                <VisibleSoloParaAdmin>
-                  <Boton
-                    onClick={() =>
-                      navigate(`${rutasNavegacion.crearEquipo}/${id}`)
+    <>
+      <FlujoHomeLayout
+        titulo={club!.nombre}
+        iconoTitulo={imagenTitulo ? undefined : 'Clubes'}
+        imagenTitulo={imagenTitulo}
+        pathBotonVolver={rutasNavegacion.clubs}
+        botonera={{
+          iconos: [
+            {
+              alApretar: () => navigate(`${rutasNavegacion.editarClub}/${id}`),
+              tooltip: 'Editar',
+              icono: 'Editar',
+              visibleSoloParaAdmin: true
+            },
+            ...(club!.equipos && club!.equipos.length > 0
+              ? [
+                  {
+                    alApretar: () => setAbrirModalEliminar(true),
+                    tooltip: 'Eliminar',
+                    icono: 'Eliminar' as const,
+                    visibleSoloParaAdmin: true
+                  }
+                ]
+              : [
+                  {
+                    alApretar: () => eliminarMutation.mutate(undefined),
+                    tooltip: 'Eliminar',
+                    icono: 'Eliminar' as const,
+                    visibleSoloParaAdmin: true,
+                    esEliminar: true,
+                    modalEliminacion: {
+                      titulo: 'Eliminar club',
+                      subtitulo: `¿Estás seguro de que querés eliminar el club "${club!.nombre}"? Esta acción no se puede deshacer.`,
+                      eliminarTexto: 'Eliminar club',
+                      estaCargando: eliminarMutation.isPending
                     }
-                    variant='outline'
-                    size='sm'
-                    className='flex items-center gap-1'
-                  >
-                    <Icono nombre='Agregar equipo' className='h-4 w-4' />
-                    Nuevo
-                  </Boton>
-                </VisibleSoloParaAdmin>
-              </CardHeader>
-              <CardContent>
-                {club!.equipos && club!.equipos.length > 0 ? (
-                  <ul className='space-y-3'>
-                    {club!.equipos.map((equipo) => (
-                      <li
-                        key={equipo.id}
-                        className='flex items-center justify-between bg-gray-50 rounded-lg p-3'
-                      >
-                        <Boton
-                          variant='ghost'
-                          className='p-0 h-auto text-left font-normal hover:bg-transparent'
-                          onClick={() =>
-                            navigate(
-                              `${rutasNavegacion.detalleEquipo}/${equipo.id}`
-                            )
-                          }
-                        >
-                          {equipo.nombre}
-                        </Boton>
-                        {equipo.torneoNombre ? (
-                          <span className='text-sm px-3 py-1 bg-blue-100 text-blue-800 rounded-full'>
-                            {equipo.torneoNombre}
-                          </span>
-                        ) : (
-                          <span className='text-sm px-3 py-1 bg-gray-100 text-gray-600 rounded-full'>
-                            Sin torneo
-                          </span>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className='text-gray-500 text-sm italic text-center py-4'>
-                    No hay equipos registrados
-                  </p>
-                )}
+                  }
+                ])
+          ]
+        }}
+        contenidoEnCard={false}
+        contenido={
+          <div className='space-y-6'>
+            <Card className='shadow-md'>
+              <CardContent className='space-y-2'>
+                <p className='flex items-center gap-2'>
+                  <Icono
+                    nombre='Casa'
+                    className='h-5 w-5 shrink-0 text-primary'
+                  />
+                  {[club!.direccion, club!.localidad]
+                    .filter(Boolean)
+                    .join(', ') || '—'}
+                </p>
+                <p className='flex items-baseline gap-1 pl-1'>
+                  {club!.esTechado ? (
+                    <>
+                      Tiene techo
+                      <Icono
+                        nombre='Verificado'
+                        className='h-3.5 w-3.5 shrink-0 translate-y-[2px] text-primary'
+                      />
+                    </>
+                  ) : (
+                    <>
+                      No tiene techo
+                      <Icono
+                        nombre='Cruz'
+                        className='h-3.5 w-3.5 shrink-0 translate-y-[2px] text-destructive'
+                      />
+                    </>
+                  )}
+                </p>
               </CardContent>
             </Card>
+
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+              <Card className='shadow-md'>
+                <CardHeader className='pb-3'>
+                  <CardTitle className='text-xl font-semibold flex items-center gap-2'>
+                    <Icono nombre='Delegados' className='h-5 w-5' />
+                    Delegados
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {club!.delegados && club!.delegados.length > 0 ? (
+                    <ul className='space-y-2 divide-y divide-gray-100'>
+                      {club!.delegados.map((delegado) => (
+                        <li key={delegado.id} className='pt-2 first:pt-0'>
+                          <Boton
+                            variant='ghost'
+                            className='w-full justify-start font-normal hover:bg-gray-50'
+                            onClick={() =>
+                              navigate(
+                                `${rutasNavegacion.detalleDelegado}/${delegado.id}`
+                              )
+                            }
+                          >
+                            {delegado.nombre} {delegado.apellido}
+                          </Boton>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className='text-gray-500 text-sm italic text-center py-4'>
+                      No hay delegados registrados
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className='shadow-md'>
+                <CardHeader className='pb-3 flex flex-row items-center justify-between'>
+                  <CardTitle className='text-xl font-semibold flex items-center gap-2'>
+                    <Icono nombre='Equipos' className='h-5 w-5' />
+                    Equipos
+                  </CardTitle>
+                  <VisibleSoloParaAdmin>
+                    <Boton
+                      onClick={() =>
+                        navigate(`${rutasNavegacion.crearEquipo}/${id}`)
+                      }
+                      variant='outline'
+                      size='sm'
+                      className='flex items-center gap-1'
+                    >
+                      <Icono nombre='Agregar equipo' className='h-4 w-4' />
+                      Nuevo
+                    </Boton>
+                  </VisibleSoloParaAdmin>
+                </CardHeader>
+                <CardContent>
+                  {club!.equipos && club!.equipos.length > 0 ? (
+                    <ul className='space-y-3'>
+                      {club!.equipos.map((equipo) => (
+                        <li
+                          key={equipo.id}
+                          className='flex items-center justify-between bg-gray-50 rounded-lg p-3'
+                        >
+                          <Boton
+                            variant='ghost'
+                            className='p-0 h-auto text-left font-normal hover:bg-transparent'
+                            onClick={() =>
+                              navigate(
+                                `${rutasNavegacion.detalleEquipo}/${equipo.id}`
+                              )
+                            }
+                          >
+                            {equipo.nombre}
+                          </Boton>
+                          {equipo.torneoNombre ? (
+                            <span className='text-sm px-3 py-1 bg-blue-100 text-blue-800 rounded-full'>
+                              {equipo.torneoNombre}
+                            </span>
+                          ) : (
+                            <span className='text-sm px-3 py-1 bg-gray-100 text-gray-600 rounded-full'>
+                              Sin torneo
+                            </span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className='text-gray-500 text-sm italic text-center py-4'>
+                      No hay equipos registrados
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           </div>
-        </div>
-      }
-    />
+        }
+      />
+
+      <AlertDialog
+        open={abrirModalEliminar}
+        onOpenChange={setAbrirModalEliminar}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>No se puede eliminar el club</AlertDialogTitle>
+            <AlertDialogDescription>
+              Este club tiene equipos. Para eliminar el club, eliminá primero
+              los equipos que tiene.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Volver</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }
