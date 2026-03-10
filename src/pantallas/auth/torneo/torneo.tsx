@@ -24,6 +24,12 @@ export default function Torneo() {
       botonera={{
         iconos: [
           {
+            alApretar: () => navigate(rutasNavegacion.agrupadoresTorneo),
+            tooltip: 'Agrupadores de torneos',
+            icono: 'Layout dashboard',
+            visibleSoloParaAdmin: true
+          },
+          {
             alApretar: () => navigate(rutasNavegacion.crearTorneo),
             tooltip: 'Crear Torneo',
             icono: 'Agregar',

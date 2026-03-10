@@ -63,7 +63,11 @@ export function generarFixture(
     ...fantasmas
   ]
 
-  const fechasIda = metodoCirculo(participantes, T)
+  const idEquipos = equipos.map((e) => e.id)
+  const fechasIda = balancearLocalVisitante(
+    metodoCirculo(participantes, T),
+    idEquipos
+  )
 
   if (vueltas === 'ida') return fechasIda
 
@@ -631,6 +635,67 @@ export function intercambiarParticipantesEnBracket(
   resultado[indexA] = participantes[indexB]
   resultado[indexB] = participantes[indexA]
   return resultado
+}
+
+// ─── Implementación interna: balanceo local/visitante ────────────────────────
+
+/**
+ * Cuando los participantes fantasma (LIBRE/INTERZONAL) interrumpen la rotación
+ * natural del método círculo, algunos equipos terminan con más partidos de local
+ * de los permitidos. Esta función intercambia el local/visitante en partidos
+ * entre dos equipos "sobrantes", corrigiéndolos de a pares.
+ */
+/**
+ * Re-asigna local/visitante para todos los partidos regulares usando una
+ * fórmula basada en el rango de los equipos, garantizando balance perfecto:
+ * - N-1 par (e.g. N=13): cada equipo juega exactamente (N-1)/2 de local
+ * - N-1 impar (e.g. N=8): cada equipo juega floor o ceil de (N-1)/2 de local
+ *
+ * La fórmula: ordenar equipos por id; para el par (rangoA < rangoB),
+ * A es local si (rangoB - rangoA) ≤ ⌊(N-1)/2⌋, si no B es local.
+ */
+function balancearLocalVisitante(
+  fechas: FechaFixture[],
+  idEquipos: number[]
+): FechaFixture[] {
+  const N = idEquipos.length
+  if (N < 2) return fechas
+  const halfN = Math.floor((N - 1) / 2)
+
+  const sorted = [...idEquipos].sort((a, b) => a - b)
+  const rango: Record<number, number> = {}
+  sorted.forEach((id, i) => {
+    rango[id] = i
+  })
+
+  return fechas.map((fecha) => ({
+    ...fecha,
+    entradas: fecha.entradas.map((entrada) => {
+      if (entrada.tipo !== 'regular') return entrada
+      const a = entrada.idEquipoLocal
+      const b = entrada.idEquipoVisitante
+      if (a == null || b == null) return entrada
+
+      const ra = rango[a]
+      const rb = rango[b]
+      if (ra == null || rb == null) return entrada
+
+      const [smaller, larger, rankSmall, rankLarge] =
+        ra < rb ? [a, b, ra, rb] : [b, a, rb, ra]
+      const smallerEsLocal = rankLarge - rankSmall <= halfN
+      const newLocal = smallerEsLocal ? smaller : larger
+      const newVisitante = smallerEsLocal ? larger : smaller
+
+      if (newLocal === a) return entrada
+      return {
+        ...entrada,
+        local: entrada.visitante,
+        visitante: entrada.local,
+        idEquipoLocal: newLocal,
+        idEquipoVisitante: newVisitante
+      }
+    })
+  }))
 }
 
 // ─── Implementación interna: método círculo ──────────────────────────────────

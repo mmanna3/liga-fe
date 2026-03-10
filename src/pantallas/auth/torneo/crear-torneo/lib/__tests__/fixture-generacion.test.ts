@@ -1045,6 +1045,40 @@ describe('intercambiar local↔visitante y recalcular estadísticas', () => {
   })
 })
 
+// ─── generarFixture – 13 equipos + 1 libre ───────────────────────────────────
+
+describe('generarFixture – 13 equipos + 1 libre', () => {
+  it('genera exactamente 13 fechas', () => {
+    const fechas = generarFixture(equipos(13), 1, 0, 'ida')
+    expect(fechas).toHaveLength(13)
+  })
+
+  it('cada equipo juega exactamente 12 partidos regulares', () => {
+    const eq = equipos(13)
+    const fechas = generarFixture(eq, 1, 0, 'ida')
+    const conteo = contarPorEquipo(fechas, 'regular')
+    for (const e of eq) {
+      expect(conteo[e.id]).toBe(12)
+    }
+  })
+
+  it('cada equipo queda libre exactamente 1 fecha', () => {
+    const eq = equipos(13)
+    const fechas = generarFixture(eq, 1, 0, 'ida')
+    const conteo = contarPorEquipo(fechas, 'libre')
+    for (const e of eq) {
+      expect(conteo[e.id]).toBe(1)
+    }
+  })
+
+  it('sin excepciones', () => {
+    const eq = equipos(13)
+    const fechas = generarFixture(eq, 1, 0, 'ida')
+    const stats = calcularEstadisticasFixture(fechas, eq, 1, 0, 'ida')
+    expect(todasLasExcepciones(stats)).toHaveLength(0)
+  })
+})
+
 // ─── intercambiarParticipantesEnBracket ──────────────────────────────────────
 
 describe('intercambiarParticipantesEnBracket', () => {

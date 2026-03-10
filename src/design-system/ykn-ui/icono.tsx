@@ -50,6 +50,9 @@ const MAPEO_ICONOS: Record<
   Relámpago: LucideIcons.Zap,
   Personalizado: LucideIcons.Settings,
 
+  // Agrupadores / dashboards
+  'Layout dashboard': LucideIcons.LayoutDashboard,
+
   // Datos personales
   Calendario: LucideIcons.CalendarDays,
   Carnet: LucideIcons.IdCard,

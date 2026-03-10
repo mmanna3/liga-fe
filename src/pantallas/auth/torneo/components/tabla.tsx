@@ -22,6 +22,11 @@ export default function TablaTorneo({
       accessorKey: 'nombre',
       header: 'Nombre',
       cell: ({ row }) => <span>{row.getValue('nombre')}</span>
+    },
+    {
+      accessorKey: 'torneoAgrupadorNombre',
+      header: 'Agrupador',
+      cell: ({ row }) => <span>{row.getValue('torneoAgrupadorNombre')}</span>
     }
   ]
 

@@ -3403,6 +3403,341 @@ export class Client {
     }
     return Promise.resolve<number>(null as any)
   }
+
+  /**
+   * @param ids (optional)
+   * @return OK
+   */
+  torneoAgrupadoresPorIds(
+    ids: number[] | undefined
+  ): Promise<TorneoAgrupadorDTO[]> {
+    let url_ = this.baseUrl + '/api/TorneoAgrupador/por-ids?'
+    if (ids === null) throw new Error("The parameter 'ids' cannot be null.")
+    else if (ids !== undefined)
+      ids &&
+        ids.forEach((item) => {
+          url_ += 'ids=' + encodeURIComponent('' + item) + '&'
+        })
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processTorneoAgrupadoresPorIds(_response)
+    })
+  }
+
+  protected processTorneoAgrupadoresPorIds(
+    response: Response
+  ): Promise<TorneoAgrupadorDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(TorneoAgrupadorDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<TorneoAgrupadorDTO[]>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  torneoAgrupadorAll(): Promise<TorneoAgrupadorDTO[]> {
+    let url_ = this.baseUrl + '/api/TorneoAgrupador'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processTorneoAgrupadorAll(_response)
+    })
+  }
+
+  protected processTorneoAgrupadorAll(
+    response: Response
+  ): Promise<TorneoAgrupadorDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(TorneoAgrupadorDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<TorneoAgrupadorDTO[]>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  torneoAgrupadorPOST(
+    body: TorneoAgrupadorDTO | undefined
+  ): Promise<TorneoAgrupadorDTO> {
+    let url_ = this.baseUrl + '/api/TorneoAgrupador'
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processTorneoAgrupadorPOST(_response)
+    })
+  }
+
+  protected processTorneoAgrupadorPOST(
+    response: Response
+  ): Promise<TorneoAgrupadorDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = TorneoAgrupadorDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<TorneoAgrupadorDTO>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  torneoAgrupadorGET(id: number): Promise<TorneoAgrupadorDTO> {
+    let url_ = this.baseUrl + '/api/TorneoAgrupador/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processTorneoAgrupadorGET(_response)
+    })
+  }
+
+  protected processTorneoAgrupadorGET(
+    response: Response
+  ): Promise<TorneoAgrupadorDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = TorneoAgrupadorDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<TorneoAgrupadorDTO>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  torneoAgrupadorPUT(
+    id: number,
+    body: TorneoAgrupadorDTO | undefined
+  ): Promise<void> {
+    let url_ = this.baseUrl + '/api/TorneoAgrupador/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processTorneoAgrupadorPUT(_response)
+    })
+  }
+
+  protected processTorneoAgrupadorPUT(response: Response): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  torneoAgrupadorDELETE(id: number): Promise<number> {
+    let url_ = this.baseUrl + '/api/TorneoAgrupador/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'DELETE',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processTorneoAgrupadorDELETE(_response)
+    })
+  }
+
+  protected processTorneoAgrupadorDELETE(response: Response): Promise<number> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = resultData200 !== undefined ? resultData200 : <any>null
+
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<number>(null as any)
+  }
 }
 
 export class AprobarDelegadoEnElClubDTO implements IAprobarDelegadoEnElClubDTO {
@@ -5078,9 +5413,70 @@ export interface IReportePagosDTO {
   cantidadJugadoresPagados?: number
 }
 
+export class TorneoAgrupadorDTO implements ITorneoAgrupadorDTO {
+  id?: number
+  nombre!: string
+  visibleEnApp?: boolean
+  cantidadDeTorneos?: number
+  torneos?: TorneoDTO[] | undefined
+
+  constructor(data?: ITorneoAgrupadorDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.nombre = _data['nombre']
+      this.visibleEnApp = _data['visibleEnApp']
+      this.cantidadDeTorneos = _data['cantidadDeTorneos']
+      if (Array.isArray(_data['torneos'])) {
+        this.torneos = [] as any
+        for (let item of _data['torneos'])
+          this.torneos!.push(TorneoDTO.fromJS(item))
+      }
+    }
+  }
+
+  static fromJS(data: any): TorneoAgrupadorDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new TorneoAgrupadorDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['nombre'] = this.nombre
+    data['visibleEnApp'] = this.visibleEnApp
+    data['cantidadDeTorneos'] = this.cantidadDeTorneos
+    if (Array.isArray(this.torneos)) {
+      data['torneos'] = []
+      for (let item of this.torneos) data['torneos'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface ITorneoAgrupadorDTO {
+  id?: number
+  nombre: string
+  visibleEnApp?: boolean
+  cantidadDeTorneos?: number
+  torneos?: TorneoDTO[] | undefined
+}
+
 export class TorneoDTO implements ITorneoDTO {
   id?: number
   nombre!: string
+  torneoAgrupadorId?: number
+  torneoAgrupadorNombre?: string | undefined
   equipos?: EquipoDTO[] | undefined
 
   constructor(data?: ITorneoDTO) {
@@ -5096,6 +5492,8 @@ export class TorneoDTO implements ITorneoDTO {
     if (_data) {
       this.id = _data['id']
       this.nombre = _data['nombre']
+      this.torneoAgrupadorId = _data['torneoAgrupadorId']
+      this.torneoAgrupadorNombre = _data['torneoAgrupadorNombre']
       if (Array.isArray(_data['equipos'])) {
         this.equipos = [] as any
         for (let item of _data['equipos'])
@@ -5115,6 +5513,8 @@ export class TorneoDTO implements ITorneoDTO {
     data = typeof data === 'object' ? data : {}
     data['id'] = this.id
     data['nombre'] = this.nombre
+    data['torneoAgrupadorId'] = this.torneoAgrupadorId
+    data['torneoAgrupadorNombre'] = this.torneoAgrupadorNombre
     if (Array.isArray(this.equipos)) {
       data['equipos'] = []
       for (let item of this.equipos) data['equipos'].push(item.toJSON())
@@ -5126,6 +5526,8 @@ export class TorneoDTO implements ITorneoDTO {
 export interface ITorneoDTO {
   id?: number
   nombre: string
+  torneoAgrupadorId?: number
+  torneoAgrupadorNombre?: string | undefined
   equipos?: EquipoDTO[] | undefined
 }
 

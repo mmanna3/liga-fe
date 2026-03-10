@@ -15,6 +15,9 @@ import Jugador from '@/pantallas/auth/jugador/jugador'
 import SuspenderActivar from '@/pantallas/auth/jugador/suspender-activar'
 import ReportesPage from '@/pantallas/auth/reportes'
 import ReportePagosPage from '@/pantallas/auth/reportes/pagos'
+import AgrupadorTorneo from '@/pantallas/auth/torneo/agrupador-torneo/agrupador-torneo'
+import CrearAgrupadorTorneo from '@/pantallas/auth/torneo/agrupador-torneo/crear-agrupador-torneo'
+import EditarAgrupadorTorneo from '@/pantallas/auth/torneo/agrupador-torneo/editar-agrupador-torneo'
 import CrearTorneo from '@/pantallas/auth/torneo/crear-torneo'
 import DetalleTorneo from '@/pantallas/auth/torneo/detalle-torneo'
 import Torneo from '@/pantallas/auth/torneo/torneo'
@@ -79,6 +82,12 @@ export const mapaRutasComponentes = [
         element: <CambiarEstado />
       },
       { path: rutas.torneos, element: <Torneo /> },
+      { path: rutas.agrupadoresTorneo, element: <AgrupadorTorneo /> },
+      { path: rutas.crearAgrupadorTorneo, element: <CrearAgrupadorTorneo /> },
+      {
+        path: `${rutas.editarAgrupadorTorneo}/:id`,
+        element: <EditarAgrupadorTorneo />
+      },
       { path: rutas.crearTorneo, element: <CrearTorneo /> },
       { path: `${rutas.detalleTorneo}/:id`, element: <DetalleTorneo /> },
       { path: rutas.reportes, element: <ReportesPage /> },
