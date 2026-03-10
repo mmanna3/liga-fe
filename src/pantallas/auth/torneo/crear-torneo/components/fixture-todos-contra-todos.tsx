@@ -326,10 +326,12 @@ export function FixtureTodosContraTodos({
 
             {/* Estadísticas de la zona seleccionada */}
             {estadisticas && fixtureGenerado && (
-              <PanelEstadisticas estadisticas={estadisticas} />
+              <div className='mb-6'>
+                <PanelEstadisticas estadisticas={estadisticas} />
+              </div>
             )}
 
-            <h4 className='font-semibold mb-4'>
+            {/* <h4 className='font-semibold mb-4'>
               Fixture generado — {fechasMostradas.length} fechas
               {usarModoZona && zonaSeleccionadaId && (
                 <span className='font-normal text-muted-foreground'>
@@ -342,7 +344,7 @@ export function FixtureTodosContraTodos({
                   )
                 </span>
               )}
-            </h4>
+            </h4> */}
 
             {fechasMostradas.map((fd) => (
               <div key={fd.numeroFecha} className='mb-6'>
@@ -569,9 +571,9 @@ function PanelEstadisticas({
 }) {
   return (
     <div className='p-3 bg-muted rounded-lg space-y-2'>
-      <p className='text-sm font-medium'>
+      {/* <p className='text-sm font-medium'>
         Fixture generado — {estadisticas.totalFechas} fechas
-      </p>
+      </p> */}
       <p className='text-sm text-muted-foreground'>
         Cada equipo juega{' '}
         <strong className='text-foreground'>
