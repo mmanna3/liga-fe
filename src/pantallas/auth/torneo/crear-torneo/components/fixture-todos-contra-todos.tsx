@@ -1,5 +1,9 @@
 import { cn } from '@/logica-compartida/utils'
-import { AlertTriangle, Calendar as CalendarIcon } from 'lucide-react'
+import {
+  AlertTriangle,
+  Calendar as CalendarIcon,
+  CheckCircle
+} from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
@@ -409,15 +413,32 @@ export function FixtureTodosContraTodos({
                             )
                           }}
                         >
-                          <span
-                            className={cn(
-                              'font-medium cursor-grab select-none rounded px-0.5 hover:outline hover:outline-1 hover:outline-dashed hover:outline-green-800',
-                              entrada.local === 'INTERZONAL' &&
-                                'text-blue-700 italic'
-                            )}
-                          >
-                            {entrada.local}
-                          </span>
+                          {(() => {
+                            const esForaneo =
+                              entrada.tipo === 'interzonal' &&
+                              entrada.idEquipoLocal != null &&
+                              !idsEquiposEnZonaSeleccionada.has(
+                                entrada.idEquipoLocal
+                              )
+                            const esNoArrastrable =
+                              entrada.local === 'LIBRE' ||
+                              entrada.local === 'INTERZONAL' ||
+                              esForaneo
+                            return (
+                              <span
+                                className={cn(
+                                  'font-medium select-none rounded px-0.5',
+                                  esNoArrastrable
+                                    ? 'cursor-not-allowed'
+                                    : 'cursor-grab hover:outline hover:outline-1 hover:outline-dashed hover:outline-green-800',
+                                  entrada.local === 'INTERZONAL' &&
+                                    'text-blue-700 italic'
+                                )}
+                              >
+                                {entrada.local}
+                              </span>
+                            )
+                          })()}
                           {entrada.tipo === 'interzonal' &&
                             entrada.idEquipoLocal != null &&
                             !idsEquiposEnZonaSeleccionada.has(
@@ -491,17 +512,34 @@ export function FixtureTodosContraTodos({
                                 {zonaNombreDe(entrada.idEquipoVisitante)}
                               </span>
                             )}
-                          <span
-                            className={cn(
-                              'font-medium cursor-grab select-none rounded px-0.5 hover:outline hover:outline-1 hover:outline-dashed hover:outline-green-800',
-                              entrada.visitante === 'LIBRE' &&
-                                'text-amber-700 italic',
-                              entrada.visitante === 'INTERZONAL' &&
-                                'text-blue-700 italic'
-                            )}
-                          >
-                            {entrada.visitante}
-                          </span>
+                          {(() => {
+                            const esForaneo =
+                              entrada.tipo === 'interzonal' &&
+                              entrada.idEquipoVisitante != null &&
+                              !idsEquiposEnZonaSeleccionada.has(
+                                entrada.idEquipoVisitante
+                              )
+                            const esNoArrastrable =
+                              entrada.visitante === 'LIBRE' ||
+                              entrada.visitante === 'INTERZONAL' ||
+                              esForaneo
+                            return (
+                              <span
+                                className={cn(
+                                  'font-medium select-none rounded px-0.5',
+                                  esNoArrastrable
+                                    ? 'cursor-not-allowed'
+                                    : 'cursor-grab hover:outline hover:outline-1 hover:outline-dashed hover:outline-green-800',
+                                  entrada.visitante === 'LIBRE' &&
+                                    'text-amber-700 italic',
+                                  entrada.visitante === 'INTERZONAL' &&
+                                    'text-blue-700 italic'
+                                )}
+                              >
+                                {entrada.visitante}
+                              </span>
+                            )
+                          })()}
                         </div>
                       </div>
                     </div>
@@ -568,48 +606,70 @@ function PanelEstadisticas({
           (y el complemento de visitante).
         </p>
       )}
-      {(() => {
-        const { localVisitante, jornadasLibres, jornadasInterzonales } =
-          estadisticas.excepciones
-        const hayExcepciones =
-          localVisitante.length > 0 ||
-          jornadasLibres.length > 0 ||
-          jornadasInterzonales.length > 0
-        if (!hayExcepciones) {
-          return (
-            <p className='text-xs text-muted-foreground'>
-              Distribución equilibrada. Sin excepciones.
-            </p>
-          )
-        }
-        const grupos: { titulo: string; items: string[] }[] = [
-          { titulo: 'Excepciones Local/Visitante', items: localVisitante },
-          { titulo: 'Excepciones Jornadas Libres', items: jornadasLibres },
-          {
-            titulo: 'Excepciones Jornadas Interzonales',
-            items: jornadasInterzonales
-          }
-        ]
-        return (
-          <div className='space-y-2'>
-            {grupos
-              .filter((g) => g.items.length > 0)
-              .map((g) => (
-                <div key={g.titulo} className='space-y-1'>
-                  <p className='text-xs font-medium text-amber-700 flex items-center gap-1'>
-                    <AlertTriangle className='w-3 h-3' />
-                    {g.titulo}
+      <div className='border rounded-lg overflow-hidden h-40 flex flex-col'>
+        <div className='px-3 py-1.5 border-b bg-background/60 shrink-0'>
+          <p className='text-xs font-semibold text-foreground'>Excepciones</p>
+        </div>
+        <div className='flex-1 overflow-y-auto min-h-0 p-2 space-y-2'>
+          {(() => {
+            const { localVisitante, jornadasLibres, jornadasInterzonales } =
+              estadisticas.excepciones
+            const grupos: {
+              titulo: string
+              items: string[]
+              color: string
+              icono: React.ReactNode
+            }[] = [
+              {
+                titulo: 'Local/Visitante',
+                items: localVisitante,
+                color: 'text-red-700',
+                icono: <AlertTriangle className='w-3 h-3' />
+              },
+              {
+                titulo: 'Jornadas Libres',
+                items: jornadasLibres,
+                color: 'text-amber-700',
+                icono: <AlertTriangle className='w-3 h-3' />
+              },
+              {
+                titulo: 'Jornadas Interzonales',
+                items: jornadasInterzonales,
+                color: 'text-blue-700',
+                icono: <AlertTriangle className='w-3 h-3' />
+              }
+            ].filter((g) => g.items.length > 0)
+
+            if (grupos.length === 0) {
+              return (
+                <p className='text-xs text-green-700 flex items-center gap-1'>
+                  <CheckCircle className='w-3 h-3 shrink-0' />
+                  No hay excepciones
+                </p>
+              )
+            }
+
+            return grupos.map((g) => (
+              <div key={g.titulo} className='space-y-0.5'>
+                <p
+                  className={cn(
+                    'text-xs font-medium flex items-center gap-1',
+                    g.color
+                  )}
+                >
+                  {g.icono}
+                  {g.titulo}
+                </p>
+                {g.items.map((ex, i) => (
+                  <p key={i} className={cn('text-xs pl-4', g.color)}>
+                    • {ex}
                   </p>
-                  {g.items.map((ex, i) => (
-                    <p key={i} className='text-xs text-amber-700 pl-4'>
-                      • {ex}
-                    </p>
-                  ))}
-                </div>
-              ))}
-          </div>
-        )
-      })()}
+                ))}
+              </div>
+            ))
+          })()}
+        </div>
+      </div>
     </div>
   )
 }
