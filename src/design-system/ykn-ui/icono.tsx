@@ -53,6 +53,10 @@ const MAPEO_ICONOS: Record<
   // Agrupadores / dashboards
   'Layout dashboard': LucideIcons.LayoutDashboard,
 
+  // Ubicación / datos
+  Casa: LucideIcons.MapPin,
+  Cruz: LucideIcons.X,
+
   // Datos personales
   Calendario: LucideIcons.CalendarDays,
   Carnet: LucideIcons.IdCard,

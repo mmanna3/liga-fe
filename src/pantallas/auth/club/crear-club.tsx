@@ -1,10 +1,12 @@
 import { api } from '@/api/api'
 import { ClubDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
-import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/base-ui/input'
-import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
+import { Label } from '@/design-system/base-ui/label'
+import { Switch } from '@/design-system/base-ui/switch'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import ContenedorBotones from '@/design-system/ykn-ui/contenedor-botones'
+import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -12,6 +14,9 @@ import { useNavigate } from 'react-router-dom'
 export default function CrearClub() {
   const navigate = useNavigate()
   const [nombre, setNombre] = useState<string>('')
+  const [direccion, setDireccion] = useState<string>('')
+  const [esTechado, setEsTechado] = useState<boolean>(false)
+  const [localidad, setLocalidad] = useState<string>('')
 
   const mutation = useApiMutation({
     fn: async (nuevoClub: ClubDTO) => {
@@ -23,7 +28,14 @@ export default function CrearClub() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    mutation.mutate(new ClubDTO({ nombre }))
+    mutation.mutate(
+      new ClubDTO({
+        nombre,
+        direccion: direccion || undefined,
+        esTechado,
+        localidad: localidad || undefined
+      })
+    )
   }
 
   return (
@@ -31,13 +43,47 @@ export default function CrearClub() {
       titulo='Crear Club'
       contenido={
         <form onSubmit={handleSubmit} className='space-y-4'>
-          <Input
-            type='text'
-            placeholder='Nombre'
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
-            required
-          />
+          <div className='space-y-2'>
+            <Label htmlFor='nombre'>Nombre</Label>
+            <Input
+              id='nombre'
+              type='text'
+              placeholder='Nombre'
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              required
+            />
+          </div>
+          <div className='space-y-2'>
+            <Label htmlFor='direccion'>Dirección</Label>
+            <Input
+              id='direccion'
+              type='text'
+              placeholder='Dirección'
+              value={direccion}
+              onChange={(e) => setDireccion(e.target.value)}
+            />
+          </div>
+          <div className='space-y-2'>
+            <Label htmlFor='localidad'>Localidad</Label>
+            <Input
+              id='localidad'
+              type='text'
+              placeholder='Localidad'
+              value={localidad}
+              onChange={(e) => setLocalidad(e.target.value)}
+            />
+          </div>
+          <div className='flex items-center justify-between space-x-2'>
+            <Label htmlFor='esTechado'>¿Es techado?</Label>
+            <Switch
+              id='esTechado'
+              checked={esTechado}
+              onCheckedChange={setEsTechado}
+              textoApagado='No'
+              textoPrendido='Sí'
+            />
+          </div>
           <ContenedorBotones>
             <Boton type='submit' estaCargando={mutation.isPending}>
               Guardar

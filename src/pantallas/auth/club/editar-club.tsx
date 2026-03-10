@@ -2,8 +2,6 @@ import { api } from '@/api/api'
 import { CambiarEscudoDTO, ClubDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
-import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
-import { Boton } from '@/design-system/ykn-ui/boton'
 import {
   Card,
   CardContent,
@@ -12,10 +10,13 @@ import {
 } from '@/design-system/base-ui/card'
 import { Input } from '@/design-system/base-ui/input'
 import { Label } from '@/design-system/base-ui/label'
+import { Switch } from '@/design-system/base-ui/switch'
+import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import BotonVolver from '@/design-system/ykn-ui/boton-volver'
 import ContenedorBotones from '@/design-system/ykn-ui/contenedor-botones'
-import { rutasNavegacion } from '@/ruteo/rutas'
 import Icono from '@/design-system/ykn-ui/icono'
+import { rutasNavegacion } from '@/ruteo/rutas'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -32,6 +33,9 @@ export default function EditarClub() {
   const navigate = useNavigate()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [nombre, setNombre] = useState('')
+  const [direccion, setDireccion] = useState('')
+  const [esTechado, setEsTechado] = useState(false)
+  const [localidad, setLocalidad] = useState('')
   const [escudoPreview, setEscudoPreview] = useState<string | null>(null)
   const [escudoBase64, setEscudoBase64] = useState<string | null>(null)
 
@@ -61,6 +65,9 @@ export default function EditarClub() {
   useEffect(() => {
     if (club) {
       setNombre(club.nombre || '')
+      setDireccion(club.direccion || '')
+      setEsTechado(club.esTechado ?? false)
+      setLocalidad(club.localidad || '')
       if (club.escudo) {
         const src =
           club.escudo.startsWith('data:') || club.escudo.startsWith('http')
@@ -91,19 +98,28 @@ export default function EditarClub() {
     e.preventDefault()
 
     const nombreCambiado = nombre !== club?.nombre
+    const direccionCambiada = direccion !== (club?.direccion ?? '')
+    const esTechadoCambiado = esTechado !== (club?.esTechado ?? false)
+    const localidadCambiada = localidad !== (club?.localidad ?? '')
     const escudoCambiado = escudoBase64 !== null
+    const datosCambiados =
+      nombreCambiado ||
+      direccionCambiada ||
+      esTechadoCambiado ||
+      localidadCambiada
 
-    if (!nombreCambiado && !escudoCambiado) return
+    if (!datosCambiados && !escudoCambiado) return
 
     try {
-      if (nombreCambiado) {
+      if (datosCambiados) {
         await actualizarNombreMutation.mutateAsync(
           new ClubDTO({
             id: club?.id,
             nombre,
             escudo: club?.escudo,
-            equipos: club?.equipos,
-            delegados: club?.delegados
+            direccion: direccion || undefined,
+            esTechado,
+            localidad: localidad || undefined
           })
         )
       }
@@ -122,7 +138,12 @@ export default function EditarClub() {
 
   const isPending =
     actualizarNombreMutation.isPending || cambiarEscudoMutation.isPending
-  const hayCambios = nombre !== club?.nombre || escudoBase64 !== null
+  const hayCambios =
+    nombre !== club?.nombre ||
+    direccion !== (club?.direccion ?? '') ||
+    esTechado !== (club?.esTechado ?? false) ||
+    localidad !== (club?.localidad ?? '') ||
+    escudoBase64 !== null
 
   return (
     <ContenedorCargandoYError
@@ -148,6 +169,39 @@ export default function EditarClub() {
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
                 required
+              />
+            </div>
+
+            <div className='space-y-2'>
+              <Label htmlFor='direccion'>Dirección</Label>
+              <Input
+                id='direccion'
+                type='text'
+                placeholder='Dirección'
+                value={direccion}
+                onChange={(e) => setDireccion(e.target.value)}
+              />
+            </div>
+
+            <div className='space-y-2'>
+              <Label htmlFor='localidad'>Localidad</Label>
+              <Input
+                id='localidad'
+                type='text'
+                placeholder='Localidad'
+                value={localidad}
+                onChange={(e) => setLocalidad(e.target.value)}
+              />
+            </div>
+
+            <div className='flex items-center justify-between space-x-2'>
+              <Label htmlFor='esTechado'>¿Es techado?</Label>
+              <Switch
+                id='esTechado'
+                checked={esTechado}
+                onCheckedChange={setEsTechado}
+                textoApagado='No'
+                textoPrendido='Sí'
               />
             </div>
 

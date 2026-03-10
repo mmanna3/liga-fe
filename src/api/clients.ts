@@ -5325,6 +5325,9 @@ export class ClubDTO implements IClubDTO {
   id?: number
   nombre!: string
   escudo?: string | undefined
+  direccion?: string | undefined
+  esTechado?: boolean | undefined
+  localidad?: string | undefined
   equipos?: EquipoDTO[] | undefined
   delegados?: DelegadoDTO[] | undefined
 
@@ -5342,6 +5345,9 @@ export class ClubDTO implements IClubDTO {
       this.id = _data['id']
       this.nombre = _data['nombre']
       this.escudo = _data['escudo']
+      this.direccion = _data['direccion']
+      this.esTechado = _data['esTechado']
+      this.localidad = _data['localidad']
       if (Array.isArray(_data['equipos'])) {
         this.equipos = [] as any
         for (let item of _data['equipos'])
@@ -5367,6 +5373,9 @@ export class ClubDTO implements IClubDTO {
     data['id'] = this.id
     data['nombre'] = this.nombre
     data['escudo'] = this.escudo
+    data['direccion'] = this.direccion
+    data['esTechado'] = this.esTechado
+    data['localidad'] = this.localidad
     if (Array.isArray(this.equipos)) {
       data['equipos'] = []
       for (let item of this.equipos) data['equipos'].push(item.toJSON())
@@ -5383,6 +5392,9 @@ export interface IClubDTO {
   id?: number
   nombre: string
   escudo?: string | undefined
+  direccion?: string | undefined
+  esTechado?: boolean | undefined
+  localidad?: string | undefined
   equipos?: EquipoDTO[] | undefined
   delegados?: DelegadoDTO[] | undefined
 }

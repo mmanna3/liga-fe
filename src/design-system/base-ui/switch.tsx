@@ -6,11 +6,15 @@ import { cn } from '@/logica-compartida/utils'
 function Switch({
   className,
   size = 'default',
+  textoApagado,
+  textoPrendido,
   ...props
 }: React.ComponentProps<typeof SwitchPrimitive.Root> & {
   size?: 'sm' | 'default'
+  textoApagado?: string
+  textoPrendido?: string
 }) {
-  return (
+  const switchElement = (
     <SwitchPrimitive.Root
       data-slot='switch'
       data-size={size}
@@ -28,6 +32,22 @@ function Switch({
       />
     </SwitchPrimitive.Root>
   )
+
+  if (textoApagado != null || textoPrendido != null) {
+    return (
+      <div className='inline-flex items-center gap-2'>
+        {textoApagado != null && (
+          <span className='text-sm text-muted-foreground'>{textoApagado}</span>
+        )}
+        {switchElement}
+        {textoPrendido != null && (
+          <span className='text-sm text-muted-foreground'>{textoPrendido}</span>
+        )}
+      </div>
+    )
+  }
+
+  return switchElement
 }
 
 export { Switch }

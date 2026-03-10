@@ -5,7 +5,6 @@ import {
   AlertDescription,
   AlertTitle
 } from '@/design-system/base-ui/alert'
-import { Boton } from '@/design-system/ykn-ui/boton'
 import {
   Card,
   CardContent,
@@ -14,9 +13,10 @@ import {
 } from '@/design-system/base-ui/card'
 import { Skeleton } from '@/design-system/base-ui/skeleton'
 import { VisibleSoloParaAdmin } from '@/design-system/visible-solo-para-admin'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
-import { rutasNavegacion } from '@/ruteo/rutas'
 import Icono from '@/design-system/ykn-ui/icono'
+import { rutasNavegacion } from '@/ruteo/rutas'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export default function DetalleClub() {
@@ -85,99 +85,134 @@ export default function DetalleClub() {
       }}
       contenidoEnCard={false}
       contenido={
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+        <div className='space-y-6'>
           <Card className='shadow-md'>
-            <CardHeader className='pb-3'>
-              <CardTitle className='text-xl font-semibold flex items-center gap-2'>
-                <Icono nombre='Delegados' className='h-5 w-5' />
-                Delegados
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {club!.delegados && club!.delegados.length > 0 ? (
-                <ul className='space-y-2 divide-y divide-gray-100'>
-                  {club!.delegados.map((delegado) => (
-                    <li key={delegado.id} className='pt-2 first:pt-0'>
-                      <Boton
-                        variant='ghost'
-                        className='w-full justify-start font-normal hover:bg-gray-50'
-                        onClick={() =>
-                          navigate(
-                            `${rutasNavegacion.detalleDelegado}/${delegado.id}`
-                          )
-                        }
-                      >
-                        {delegado.nombre} {delegado.apellido}
-                      </Boton>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className='text-gray-500 text-sm italic text-center py-4'>
-                  No hay delegados registrados
-                </p>
-              )}
+            <CardContent className='space-y-2'>
+              <p className='flex items-center gap-2'>
+                <Icono
+                  nombre='Casa'
+                  className='h-5 w-5 shrink-0 text-primary'
+                />
+                {[club!.direccion, club!.localidad]
+                  .filter(Boolean)
+                  .join(', ') || '—'}
+              </p>
+              <p className='flex items-baseline gap-1 pl-1'>
+                {club!.esTechado ? (
+                  <>
+                    Tiene techo
+                    <Icono
+                      nombre='Verificado'
+                      className='h-3.5 w-3.5 shrink-0 translate-y-[2px] text-primary'
+                    />
+                  </>
+                ) : (
+                  <>
+                    No tiene techo
+                    <Icono
+                      nombre='Cruz'
+                      className='h-3.5 w-3.5 shrink-0 translate-y-[2px] text-destructive'
+                    />
+                  </>
+                )}
+              </p>
             </CardContent>
           </Card>
 
-          <Card className='shadow-md'>
-            <CardHeader className='pb-3 flex flex-row items-center justify-between'>
-              <CardTitle className='text-xl font-semibold flex items-center gap-2'>
-                <Icono nombre='Equipos' className='h-5 w-5' />
-                Equipos
-              </CardTitle>
-              <VisibleSoloParaAdmin>
-                <Boton
-                  onClick={() =>
-                    navigate(`${rutasNavegacion.crearEquipo}/${id}`)
-                  }
-                  variant='outline'
-                  size='sm'
-                  className='flex items-center gap-1'
-                >
-                  <Icono nombre='Agregar equipo' className='h-4 w-4' />
-                  Nuevo
-                </Boton>
-              </VisibleSoloParaAdmin>
-            </CardHeader>
-            <CardContent>
-              {club!.equipos && club!.equipos.length > 0 ? (
-                <ul className='space-y-3'>
-                  {club!.equipos.map((equipo) => (
-                    <li
-                      key={equipo.id}
-                      className='flex items-center justify-between bg-gray-50 rounded-lg p-3'
-                    >
-                      <Boton
-                        variant='ghost'
-                        className='p-0 h-auto text-left font-normal hover:bg-transparent'
-                        onClick={() =>
-                          navigate(
-                            `${rutasNavegacion.detalleEquipo}/${equipo.id}`
-                          )
-                        }
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+            <Card className='shadow-md'>
+              <CardHeader className='pb-3'>
+                <CardTitle className='text-xl font-semibold flex items-center gap-2'>
+                  <Icono nombre='Delegados' className='h-5 w-5' />
+                  Delegados
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {club!.delegados && club!.delegados.length > 0 ? (
+                  <ul className='space-y-2 divide-y divide-gray-100'>
+                    {club!.delegados.map((delegado) => (
+                      <li key={delegado.id} className='pt-2 first:pt-0'>
+                        <Boton
+                          variant='ghost'
+                          className='w-full justify-start font-normal hover:bg-gray-50'
+                          onClick={() =>
+                            navigate(
+                              `${rutasNavegacion.detalleDelegado}/${delegado.id}`
+                            )
+                          }
+                        >
+                          {delegado.nombre} {delegado.apellido}
+                        </Boton>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className='text-gray-500 text-sm italic text-center py-4'>
+                    No hay delegados registrados
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className='shadow-md'>
+              <CardHeader className='pb-3 flex flex-row items-center justify-between'>
+                <CardTitle className='text-xl font-semibold flex items-center gap-2'>
+                  <Icono nombre='Equipos' className='h-5 w-5' />
+                  Equipos
+                </CardTitle>
+                <VisibleSoloParaAdmin>
+                  <Boton
+                    onClick={() =>
+                      navigate(`${rutasNavegacion.crearEquipo}/${id}`)
+                    }
+                    variant='outline'
+                    size='sm'
+                    className='flex items-center gap-1'
+                  >
+                    <Icono nombre='Agregar equipo' className='h-4 w-4' />
+                    Nuevo
+                  </Boton>
+                </VisibleSoloParaAdmin>
+              </CardHeader>
+              <CardContent>
+                {club!.equipos && club!.equipos.length > 0 ? (
+                  <ul className='space-y-3'>
+                    {club!.equipos.map((equipo) => (
+                      <li
+                        key={equipo.id}
+                        className='flex items-center justify-between bg-gray-50 rounded-lg p-3'
                       >
-                        {equipo.nombre}
-                      </Boton>
-                      {equipo.torneoNombre ? (
-                        <span className='text-sm px-3 py-1 bg-blue-100 text-blue-800 rounded-full'>
-                          {equipo.torneoNombre}
-                        </span>
-                      ) : (
-                        <span className='text-sm px-3 py-1 bg-gray-100 text-gray-600 rounded-full'>
-                          Sin torneo
-                        </span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className='text-gray-500 text-sm italic text-center py-4'>
-                  No hay equipos registrados
-                </p>
-              )}
-            </CardContent>
-          </Card>
+                        <Boton
+                          variant='ghost'
+                          className='p-0 h-auto text-left font-normal hover:bg-transparent'
+                          onClick={() =>
+                            navigate(
+                              `${rutasNavegacion.detalleEquipo}/${equipo.id}`
+                            )
+                          }
+                        >
+                          {equipo.nombre}
+                        </Boton>
+                        {equipo.torneoNombre ? (
+                          <span className='text-sm px-3 py-1 bg-blue-100 text-blue-800 rounded-full'>
+                            {equipo.torneoNombre}
+                          </span>
+                        ) : (
+                          <span className='text-sm px-3 py-1 bg-gray-100 text-gray-600 rounded-full'>
+                            Sin torneo
+                          </span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className='text-gray-500 text-sm italic text-center py-4'>
+                    No hay equipos registrados
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
       }
     />
