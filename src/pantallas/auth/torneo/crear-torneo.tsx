@@ -50,7 +50,11 @@ export default function CrearTorneo() {
   const alEnviar = methods.handleSubmit((datos) => {
     const nombre =
       datos.nombre || `Torneo ${datos.temporada} - ${datos.tipo || 'General'}`
-    mutacion.mutate(new TorneoDTO({ nombre }))
+    const anio = parseInt(
+      datos.temporada ?? new Date().getFullYear().toString(),
+      10
+    )
+    mutacion.mutate(new TorneoDTO({ nombre, anio }))
   })
 
   return (

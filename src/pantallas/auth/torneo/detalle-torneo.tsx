@@ -6,13 +6,11 @@ import {
   CardTitle
 } from '@/design-system/base-ui/card'
 import BotonVolver from '@/design-system/ykn-ui/boton-volver'
-import { rutasNavegacion } from '@/ruteo/rutas'
 import { useQuery } from '@tanstack/react-query'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
 export default function DetalleTorneo() {
   const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['torneo', id],
@@ -38,29 +36,12 @@ export default function DetalleTorneo() {
         <CardContent>
           <div className='space-y-4'>
             <div>
-              <h3 className='text-lg font-semibold'>Equipos</h3>
-              {data.equipos && data.equipos.length > 0 ? (
-                <ul className='list-disc pl-5 mt-2'>
-                  {data.equipos.map((equipo) => (
-                    <li key={equipo.id}>
-                      <span
-                        className='cursor-pointer text-blue-500 hover:underline'
-                        onClick={() =>
-                          navigate(
-                            `${rutasNavegacion.detalleEquipo}/${equipo.id}`
-                          )
-                        }
-                      >
-                        {equipo.nombre}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className='text-gray-500 mt-2'>
-                  No hay equipos en este torneo
-                </p>
-              )}
+              <p className='text-muted-foreground'>
+                Año: {data.anio}
+                {data.torneoAgrupadorNombre && (
+                  <> · Agrupador: {data.torneoAgrupadorNombre}</>
+                )}
+              </p>
             </div>
           </div>
         </CardContent>
