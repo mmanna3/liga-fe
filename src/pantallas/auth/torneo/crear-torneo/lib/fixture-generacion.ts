@@ -345,6 +345,7 @@ export function calcularEstadisticasFixture(
     vueltas === 'ida-y-vuelta'
       ? regularPorEquipo
       : Math.ceil(regularPorEquipo / 2)
+  const excEncuentros: string[] = []
   const excLocalVisitante: string[] = []
   const excJornadasLibres: string[] = []
   const excJornadasInterzonales: string[] = []
@@ -355,7 +356,7 @@ export function calcularEstadisticasFixture(
       const clave = `${a}-${b}`
       const encuentros = encuentrosPorPar[clave] ?? 0
       if (encuentros !== encuentrosEsperados) {
-        excLocalVisitante.push(
+        excEncuentros.push(
           `${equipos[i].nombre} vs ${equipos[j].nombre}: ${encuentros} ${encuentros === 1 ? 'encuentro' : 'encuentros'} (esperado ${encuentrosEsperados})`
         )
       }
@@ -403,6 +404,7 @@ export function calcularEstadisticasFixture(
     partidosLocalEsperados: localEsperado,
     partidosVisitanteEsperados: visitanteEsperado,
     excepciones: {
+      encuentros: excEncuentros,
       localVisitante: excLocalVisitante,
       jornadasLibres: excJornadasLibres,
       jornadasInterzonales: excJornadasInterzonales

@@ -24,6 +24,7 @@ export interface EstadisticasEquipo {
 }
 
 export interface ExcepcionesFixture {
+  encuentros: string[]
   localVisitante: string[]
   jornadasLibres: string[]
   jornadasInterzonales: string[]

@@ -2,9 +2,11 @@ import { Badge } from '@/design-system/base-ui/badge'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/base-ui/input'
 import { Label } from '@/design-system/base-ui/label'
-import { Plus, X } from 'lucide-react'
+import { Plus, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 import type { Categoria } from '../tipos'
+
+const ANIO_ACTUAL = new Date().getFullYear()
 
 interface CategoriasProps {
   valor: Categoria[]
@@ -22,6 +24,7 @@ export function Categorias({
   const [editandoCategoriaId, setEditandoCategoriaId] = useState<string | null>(
     null
   )
+  const [erroresValidacion, setErroresValidacion] = useState<string[]>([])
 
   const agregarCategoria = () => {
     const nuevaCategoria: Categoria = {
@@ -35,27 +38,71 @@ export function Categorias({
     const categoriasConNombre = valor.filter((c) => c.nombre.trim() !== '')
     alCambiar([...categoriasConNombre, nuevaCategoria])
     setEditandoCategoriaId(nuevaCategoria.id)
+    setErroresValidacion([])
   }
 
   const quitarCategoria = (id: string) => {
     alCambiar(valor.filter((c) => c.id !== id))
     if (editandoCategoriaId === id) {
       setEditandoCategoriaId(null)
+      setErroresValidacion([])
     }
   }
 
   const actualizarCategoria = (id: string, campo: Partial<Categoria>) => {
     alCambiar(valor.map((c) => (c.id === id ? { ...c, ...campo } : c)))
+    if (id === editandoCategoriaId) {
+      setErroresValidacion([])
+    }
+  }
+
+  const soloAnio = (valor: string) => {
+    const nums = valor.replace(/\D/g, '')
+    if (nums.length <= 4) return nums
+    return nums.slice(0, 4)
   }
 
   const alClickearCategoria = (id: string) => {
     setEditandoCategoriaId(id)
+    setErroresValidacion([])
   }
 
   const alGuardarCategoria = () => {
-    if (categoriaEditando && !categoriaEditando.nombre.trim()) {
-      quitarCategoria(categoriaEditando.id)
+    if (!categoriaEditando) return
+
+    const errores: string[] = []
+
+    if (!categoriaEditando.nombre.trim()) {
+      errores.push('El nombre de la categoría es requerido')
     }
+
+    const desde = categoriaEditando.anioDesde.trim()
+    const hasta = categoriaEditando.anioHasta.trim()
+
+    if (!desde) {
+      errores.push('El año "Desde" es requerido')
+    }
+    if (!hasta) {
+      errores.push('El año "Hasta" es requerido')
+    }
+
+    if (desde && hasta) {
+      const desdeNum = parseInt(desde, 10)
+      const hastaNum = parseInt(hasta, 10)
+      if (desdeNum >= hastaNum) {
+        errores.push('"Desde" debe ser menor que "Hasta"')
+      }
+      if (hastaNum > ANIO_ACTUAL) {
+        errores.push('"Hasta" no puede ser mayor al año actual')
+      }
+    }
+
+    if (errores.length > 0) {
+      setErroresValidacion(errores)
+      return
+    }
+
+    setErroresValidacion([])
     setEditandoCategoriaId(null)
   }
 
@@ -116,11 +163,15 @@ export function Categorias({
             />
             <div className='flex items-center gap-2 sm:shrink-0'>
               <Input
-                type='text'
+                type='number'
+                inputMode='numeric'
+                min={1900}
+                max={ANIO_ACTUAL}
+                step={1}
                 value={categoriaEditando.anioDesde}
                 onChange={(e) =>
                   actualizarCategoria(categoriaEditando.id, {
-                    anioDesde: e.target.value
+                    anioDesde: soloAnio(e.target.value)
                   })
                 }
                 placeholder='Desde'
@@ -128,11 +179,15 @@ export function Categorias({
               />
               <span className='text-muted-foreground'>-</span>
               <Input
-                type='text'
+                type='number'
+                inputMode='numeric'
+                min={1900}
+                max={ANIO_ACTUAL}
+                step={1}
                 value={categoriaEditando.anioHasta}
                 onChange={(e) =>
                   actualizarCategoria(categoriaEditando.id, {
-                    anioHasta: e.target.value
+                    anioHasta: soloAnio(e.target.value)
                   })
                 }
                 placeholder='Hasta'
@@ -141,7 +196,22 @@ export function Categorias({
               <Boton type='button' size='sm' onClick={alGuardarCategoria}>
                 Guardar
               </Boton>
+              <button
+                type='button'
+                onClick={() => quitarCategoria(categoriaEditando.id)}
+                className='p-2 text-muted-foreground hover:text-destructive hover:bg-muted rounded-md transition-colors'
+                title='Eliminar categoría'
+              >
+                <Trash2 className='w-4 h-4' />
+              </button>
             </div>
+            {erroresValidacion.length > 0 && (
+              <ul className='text-sm text-destructive mt-2 list-disc list-inside'>
+                {erroresValidacion.map((msg, i) => (
+                  <li key={i}>{msg}</li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       )}

@@ -13,11 +13,13 @@ import type { EntradaDeZona, FechaFixture } from '../fixture-tipos'
 
 const todasLasExcepciones = (stats: {
   excepciones: {
+    encuentros: string[]
     localVisitante: string[]
     jornadasLibres: string[]
     jornadasInterzonales: string[]
   }
 }) => [
+  ...stats.excepciones.encuentros,
   ...stats.excepciones.localVisitante,
   ...stats.excepciones.jornadasLibres,
   ...stats.excepciones.jornadasInterzonales
@@ -471,7 +473,7 @@ describe('calcularEstadisticasFixture', () => {
       0,
       'ida'
     )
-    expect(stats.excepciones.localVisitante.some((e) => e.includes('vs'))).toBe(
+    expect(stats.excepciones.encuentros.some((e) => e.includes('vs'))).toBe(
       true
     )
   })

@@ -614,14 +614,24 @@ function PanelEstadisticas({
         </div>
         <div className='flex-1 overflow-y-auto min-h-0 p-2 space-y-2'>
           {(() => {
-            const { localVisitante, jornadasLibres, jornadasInterzonales } =
-              estadisticas.excepciones
+            const {
+              encuentros,
+              localVisitante,
+              jornadasLibres,
+              jornadasInterzonales
+            } = estadisticas.excepciones
             const grupos: {
               titulo: string
               items: string[]
               color: string
               icono: React.ReactNode
             }[] = [
+              {
+                titulo: 'Encuentros esperados',
+                items: encuentros,
+                color: 'text-orange-700',
+                icono: <AlertTriangle className='w-3 h-3' />
+              },
               {
                 titulo: 'Local/Visitante',
                 items: localVisitante,

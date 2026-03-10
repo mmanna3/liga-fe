@@ -1,12 +1,26 @@
 import { z } from 'zod'
 
+const ANIO_ACTUAL = new Date().getFullYear()
+
 // Esquema para categoría
-const esquemaCategoria = z.object({
-  id: z.string(),
-  nombre: z.string().min(1, 'El nombre de la categoría es requerido'),
-  anioDesde: z.string(),
-  anioHasta: z.string()
-})
+const esquemaCategoria = z
+  .object({
+    id: z.string(),
+    nombre: z.string().min(1, 'El nombre de la categoría es requerido'),
+    anioDesde: z.string().min(1, 'El año "Desde" es requerido'),
+    anioHasta: z.string().min(1, 'El año "Hasta" es requerido')
+  })
+  .refine(
+    (c) => {
+      const desde = parseInt(c.anioDesde, 10)
+      const hasta = parseInt(c.anioHasta, 10)
+      return desde < hasta
+    },
+    { message: '"Desde" debe ser menor que "Hasta"' }
+  )
+  .refine((c) => parseInt(c.anioHasta, 10) <= ANIO_ACTUAL, {
+    message: '"Hasta" no puede ser mayor al año actual'
+  })
 
 // Esquema para fase
 const esquemaFase = z.object({
