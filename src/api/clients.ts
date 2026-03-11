@@ -4655,6 +4655,130 @@ export class Client {
   }
 
   /**
+   * @param body (optional)
+   * @return OK
+   */
+  crearZonasMasivamente(
+    padreId: number,
+    body: TorneoZonaDTO[] | undefined
+  ): Promise<TorneoZonaDTO[]> {
+    let url_ =
+      this.baseUrl + '/api/TorneoFase/{padreId}/zonas/crear-zonas-masivamente'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processCrearZonasMasivamente(_response)
+    })
+  }
+
+  protected processCrearZonasMasivamente(
+    response: Response
+  ): Promise<TorneoZonaDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(TorneoZonaDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<TorneoZonaDTO[]>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  modificarZonasMasivamente(
+    padreId: number,
+    body: TorneoZonaDTO[] | undefined
+  ): Promise<void> {
+    let url_ =
+      this.baseUrl +
+      '/api/TorneoFase/{padreId}/zonas/modificar-zonas-masivamente'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processModificarZonasMasivamente(_response)
+    })
+  }
+
+  protected processModificarZonasMasivamente(
+    response: Response
+  ): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
    * @return OK
    */
   zonasAll(padreId: number): Promise<TorneoZonaDTO[]> {
@@ -5933,6 +6057,54 @@ export interface IEquipoDTO {
   jugadores?: JugadorDelEquipoDTO[] | undefined
 }
 
+export class EquipoDeLaZonaDTO implements IEquipoDeLaZonaDTO {
+  nombre?: string | undefined
+  club?: string | undefined
+  id?: string | undefined
+  codigo?: string | undefined
+
+  constructor(data?: IEquipoDeLaZonaDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.nombre = _data['nombre']
+      this.club = _data['club']
+      this.id = _data['id']
+      this.codigo = _data['codigo']
+    }
+  }
+
+  static fromJS(data: any): EquipoDeLaZonaDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new EquipoDeLaZonaDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['nombre'] = this.nombre
+    data['club'] = this.club
+    data['id'] = this.id
+    data['codigo'] = this.codigo
+    return data
+  }
+}
+
+export interface IEquipoDeLaZonaDTO {
+  nombre?: string | undefined
+  club?: string | undefined
+  id?: string | undefined
+  codigo?: string | undefined
+}
+
 export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
   id?: number
   equipoId?: number
@@ -7084,6 +7256,7 @@ export class TorneoZonaDTO implements ITorneoZonaDTO {
   id?: number
   nombre!: string
   torneoFaseId?: number
+  equipos?: EquipoDeLaZonaDTO[] | undefined
 
   constructor(data?: ITorneoZonaDTO) {
     if (data) {
@@ -7099,6 +7272,11 @@ export class TorneoZonaDTO implements ITorneoZonaDTO {
       this.id = _data['id']
       this.nombre = _data['nombre']
       this.torneoFaseId = _data['torneoFaseId']
+      if (Array.isArray(_data['equipos'])) {
+        this.equipos = [] as any
+        for (let item of _data['equipos'])
+          this.equipos!.push(EquipoDeLaZonaDTO.fromJS(item))
+      }
     }
   }
 
@@ -7114,6 +7292,10 @@ export class TorneoZonaDTO implements ITorneoZonaDTO {
     data['id'] = this.id
     data['nombre'] = this.nombre
     data['torneoFaseId'] = this.torneoFaseId
+    if (Array.isArray(this.equipos)) {
+      data['equipos'] = []
+      for (let item of this.equipos) data['equipos'].push(item.toJSON())
+    }
     return data
   }
 }
@@ -7122,6 +7304,7 @@ export interface ITorneoZonaDTO {
   id?: number
   nombre: string
   torneoFaseId?: number
+  equipos?: EquipoDeLaZonaDTO[] | undefined
 }
 
 export class UsuarioDTO implements IUsuarioDTO {

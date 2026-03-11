@@ -7,6 +7,7 @@ import {
 import { TextoEditable } from '@/design-system/ykn-ui/texto-editable'
 import { cn } from '@/logica-compartida/utils'
 import { X } from 'lucide-react'
+import type { ZonaEstado } from './tipos-zona'
 
 function textoEquipoCompleto(eq: EquipoDTO): string {
   const partes: string[] = []
@@ -16,13 +17,7 @@ function textoEquipoCompleto(eq: EquipoDTO): string {
   return partes.join(' ')
 }
 
-export interface ZonaEstado {
-  id?: number
-  nombre: string
-  equipos: EquipoDTO[]
-}
-
-interface ZonaProps {
+interface DetalleZonasDeLaFaseProps {
   zona: ZonaEstado
   onNombreChange: (nombre: string) => void
   onQuitarEquipo: (equipoId: number) => void
@@ -30,13 +25,13 @@ interface ZonaProps {
   editable?: boolean
 }
 
-export function Zona({
+export function DetalleZonasDeLaFase({
   zona,
   onNombreChange,
   onQuitarEquipo,
   onDropEquipo,
   editable = true
-}: ZonaProps) {
+}: DetalleZonasDeLaFaseProps) {
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
     e.dataTransfer.dropEffect = 'move'

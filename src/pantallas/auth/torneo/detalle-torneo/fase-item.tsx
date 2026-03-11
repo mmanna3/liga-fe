@@ -17,9 +17,9 @@ import ModalEliminacion from '@/design-system/modal-eliminacion'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import Icono from '@/design-system/ykn-ui/icono'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
+import { rutasNavegacion } from '@/ruteo/rutas'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { rutasNavegacion } from '@/ruteo/rutas'
 import { DatosFaseLectura } from '../crear-torneo/components/datos-fase-lectura'
 import { TituloFase } from '../crear-torneo/components/titulo-fase'
 import {
@@ -148,7 +148,8 @@ export function FaseItem({
           <AlertDialogHeader>
             <AlertDialogTitle>No se puede eliminar</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta fase no se puede eliminar.
+              Esta fase no se puede eliminar. Para eliminarla, eliminá primero
+              todas sus zonas.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

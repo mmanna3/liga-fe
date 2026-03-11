@@ -138,7 +138,7 @@ export default function DetalleTorneo() {
     <LayoutSegundoNivel
       titulo={`${torneo.nombre}`}
       pathBotonVolver={rutasNavegacion.torneos}
-      maxWidth='6xl'
+      maxWidth='2xl'
       botonera={{
         iconos: [
           {
