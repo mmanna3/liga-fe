@@ -89,8 +89,8 @@ export function Categorias({
     if (desde && hasta) {
       const desdeNum = parseInt(desde, 10)
       const hastaNum = parseInt(hasta, 10)
-      if (desdeNum >= hastaNum) {
-        errores.push('"Desde" debe ser menor que "Hasta"')
+      if (desdeNum > hastaNum) {
+        errores.push('"Desde" debe ser menor o igual que "Hasta"')
       }
       if (hastaNum > ANIO_ACTUAL) {
         errores.push('"Hasta" no puede ser mayor al año actual')
@@ -128,7 +128,9 @@ export function Categorias({
                 {categoria.nombre}
                 {(categoria.anioDesde || categoria.anioHasta) && (
                   <span className='ml-1'>
-                    ({categoria.anioDesde || '—'}/{categoria.anioHasta || '—'})
+                    {categoria.anioDesde === categoria.anioHasta
+                      ? `(${categoria.anioDesde || '—'})`
+                      : `(${categoria.anioDesde || '—'}/${categoria.anioHasta || '—'})`}
                   </span>
                 )}
                 <button
