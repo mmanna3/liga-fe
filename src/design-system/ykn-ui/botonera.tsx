@@ -1,4 +1,13 @@
 import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/design-system/base-ui/alert-dialog'
+import {
   Tooltip,
   TooltipContent,
   TooltipTrigger
@@ -13,14 +22,23 @@ import * as React from 'react'
 export interface IconoBotonera {
   alApretar: () => void
   tooltip: string
-  icono: NombreIcono
+  /** Opcional. Para botones eliminar, por defecto 'Eliminar' */
+  icono?: NombreIcono
   visibleSoloParaAdmin?: boolean
-  esEliminar?: boolean
-  /** Requerido cuando esEliminar es true */
+  /**
+   * Botón eliminar: requiere modalEliminacion.
+   * - puedeEliminar true (o undefined): muestra modal de confirmación y ejecuta alApretar.
+   * - puedeEliminar false: muestra Dialog "No se puede eliminar" con textoNoSePuedeEliminar.
+   * Los botones eliminar son siempre visibleSoloParaAdmin.
+   */
+  puedeEliminar?: boolean
+  /** Requerido cuando puedeEliminar es false. Mensaje del Dialog "No se puede eliminar". */
+  textoNoSePuedeEliminar?: string
   modalEliminacion?: {
     titulo: string
     subtitulo: string
-    eliminarTexto: string
+    /** Opcional. Si no se provee, se usa titulo. */
+    eliminarTexto?: string
     estaCargando?: boolean
   }
 }
@@ -34,18 +52,32 @@ export interface BotoneraProps {
 }
 
 function IconoBoton({ item }: { item: IconoBotonera }) {
+  const esEliminar = !!item.modalEliminacion
+  const puedeEliminar = item.puedeEliminar !== false
+  const [abrirNoSePuede, setAbrirNoSePuede] = React.useState(false)
+
+  const iconoNombre: NombreIcono =
+    item.icono ?? (esEliminar ? 'Eliminar' : 'Editar')
+
   const boton = (
     <Boton
       variant='outline'
       className={cn(
         'h-10 w-10 min-w-10 p-0',
-        item.esEliminar &&
+        esEliminar &&
+          puedeEliminar &&
           'border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive'
       )}
-      onClick={item.esEliminar ? undefined : item.alApretar}
+      onClick={
+        esEliminar && !puedeEliminar
+          ? () => setAbrirNoSePuede(true)
+          : esEliminar
+            ? undefined
+            : item.alApretar
+      }
       estaCargando={item.modalEliminacion?.estaCargando}
     >
-      <Icono nombre={item.icono} className='h-5 w-5 shrink-0' />
+      <Icono nombre={iconoNombre} className='h-5 w-5 shrink-0' />
     </Boton>
   )
 
@@ -59,7 +91,7 @@ function IconoBoton({ item }: { item: IconoBotonera }) {
     </TooltipContent>
   )
 
-  if (item.esEliminar) {
+  if (esEliminar && puedeEliminar) {
     return (
       <Tooltip>
         <TooltipTrigger asChild>
@@ -68,7 +100,10 @@ function IconoBoton({ item }: { item: IconoBotonera }) {
               titulo={item.modalEliminacion!.titulo}
               subtitulo={item.modalEliminacion!.subtitulo}
               eliminarOnClick={item.alApretar}
-              eliminarTexto={item.modalEliminacion!.eliminarTexto}
+              eliminarTexto={
+                item.modalEliminacion!.eliminarTexto ??
+                item.modalEliminacion!.titulo
+              }
               trigger={boton}
               estaCargando={item.modalEliminacion?.estaCargando}
             />
@@ -76,6 +111,31 @@ function IconoBoton({ item }: { item: IconoBotonera }) {
         </TooltipTrigger>
         {tooltipContent}
       </Tooltip>
+    )
+  }
+
+  if (esEliminar && !puedeEliminar) {
+    return (
+      <>
+        <Tooltip>
+          <TooltipTrigger asChild>{boton}</TooltipTrigger>
+          {tooltipContent}
+        </Tooltip>
+        <AlertDialog open={abrirNoSePuede} onOpenChange={setAbrirNoSePuede}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>No se puede eliminar</AlertDialogTitle>
+              <AlertDialogDescription>
+                {item.textoNoSePuedeEliminar ??
+                  'No se puede realizar esta acción.'}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Volver</AlertDialogCancel>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </>
     )
   }
 
@@ -94,7 +154,9 @@ export default function Botonera({ iconos, children }: BotoneraProps) {
       <div className='flex gap-2 shrink-0'>
         {iconos.map((item, index) => {
           const boton = <IconoBoton key={index} item={item} />
-          return item.visibleSoloParaAdmin ? (
+          const esEliminar = !!item.modalEliminacion
+          const visibleSoloAdmin = item.visibleSoloParaAdmin ?? esEliminar
+          return visibleSoloAdmin ? (
             <VisibleSoloParaAdmin key={index}>{boton}</VisibleSoloParaAdmin>
           ) : (
             <React.Fragment key={index}>{boton}</React.Fragment>

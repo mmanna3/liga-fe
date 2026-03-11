@@ -7,15 +7,6 @@ import {
   AlertTitle
 } from '@/design-system/base-ui/alert'
 import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from '@/design-system/base-ui/alert-dialog'
-import {
   Card,
   CardContent,
   CardHeader,
@@ -27,13 +18,11 @@ import { Boton } from '@/design-system/ykn-ui/boton'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
 import Icono from '@/design-system/ykn-ui/icono'
 import { rutasNavegacion } from '@/ruteo/rutas'
-import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export default function DetalleClub() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [abrirModalEliminar, setAbrirModalEliminar] = useState(false)
 
   const {
     data: club,
@@ -102,30 +91,18 @@ export default function DetalleClub() {
               icono: 'Editar',
               visibleSoloParaAdmin: true
             },
-            ...(club!.equipos && club!.equipos.length > 0
-              ? [
-                  {
-                    alApretar: () => setAbrirModalEliminar(true),
-                    tooltip: 'Eliminar',
-                    icono: 'Eliminar' as const,
-                    visibleSoloParaAdmin: true
-                  }
-                ]
-              : [
-                  {
-                    alApretar: () => eliminarMutation.mutate(undefined),
-                    tooltip: 'Eliminar',
-                    icono: 'Eliminar' as const,
-                    visibleSoloParaAdmin: true,
-                    esEliminar: true,
-                    modalEliminacion: {
-                      titulo: 'Eliminar club',
-                      subtitulo: `¿Estás seguro de que querés eliminar el club "${club!.nombre}"? Esta acción no se puede deshacer.`,
-                      eliminarTexto: 'Eliminar club',
-                      estaCargando: eliminarMutation.isPending
-                    }
-                  }
-                ])
+            {
+              alApretar: () => eliminarMutation.mutate(undefined),
+              tooltip: 'Eliminar',
+              puedeEliminar: !(club!.equipos && club!.equipos.length > 0),
+              textoNoSePuedeEliminar:
+                'Este club tiene equipos. Para eliminar el club, eliminá primero los equipos que tiene.',
+              modalEliminacion: {
+                titulo: 'Eliminar club',
+                subtitulo: `¿Estás seguro de que querés eliminar el club "${club!.nombre}"? Esta acción no se puede deshacer.`,
+                estaCargando: eliminarMutation.isPending
+              }
+            }
           ]
         }}
         contenidoEnCard={false}
@@ -261,24 +238,6 @@ export default function DetalleClub() {
           </div>
         }
       />
-
-      <AlertDialog
-        open={abrirModalEliminar}
-        onOpenChange={setAbrirModalEliminar}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>No se puede eliminar el club</AlertDialogTitle>
-            <AlertDialogDescription>
-              Este club tiene equipos. Para eliminar el club, eliminá primero
-              los equipos que tiene.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Volver</AlertDialogCancel>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </>
   )
 }

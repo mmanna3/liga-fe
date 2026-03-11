@@ -25,7 +25,7 @@ export function SelectorAgrupador({
 
   const opciones = agrupadores.map((a) => ({
     id: String(a.id ?? 0),
-    texto: a.nombre
+    titulo: a.nombre
   }))
 
   const valorActual = valor != null ? String(valor) : ''
@@ -58,6 +58,7 @@ export function SelectorAgrupador({
         valorActual={valorActual}
         alElegirOpcion={(id) => alCambiar(id ? parseInt(id, 10) : null)}
         deshabilitado={deshabilitado}
+        columnasPorRenglon={3}
       />
       {error && <p className='text-sm text-destructive mt-2'>{error}</p>}
     </div>

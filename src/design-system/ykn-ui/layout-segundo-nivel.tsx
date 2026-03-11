@@ -1,10 +1,20 @@
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle
 } from '@/design-system/base-ui/card'
+import type { BotoneraProps } from '@/design-system/ykn-ui/botonera'
+import Botonera from '@/design-system/ykn-ui/botonera'
 import BotonVolver from '@/design-system/ykn-ui/boton-volver'
+
+const MAX_WIDTH_CLASSES: Record<string, string> = {
+  md: 'max-w-md',
+  lg: 'max-w-lg',
+  xl: 'max-w-xl',
+  '2xl': 'max-w-2xl'
+}
 
 interface LayoutSegundoNivelProps {
   /** Título del CardHeader (string) */
@@ -17,8 +27,12 @@ interface LayoutSegundoNivelProps {
   headerClassName?: string
   /** Contenido opcional debajo del CardContent, dentro del Card (ej. botones de acción) */
   footer?: React.ReactNode
-  /** Ancho máximo del contenedor: 'md' (448px) o 'lg' (512px). Por defecto 'lg' */
-  maxWidth?: 'md' | 'lg'
+  /** Botonera opcional (iconos Editar, Eliminar, etc.) a la derecha del título, como en FlujoHomeLayout */
+  botonera?: BotoneraProps
+  /** Ancho máximo del contenedor: 'md' (448px), 'lg' (512px), 'xl' (576px), '2xl' (672px). Por defecto 'lg' */
+  maxWidth?: 'md' | 'lg' | 'xl' | '2xl'
+  /** Texto opcional debajo del título */
+  subtitulo?: string
 }
 
 export default function LayoutSegundoNivel({
@@ -27,9 +41,11 @@ export default function LayoutSegundoNivel({
   pathBotonVolver,
   headerClassName,
   footer,
-  maxWidth = 'lg'
+  botonera,
+  maxWidth = 'lg',
+  subtitulo
 }: LayoutSegundoNivelProps) {
-  const maxWidthClass = maxWidth === 'md' ? 'max-w-md' : 'max-w-lg'
+  const maxWidthClass = MAX_WIDTH_CLASSES[maxWidth] ?? 'max-w-lg'
 
   return (
     <div className={`${maxWidthClass} mx-auto px-4`}>
@@ -37,10 +53,19 @@ export default function LayoutSegundoNivel({
         <BotonVolver path={pathBotonVolver} />
       </div>
       <Card className='p-6 rounded-xl border bg-white shadow-md'>
-        <CardHeader className={headerClassName}>
-          <CardTitle className='text-3xl font-semibold text-gray-900'>
-            {titulo}
-          </CardTitle>
+        <CardHeader
+          className={
+            headerClassName ??
+            (botonera ? 'flex flex-row items-start justify-between' : undefined)
+          }
+        >
+          <div>
+            <CardTitle className='text-3xl font-semibold text-gray-900'>
+              {titulo}
+            </CardTitle>
+            {subtitulo && <CardDescription>{subtitulo}</CardDescription>}
+          </div>
+          {botonera && <Botonera {...botonera} />}
         </CardHeader>
         <CardContent className='pt-0'>{contenido}</CardContent>
         {footer}

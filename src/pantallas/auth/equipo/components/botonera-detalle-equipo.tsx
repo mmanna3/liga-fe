@@ -52,9 +52,7 @@ export function useBotoneraDetalleEquipo({
       {
         alApretar: () => eliminarMutation.mutate(),
         tooltip: 'Eliminar equipo',
-        icono: 'Eliminar',
-        visibleSoloParaAdmin: true,
-        esEliminar: true,
+        puedeEliminar: true,
         modalEliminacion: {
           titulo: `Eliminar definitivamente al equipo ${equipo.nombre}`,
           subtitulo: `Al eliminar el equipo, se eliminarán también los jugadores que solo jueguen en este equipo. Son: ${jugadores}`,

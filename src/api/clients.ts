@@ -3203,7 +3203,7 @@ export class Client {
    * @param body (optional)
    * @return OK
    */
-  torneoPOST(body: TorneoDTO | undefined): Promise<TorneoDTO> {
+  torneoPOST(body: CrearTorneoDTO | undefined): Promise<TorneoDTO> {
     let url_ = this.baseUrl + '/api/Torneo'
     url_ = url_.replace(/[?&]$/, '')
 
@@ -5399,6 +5399,77 @@ export interface IClubDTO {
   delegados?: DelegadoDTO[] | undefined
 }
 
+export class CrearTorneoDTO implements ICrearTorneoDTO {
+  id?: number
+  nombre!: string
+  anio!: number
+  torneoAgrupadorId?: number
+  torneoAgrupadorNombre?: string | undefined
+  primeraFase?: TorneoFaseDTO
+  categorias?: TorneoCategoriaDTO[] | undefined
+
+  constructor(data?: ICrearTorneoDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.nombre = _data['nombre']
+      this.anio = _data['anio']
+      this.torneoAgrupadorId = _data['torneoAgrupadorId']
+      this.torneoAgrupadorNombre = _data['torneoAgrupadorNombre']
+      this.primeraFase = _data['primeraFase']
+        ? TorneoFaseDTO.fromJS(_data['primeraFase'])
+        : <any>undefined
+      if (Array.isArray(_data['categorias'])) {
+        this.categorias = [] as any
+        for (let item of _data['categorias'])
+          this.categorias!.push(TorneoCategoriaDTO.fromJS(item))
+      }
+    }
+  }
+
+  static fromJS(data: any): CrearTorneoDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new CrearTorneoDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['nombre'] = this.nombre
+    data['anio'] = this.anio
+    data['torneoAgrupadorId'] = this.torneoAgrupadorId
+    data['torneoAgrupadorNombre'] = this.torneoAgrupadorNombre
+    data['primeraFase'] = this.primeraFase
+      ? this.primeraFase.toJSON()
+      : <any>undefined
+    if (Array.isArray(this.categorias)) {
+      data['categorias'] = []
+      for (let item of this.categorias) data['categorias'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface ICrearTorneoDTO {
+  id?: number
+  nombre: string
+  anio: number
+  torneoAgrupadorId?: number
+  torneoAgrupadorNombre?: string | undefined
+  primeraFase?: TorneoFaseDTO
+  categorias?: TorneoCategoriaDTO[] | undefined
+}
+
 export class DelegadoClubDTO implements IDelegadoClubDTO {
   id?: number
   clubId?: number
@@ -6752,17 +6823,17 @@ export interface ITorneoDTO {
 
 export class TorneoFaseDTO implements ITorneoFaseDTO {
   id?: number
+  nombre?: string | undefined
   numero!: number
   torneoId?: number
   faseFormatoId?: number
   faseFormatoNombre?: string | undefined
   instanciaEliminacionDirectaId?: number | undefined
   instanciaEliminacionDirectaNombre?: string | undefined
-  faseTipoDeVueltaId?: number
-  faseTipoDeVueltaNombre?: string | undefined
   estadoFaseId?: number
   estadoFaseNombre?: string | undefined
   esVisibleEnApp?: boolean
+  esExcluyente?: boolean
 
   constructor(data?: ITorneoFaseDTO) {
     if (data) {
@@ -6776,6 +6847,7 @@ export class TorneoFaseDTO implements ITorneoFaseDTO {
   init(_data?: any) {
     if (_data) {
       this.id = _data['id']
+      this.nombre = _data['nombre']
       this.numero = _data['numero']
       this.torneoId = _data['torneoId']
       this.faseFormatoId = _data['faseFormatoId']
@@ -6784,11 +6856,10 @@ export class TorneoFaseDTO implements ITorneoFaseDTO {
         _data['instanciaEliminacionDirectaId']
       this.instanciaEliminacionDirectaNombre =
         _data['instanciaEliminacionDirectaNombre']
-      this.faseTipoDeVueltaId = _data['faseTipoDeVueltaId']
-      this.faseTipoDeVueltaNombre = _data['faseTipoDeVueltaNombre']
       this.estadoFaseId = _data['estadoFaseId']
       this.estadoFaseNombre = _data['estadoFaseNombre']
       this.esVisibleEnApp = _data['esVisibleEnApp']
+      this.esExcluyente = _data['esExcluyente']
     }
   }
 
@@ -6802,6 +6873,7 @@ export class TorneoFaseDTO implements ITorneoFaseDTO {
   toJSON(data?: any) {
     data = typeof data === 'object' ? data : {}
     data['id'] = this.id
+    data['nombre'] = this.nombre
     data['numero'] = this.numero
     data['torneoId'] = this.torneoId
     data['faseFormatoId'] = this.faseFormatoId
@@ -6809,28 +6881,27 @@ export class TorneoFaseDTO implements ITorneoFaseDTO {
     data['instanciaEliminacionDirectaId'] = this.instanciaEliminacionDirectaId
     data['instanciaEliminacionDirectaNombre'] =
       this.instanciaEliminacionDirectaNombre
-    data['faseTipoDeVueltaId'] = this.faseTipoDeVueltaId
-    data['faseTipoDeVueltaNombre'] = this.faseTipoDeVueltaNombre
     data['estadoFaseId'] = this.estadoFaseId
     data['estadoFaseNombre'] = this.estadoFaseNombre
     data['esVisibleEnApp'] = this.esVisibleEnApp
+    data['esExcluyente'] = this.esExcluyente
     return data
   }
 }
 
 export interface ITorneoFaseDTO {
   id?: number
+  nombre?: string | undefined
   numero: number
   torneoId?: number
   faseFormatoId?: number
   faseFormatoNombre?: string | undefined
   instanciaEliminacionDirectaId?: number | undefined
   instanciaEliminacionDirectaNombre?: string | undefined
-  faseTipoDeVueltaId?: number
-  faseTipoDeVueltaNombre?: string | undefined
   estadoFaseId?: number
   estadoFaseNombre?: string | undefined
   esVisibleEnApp?: boolean
+  esExcluyente?: boolean
 }
 
 export class TorneoFechaDTO implements ITorneoFechaDTO {

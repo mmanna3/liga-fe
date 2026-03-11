@@ -3,11 +3,11 @@ import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
 
 export type TipoTorneo = 'FUTSAL' | 'BABY' | 'FUTBOL 11' | 'FEMENINO'
 
-const OPCIONES_TIPO: { id: TipoTorneo; texto: string }[] = [
-  { id: 'FUTSAL', texto: 'Futsal' },
-  { id: 'BABY', texto: 'Baby' },
-  { id: 'FUTBOL 11', texto: 'Fútbol 11' },
-  { id: 'FEMENINO', texto: 'Femenino' }
+const OPCIONES_TIPO: { id: TipoTorneo; titulo: string }[] = [
+  { id: 'FUTSAL', titulo: 'Futsal' },
+  { id: 'BABY', titulo: 'Baby' },
+  { id: 'FUTBOL 11', titulo: 'Fútbol 11' },
+  { id: 'FEMENINO', titulo: 'Femenino' }
 ]
 
 interface SelectorTipoTorneoProps {
