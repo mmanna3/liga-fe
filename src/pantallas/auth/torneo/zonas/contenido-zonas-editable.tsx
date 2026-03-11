@@ -2,7 +2,7 @@ import { EquipoDTO } from '@/api/clients'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { Plus } from 'lucide-react'
 import { BuscadorDeEquiposParaZona } from './buscador-de-equipos-para-zona'
-import { DetalleZonasDeLaFase } from './detalle-zonas-de-la-fase'
+import { Zona } from './zona-fase'
 import type { ZonaEstado } from './tipos-zona'
 
 interface ContenidoZonasEditableProps {
@@ -11,6 +11,7 @@ interface ContenidoZonasEditableProps {
   onActualizarNombre: (index: number, nombre: string) => void
   onQuitarEquipo: (index: number, equipoId: number) => void
   onDropEquipo: (index: number, equipo: EquipoDTO) => void
+  onEliminarZona: (index: number) => void
   onAgregarZona: () => void
 }
 
@@ -21,6 +22,7 @@ export function ContenidoZonasEditable({
   onActualizarNombre,
   onQuitarEquipo,
   onDropEquipo,
+  onEliminarZona,
   onAgregarZona
 }: ContenidoZonasEditableProps) {
   return (
@@ -28,11 +30,12 @@ export function ContenidoZonasEditable({
       <div className='flex flex-wrap gap-4 items-start'>
         {zonasEstado.map((zona, index) => (
           <div key={zona.id ?? index} className='min-w-[280px] flex-1'>
-            <DetalleZonasDeLaFase
+            <Zona
               zona={zona}
               onNombreChange={(n) => onActualizarNombre(index, n)}
               onQuitarEquipo={(eqId) => onQuitarEquipo(index, eqId)}
               onDropEquipo={(eq) => onDropEquipo(index, eq)}
+              onEliminar={() => onEliminarZona(index)}
               editable
             />
           </div>

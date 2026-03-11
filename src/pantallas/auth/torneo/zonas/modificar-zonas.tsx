@@ -31,6 +31,7 @@ export function ModificarZonas({ titulo, pathVolver }: ModificarZonasProps) {
     actualizarZona,
     agregarEquipoAZona,
     quitarEquipoDeZona,
+    eliminarZona,
     agregarZona
   } = useZonasEstado([])
 
@@ -79,6 +80,7 @@ export function ModificarZonas({ titulo, pathVolver }: ModificarZonasProps) {
           onActualizarNombre={(i, n) => actualizarZona(i, 'nombre', n)}
           onQuitarEquipo={quitarEquipoDeZona}
           onDropEquipo={agregarEquipoAZona}
+          onEliminarZona={eliminarZona}
           onAgregarZona={agregarZona}
         />
       }

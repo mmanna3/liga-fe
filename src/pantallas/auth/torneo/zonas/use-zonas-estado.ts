@@ -45,6 +45,10 @@ export function useZonasEstado(initial: ZonaEstado[]) {
     setZonasEstado((prev) => [...prev, { nombre: 'Nueva Zona', equipos: [] }])
   }, [])
 
+  const eliminarZona = useCallback((index: number) => {
+    setZonasEstado((prev) => prev.filter((_, i) => i !== index))
+  }, [])
+
   const setZonasEstadoDirecto = useCallback((zonas: ZonaEstado[]) => {
     setZonasEstado(zonas)
   }, [])
@@ -56,6 +60,7 @@ export function useZonasEstado(initial: ZonaEstado[]) {
     actualizarZona,
     agregarEquipoAZona,
     quitarEquipoDeZona,
-    agregarZona
+    agregarZona,
+    eliminarZona
   }
 }

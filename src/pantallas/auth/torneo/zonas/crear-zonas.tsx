@@ -26,6 +26,7 @@ export function CrearZonas({ titulo, pathVolver }: CrearZonasProps) {
     actualizarZona,
     agregarEquipoAZona,
     quitarEquipoDeZona,
+    eliminarZona,
     agregarZona
   } = useZonasEstado([{ nombre: 'Zona A', equipos: [] }])
 
@@ -68,6 +69,7 @@ export function CrearZonas({ titulo, pathVolver }: CrearZonasProps) {
           onActualizarNombre={(i, n) => actualizarZona(i, 'nombre', n)}
           onQuitarEquipo={quitarEquipoDeZona}
           onDropEquipo={agregarEquipoAZona}
+          onEliminarZona={eliminarZona}
           onAgregarZona={agregarZona}
         />
       }
