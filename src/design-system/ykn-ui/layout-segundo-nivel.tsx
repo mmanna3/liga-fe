@@ -5,15 +5,19 @@ import {
   CardHeader,
   CardTitle
 } from '@/design-system/base-ui/card'
+import BotonVolver from '@/design-system/ykn-ui/boton-volver'
 import type { BotoneraProps } from '@/design-system/ykn-ui/botonera'
 import Botonera from '@/design-system/ykn-ui/botonera'
-import BotonVolver from '@/design-system/ykn-ui/boton-volver'
 
 const MAX_WIDTH_CLASSES: Record<string, string> = {
   md: 'max-w-md',
   lg: 'max-w-lg',
   xl: 'max-w-xl',
-  '2xl': 'max-w-2xl'
+  '2xl': 'max-w-2xl',
+  '3xl': 'max-w-3xl',
+  '4xl': 'max-w-4xl',
+  '5xl': 'max-w-5xl',
+  '6xl': 'max-w-6xl'
 }
 
 interface LayoutSegundoNivelProps {
@@ -30,7 +34,7 @@ interface LayoutSegundoNivelProps {
   /** Botonera opcional (iconos Editar, Eliminar, etc.) a la derecha del título, como en FlujoHomeLayout */
   botonera?: BotoneraProps
   /** Ancho máximo del contenedor: 'md' (448px), 'lg' (512px), 'xl' (576px), '2xl' (672px). Por defecto 'lg' */
-  maxWidth?: 'md' | 'lg' | 'xl' | '2xl'
+  maxWidth?: 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl'
   /** Texto opcional debajo del título */
   subtitulo?: string
 }

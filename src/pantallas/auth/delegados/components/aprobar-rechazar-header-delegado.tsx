@@ -1,10 +1,10 @@
 import { AprobarDelegadoEnElClubDTO, DelegadoDTO } from '@/api/clients'
 import { CardTitle } from '@/design-system/base-ui/card'
-import { Input } from '@/design-system/base-ui/input'
 import { Skeleton } from '@/design-system/base-ui/skeleton'
+import { TextoEditable } from '@/design-system/ykn-ui/texto-editable'
 import Icono from '@/design-system/ykn-ui/icono'
 import InputFecha from '@/pantallas/auth/jugador/components/fecha-input-editable'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface IProps {
   delegado: DelegadoDTO | undefined
@@ -71,103 +71,43 @@ export default function AprobarRechazarHeaderDelegado({
       />
       <CardTitle className='mt-4 text-3xl font-semibold'>
         <div className='flex gap-2'>
-          <ItemTextoEditable
-            valor={nombre}
-            setValor={setNombre}
+          <TextoEditable
+            valor={nombre ?? ''}
+            alCambiar={(v) => setNombre(v)}
             tamanio='titulo'
           />
-          <ItemTextoEditable
-            valor={apellido}
-            setValor={setApellido}
+          <TextoEditable
+            valor={apellido ?? ''}
+            alCambiar={(v) => setApellido(v)}
             tamanio='titulo'
           />
         </div>
       </CardTitle>
-      <ItemTextoEditable valor={dni} setValor={setDni} tamanio='detalle' />
+      <TextoEditable
+        valor={dni ?? ''}
+        alCambiar={(v) => setDni(v)}
+        tamanio='detalle'
+      />
       <ItemFechaEditable
         valor={fechaNacimiento}
         setValor={setFechaNacimiento}
       />
-      <ItemTextoEditable
+      <TextoEditable
         valor={email}
-        setValor={(v) => setEmail(v ?? '')}
+        alCambiar={(v) => setEmail(v)}
         tamanio='detalle'
-        placeholder='Email'
+        etiqueta='Email'
+        valorPorDefecto='-'
       />
-      <ItemTextoEditable
+      <TextoEditable
         valor={telefonoCelular}
-        setValor={(v) => setTelefonoCelular(v ?? '')}
+        alCambiar={(v) => setTelefonoCelular(v)}
         tamanio='detalle'
-        placeholder='Teléfono'
+        etiqueta='Teléfono'
+        valorPorDefecto='-'
       />
     </>
   )
-}
-
-interface IItemEditableProps {
-  valor: string | undefined
-  setValor: (value: string | undefined) => void
-  tamanio: 'detalle' | 'titulo'
-  placeholder?: string
-}
-
-function ItemTextoEditable({
-  valor,
-  setValor,
-  tamanio,
-  placeholder
-}: IItemEditableProps) {
-  const [esEdicion, setEsEdicion] = useState(false)
-  const inputRef = useRef<HTMLInputElement | null>(null)
-
-  useEffect(() => {
-    if (esEdicion && inputRef.current) {
-      inputRef.current.focus()
-    }
-  }, [esEdicion])
-
-  const tamanioObj = {
-    detalle: {
-      p: 'text-sm text-gray-500',
-      lapiz: 'w-3 ml-1 pb-1 text-gray-500',
-      inputClass: 'max-w-48'
-    },
-    titulo: {
-      p: 'text-3xl text-gray-900',
-      lapiz: 'w-5 ml-1 mt-2 text-gray-900',
-      inputClass: 'max-w-32 text-center'
-    }
-  }
-
-  if (!esEdicion)
-    return (
-      <div className='flex group'>
-        <p
-          className={`${tamanioObj[tamanio].p} group-hover:text-blue-700 group-hover:font-semibold`}
-          onClick={() => setEsEdicion(true)}
-        >
-          {placeholder ? `${placeholder}: ${valor ?? '-'}` : (valor ?? '-')}
-        </p>
-        <Icono
-          nombre='Editar'
-          className={`${tamanioObj[tamanio].lapiz} hidden group-hover:block group-hover:text-blue-700 group-hover:font-semibold`}
-        />
-      </div>
-    )
-  else
-    return (
-      <Input
-        ref={(el) => {
-          inputRef.current = el
-          if (el) el.focus()
-        }}
-        className={tamanioObj[tamanio].inputClass}
-        onBlur={() => setEsEdicion(false)}
-        value={valor ?? ''}
-        onChange={(v) => setValor(v.target.value)}
-        placeholder={placeholder}
-      />
-    )
 }
 
 interface IItemFechaEditableProps {

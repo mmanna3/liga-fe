@@ -1,6 +1,5 @@
-import { Input as BaseInput } from '@/design-system/base-ui/input'
-import Icono from '@/design-system/ykn-ui/icono'
-import { useEffect, useRef, useState } from 'react'
+import { TextoEditable } from '@/design-system/ykn-ui/texto-editable'
+import { cn } from '@/logica-compartida/utils'
 
 interface TituloFaseProps {
   valor: string
@@ -19,15 +18,6 @@ export function TituloFase({
   soloLectura = false,
   numero
 }: TituloFaseProps) {
-  const [esEdicion, setEsEdicion] = useState(false)
-  const inputRef = useRef<HTMLInputElement | null>(null)
-
-  useEffect(() => {
-    if (esEdicion && inputRef.current) {
-      inputRef.current.focus()
-    }
-  }, [esEdicion])
-
   const circuloNumero =
     numero != null ? (
       <span className='flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white'>
@@ -35,45 +25,16 @@ export function TituloFase({
       </span>
     ) : null
 
-  if (soloLectura) {
-    return (
-      <div className={`flex items-center gap-2 ${className ?? ''}`}>
-        {circuloNumero}
-        <h3 className='text-lg font-semibold'>{valor || 'Sin nombre'}</h3>
-      </div>
-    )
-  }
-
-  if (!esEdicion) {
-    return (
-      <div
-        className={`flex items-center gap-2 group cursor-pointer ${className ?? ''}`}
-        onClick={() => setEsEdicion(true)}
-      >
-        {circuloNumero}
-        <h3 className='text-lg font-semibold group-hover:text-primary'>
-          {valor || 'Primera Fase'}
-        </h3>
-        <Icono
-          nombre='Editar'
-          className='w-4 h-4 text-muted-foreground group-hover:text-primary'
-        />
-      </div>
-    )
-  }
-
   return (
-    <div className='flex items-center gap-2'>
+    <div className={cn('flex items-center gap-2', className)}>
       {circuloNumero}
-      <BaseInput
-        ref={(el) => {
-          inputRef.current = el
-          if (el) el.focus()
-        }}
-        className='text-lg font-semibold max-w-xs'
-        value={valor}
-        onChange={(e) => alCambiar?.(e.target.value)}
-        onBlur={() => setEsEdicion(false)}
+      <TextoEditable
+        valor={valor}
+        alCambiar={alCambiar ?? (() => {})}
+        tamanio='default'
+        valorPorDefecto={soloLectura ? 'Sin nombre' : 'Primera Fase'}
+        soloLectura={soloLectura}
+        className={cn(soloLectura && 'text-lg font-semibold')}
       />
     </div>
   )

@@ -52,6 +52,7 @@ const MAPEO_ICONOS: Record<
 
   // Agrupadores / dashboards
   'Layout dashboard': LucideIcons.LayoutDashboard,
+  Zonas: LucideIcons.Grid3X3,
 
   // Ubicación / datos
   Casa: LucideIcons.MapPin,

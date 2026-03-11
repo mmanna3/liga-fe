@@ -20,6 +20,7 @@ import CrearAgrupadorTorneo from '@/pantallas/auth/torneo/agrupador-torneo/crear
 import EditarAgrupadorTorneo from '@/pantallas/auth/torneo/agrupador-torneo/editar-agrupador-torneo'
 import CrearTorneo from '@/pantallas/auth/torneo/crear-torneo'
 import DetalleTorneo from '@/pantallas/auth/torneo/detalle-torneo'
+import ZonasDeLaFase from '@/pantallas/auth/torneo/zonas-de-la-fase'
 import Torneo from '@/pantallas/auth/torneo/torneo'
 import ErrorPage from '@/pantallas/error'
 import Login from '@/pantallas/login'
@@ -90,6 +91,10 @@ export const mapaRutasComponentes = [
       },
       { path: rutas.crearTorneo, element: <CrearTorneo /> },
       { path: `${rutas.detalleTorneo}/:id`, element: <DetalleTorneo /> },
+      {
+        path: `${rutas.detalleTorneo}/:id/fases/:faseId/zonas`,
+        element: <ZonasDeLaFase />
+      },
       { path: rutas.reportes, element: <ReportesPage /> },
       { path: rutas.reportePagos, element: <ReportePagosPage /> },
       { path: rutas.delegados, element: <Delegados /> },

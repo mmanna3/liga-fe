@@ -5,90 +5,19 @@ import useApiQuery from '@/api/hooks/use-api-query'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/ykn-ui/input'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
-import SelectorSimple, {
-  type OpcionSelector
-} from '@/design-system/ykn-ui/selector-simple'
 import { rutasNavegacion } from '@/ruteo/rutas'
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from '@/design-system/base-ui/alert-dialog'
-import ModalEliminacion from '@/design-system/modal-eliminacion'
-import Icono from '@/design-system/ykn-ui/icono'
 import { Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Categorias } from './crear-torneo/components/categorias'
-import { DatosFaseLectura } from './crear-torneo/components/datos-fase-lectura'
 import { SelectorAgrupador } from './crear-torneo/components/selector-agrupador'
-import { TituloFase } from './crear-torneo/components/titulo-fase'
-import type { Categoria } from './crear-torneo/tipos'
-
-const OPCIONES_FORMATO: OpcionSelector[] = [
-  { id: 'todos-contra-todos', titulo: 'Todos contra todos' },
-  { id: 'eliminacion-directa', titulo: 'Eliminación directa' }
-]
-
-const OPCIONES_EXCLUYENTE: OpcionSelector[] = [
-  {
-    id: 'excluyente',
-    titulo: 'Fase excluyente',
-    descripcion:
-      'Los equipos que juegan esta fase no pueden jugar otra fase excluyente.'
-  },
-  {
-    id: 'no-excluyente',
-    titulo: 'Fase no excluyente',
-    descripcion: 'Cualquier equipo de la liga puede jugar esta fase.'
-  }
-]
-
-function formatoIdAOpción(faseFormatoId?: number): string {
-  if (faseFormatoId === 1) return 'todos-contra-todos'
-  if (faseFormatoId === 2) return 'eliminacion-directa'
-  return ''
-}
-
-function formatoNombreDesdeId(faseFormatoId?: number): string {
-  if (faseFormatoId === 1) return 'Todos contra todos'
-  if (faseFormatoId === 2) return 'Eliminación directa'
-  return '—'
-}
-
-function categoriasDtoACategoria(dtos: TorneoCategoriaDTO[]): Categoria[] {
-  return (dtos ?? []).map((c) => ({
-    id: String(c.id ?? Date.now() + Math.random()),
-    nombre: c.nombre ?? '',
-    anioDesde: String(c.anioDesde ?? ''),
-    anioHasta: String(c.anioHasta ?? '')
-  }))
-}
-
-function categoriasACategoriaDto(cats: Categoria[]): TorneoCategoriaDTO[] {
-  return cats
-    .filter(
-      (c) =>
-        c.nombre.trim() !== '' &&
-        c.anioDesde.trim() !== '' &&
-        c.anioHasta.trim() !== ''
-    )
-    .map((c) => {
-      const idNum = parseInt(c.id, 10)
-      const esCategoriaExistente =
-        !isNaN(idNum) && idNum > 0 && idNum < 1_000_000_000
-      return new TorneoCategoriaDTO({
-        ...(esCategoriaExistente && { id: idNum }),
-        nombre: c.nombre.trim(),
-        anioDesde: parseInt(c.anioDesde, 10),
-        anioHasta: parseInt(c.anioHasta, 10)
-      })
-    })
-}
+import { FaseItem } from './detalle-torneo/fase-item'
+import {
+  categoriasACategoriaDto,
+  categoriasDtoACategoria,
+  formatoIdAOpción,
+  type FaseEstado
+} from './detalle-torneo/lib'
 
 export default function DetalleTorneo() {
   const { id } = useParams<{ id: string }>()
@@ -106,59 +35,30 @@ export default function DetalleTorneo() {
   })
 
   const torneoFases = torneo?.fases ?? []
-
-  const eliminarMutation = useApiMutation<void>({
-    fn: async () => {
-      await api.torneoDELETE(torneoId)
-    },
-    antesDeMensajeExito: () => navigate(rutasNavegacion.torneos),
-    mensajeDeExito: `El torneo "${torneo?.nombre ?? ''}" fue eliminado.`
-  })
-
   const puedeEditarTorneo = torneo?.sePuedeEditar !== false
 
   const [nombre, setNombre] = useState('')
   const [temporada, setTemporada] = useState('')
   const [agrupadorId, setAgrupadorId] = useState<number | null>(null)
-  const [categorias, setCategorias] = useState<Categoria[]>([])
-  const [fasesEstado, setFasesEstado] = useState<
-    Array<{
-      id?: number
-      numero: number
-      nombre: string
-      formato: string
-      excluyente: string
-      sePuedeEditar: boolean
-    }>
-  >([])
+  const [categorias, setCategorias] = useState(categoriasDtoACategoria([]))
+  const [fasesEstado, setFasesEstado] = useState<FaseEstado[]>([])
 
   useEffect(() => {
-    if (torneo) {
-      setNombre(torneo.nombre ?? '')
-      setTemporada(String(torneo.anio ?? ''))
-      setAgrupadorId(torneo.torneoAgrupadorId ?? null)
-    }
-  }, [torneo])
-
-  useEffect(() => {
-    if (torneo) {
-      setCategorias(categoriasDtoACategoria(torneo.categorias ?? []))
-    }
-  }, [torneo])
-
-  useEffect(() => {
-    if (torneo) {
-      setFasesEstado(
-        (torneo.fases ?? []).map((f) => ({
-          id: f.id,
-          numero: f.numero ?? 0,
-          nombre: f.nombre ?? '',
-          formato: formatoIdAOpción(f.faseFormatoId),
-          excluyente: f.esExcluyente ? 'excluyente' : 'no-excluyente',
-          sePuedeEditar: f.sePuedeEditar !== false
-        }))
-      )
-    }
+    if (!torneo) return
+    setNombre(torneo.nombre ?? '')
+    setTemporada(String(torneo.anio ?? ''))
+    setAgrupadorId(torneo.torneoAgrupadorId ?? null)
+    setCategorias(categoriasDtoACategoria(torneo.categorias ?? []))
+    setFasesEstado(
+      (torneo.fases ?? []).map((f) => ({
+        id: f.id,
+        numero: f.numero ?? 0,
+        nombre: f.nombre ?? '',
+        formato: formatoIdAOpción(f.faseFormatoId),
+        excluyente: f.esExcluyente ? 'excluyente' : 'no-excluyente',
+        sePuedeEditar: f.sePuedeEditar !== false
+      }))
+    )
   }, [torneo])
 
   const actualizarFase = (index: number, campo: string, valor: string) => {
@@ -166,10 +66,6 @@ export default function DetalleTorneo() {
       prev.map((f, i) => (i === index ? { ...f, [campo]: valor } : f))
     )
   }
-
-  const [faseIndexNoSePuedeEliminar, setFaseIndexNoSePuedeEliminar] = useState<
-    number | null
-  >(null)
 
   const eliminarFase = (index: number) => {
     setFasesEstado((prev) =>
@@ -193,10 +89,17 @@ export default function DetalleTorneo() {
     ])
   }
 
+  const eliminarMutation = useApiMutation<void>({
+    fn: async () => {
+      await api.torneoDELETE(torneoId)
+    },
+    antesDeMensajeExito: () => navigate(rutasNavegacion.torneos),
+    mensajeDeExito: `El torneo "${torneo?.nombre ?? ''}" fue eliminado.`
+  })
+
   const guardarMutation = useApiMutation<void>({
     fn: async () => {
       if (!torneo) return
-      const categoriasValidas = categoriasACategoriaDto(categorias)
       const fasesValidas = fasesEstado
         .filter((f) => f.nombre.trim() && f.formato && f.excluyente)
         .map((f) => ({
@@ -214,12 +117,10 @@ export default function DetalleTorneo() {
         nombre,
         anio: parseInt(temporada, 10),
         torneoAgrupadorId: agrupadorId ?? undefined,
-        categorias: categoriasValidas.map(
-          (c) => new TorneoCategoriaDTO({ ...c, torneoId: torneoId })
+        categorias: categoriasACategoriaDto(categorias).map(
+          (c) => new TorneoCategoriaDTO({ ...c, torneoId })
         ),
-        fases: fasesValidas.map(
-          (f) => new TorneoFaseDTO({ ...f, torneoId: torneoId })
-        )
+        fases: fasesValidas.map((f) => new TorneoFaseDTO({ ...f, torneoId }))
       })
       await api.torneoPUT(torneoId, body)
     },
@@ -231,14 +132,13 @@ export default function DetalleTorneo() {
   if (isError) return <div>Error al cargar el torneo</div>
   if (!torneo) return <div>No se encontró el torneo</div>
 
-  const tieneFases = torneoFases.length > 0
-  const puedeEliminar = !tieneFases
+  const puedeEliminar = torneoFases.length === 0
 
   return (
     <LayoutSegundoNivel
       titulo={`${torneo.nombre}`}
       pathBotonVolver={rutasNavegacion.torneos}
-      maxWidth='2xl'
+      maxWidth='6xl'
       botonera={{
         iconos: [
           {
@@ -318,79 +218,18 @@ export default function DetalleTorneo() {
             soloLectura={!puedeEditarTorneo}
           />
 
-          {fasesEstado.map((fase, index) => {
-            const faseOriginal = torneoFases[index]
-            const puedeEliminarFase = fase.sePuedeEditar
-            const botonEliminar = (
-              <Boton
-                type='button'
-                variant='outline'
-                className='h-10 w-10 min-w-10 p-0 border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive'
-                onClick={
-                  puedeEliminarFase
-                    ? undefined
-                    : () => setFaseIndexNoSePuedeEliminar(index)
-                }
-              >
-                <Icono nombre='Eliminar' className='h-5 w-5 shrink-0' />
-              </Boton>
-            )
-            return (
-              <div key={fase.id ?? index} className='space-y-4 pt-6 border-t'>
-                <div className='flex items-start justify-between gap-2'>
-                  <TituloFase
-                    numero={fase.numero}
-                    valor={fase.nombre}
-                    alCambiar={(v) => actualizarFase(index, 'nombre', v)}
-                    soloLectura={!fase.sePuedeEditar}
-                  />
-                  {puedeEliminarFase ? (
-                    <ModalEliminacion
-                      titulo='Eliminar fase'
-                      subtitulo={`¿Estás seguro de que querés eliminar la fase "${fase.nombre}"?`}
-                      eliminarOnClick={() => eliminarFase(index)}
-                      eliminarTexto='Eliminar'
-                      trigger={botonEliminar}
-                    />
-                  ) : (
-                    botonEliminar
-                  )}
-                </div>
-                {fase.sePuedeEditar ? (
-                  <>
-                    <SelectorSimple
-                      titulo='Formato'
-                      opciones={OPCIONES_FORMATO}
-                      valorActual={fase.formato}
-                      alElegirOpcion={(v) =>
-                        actualizarFase(index, 'formato', v)
-                      }
-                    />
-                    <SelectorSimple
-                      titulo='Excluyente'
-                      opciones={OPCIONES_EXCLUYENTE}
-                      valorActual={fase.excluyente}
-                      alElegirOpcion={(v) =>
-                        actualizarFase(index, 'excluyente', v)
-                      }
-                    />
-                  </>
-                ) : (
-                  <DatosFaseLectura
-                    formato={
-                      faseOriginal?.faseFormatoNombre ??
-                      formatoNombreDesdeId(faseOriginal?.faseFormatoId)
-                    }
-                    excluyente={
-                      faseOriginal?.esExcluyente
-                        ? 'Fase excluyente'
-                        : 'Fase no excluyente'
-                    }
-                  />
-                )}
-              </div>
-            )
-          })}
+          {fasesEstado.map((fase, index) => (
+            <FaseItem
+              key={fase.id ?? index}
+              torneoId={torneoId}
+              fase={fase}
+              faseOriginal={torneoFases[index]}
+              onActualizar={(campo, valor) =>
+                actualizarFase(index, campo, valor)
+              }
+              onEliminar={() => eliminarFase(index)}
+            />
+          ))}
 
           {puedeEditarTorneo && (
             <Boton
@@ -416,25 +255,6 @@ export default function DetalleTorneo() {
               </Boton>
             </div>
           )}
-
-          <AlertDialog
-            open={faseIndexNoSePuedeEliminar !== null}
-            onOpenChange={(open) =>
-              !open && setFaseIndexNoSePuedeEliminar(null)
-            }
-          >
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>No se puede eliminar</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Esta fase no se puede eliminar.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Volver</AlertDialogCancel>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
         </form>
       }
     />
