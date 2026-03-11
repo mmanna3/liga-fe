@@ -9,7 +9,7 @@ interface TorneoCardProps {
 }
 
 function FaseItem({ fase }: { fase: TorneoFaseDTO }) {
-  const titulo = `${fase.numero} ${fase.nombre ?? ''}`.trim()
+  const titulo = `${fase.nombre ?? ''}`.trim()
   const subtitulo = [
     fase.faseFormatoNombre ?? '',
     fase.esExcluyente ? 'Es exclusiva' : 'No es exclusiva'

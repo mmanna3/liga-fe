@@ -162,9 +162,9 @@ export default function DetalleTorneo() {
       ...prev,
       {
         numero: maxNumero + 1,
-        nombre: '',
-        formato: '',
-        excluyente: '',
+        nombre: 'Nueva fase',
+        formato: 'todos-contra-todos',
+        excluyente: 'excluyente',
         sePuedeEditar: true
       }
     ])
@@ -300,6 +300,7 @@ export default function DetalleTorneo() {
             return (
               <div key={fase.id ?? index} className='space-y-4 pt-6 border-t'>
                 <TituloFase
+                  numero={fase.numero}
                   valor={fase.nombre}
                   alCambiar={(v) => actualizarFase(index, 'nombre', v)}
                   soloLectura={!fase.sePuedeEditar}
