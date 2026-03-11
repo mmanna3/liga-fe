@@ -5,9 +5,7 @@ import {
   TorneoFaseDTO
 } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
-import { Input as BaseInput } from '@/design-system/base-ui/input'
 import { Boton } from '@/design-system/ykn-ui/boton'
-import Icono from '@/design-system/ykn-ui/icono'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import { Input } from '@/design-system/ykn-ui/input'
 import SelectorSimple, {
@@ -15,12 +13,13 @@ import SelectorSimple, {
 } from '@/design-system/ykn-ui/selector-simple'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Categorias } from './crear-torneo/components/categorias'
 import { SelectorAgrupador } from './crear-torneo/components/selector-agrupador'
+import { TituloFase } from './crear-torneo/components/titulo-fase'
 import type { Categoria } from './crear-torneo/tipos'
 
 const OPCIONES_FORMATO: OpcionSelector[] = [
@@ -41,55 +40,6 @@ const OPCIONES_EXCLUYENTE: OpcionSelector[] = [
     descripcion: 'Cualquier equipo de la liga puede jugar esta fase.'
   }
 ]
-
-function TituloEditable({
-  valor,
-  alCambiar,
-  className
-}: {
-  valor: string
-  alCambiar: (v: string) => void
-  className?: string
-}) {
-  const [esEdicion, setEsEdicion] = useState(false)
-  const inputRef = useRef<HTMLInputElement | null>(null)
-
-  useEffect(() => {
-    if (esEdicion && inputRef.current) {
-      inputRef.current.focus()
-    }
-  }, [esEdicion])
-
-  if (!esEdicion) {
-    return (
-      <div
-        className={`flex items-center gap-1.5 group cursor-pointer ${className ?? ''}`}
-        onClick={() => setEsEdicion(true)}
-      >
-        <h3 className='text-lg font-semibold group-hover:text-primary'>
-          {valor || 'Primera Fase'}
-        </h3>
-        <Icono
-          nombre='Editar'
-          className='w-4 h-4 text-muted-foreground group-hover:text-primary'
-        />
-      </div>
-    )
-  }
-
-  return (
-    <BaseInput
-      ref={(el) => {
-        inputRef.current = el
-        if (el) el.focus()
-      }}
-      className='text-lg font-semibold max-w-xs'
-      value={valor}
-      onChange={(e) => alCambiar(e.target.value)}
-      onBlur={() => setEsEdicion(false)}
-    />
-  )
-}
 
 const esquema = z
   .object({
@@ -267,7 +217,7 @@ export default function CrearTorneo() {
           />
 
           <div className='space-y-4 pt-6 border-t'>
-            <TituloEditable valor={tituloFase} alCambiar={setTituloFase} />
+            <TituloFase valor={tituloFase} alCambiar={setTituloFase} />
             <SelectorSimple
               titulo='Formato'
               opciones={OPCIONES_FORMATO}

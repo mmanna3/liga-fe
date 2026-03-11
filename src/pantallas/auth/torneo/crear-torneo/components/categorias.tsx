@@ -13,13 +13,16 @@ interface CategoriasProps {
   alCambiar: (categorias: Categoria[]) => void
   error?: string
   titulo?: string
+  /** Si true, solo muestra las categorías sin posibilidad de editar/agregar/quitar */
+  soloLectura?: boolean
 }
 
 export function Categorias({
   valor,
   alCambiar,
   error,
-  titulo = 'Categorías *'
+  titulo = 'Categorías *',
+  soloLectura = false
 }: CategoriasProps) {
   const [editandoCategoriaId, setEditandoCategoriaId] = useState<string | null>(
     null
@@ -122,8 +125,16 @@ export function Categorias({
               <Badge
                 key={categoria.id}
                 variant='secondary'
-                className='bg-primary/10 text-primary border-primary/20 pl-3 pr-1.5 py-1.5 text-sm cursor-pointer hover:bg-primary/20 transition-colors'
-                onClick={() => alClickearCategoria(categoria.id)}
+                className={`bg-primary/10 text-primary border-primary/20 pl-3 pr-1.5 py-1.5 text-sm ${
+                  soloLectura
+                    ? ''
+                    : 'cursor-pointer hover:bg-primary/20 transition-colors'
+                }`}
+                onClick={
+                  soloLectura
+                    ? undefined
+                    : () => alClickearCategoria(categoria.id)
+                }
               >
                 {categoria.nombre}
                 {(categoria.anioDesde || categoria.anioHasta) && (
@@ -133,22 +144,24 @@ export function Categorias({
                       : `(${categoria.anioDesde || '—'}/${categoria.anioHasta || '—'})`}
                   </span>
                 )}
-                <button
-                  type='button'
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    quitarCategoria(categoria.id)
-                  }}
-                  className='ml-1.5 hover:bg-muted rounded-full p-0.5'
-                >
-                  <X className='w-3 h-3' />
-                </button>
+                {!soloLectura && (
+                  <button
+                    type='button'
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      quitarCategoria(categoria.id)
+                    }}
+                    className='ml-1.5 hover:bg-muted rounded-full p-0.5'
+                  >
+                    <X className='w-3 h-3' />
+                  </button>
+                )}
               </Badge>
             ))}
         </div>
       )}
 
-      {categoriaEditando && (
+      {!soloLectura && categoriaEditando && (
         <div className='p-3 bg-muted rounded-lg mb-2 max-w-2xl'>
           <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2'>
             <Input
@@ -218,16 +231,18 @@ export function Categorias({
         </div>
       )}
 
-      <Boton
-        type='button'
-        variant='outline'
-        size='sm'
-        onClick={agregarCategoria}
-        className='my-2'
-      >
-        <Plus className='w-3 h-3' />
-        Agregar
-      </Boton>
+      {!soloLectura && (
+        <Boton
+          type='button'
+          variant='outline'
+          size='sm'
+          onClick={agregarCategoria}
+          className='my-2'
+        >
+          <Plus className='w-3 h-3' />
+          Agregar
+        </Boton>
+      )}
       {error && <p className='text-sm text-destructive mt-2'>{error}</p>}
     </div>
   )
