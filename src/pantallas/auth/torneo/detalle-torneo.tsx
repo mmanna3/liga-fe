@@ -9,6 +9,17 @@ import SelectorSimple, {
   type OpcionSelector
 } from '@/design-system/ykn-ui/selector-simple'
 import { rutasNavegacion } from '@/ruteo/rutas'
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/design-system/base-ui/alert-dialog'
+import ModalEliminacion from '@/design-system/modal-eliminacion'
+import Icono from '@/design-system/ykn-ui/icono'
 import { Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -156,6 +167,18 @@ export default function DetalleTorneo() {
     )
   }
 
+  const [faseIndexNoSePuedeEliminar, setFaseIndexNoSePuedeEliminar] = useState<
+    number | null
+  >(null)
+
+  const eliminarFase = (index: number) => {
+    setFasesEstado((prev) =>
+      prev
+        .filter((_, i) => i !== index)
+        .map((f, i) => ({ ...f, numero: i + 1 }))
+    )
+  }
+
   const agregarFase = () => {
     const maxNumero = Math.max(0, ...fasesEstado.map((f) => f.numero))
     setFasesEstado((prev) => [
@@ -297,14 +320,42 @@ export default function DetalleTorneo() {
 
           {fasesEstado.map((fase, index) => {
             const faseOriginal = torneoFases[index]
+            const puedeEliminarFase = fase.sePuedeEditar
+            const botonEliminar = (
+              <Boton
+                type='button'
+                variant='outline'
+                className='h-10 w-10 min-w-10 p-0 border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive'
+                onClick={
+                  puedeEliminarFase
+                    ? undefined
+                    : () => setFaseIndexNoSePuedeEliminar(index)
+                }
+              >
+                <Icono nombre='Eliminar' className='h-5 w-5 shrink-0' />
+              </Boton>
+            )
             return (
               <div key={fase.id ?? index} className='space-y-4 pt-6 border-t'>
-                <TituloFase
-                  numero={fase.numero}
-                  valor={fase.nombre}
-                  alCambiar={(v) => actualizarFase(index, 'nombre', v)}
-                  soloLectura={!fase.sePuedeEditar}
-                />
+                <div className='flex items-start justify-between gap-2'>
+                  <TituloFase
+                    numero={fase.numero}
+                    valor={fase.nombre}
+                    alCambiar={(v) => actualizarFase(index, 'nombre', v)}
+                    soloLectura={!fase.sePuedeEditar}
+                  />
+                  {puedeEliminarFase ? (
+                    <ModalEliminacion
+                      titulo='Eliminar fase'
+                      subtitulo={`¿Estás seguro de que querés eliminar la fase "${fase.nombre}"?`}
+                      eliminarOnClick={() => eliminarFase(index)}
+                      eliminarTexto='Eliminar'
+                      trigger={botonEliminar}
+                    />
+                  ) : (
+                    botonEliminar
+                  )}
+                </div>
                 {fase.sePuedeEditar ? (
                   <>
                     <SelectorSimple
@@ -365,6 +416,25 @@ export default function DetalleTorneo() {
               </Boton>
             </div>
           )}
+
+          <AlertDialog
+            open={faseIndexNoSePuedeEliminar !== null}
+            onOpenChange={(open) =>
+              !open && setFaseIndexNoSePuedeEliminar(null)
+            }
+          >
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>No se puede eliminar</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Esta fase no se puede eliminar.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Volver</AlertDialogCancel>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </form>
       }
     />
