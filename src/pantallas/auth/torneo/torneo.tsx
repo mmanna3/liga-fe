@@ -16,19 +16,35 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import TorneoCard from './components/torneo-card'
 
-function obtenerAniosUnicos(torneos: TorneoDTO[]): number[] {
-  const anios = [...new Set(torneos.map((t) => t.anio))]
-  return anios.sort((a, b) => b - a)
+function obtenerRangoAnios(anioActual: number): number[] {
+  const desde = anioActual - 20
+  const hasta = anioActual + 1
+  const anios: number[] = []
+  for (let a = hasta; a >= desde; a--) anios.push(a)
+  return anios
 }
 
 const VALOR_TODOS = 'todos'
+const VALOR_SIN_AGRUPADOR = 'sin-agrupador'
 
-function obtenerAgrupadoresUnicos(torneos: TorneoDTO[]): string[] {
-  const nombres = torneos.map(
-    (t) => t.torneoAgrupadorNombre?.trim() || 'Sin agrupador'
-  )
-  const unicos = [...new Set(nombres)]
-  return unicos.sort((a, b) => a.localeCompare(b))
+interface AgrupadorOpcion {
+  id: string
+  nombre: string
+}
+
+function obtenerAgrupadoresConId(torneos: TorneoDTO[]): AgrupadorOpcion[] {
+  const mapa = new Map<string, string>()
+  for (const t of torneos) {
+    const nombre = t.torneoAgrupadorNombre?.trim() || 'Sin agrupador'
+    const id =
+      nombre === 'Sin agrupador'
+        ? VALOR_SIN_AGRUPADOR
+        : String(t.torneoAgrupadorId ?? '')
+    if (id && !mapa.has(id)) mapa.set(id, nombre)
+  }
+  return Array.from(mapa.entries())
+    .map(([id, nombre]) => ({ id, nombre }))
+    .sort((a, b) => a.nombre.localeCompare(b.nombre))
 }
 
 export default function Torneo() {
@@ -40,57 +56,51 @@ export default function Torneo() {
   const [agrupadorSeleccionado, setAgrupadorSeleccionado] =
     useState<string>(VALOR_TODOS)
 
+  const aniosDisponibles = useMemo(
+    () => obtenerRangoAnios(anioActual),
+    [anioActual]
+  )
+  const anioEfectivo = aniosDisponibles.includes(Number(anioSeleccionado))
+    ? Number(anioSeleccionado)
+    : anioActual
+
+  const agrupadorIdParaApi =
+    agrupadorSeleccionado === VALOR_TODOS ||
+    agrupadorSeleccionado === VALOR_SIN_AGRUPADOR
+      ? undefined
+      : Number(agrupadorSeleccionado)
+
+  const { data: torneosPorAnio = [] } = useQuery({
+    queryKey: ['torneos', 'filtrar', anioEfectivo, undefined],
+    queryFn: () => api.torneosFiltrar(anioEfectivo, undefined),
+    enabled: anioEfectivo > 0
+  })
+
   const {
-    data: torneos = [],
+    data: torneosFiltrados = [],
     isLoading,
     isError
   } = useQuery({
-    queryKey: ['torneos'],
-    queryFn: async () => {
-      const response = await api.torneoAll()
-      return response
-    }
+    queryKey: ['torneos', 'filtrar', anioEfectivo, agrupadorIdParaApi],
+    queryFn: () => api.torneosFiltrar(anioEfectivo, agrupadorIdParaApi),
+    enabled: anioEfectivo > 0
   })
 
-  const aniosDisponibles = useMemo(() => obtenerAniosUnicos(torneos), [torneos])
-  const anioPorDefecto = useMemo(
-    () =>
-      aniosDisponibles.includes(anioActual)
-        ? anioActual
-        : (aniosDisponibles[0] ?? anioActual),
-    [aniosDisponibles, anioActual]
-  )
-  const anioEfectivo =
-    aniosDisponibles.length > 0 &&
-    !aniosDisponibles.includes(Number(anioSeleccionado))
-      ? anioPorDefecto
-      : Number(anioSeleccionado)
-
-  const torneosPorAnio = useMemo(
-    () => torneos.filter((t) => t.anio === anioEfectivo),
-    [torneos, anioEfectivo]
-  )
-
   const agrupadoresDisponibles = useMemo(
-    () => obtenerAgrupadoresUnicos(torneosPorAnio),
+    () => obtenerAgrupadoresConId(torneosPorAnio),
     [torneosPorAnio]
   )
 
   const agrupadorEfectivo =
     agrupadorSeleccionado === VALOR_TODOS ||
-    agrupadoresDisponibles.includes(agrupadorSeleccionado)
+    agrupadoresDisponibles.some((a) => a.id === agrupadorSeleccionado)
       ? agrupadorSeleccionado
       : VALOR_TODOS
 
-  const torneosFiltrados = useMemo(() => {
-    if (agrupadorEfectivo === VALOR_TODOS) return torneosPorAnio
-    if (agrupadorEfectivo === 'Sin agrupador') {
-      return torneosPorAnio.filter((t) => !t.torneoAgrupadorNombre?.trim())
-    }
-    return torneosPorAnio.filter(
-      (t) => (t.torneoAgrupadorNombre?.trim() || '') === agrupadorEfectivo
-    )
-  }, [torneosPorAnio, agrupadorEfectivo])
+  const torneosAMostrar =
+    agrupadorEfectivo === VALOR_SIN_AGRUPADOR
+      ? torneosFiltrados.filter((t) => !t.torneoAgrupadorId)
+      : torneosFiltrados
 
   const opcionesAnio = useMemo(
     () =>
@@ -161,8 +171,8 @@ export default function Torneo() {
                     <SelectContent>
                       <SelectItem value={VALOR_TODOS}>Todos</SelectItem>
                       {agrupadoresDisponibles.map((agrupador) => (
-                        <SelectItem key={agrupador} value={agrupador}>
-                          {agrupador}
+                        <SelectItem key={agrupador.id} value={agrupador.id}>
+                          {agrupador.nombre}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -177,13 +187,13 @@ export default function Torneo() {
               <p className='text-muted-foreground'>Cargando torneos...</p>
             ) : isError ? (
               <p className='text-destructive'>Error al cargar los torneos</p>
-            ) : torneosFiltrados.length === 0 ? (
+            ) : torneosAMostrar.length === 0 ? (
               <p className='text-muted-foreground ml-2'>
                 No hay torneos para el año seleccionado
               </p>
             ) : (
               <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
-                {torneosFiltrados.map((torneo) => (
+                {torneosAMostrar.map((torneo) => (
                   <TorneoCard key={torneo.id} torneo={torneo} />
                 ))}
               </div>

@@ -1,9 +1,7 @@
-import { api } from '@/api/api'
 import type { TorneoDTO, TorneoFaseDTO } from '@/api/clients'
 import { Card, CardContent } from '@/design-system/base-ui/card'
 import Icono from '@/design-system/ykn-ui/icono'
 import { rutasNavegacion } from '@/ruteo/rutas'
-import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 
 interface TorneoCardProps {
@@ -11,7 +9,7 @@ interface TorneoCardProps {
 }
 
 function FaseItem({ fase }: { fase: TorneoFaseDTO }) {
-  const titulo = `${fase.nombre ?? ''}`.trim()
+  const titulo = `${fase.numero} ${fase.nombre ?? ''}`.trim()
   const subtitulo = [
     fase.faseFormatoNombre ?? '',
     fase.esExcluyente ? 'Es exclusiva' : 'No es exclusiva'
@@ -34,12 +32,7 @@ function FaseItem({ fase }: { fase: TorneoFaseDTO }) {
 
 export default function TorneoCard({ torneo }: TorneoCardProps) {
   const navigate = useNavigate()
-
-  const { data: fases } = useQuery({
-    queryKey: ['torneo', torneo.id, 'fases'],
-    queryFn: () => api.fasesAll(torneo.id!),
-    enabled: !!torneo.id
-  })
+  const fases = torneo.fases ?? []
 
   const agrupador = torneo.torneoAgrupadorNombre ?? 'Sin agrupador'
   const subtitulo = `${agrupador} - ${torneo.anio}`
@@ -57,7 +50,7 @@ export default function TorneoCard({ torneo }: TorneoCardProps) {
           </h3>
           <p className='text-muted-foreground my-2 text-sm'>{subtitulo}</p>
         </div>
-        {fases && fases.length > 0 && (
+        {fases.length > 0 && (
           <ul className='flex flex-col gap-1.5'>
             {fases.map((fase) => (
               <FaseItem key={fase.id} fase={fase} />
