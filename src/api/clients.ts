@@ -6823,7 +6823,7 @@ export interface ITorneoDTO {
 
 export class TorneoFaseDTO implements ITorneoFaseDTO {
   id?: number
-  nombre?: string | undefined
+  nombre!: string
   numero!: number
   torneoId?: number
   faseFormatoId?: number
@@ -6891,7 +6891,7 @@ export class TorneoFaseDTO implements ITorneoFaseDTO {
 
 export interface ITorneoFaseDTO {
   id?: number
-  nombre?: string | undefined
+  nombre: string
   numero: number
   torneoId?: number
   faseFormatoId?: number

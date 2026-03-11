@@ -149,12 +149,16 @@ export default function CrearTorneo() {
   const mutacion = useApiMutation({
     fn: async (payload: {
       datos: DatosFormulario
+      tituloFase: string
       formatoFase: string
       excluyenteFase: string
     }) => {
-      const { datos, formatoFase, excluyenteFase } = payload
+      const { datos, tituloFase, formatoFase, excluyenteFase } = payload
       if (datos.agrupadorId == null) {
         throw new Error('El agrupador es requerido')
+      }
+      if (!tituloFase?.trim()) {
+        throw new Error('El nombre de la fase es requerido')
       }
       if (!formatoFase || !excluyenteFase) {
         throw new Error('Seleccioná el formato y si la fase es excluyente')
@@ -181,6 +185,7 @@ export default function CrearTorneo() {
 
       const primeraFase = new TorneoFaseDTO({
         numero: 1,
+        nombre: tituloFase.trim(),
         faseFormatoId,
         esExcluyente,
         estadoFaseId: 100,
@@ -219,6 +224,7 @@ export default function CrearTorneo() {
           onSubmit={handleSubmit((d) =>
             mutacion.mutate({
               datos: d,
+              tituloFase,
               formatoFase,
               excluyenteFase
             })

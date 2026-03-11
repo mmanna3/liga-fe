@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/design-system/base-ui/card'
-import Cabecera from '@/design-system/ykn-ui/cabecera'
-import type { DetalleItemData } from '@/design-system/ykn-ui/cabecera'
 import type { BotoneraProps } from '@/design-system/ykn-ui/botonera'
+import type { DetalleItemData } from '@/design-system/ykn-ui/cabecera'
+import Cabecera from '@/design-system/ykn-ui/cabecera'
 import type { NombreIcono } from '@/design-system/ykn-ui/icono'
 
 export type { DetalleItemData }
