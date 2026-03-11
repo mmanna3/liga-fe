@@ -1,5 +1,5 @@
 import { api } from '@/api/api'
-import { TorneoDTO } from '@/api/clients'
+import { TorneoCategoriaDTO, TorneoDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import {
   Card,
@@ -10,133 +10,174 @@ import {
 } from '@/design-system/base-ui/card'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import BotonVolver from '@/design-system/ykn-ui/boton-volver'
+import { Input } from '@/design-system/ykn-ui/input'
 import { rutasNavegacion } from '@/ruteo/rutas'
-import { FormProvider } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from 'react-router-dom'
-import { IndicadorDePasos } from './crear-torneo/components/indicador-de-pasos'
-import ModalCambiosDetectadosEnEdicion from './crear-torneo/components/ModalCambiosDetectadosEnEdicion'
-import { Paso6Resumen } from './crear-torneo/components/paso-6-resumen'
-import { PASOS } from './crear-torneo/datos-pasos'
-import { useNavegacionWizard } from './crear-torneo/use-navegacion-wizard'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { Categorias } from './crear-torneo/components/categorias'
+import { SelectorAgrupador } from './crear-torneo/components/selector-agrupador'
+import type { Categoria } from './crear-torneo/tipos'
 
-const ULTIMO_PASO = PASOS.length
+const esquema = z
+  .object({
+    nombre: z.string().min(1, 'El nombre es requerido'),
+    temporada: z.string().min(1, 'La temporada es requerida'),
+    agrupadorId: z.number().optional(),
+    categorias: z
+      .array(
+        z.object({
+          id: z.string(),
+          nombre: z.string(),
+          anioDesde: z.string(),
+          anioHasta: z.string()
+        })
+      )
+      .refine(
+        (cats) =>
+          cats.some(
+            (c) =>
+              c.nombre.trim() !== '' &&
+              c.anioDesde.trim() !== '' &&
+              c.anioHasta.trim() !== ''
+          ),
+        'Agregá al menos una categoría con nombre y años'
+      )
+  })
+  .refine((data) => data.agrupadorId != null, {
+    message: 'El agrupador es requerido',
+    path: ['agrupadorId']
+  })
+
+type DatosFormulario = z.infer<typeof esquema>
+
+const valoresIniciales: Partial<DatosFormulario> = {
+  nombre: '',
+  temporada: new Date().getFullYear().toString(),
+  agrupadorId: undefined,
+  categorias: []
+}
 
 export default function CrearTorneo() {
   const navigate = useNavigate()
 
   const {
-    methods,
-    pasoActual,
-    maxPasoAlcanzado,
-    pasoConfig,
-    confirmacionAbierta,
-    accionPendienteRef,
-    alSiguiente,
-    alAnterior,
-    alClickearPaso,
-    alEditarPaso,
-    alRevertir,
-    alConfirmarYLimpiar
-  } = useNavegacionWizard()
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors }
+  } = useForm<DatosFormulario>({
+    resolver: zodResolver(esquema),
+    defaultValues: valoresIniciales as DatosFormulario
+  })
 
   const mutacion = useApiMutation({
-    fn: async (nuevoTorneo: TorneoDTO) => {
-      await api.torneoPOST(nuevoTorneo)
+    fn: async (datos: DatosFormulario) => {
+      if (datos.agrupadorId == null) {
+        throw new Error('El agrupador es requerido')
+      }
+      const torneo = await api.torneoPOST(
+        new TorneoDTO({
+          nombre: datos.nombre,
+          anio: parseInt(datos.temporada, 10),
+          torneoAgrupadorId: datos.agrupadorId
+        })
+      )
+      const torneoId = torneo.id
+      if (!torneoId) throw new Error('El torneo no devolvió ID')
+
+      const categoriasValidas = datos.categorias.filter(
+        (c) =>
+          c.nombre.trim() !== '' &&
+          c.anioDesde.trim() !== '' &&
+          c.anioHasta.trim() !== ''
+      )
+
+      for (const cat of categoriasValidas) {
+        await api.categoriasPOST(
+          torneoId,
+          new TorneoCategoriaDTO({
+            nombre: cat.nombre.trim(),
+            anioDesde: parseInt(cat.anioDesde, 10),
+            anioHasta: parseInt(cat.anioHasta, 10)
+          })
+        )
+      }
     },
     antesDeMensajeExito: () => navigate(rutasNavegacion.torneos),
     mensajeDeExito: 'Torneo creado correctamente'
   })
 
-  const alEnviar = methods.handleSubmit((datos) => {
-    const nombre =
-      datos.nombre || `Torneo ${datos.temporada} - ${datos.tipo || 'General'}`
-    const anio = parseInt(
-      datos.temporada ?? new Date().getFullYear().toString(),
-      10
-    )
-    mutacion.mutate(new TorneoDTO({ nombre, anio }))
-  })
+  const datos = {
+    nombre: watch('nombre'),
+    temporada: watch('temporada'),
+    agrupadorId: watch('agrupadorId'),
+    categorias: watch('categorias')
+  }
 
   return (
-    <FormProvider {...methods}>
-      <Card className='max-w-5xl mx-auto'>
-        <CardHeader className='flex flex-row items-center justify-between'>
-          <div>
-            <CardTitle>Crear nuevo torneo</CardTitle>
-            <CardDescription>
-              Completa los siguientes pasos para configurar tu torneo
-            </CardDescription>
+    <Card className='max-w-2xl mx-auto'>
+      <CardHeader className='flex flex-row items-center justify-between'>
+        <div>
+          <CardTitle>Crear nuevo torneo</CardTitle>
+          <CardDescription>
+            Completá los datos para crear un torneo
+          </CardDescription>
+        </div>
+        <BotonVolver path={rutasNavegacion.torneos} texto='Volver a torneos' />
+      </CardHeader>
+      <CardContent>
+        <form
+          onSubmit={handleSubmit((d) => mutacion.mutate(d))}
+          className='space-y-4'
+        >
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
+            <Input
+              tipo='text'
+              titulo='Nombre del torneo *'
+              value={datos.nombre}
+              onChange={(e) => setValue('nombre', e.target.value)}
+              placeholder='Ej: Torneo Anual 2026'
+              error={errors.nombre?.message}
+            />
+            <Input
+              tipo='number'
+              titulo='Temporada/Año *'
+              value={datos.temporada}
+              onChange={(e) => setValue('temporada', e.target.value)}
+              placeholder='2026'
+              error={errors.temporada?.message}
+            />
           </div>
-          <BotonVolver
-            path={rutasNavegacion.torneos}
-            texto='Volver a torneos'
-            onBeforeNavigate={() =>
-              window.confirm(
-                'Los cambios de este torneo se van a perder. ¿Estás seguro de que deseas salir?'
-              )
+
+          <SelectorAgrupador
+            valor={datos.agrupadorId ?? null}
+            alCambiar={(id) =>
+              setValue('agrupadorId', id != null ? id : undefined)
             }
-          />
-        </CardHeader>
-        <CardContent className='space-y-6'>
-          <IndicadorDePasos
-            pasoActual={pasoActual}
-            maxPasoAlcanzado={maxPasoAlcanzado}
-            totalPasos={ULTIMO_PASO}
-            alClickearPaso={alClickearPaso}
+            error={errors.agrupadorId?.message}
           />
 
-          <div>
-            {pasoActual < ULTIMO_PASO ? (
-              <pasoConfig.Componente />
-            ) : (
-              <Paso6Resumen alEditarPaso={alEditarPaso} />
-            )}
+          <Categorias
+            valor={datos.categorias}
+            alCambiar={(categorias: Categoria[]) =>
+              setValue('categorias', categorias)
+            }
+            error={errors.categorias?.message}
+          />
+
+          <div className='flex justify-end pt-4 border-t'>
+            <Boton
+              type='submit'
+              className='h-11 w-40 text-sm'
+              estaCargando={mutacion.isPending}
+            >
+              Crear torneo
+            </Boton>
           </div>
-
-          <ModalCambiosDetectadosEnEdicion
-            open={confirmacionAbierta}
-            onOpenChange={(open) => {
-              if (!open) accionPendienteRef.current = null
-            }}
-            onRevertir={alRevertir}
-            onConfirmarYLimpiar={alConfirmarYLimpiar}
-          />
-
-          <div className='flex justify-between pt-4 border-t'>
-            {pasoActual === 1 ? (
-              <div />
-            ) : (
-              <Boton
-                type='button'
-                className='h-11 w-28 text-sm'
-                variant='outline'
-                onClick={alAnterior}
-              >
-                Anterior
-              </Boton>
-            )}
-
-            {pasoActual < ULTIMO_PASO ? (
-              <Boton
-                type='button'
-                className='h-11 w-28 text-sm'
-                onClick={alSiguiente}
-              >
-                Siguiente
-              </Boton>
-            ) : (
-              <Boton
-                type='button'
-                className='h-11 w-28 text-sm'
-                onClick={alEnviar}
-                estaCargando={mutacion.isPending}
-              >
-                Crear torneo
-              </Boton>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    </FormProvider>
+        </form>
+      </CardContent>
+    </Card>
   )
 }
