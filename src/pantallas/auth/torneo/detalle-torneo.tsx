@@ -2,11 +2,11 @@ import { api } from '@/api/api'
 import { TorneoCategoriaDTO, TorneoDTO, TorneoFaseDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
-import { useQueryClient } from '@tanstack/react-query'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/ykn-ui/input'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import { rutasNavegacion } from '@/ruteo/rutas'
+import { useQueryClient } from '@tanstack/react-query'
 import { Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -262,18 +262,16 @@ export default function DetalleTorneo() {
             />
           ))}
 
-          {puedeEditarTorneo && (
-            <Boton
-              type='button'
-              variant='outline'
-              size='sm'
-              onClick={agregarFase}
-              className='my-2'
-            >
-              <Plus className='w-3 h-3' />
-              Agregar fase
-            </Boton>
-          )}
+          <Boton
+            type='button'
+            variant='outline'
+            size='sm'
+            onClick={agregarFase}
+            className='my-2'
+          >
+            <Plus className='w-3 h-3' />
+            Agregar fase
+          </Boton>
 
           {puedeEditarTorneo && (
             <div className='flex justify-end pt-4'>
