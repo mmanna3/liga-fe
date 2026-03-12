@@ -1,6 +1,7 @@
 import { api } from '@/api/api'
 import { EquipoDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
+import { Label } from '@/design-system/base-ui/label'
 import {
   Select,
   SelectContent,
@@ -8,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/design-system/base-ui/select'
-import { Label } from '@/design-system/base-ui/label'
 import { Input } from '@/design-system/ykn-ui/input'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
 import { cn } from '@/logica-compartida/utils'
@@ -112,7 +112,7 @@ export function BuscadorDeEquiposParaZona({
   }, [equipos, idsEnZonas, modo, textoBusqueda, filtroTorneoId])
 
   const opcionesModo = [
-    { id: MODO_BUSCAR, titulo: 'Buscar por código/nombre' },
+    { id: MODO_BUSCAR, titulo: 'Buscar por código/nombre/club' },
     { id: MODO_OTRO_TORNEO, titulo: 'Desde otro torneo' }
   ]
 
@@ -126,7 +126,6 @@ export function BuscadorDeEquiposParaZona({
   return (
     <div className='space-y-4'>
       <SelectorSimple
-        titulo='Origen de equipos'
         opciones={opcionesModo}
         valorActual={modo}
         alElegirOpcion={setModo}
@@ -134,7 +133,6 @@ export function BuscadorDeEquiposParaZona({
 
       {modo === MODO_BUSCAR && (
         <Input
-          titulo='Buscar'
           tipo='text'
           value={textoBusqueda}
           onChange={(e) => setTextoBusqueda(e.target.value)}
@@ -246,10 +244,6 @@ export function BuscadorDeEquiposParaZona({
       )}
 
       <div>
-        <h3 className='text-sm font-semibold mb-2'>Equipos disponibles</h3>
-        <p className='text-xs text-muted-foreground mb-2'>
-          Arrastrá un equipo hacia la zona deseada
-        </p>
         <div className='space-y-2 max-h-64 overflow-y-auto'>
           {equiposFiltrados.map((eq) => (
             <div

@@ -6,6 +6,7 @@ import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import { BuscadorDeEquiposParaZona } from './buscador-de-equipos-para-zona'
 import { ContenidoZonasEditable } from './contenido-zonas-editable'
 import { useZonasEstado } from './use-zonas-estado'
 import {
@@ -15,11 +16,14 @@ import {
 } from './tipos-zona'
 
 interface ModificarZonasProps {
-  titulo: string
+  headerCard?: React.ReactNode
   pathVolver: string
 }
 
-export function ModificarZonas({ titulo, pathVolver }: ModificarZonasProps) {
+export function ModificarZonas({
+  headerCard,
+  pathVolver
+}: ModificarZonasProps) {
   const navigate = useNavigate()
   const { faseId: faseIdParam } = useParams<{ id: string; faseId: string }>()
   const faseId = Number(faseIdParam)
@@ -73,7 +77,10 @@ export function ModificarZonas({ titulo, pathVolver }: ModificarZonasProps) {
 
   return (
     <LayoutSegundoNivel
-      titulo={titulo}
+      headerCard={headerCard}
+      cardAdicional={
+        <BuscadorDeEquiposParaZona equiposEnZonas={equiposEnZonas} />
+      }
       pathBotonVolver={pathVolver}
       maxWidth='6xl'
       footer={
@@ -90,7 +97,6 @@ export function ModificarZonas({ titulo, pathVolver }: ModificarZonasProps) {
       contenido={
         <ContenidoZonasEditable
           zonasEstado={zonasEstado}
-          equiposEnZonas={equiposEnZonas}
           onActualizarNombre={(i, n) => actualizarZona(i, 'nombre', n)}
           onQuitarEquipo={quitarEquipoDeZona}
           onDropEquipo={agregarEquipoAZona}

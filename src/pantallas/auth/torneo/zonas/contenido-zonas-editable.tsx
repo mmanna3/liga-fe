@@ -1,13 +1,11 @@
 import { EquipoDTO } from '@/api/clients'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { Plus } from 'lucide-react'
-import { BuscadorDeEquiposParaZona } from './buscador-de-equipos-para-zona'
 import type { ZonaEstado } from './tipos-zona'
 import { Zona } from './zona-fase'
 
 interface ContenidoZonasEditableProps {
   zonasEstado: ZonaEstado[]
-  equiposEnZonas: EquipoDTO[]
   onActualizarNombre: (index: number, nombre: string) => void
   onQuitarEquipo: (index: number, equipoId: number) => void
   onDropEquipo: (index: number, equipo: EquipoDTO) => void
@@ -18,7 +16,6 @@ interface ContenidoZonasEditableProps {
 /** Contenido compartido: grid de zonas editables + buscador. Usado en CrearZonas y ModificarZonas. */
 export function ContenidoZonasEditable({
   zonasEstado,
-  equiposEnZonas,
   onActualizarNombre,
   onQuitarEquipo,
   onDropEquipo,
@@ -27,6 +24,17 @@ export function ContenidoZonasEditable({
 }: ContenidoZonasEditableProps) {
   return (
     <div className='space-y-6'>
+      <Boton
+        type='button'
+        variant='outline'
+        size='sm'
+        onClick={onAgregarZona}
+        className='py-1 text-xs'
+      >
+        Agregar Zona
+        <Plus className='w-3 h-3' />
+      </Boton>
+
       <div className='flex flex-wrap gap-4 items-start'>
         {zonasEstado.map((zona, index) => (
           <div key={zona.id ?? index} className='min-w-[280px] flex-1'>
@@ -40,22 +48,6 @@ export function ContenidoZonasEditable({
             />
           </div>
         ))}
-        <div className='flex-1 flex items-center'>
-          <Boton
-            type='button'
-            variant='outline'
-            size='sm'
-            onClick={onAgregarZona}
-            className='py-1 text-xs'
-          >
-            Agregar Zona
-            <Plus className='w-3 h-3' />
-          </Boton>
-        </div>
-      </div>
-
-      <div className='pt-6 border-t'>
-        <BuscadorDeEquiposParaZona equiposEnZonas={equiposEnZonas} />
       </div>
     </div>
   )

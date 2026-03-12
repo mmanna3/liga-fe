@@ -6,16 +6,17 @@ import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useCallback, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { BuscadorDeEquiposParaZona } from './buscador-de-equipos-para-zona'
 import { ContenidoZonasEditable } from './contenido-zonas-editable'
 import { useZonasEstado } from './use-zonas-estado'
 import { validarZonasParaGuardar, zonaEstadoADto } from './tipos-zona'
 
 interface CrearZonasProps {
-  titulo: string
+  headerCard?: React.ReactNode
   pathVolver: string
 }
 
-export function CrearZonas({ titulo, pathVolver }: CrearZonasProps) {
+export function CrearZonas({ headerCard, pathVolver }: CrearZonasProps) {
   const navigate = useNavigate()
   const { faseId: faseIdParam } = useParams<{ id: string; faseId: string }>()
   const queryClient = useQueryClient()
@@ -58,7 +59,10 @@ export function CrearZonas({ titulo, pathVolver }: CrearZonasProps) {
 
   return (
     <LayoutSegundoNivel
-      titulo={titulo}
+      headerCard={headerCard}
+      cardAdicional={
+        <BuscadorDeEquiposParaZona equiposEnZonas={equiposEnZonas} />
+      }
       pathBotonVolver={pathVolver}
       maxWidth='6xl'
       footer={
@@ -75,7 +79,6 @@ export function CrearZonas({ titulo, pathVolver }: CrearZonasProps) {
       contenido={
         <ContenidoZonasEditable
           zonasEstado={zonasEstado}
-          equiposEnZonas={equiposEnZonas}
           onActualizarNombre={(i, n) => actualizarZona(i, 'nombre', n)}
           onQuitarEquipo={quitarEquipoDeZona}
           onDropEquipo={agregarEquipoAZona}

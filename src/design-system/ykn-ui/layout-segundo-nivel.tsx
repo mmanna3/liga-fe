@@ -21,12 +21,16 @@ const MAX_WIDTH_CLASSES: Record<string, string> = {
 }
 
 interface LayoutSegundoNivelProps {
-  /** Título del CardHeader (string) */
-  titulo: string
+  /** Título del CardHeader (string). Ignorado si headerCard está definido */
+  titulo?: string
   /** Contenido del CardContent */
   contenido: React.ReactNode
   /** Ruta del BotonVolver. Si no se provee, usa navigate(-1) */
   pathBotonVolver?: string
+  /** Card separada que se renderiza arriba de la card de contenido (ej. header con título y subtítulo) */
+  headerCard?: React.ReactNode
+  /** Card separada que se renderiza debajo de la card de contenido */
+  cardAdicional?: React.ReactNode
   /** Clases para el CardHeader (ej. flex flex-col items-center text-center) */
   headerClassName?: string
   /** Contenido opcional debajo del CardContent, dentro del Card (ej. botones de acción) */
@@ -43,6 +47,8 @@ export default function LayoutSegundoNivel({
   titulo,
   contenido,
   pathBotonVolver,
+  headerCard,
+  cardAdicional,
   headerClassName,
   footer,
   botonera,
@@ -50,30 +56,49 @@ export default function LayoutSegundoNivel({
   subtitulo
 }: LayoutSegundoNivelProps) {
   const maxWidthClass = MAX_WIDTH_CLASSES[maxWidth] ?? 'max-w-lg'
+  const mostrarHeaderEnCardPrincipal = !headerCard && titulo != null
 
   return (
-    <div className={`${maxWidthClass} mx-auto px-4`}>
+    <div className={`${maxWidthClass} mx-auto px-4 space-y-4`}>
       <div className='mb-4'>
         <BotonVolver path={pathBotonVolver} />
       </div>
+      {headerCard && (
+        <Card className='p-6 rounded-xl border bg-white shadow-md'>
+          {headerCard}
+        </Card>
+      )}
       <Card className='p-6 rounded-xl border bg-white shadow-md'>
-        <CardHeader
-          className={
-            headerClassName ??
-            (botonera ? 'flex flex-row items-start justify-between' : undefined)
-          }
+        {mostrarHeaderEnCardPrincipal && (
+          <CardHeader
+            className={
+              headerClassName ??
+              (botonera
+                ? 'flex flex-row items-start justify-between'
+                : undefined)
+            }
+          >
+            <div>
+              <CardTitle className='text-3xl font-semibold text-gray-900'>
+                {titulo}
+              </CardTitle>
+              {subtitulo && <CardDescription>{subtitulo}</CardDescription>}
+            </div>
+            {botonera && <Botonera {...botonera} />}
+          </CardHeader>
+        )}
+        <CardContent
+          className={mostrarHeaderEnCardPrincipal ? 'pt-0' : undefined}
         >
-          <div>
-            <CardTitle className='text-3xl font-semibold text-gray-900'>
-              {titulo}
-            </CardTitle>
-            {subtitulo && <CardDescription>{subtitulo}</CardDescription>}
-          </div>
-          {botonera && <Botonera {...botonera} />}
-        </CardHeader>
-        <CardContent className='pt-0'>{contenido}</CardContent>
+          {contenido}
+        </CardContent>
         {footer}
       </Card>
+      {cardAdicional && (
+        <Card className='p-6 rounded-xl border bg-white shadow-md'>
+          <CardContent>{cardAdicional}</CardContent>
+        </Card>
+      )}
     </div>
   )
 }

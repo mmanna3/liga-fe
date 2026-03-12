@@ -73,7 +73,7 @@ export function Zona({
           <Icono nombre='Eliminar' className='h-4 w-4' />
         </button>
       )}
-      <div className='mb-3'>
+      <div className='mb-2'>
         {editable ? (
           <TextoEditable
             valor={zona.nombre}
@@ -85,6 +85,11 @@ export function Zona({
           <p className='font-semibold text-lg'>{zona.nombre}</p>
         )}
       </div>
+      <p className='text-xs text-muted-foreground mb-2'>
+        {zona.equipos.length == 1
+          ? '1 equipo'
+          : `${zona.equipos.length} equipos`}
+      </p>
       <div className='space-y-2'>
         {zona.equipos.map((eq) => (
           <Tooltip key={eq.id}>

@@ -1,6 +1,12 @@
 import { api } from '@/api/api'
 import useApiQuery from '@/api/hooks/use-api-query'
+import {
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/design-system/base-ui/card'
 import BotonVolver from '@/design-system/ykn-ui/boton-volver'
+import Icono from '@/design-system/ykn-ui/icono'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
@@ -30,8 +36,19 @@ export default function ZonasDeLaFase() {
     [torneo, faseId]
   )
 
-  const titulo = `Zonas de la fase: ${fase?.nombre ?? 'Fase'}`
   const pathVolver = `${rutasNavegacion.detalleTorneo}/${torneoId}`
+
+  const headerCard = (
+    <CardHeader className='pb-2'>
+      <CardTitle className='text-2xl font-semibold text-gray-900 flex gap-2'>
+        <Icono nombre='Zonas' className='h-6 w-6 mt-1' />
+        Zonas
+      </CardTitle>
+      <CardDescription className='text-base mt-1'>
+        Torneo: {torneo?.nombre ?? '—'} · Fase: {fase?.nombre ?? '—'}
+      </CardDescription>
+    </CardHeader>
+  )
 
   const tieneZonas = zonasApi.length > 0
 
@@ -47,8 +64,8 @@ export default function ZonasDeLaFase() {
   }
 
   if (tieneZonas) {
-    return <ModificarZonas titulo={titulo} pathVolver={pathVolver} />
+    return <ModificarZonas headerCard={headerCard} pathVolver={pathVolver} />
   }
 
-  return <CrearZonas titulo={titulo} pathVolver={pathVolver} />
+  return <CrearZonas headerCard={headerCard} pathVolver={pathVolver} />
 }
