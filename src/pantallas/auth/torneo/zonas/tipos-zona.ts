@@ -14,8 +14,8 @@ export function zonaDtoAEstado(dto: TorneoZonaDTO): ZonaEstado {
     codigoAlfanumerico: e.codigo,
     nombre: e.nombre,
     clubNombre: e.club,
-    zonaExcluyenteId: e.zonaExcluyenteId ?? dto.id,
-    zonaExcluyente: e.zona ?? dto.nombre
+    zonaExcluyenteId: dto.id,
+    zonaExcluyente: dto.nombre
   })) as EquipoDTO[]
   return {
     id: dto.id,

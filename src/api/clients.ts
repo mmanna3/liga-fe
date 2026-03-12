@@ -1590,6 +1590,62 @@ export class Client {
   /**
    * @return OK
    */
+  equiposParaZonas(): Promise<EquipoParaZonasDTO[]> {
+    let url_ = this.baseUrl + '/api/Equipo/equipos-para-zonas'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processEquiposParaZonas(_response)
+    })
+  }
+
+  protected processEquiposParaZonas(
+    response: Response
+  ): Promise<EquipoParaZonasDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(EquipoParaZonasDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<EquipoParaZonasDTO[]>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
   equipoAll(): Promise<EquipoDTO[]> {
     let url_ = this.baseUrl + '/api/Equipo'
     url_ = url_.replace(/[?&]$/, '')
@@ -6082,9 +6138,6 @@ export class EquipoDeLaZonaDTO implements IEquipoDeLaZonaDTO {
   club?: string | undefined
   id?: string | undefined
   codigo?: string | undefined
-  torneo?: string | undefined
-  zona?: string | undefined
-  zonaExcluyenteId?: number | undefined
 
   constructor(data?: IEquipoDeLaZonaDTO) {
     if (data) {
@@ -6101,9 +6154,6 @@ export class EquipoDeLaZonaDTO implements IEquipoDeLaZonaDTO {
       this.club = _data['club']
       this.id = _data['id']
       this.codigo = _data['codigo']
-      this.torneo = _data['torneo']
-      this.zona = _data['zona']
-      this.zonaExcluyenteId = _data['zonaExcluyenteId']
     }
   }
 
@@ -6120,9 +6170,6 @@ export class EquipoDeLaZonaDTO implements IEquipoDeLaZonaDTO {
     data['club'] = this.club
     data['id'] = this.id
     data['codigo'] = this.codigo
-    data['torneo'] = this.torneo
-    data['zona'] = this.zona
-    data['zonaExcluyenteId'] = this.zonaExcluyenteId
     return data
   }
 }
@@ -6132,9 +6179,6 @@ export interface IEquipoDeLaZonaDTO {
   club?: string | undefined
   id?: string | undefined
   codigo?: string | undefined
-  torneo?: string | undefined
-  zona?: string | undefined
-  zonaExcluyenteId?: number | undefined
 }
 
 export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {
@@ -6203,6 +6247,64 @@ export interface IEquipoDelJugadorDTO {
   estado?: EstadoJugadorEnum
   motivo?: string | undefined
   fechaPagoDeFichaje?: Date | undefined
+}
+
+export class EquipoParaZonasDTO implements IEquipoParaZonasDTO {
+  id?: number
+  nombre?: string | undefined
+  club?: string | undefined
+  codigoAlfanumerico?: string | undefined
+  zonas?: ZonaDTO[] | undefined
+
+  constructor(data?: IEquipoParaZonasDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.nombre = _data['nombre']
+      this.club = _data['club']
+      this.codigoAlfanumerico = _data['codigoAlfanumerico']
+      if (Array.isArray(_data['zonas'])) {
+        this.zonas = [] as any
+        for (let item of _data['zonas']) this.zonas!.push(ZonaDTO.fromJS(item))
+      }
+    }
+  }
+
+  static fromJS(data: any): EquipoParaZonasDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new EquipoParaZonasDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['nombre'] = this.nombre
+    data['club'] = this.club
+    data['codigoAlfanumerico'] = this.codigoAlfanumerico
+    if (Array.isArray(this.zonas)) {
+      data['zonas'] = []
+      for (let item of this.zonas) data['zonas'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface IEquipoParaZonasDTO {
+  id?: number
+  nombre?: string | undefined
+  club?: string | undefined
+  codigoAlfanumerico?: string | undefined
+  zonas?: ZonaDTO[] | undefined
 }
 
 export class EquiposDelDelegadoDTO implements IEquiposDelDelegadoDTO {
@@ -7392,6 +7494,74 @@ export interface IUsuarioDTO {
   id?: number
   nombreUsuario?: string | undefined
   delegadoId?: number | undefined
+}
+
+export class ZonaDTO implements IZonaDTO {
+  id?: number | undefined
+  nombre?: string | undefined
+  torneoId?: number | undefined
+  torneo?: string | undefined
+  agrupador?: string | undefined
+  agrupadorId?: number | undefined
+  fase?: string | undefined
+  faseId?: number | undefined
+  esExcluyente?: boolean
+
+  constructor(data?: IZonaDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.nombre = _data['nombre']
+      this.torneoId = _data['torneoId']
+      this.torneo = _data['torneo']
+      this.agrupador = _data['agrupador']
+      this.agrupadorId = _data['agrupadorId']
+      this.fase = _data['fase']
+      this.faseId = _data['faseId']
+      this.esExcluyente = _data['esExcluyente']
+    }
+  }
+
+  static fromJS(data: any): ZonaDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new ZonaDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['nombre'] = this.nombre
+    data['torneoId'] = this.torneoId
+    data['torneo'] = this.torneo
+    data['agrupador'] = this.agrupador
+    data['agrupadorId'] = this.agrupadorId
+    data['fase'] = this.fase
+    data['faseId'] = this.faseId
+    data['esExcluyente'] = this.esExcluyente
+    return data
+  }
+}
+
+export interface IZonaDTO {
+  id?: number | undefined
+  nombre?: string | undefined
+  torneoId?: number | undefined
+  torneo?: string | undefined
+  agrupador?: string | undefined
+  agrupadorId?: number | undefined
+  fase?: string | undefined
+  faseId?: number | undefined
+  esExcluyente?: boolean
 }
 
 export class ZonaDeFaseDTO implements IZonaDeFaseDTO {

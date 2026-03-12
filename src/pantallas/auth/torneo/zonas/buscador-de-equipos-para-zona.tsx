@@ -1,5 +1,5 @@
 import { api } from '@/api/api'
-import { EquipoDTO } from '@/api/clients'
+import { EquipoDTO, EquipoParaZonasDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
 import CajitaConTick from '@/design-system/ykn-ui/cajita-con-tick'
 import { Input } from '@/design-system/ykn-ui/input'
@@ -7,6 +7,26 @@ import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
 import { useEffect, useMemo, useState } from 'react'
 import { FiltrosBuscadorDeEquipos } from './filtros-buscador-de-equipos'
 import { RenglonBuscadorDeEquipos } from './renglon-buscador-de-equipos'
+
+/** Convierte EquipoParaZonasDTO a EquipoDTO para compatibilidad con zona-fase y RenglonBuscadorDeEquipos */
+function equipoParaZonasAEquipoDto(e: EquipoParaZonasDTO): EquipoDTO {
+  const zonaExcluyente = e.zonas?.find((z) => z.esExcluyente)
+  const primeraZona = e.zonas?.[0]
+  return {
+    id: e.id,
+    nombre: e.nombre,
+    clubNombre: e.club,
+    codigoAlfanumerico: e.codigoAlfanumerico,
+    clubId: 0,
+    torneoId: primeraZona?.torneoId,
+    faseId: primeraZona?.faseId,
+    agrupadorId: primeraZona?.agrupadorId,
+    zonaExcluyenteId: zonaExcluyente?.id,
+    torneo: primeraZona?.torneo,
+    fase: primeraZona?.fase,
+    zonaExcluyente: zonaExcluyente?.nombre
+  } as EquipoDTO
+}
 
 const MODO_BUSCAR = 'buscar'
 const MODO_OTRO_TORNEO = 'otro-torneo'
@@ -43,9 +63,9 @@ export function BuscadorDeEquiposParaZona({
     }
   }, [equiposEnZonas, idsEnZonas, idsSeleccionados])
 
-  const { data: equipos = [] } = useApiQuery({
-    key: ['equipoAll'],
-    fn: () => api.equipoAll()
+  const { data: equiposParaZonas = [] } = useApiQuery({
+    key: ['equiposParaZonas'],
+    fn: () => api.equiposParaZonas()
   })
 
   const { data: torneosTodos = [] } = useApiQuery({
@@ -67,7 +87,9 @@ export function BuscadorDeEquiposParaZona({
   }, [torneosTodos, filtroAnio, filtroAgrupadorId])
 
   const equiposFiltrados = useMemo(() => {
-    let lista = equipos.filter((e) => !idsEnZonas.has(e.id))
+    let lista = equiposParaZonas.filter(
+      (e) => e.id != null && !idsEnZonas.has(e.id)
+    )
 
     if (modo === MODO_BUSCAR) {
       const t = textoBusqueda.trim().toLowerCase()
@@ -76,7 +98,7 @@ export function BuscadorDeEquiposParaZona({
           (e) =>
             (e.nombre?.toLowerCase().includes(t) ?? false) ||
             (e.codigoAlfanumerico?.toLowerCase().includes(t) ?? false) ||
-            (e.clubNombre?.toLowerCase().includes(t) ?? false)
+            (e.club?.toLowerCase().includes(t) ?? false)
         )
       }
     } else {
@@ -93,23 +115,26 @@ export function BuscadorDeEquiposParaZona({
       const agrupadorIdNum = filtroAgrupadorId
         ? parseInt(filtroAgrupadorId, 10)
         : null
+      const faseIdNum = filtroFaseId ? parseInt(filtroFaseId, 10) : null
+      const zonaIdNum = filtroZonaId ? parseInt(filtroZonaId, 10) : null
 
       lista = lista.filter((e) => {
-        if (e.torneoId == null) return false
-        if (!torneoIdsValidos.has(e.torneoId)) return false
-        if (agrupadorIdNum != null && e.agrupadorId !== agrupadorIdNum)
-          return false
-        if (filtroFaseId && e.faseId !== parseInt(filtroFaseId, 10))
-          return false
-        if (filtroZonaId && e.zonaExcluyenteId !== parseInt(filtroZonaId, 10))
-          return false
-        return true
+        const algunaZonaCoincide = e.zonas?.some((z) => {
+          if (z.torneoId == null || !torneoIdsValidos.has(z.torneoId))
+            return false
+          if (agrupadorIdNum != null && z.agrupadorId !== agrupadorIdNum)
+            return false
+          if (faseIdNum != null && z.faseId !== faseIdNum) return false
+          if (zonaIdNum != null && z.id !== zonaIdNum) return false
+          return true
+        })
+        return algunaZonaCoincide ?? false
       })
     }
 
-    return lista
+    return lista.map(equipoParaZonasAEquipoDto)
   }, [
-    equipos,
+    equiposParaZonas,
     idsEnZonas,
     modo,
     textoBusqueda,
