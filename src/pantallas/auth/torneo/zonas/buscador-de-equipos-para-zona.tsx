@@ -4,9 +4,9 @@ import useApiQuery from '@/api/hooks/use-api-query'
 import CajitaConTick from '@/design-system/ykn-ui/cajita-con-tick'
 import { Input } from '@/design-system/ykn-ui/input'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
+import { useEffect, useMemo, useState } from 'react'
 import { FiltrosBuscadorDeEquipos } from './filtros-buscador-de-equipos'
 import { RenglonBuscadorDeEquipos } from './renglon-buscador-de-equipos'
-import { useEffect, useMemo, useState } from 'react'
 
 const MODO_BUSCAR = 'buscar'
 const MODO_OTRO_TORNEO = 'otro-torneo'
@@ -101,7 +101,7 @@ export function BuscadorDeEquiposParaZona({
           return false
         if (filtroFaseId && e.faseId !== parseInt(filtroFaseId, 10))
           return false
-        if (filtroZonaId && e.zonaActualId !== parseInt(filtroZonaId, 10))
+        if (filtroZonaId && e.zonaExcluyenteId !== parseInt(filtroZonaId, 10))
           return false
         return true
       })

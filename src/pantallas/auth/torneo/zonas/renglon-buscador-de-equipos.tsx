@@ -56,7 +56,7 @@ export function RenglonBuscadorDeEquipos({
       <span className='text-muted-foreground text-sm truncate'>
         {equipo.torneo ? `(${equipo.torneo} ·` : ''}{' '}
         {equipo.fase ? `${equipo.fase} ·` : ''}{' '}
-        {equipo.zonaActual ? `${equipo.zonaActual})` : ''}
+        {equipo.zonaExcluyente ? `${equipo.zonaExcluyente})` : ''}
       </span>
     </div>
   )
