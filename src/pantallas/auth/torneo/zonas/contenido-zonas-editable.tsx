@@ -2,8 +2,8 @@ import { EquipoDTO } from '@/api/clients'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { Plus } from 'lucide-react'
 import { BuscadorDeEquiposParaZona } from './buscador-de-equipos-para-zona'
-import { Zona } from './zona-fase'
 import type { ZonaEstado } from './tipos-zona'
+import { Zona } from './zona-fase'
 
 interface ContenidoZonasEditableProps {
   zonasEstado: ZonaEstado[]
@@ -40,16 +40,16 @@ export function ContenidoZonasEditable({
             />
           </div>
         ))}
-        <div className='min-w-[280px] flex-1 flex items-center'>
+        <div className='flex-1 flex items-center'>
           <Boton
             type='button'
             variant='outline'
             size='sm'
             onClick={onAgregarZona}
-            className='w-full py-6'
+            className='py-1 text-xs'
           >
-            <Plus className='w-4 h-4 mr-2' />
             Agregar Zona
+            <Plus className='w-3 h-3' />
           </Boton>
         </div>
       </div>

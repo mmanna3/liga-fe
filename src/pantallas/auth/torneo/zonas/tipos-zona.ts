@@ -43,3 +43,32 @@ export function zonaEstadoADto(
     equipos
   })
 }
+
+export interface ValidacionZonasResultado {
+  valido: boolean
+  mensaje?: string
+}
+
+/** Valida que las zonas puedan guardarse: todas con equipos y nombres únicos */
+export function validarZonasParaGuardar(
+  zonas: ZonaEstado[]
+): ValidacionZonasResultado {
+  const sinEquipos = zonas.filter((z) => !z.equipos?.length)
+  if (sinEquipos.length > 0) {
+    return {
+      valido: false,
+      mensaje: 'Todas las zonas deben tener al menos un equipo asignado.'
+    }
+  }
+
+  const nombres = zonas.map((z) => z.nombre?.trim().toLowerCase() ?? '')
+  const nombresUnicos = new Set(nombres)
+  if (nombres.length !== nombresUnicos.size) {
+    return {
+      valido: false,
+      mensaje: 'No puede haber dos zonas con el mismo nombre.'
+    }
+  }
+
+  return { valido: true }
+}

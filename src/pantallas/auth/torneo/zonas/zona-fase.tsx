@@ -56,7 +56,7 @@ export function Zona({
   return (
     <div
       className={cn(
-        'rounded-lg p-4 bg-amber-50 bg-[radial-gradient(#0001_1px,transparent_1px)] bg-size-[8px_8px] min-h-[120px]',
+        'rounded-lg p-4 bg-yellow-50 bg-[radial-gradient(#0001_1px,transparent_1px)] bg-size-[8px_8px] min-h-[120px]',
         'transition-colors relative',
         editable && onEliminar && 'pr-12'
       )}

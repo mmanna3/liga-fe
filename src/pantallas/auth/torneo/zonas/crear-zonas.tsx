@@ -3,11 +3,12 @@ import useApiMutation from '@/api/hooks/use-api-mutation'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import { useQueryClient } from '@tanstack/react-query'
-import { useCallback } from 'react'
+import { toast } from 'sonner'
+import { useCallback, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ContenidoZonasEditable } from './contenido-zonas-editable'
 import { useZonasEstado } from './use-zonas-estado'
-import { zonaEstadoADto } from './tipos-zona'
+import { validarZonasParaGuardar, zonaEstadoADto } from './tipos-zona'
 
 interface CrearZonasProps {
   titulo: string
@@ -42,9 +43,18 @@ export function CrearZonas({ titulo, pathVolver }: CrearZonasProps) {
     }
   })
 
+  const validacion = useMemo(
+    () => validarZonasParaGuardar(zonasEstado),
+    [zonasEstado]
+  )
+
   const handleGuardar = useCallback(() => {
+    if (!validacion.valido) {
+      toast.error(validacion.mensaje)
+      return
+    }
     guardarMutation.mutate(undefined)
-  }, [guardarMutation])
+  }, [guardarMutation, validacion.valido, validacion.mensaje])
 
   return (
     <LayoutSegundoNivel

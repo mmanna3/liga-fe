@@ -3,11 +3,16 @@ import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { toast } from 'sonner'
 import { ContenidoZonasEditable } from './contenido-zonas-editable'
 import { useZonasEstado } from './use-zonas-estado'
-import { zonaDtoAEstado, zonaEstadoADto } from './tipos-zona'
+import {
+  validarZonasParaGuardar,
+  zonaDtoAEstado,
+  zonaEstadoADto
+} from './tipos-zona'
 
 interface ModificarZonasProps {
   titulo: string
@@ -53,9 +58,18 @@ export function ModificarZonas({ titulo, pathVolver }: ModificarZonasProps) {
     }
   })
 
+  const validacion = useMemo(
+    () => validarZonasParaGuardar(zonasEstado),
+    [zonasEstado]
+  )
+
   const handleGuardar = useCallback(() => {
+    if (!validacion.valido) {
+      toast.error(validacion.mensaje)
+      return
+    }
     guardarMutation.mutate(undefined)
-  }, [guardarMutation])
+  }, [guardarMutation, validacion.valido, validacion.mensaje])
 
   return (
     <LayoutSegundoNivel
