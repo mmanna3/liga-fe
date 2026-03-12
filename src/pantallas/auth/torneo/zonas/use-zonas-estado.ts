@@ -24,11 +24,25 @@ export function useZonasEstado(initial: ZonaEstado[]) {
   )
 
   const agregarEquipoAZona = useCallback((index: number, equipo: EquipoDTO) => {
-    setZonasEstado((prev) =>
-      prev.map((z, i) =>
+    setZonasEstado((prev) => {
+      const equipoId = equipo.id
+      let zonasActualizadas = prev
+
+      const indiceOrigen = prev.findIndex(
+        (z, i) => i !== index && z.equipos.some((e) => e.id === equipoId)
+      )
+      if (indiceOrigen >= 0) {
+        zonasActualizadas = zonasActualizadas.map((z, i) =>
+          i === indiceOrigen
+            ? { ...z, equipos: z.equipos.filter((e) => e.id !== equipoId) }
+            : z
+        )
+      }
+
+      return zonasActualizadas.map((z, i) =>
         i === index ? { ...z, equipos: [...z.equipos, equipo] } : z
       )
-    )
+    })
   }, [])
 
   const quitarEquipoDeZona = useCallback((index: number, equipoId: number) => {

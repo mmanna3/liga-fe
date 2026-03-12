@@ -14,9 +14,14 @@ import { validarZonasParaGuardar, zonaEstadoADto } from './tipos-zona'
 interface CrearZonasProps {
   headerCard?: React.ReactNode
   pathVolver: string
+  esExcluyente?: boolean
 }
 
-export function CrearZonas({ headerCard, pathVolver }: CrearZonasProps) {
+export function CrearZonas({
+  headerCard,
+  pathVolver,
+  esExcluyente = false
+}: CrearZonasProps) {
   const navigate = useNavigate()
   const { faseId: faseIdParam } = useParams<{ id: string; faseId: string }>()
   const queryClient = useQueryClient()
@@ -84,6 +89,8 @@ export function CrearZonas({ headerCard, pathVolver }: CrearZonasProps) {
           onDropEquipo={agregarEquipoAZona}
           onEliminarZona={eliminarZona}
           onAgregarZona={agregarZona}
+          esExcluyente={esExcluyente}
+          equiposEnZonas={equiposEnZonas}
         />
       }
     />
