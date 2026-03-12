@@ -5993,7 +5993,11 @@ export class EquipoDTO implements IEquipoDTO {
   codigoAlfanumerico?: string | undefined
   clubNombre?: string | undefined
   torneoId?: number | undefined
-  torneoNombre?: string | undefined
+  torneo?: string | undefined
+  faseId?: number | undefined
+  fase?: string | undefined
+  zonaActualId?: number | undefined
+  zonaActual?: string | undefined
   jugadores?: JugadorDelEquipoDTO[] | undefined
 
   constructor(data?: IEquipoDTO) {
@@ -6013,7 +6017,11 @@ export class EquipoDTO implements IEquipoDTO {
       this.codigoAlfanumerico = _data['codigoAlfanumerico']
       this.clubNombre = _data['clubNombre']
       this.torneoId = _data['torneoId']
-      this.torneoNombre = _data['torneoNombre']
+      this.torneo = _data['torneo']
+      this.faseId = _data['faseId']
+      this.fase = _data['fase']
+      this.zonaActualId = _data['zonaActualId']
+      this.zonaActual = _data['zonaActual']
       if (Array.isArray(_data['jugadores'])) {
         this.jugadores = [] as any
         for (let item of _data['jugadores'])
@@ -6037,7 +6045,11 @@ export class EquipoDTO implements IEquipoDTO {
     data['codigoAlfanumerico'] = this.codigoAlfanumerico
     data['clubNombre'] = this.clubNombre
     data['torneoId'] = this.torneoId
-    data['torneoNombre'] = this.torneoNombre
+    data['torneo'] = this.torneo
+    data['faseId'] = this.faseId
+    data['fase'] = this.fase
+    data['zonaActualId'] = this.zonaActualId
+    data['zonaActual'] = this.zonaActual
     if (Array.isArray(this.jugadores)) {
       data['jugadores'] = []
       for (let item of this.jugadores) data['jugadores'].push(item.toJSON())
@@ -6053,7 +6065,11 @@ export interface IEquipoDTO {
   codigoAlfanumerico?: string | undefined
   clubNombre?: string | undefined
   torneoId?: number | undefined
-  torneoNombre?: string | undefined
+  torneo?: string | undefined
+  faseId?: number | undefined
+  fase?: string | undefined
+  zonaActualId?: number | undefined
+  zonaActual?: string | undefined
   jugadores?: JugadorDelEquipoDTO[] | undefined
 }
 
@@ -6062,6 +6078,9 @@ export class EquipoDeLaZonaDTO implements IEquipoDeLaZonaDTO {
   club?: string | undefined
   id?: string | undefined
   codigo?: string | undefined
+  torneo?: string | undefined
+  zona?: string | undefined
+  zonaActualId?: number | undefined
 
   constructor(data?: IEquipoDeLaZonaDTO) {
     if (data) {
@@ -6078,6 +6097,9 @@ export class EquipoDeLaZonaDTO implements IEquipoDeLaZonaDTO {
       this.club = _data['club']
       this.id = _data['id']
       this.codigo = _data['codigo']
+      this.torneo = _data['torneo']
+      this.zona = _data['zona']
+      this.zonaActualId = _data['zonaActualId']
     }
   }
 
@@ -6094,6 +6116,9 @@ export class EquipoDeLaZonaDTO implements IEquipoDeLaZonaDTO {
     data['club'] = this.club
     data['id'] = this.id
     data['codigo'] = this.codigo
+    data['torneo'] = this.torneo
+    data['zona'] = this.zona
+    data['zonaActualId'] = this.zonaActualId
     return data
   }
 }
@@ -6103,6 +6128,9 @@ export interface IEquipoDeLaZonaDTO {
   club?: string | undefined
   id?: string | undefined
   codigo?: string | undefined
+  torneo?: string | undefined
+  zona?: string | undefined
+  zonaActualId?: number | undefined
 }
 
 export class EquipoDelJugadorDTO implements IEquipoDelJugadorDTO {

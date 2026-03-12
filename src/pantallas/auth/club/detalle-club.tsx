@@ -215,9 +215,9 @@ export default function DetalleClub() {
                           >
                             {equipo.nombre}
                           </Boton>
-                          {equipo.torneoNombre ? (
+                          {equipo.torneo ? (
                             <span className='text-sm px-3 py-1 bg-blue-100 text-blue-800 rounded-full'>
-                              {equipo.torneoNombre}
+                              {equipo.torneo}
                             </span>
                           ) : (
                             <span className='text-sm px-3 py-1 bg-gray-100 text-gray-600 rounded-full'>

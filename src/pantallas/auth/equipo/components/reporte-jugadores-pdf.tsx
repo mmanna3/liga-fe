@@ -1,8 +1,8 @@
 import { EquipoDTO, JugadorDelEquipoDTO } from '@/api/clients'
-import roboto400 from '@fontsource/roboto/files/roboto-latin-400-normal.woff?url'
-import roboto600 from '@fontsource/roboto/files/roboto-latin-600-normal.woff?url'
 import { estadoConfig } from '@/design-system/ykn-ui/jugador-equipo-estado-badge'
 import { EstadoJugador } from '@/logica-compartida/utils'
+import roboto400 from '@fontsource/roboto/files/roboto-latin-400-normal.woff?url'
+import roboto600 from '@fontsource/roboto/files/roboto-latin-600-normal.woff?url'
 import {
   Document,
   Font,
@@ -105,7 +105,7 @@ function ReporteJugadoresDocument({ equipo }: { equipo: EquipoDTO }) {
         </Text>
         <Text style={styles.info}>Club: {equipo.clubNombre}</Text>
         <Text style={styles.info}>
-          Torneo: {equipo.torneoNombre || 'No asignado'}
+          Torneo: {equipo.torneo || 'No asignado'}
         </Text>
         <Text style={styles.info}>Código: {equipo.codigoAlfanumerico}</Text>
 

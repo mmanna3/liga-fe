@@ -327,6 +327,15 @@ export function BuscadorDeEquiposParaZona({
               <span className='text-muted-foreground text-sm truncate'>
                 {eq.clubNombre ?? '—'}
               </span>
+              <span className='text-muted-foreground text-sm truncate'>
+                {eq.torneo ? `${eq.torneo} ·` : ''}
+              </span>
+              <span className='text-muted-foreground text-sm truncate'>
+                {eq.fase ? `${eq.fase} ·` : ''}
+              </span>
+              <span className='text-muted-foreground text-sm truncate'>
+                {eq.zonaActual ? `${eq.zonaActual} ·` : ''}
+              </span>
             </div>
           ))}
           {equiposFiltrados.length === 0 && (

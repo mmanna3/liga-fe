@@ -6,10 +6,10 @@ import {
   AlertDescription,
   AlertTitle
 } from '@/design-system/base-ui/alert'
-import { Boton } from '@/design-system/ykn-ui/boton'
 import { Checkbox } from '@/design-system/base-ui/checkbox'
 import { Skeleton } from '@/design-system/base-ui/skeleton'
 import { VisibleSoloParaAdmin } from '@/design-system/visible-solo-para-admin'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
 import JugadorEquipoEstadoBadge from '@/design-system/ykn-ui/jugador-equipo-estado-badge'
 import Tabla from '@/design-system/ykn-ui/tabla'
@@ -152,7 +152,7 @@ export default function DetalleEquipo() {
           { clave: 'Club', valor: equipo!.clubNombre! },
           {
             clave: 'Torneo',
-            valor: equipo!.torneoNombre || 'No asignado'
+            valor: equipo!.torneo || 'No asignado'
           },
           { clave: 'Código', valor: equipo!.codigoAlfanumerico! }
         ]}
