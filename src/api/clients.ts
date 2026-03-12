@@ -5992,6 +5992,7 @@ export class EquipoDTO implements IEquipoDTO {
   clubId!: number
   codigoAlfanumerico?: string | undefined
   clubNombre?: string | undefined
+  agrupadorId?: number | undefined
   torneoId?: number | undefined
   torneo?: string | undefined
   faseId?: number | undefined
@@ -6016,6 +6017,7 @@ export class EquipoDTO implements IEquipoDTO {
       this.clubId = _data['clubId']
       this.codigoAlfanumerico = _data['codigoAlfanumerico']
       this.clubNombre = _data['clubNombre']
+      this.agrupadorId = _data['agrupadorId']
       this.torneoId = _data['torneoId']
       this.torneo = _data['torneo']
       this.faseId = _data['faseId']
@@ -6044,6 +6046,7 @@ export class EquipoDTO implements IEquipoDTO {
     data['clubId'] = this.clubId
     data['codigoAlfanumerico'] = this.codigoAlfanumerico
     data['clubNombre'] = this.clubNombre
+    data['agrupadorId'] = this.agrupadorId
     data['torneoId'] = this.torneoId
     data['torneo'] = this.torneo
     data['faseId'] = this.faseId
@@ -6064,6 +6067,7 @@ export interface IEquipoDTO {
   clubId: number
   codigoAlfanumerico?: string | undefined
   clubNombre?: string | undefined
+  agrupadorId?: number | undefined
   torneoId?: number | undefined
   torneo?: string | undefined
   faseId?: number | undefined

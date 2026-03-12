@@ -1,29 +1,12 @@
 import { api } from '@/api/api'
 import { EquipoDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
-import { Checkbox } from '@/design-system/base-ui/checkbox'
-import { Label } from '@/design-system/base-ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/design-system/base-ui/select'
 import CajitaConTick from '@/design-system/ykn-ui/cajita-con-tick'
 import { Input } from '@/design-system/ykn-ui/input'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
-import { cn } from '@/logica-compartida/utils'
+import { FiltrosBuscadorDeEquipos } from './filtros-buscador-de-equipos'
+import { RenglonBuscadorDeEquipos } from './renglon-buscador-de-equipos'
 import { useEffect, useMemo, useState } from 'react'
-
-function obtenerOpcionesAnio(): { value: string; label: string }[] {
-  const anioActual = new Date().getFullYear()
-  const opciones: { value: string; label: string }[] = []
-  for (let a = anioActual; a >= anioActual - 20; a--) {
-    opciones.push({ value: String(a), label: String(a) })
-  }
-  return opciones
-}
 
 const MODO_BUSCAR = 'buscar'
 const MODO_OTRO_TORNEO = 'otro-torneo'
@@ -41,8 +24,7 @@ export function BuscadorDeEquiposParaZona({
   const [idsSeleccionados, setIdsSeleccionados] = useState<Set<number>>(
     new Set()
   )
-  const anioActual = new Date().getFullYear()
-  const [filtroAnio, setFiltroAnio] = useState(anioActual)
+  const [filtroAnio, setFiltroAnio] = useState(() => new Date().getFullYear())
   const [filtroAgrupadorId, setFiltroAgrupadorId] = useState<string>('')
   const [filtroTorneoId, setFiltroTorneoId] = useState<string>('')
   const [filtroFaseId, setFiltroFaseId] = useState<string>('')
@@ -66,41 +48,23 @@ export function BuscadorDeEquiposParaZona({
     fn: () => api.equipoAll()
   })
 
-  const { data: agrupadores = [] } = useApiQuery({
-    key: ['torneoAgrupadorAll'],
-    fn: () => api.torneoAgrupadorAll()
+  const { data: torneosTodos = [] } = useApiQuery({
+    key: ['torneoAll'],
+    fn: () => api.torneoAll(),
+    activado: modo === MODO_OTRO_TORNEO
   })
 
-  const { data: torneos = [] } = useApiQuery({
-    key: ['torneosFiltrar', filtroAnio, filtroAgrupadorId || undefined],
-    fn: () =>
-      api.torneosFiltrar(
-        filtroAnio,
-        filtroAgrupadorId ? parseInt(filtroAgrupadorId, 10) : undefined
+  const torneosFiltrados = useMemo(() => {
+    return torneosTodos.filter((t) => {
+      if (t.anio !== filtroAnio) return false
+      if (
+        filtroAgrupadorId &&
+        t.torneoAgrupadorId !== parseInt(filtroAgrupadorId, 10)
       )
-  })
-
-  const torneoSeleccionado = useMemo(
-    () => torneos.find((t) => String(t.id) === filtroTorneoId),
-    [torneos, filtroTorneoId]
-  )
-
-  const { data: fases = [] } = useApiQuery({
-    key: ['fasesAll', torneoSeleccionado?.id],
-    fn: () => api.fasesAll(torneoSeleccionado!.id!),
-    activado: !!torneoSeleccionado?.id
-  })
-
-  const faseSeleccionada = useMemo(
-    () => fases.find((f) => String(f.id) === filtroFaseId),
-    [fases, filtroFaseId]
-  )
-
-  const { data: zonas = [] } = useApiQuery({
-    key: ['zonasAll', faseSeleccionada?.id],
-    fn: () => api.zonasAll(faseSeleccionada!.id!),
-    activado: !!faseSeleccionada?.id
-  })
+        return false
+      return true
+    })
+  }, [torneosTodos, filtroAnio, filtroAgrupadorId])
 
   const equiposFiltrados = useMemo(() => {
     let lista = equipos.filter((e) => !idsEnZonas.has(e.id))
@@ -116,21 +80,50 @@ export function BuscadorDeEquiposParaZona({
         )
       }
     } else {
-      const torneoId = filtroTorneoId ? parseInt(filtroTorneoId, 10) : null
-      if (torneoId) {
-        lista = lista.filter((e) => e.torneoId === torneoId)
-      }
+      const torneoIdsValidos = new Set(
+        filtroTorneoId
+          ? torneosFiltrados.some((t) => String(t.id) === filtroTorneoId)
+            ? [parseInt(filtroTorneoId, 10)]
+            : []
+          : torneosFiltrados
+              .map((t) => t.id)
+              .filter((id): id is number => id != null)
+      )
+
+      const agrupadorIdNum = filtroAgrupadorId
+        ? parseInt(filtroAgrupadorId, 10)
+        : null
+
+      lista = lista.filter((e) => {
+        if (e.torneoId == null) return false
+        if (!torneoIdsValidos.has(e.torneoId)) return false
+        if (agrupadorIdNum != null && e.agrupadorId !== agrupadorIdNum)
+          return false
+        if (filtroFaseId && e.faseId !== parseInt(filtroFaseId, 10))
+          return false
+        if (filtroZonaId && e.zonaActualId !== parseInt(filtroZonaId, 10))
+          return false
+        return true
+      })
     }
 
     return lista
-  }, [equipos, idsEnZonas, modo, textoBusqueda, filtroTorneoId])
+  }, [
+    equipos,
+    idsEnZonas,
+    modo,
+    textoBusqueda,
+    torneosFiltrados,
+    filtroAgrupadorId,
+    filtroTorneoId,
+    filtroFaseId,
+    filtroZonaId
+  ])
 
   const opcionesModo = [
     { id: MODO_BUSCAR, titulo: 'Buscar por código/nombre/club' },
     { id: MODO_OTRO_TORNEO, titulo: 'Desde otro torneo' }
   ]
-
-  const opcionesAnio = useMemo(() => obtenerOpcionesAnio(), [])
 
   const toggleSeleccion = (equipoId: number) => {
     setIdsSeleccionados((prev) => {
@@ -177,106 +170,18 @@ export function BuscadorDeEquiposParaZona({
       )}
 
       {modo === MODO_OTRO_TORNEO && (
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 p-4 rounded-lg border bg-muted/30'>
-          <div className='space-y-2'>
-            <Label>Año</Label>
-            <Select
-              value={String(filtroAnio)}
-              onValueChange={(v) =>
-                setFiltroAnio(parseInt(v, 10) || anioActual)
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder='Año' />
-              </SelectTrigger>
-              <SelectContent>
-                {opcionesAnio.map((op) => (
-                  <SelectItem key={op.value} value={op.value}>
-                    {op.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className='space-y-2'>
-            <Label>Agrupador</Label>
-            <Select
-              value={filtroAgrupadorId || 'todos'}
-              onValueChange={(v) =>
-                setFiltroAgrupadorId(v === 'todos' ? '' : v)
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder='Agrupador' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='todos'>Todos</SelectItem>
-                {agrupadores.map((a) => (
-                  <SelectItem key={a.id} value={String(a.id ?? 0)}>
-                    {a.nombre ?? ''}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className='space-y-2'>
-            <Label>Torneo</Label>
-            <Select
-              value={filtroTorneoId || 'todos'}
-              onValueChange={(v) => setFiltroTorneoId(v === 'todos' ? '' : v)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder='Torneo' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='todos'>Todos</SelectItem>
-                {torneos.map((t) => (
-                  <SelectItem key={t.id} value={String(t.id ?? 0)}>
-                    {t.nombre ?? ''} ({t.anio ?? ''})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className='space-y-2'>
-            <Label>Fase</Label>
-            <Select
-              value={filtroFaseId || 'todas'}
-              onValueChange={(v) => setFiltroFaseId(v === 'todas' ? '' : v)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder='Fase' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='todas'>Todas</SelectItem>
-                {fases.map((f) => (
-                  <SelectItem key={f.id} value={String(f.id ?? 0)}>
-                    {f.nombre ?? ''}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className='space-y-2'>
-            <Label>Zona</Label>
-            <Select
-              value={filtroZonaId || 'todas'}
-              onValueChange={(v) => setFiltroZonaId(v === 'todas' ? '' : v)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder='Zona' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='todas'>Todas</SelectItem>
-                {zonas.map((z) => (
-                  <SelectItem key={z.id} value={String(z.id ?? 0)}>
-                    {z.nombre ?? ''}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+        <FiltrosBuscadorDeEquipos
+          filtroAnio={filtroAnio}
+          onFiltroAnioChange={setFiltroAnio}
+          filtroAgrupadorId={filtroAgrupadorId}
+          onFiltroAgrupadorIdChange={setFiltroAgrupadorId}
+          filtroTorneoId={filtroTorneoId}
+          onFiltroTorneoIdChange={setFiltroTorneoId}
+          filtroFaseId={filtroFaseId}
+          onFiltroFaseIdChange={setFiltroFaseId}
+          filtroZonaId={filtroZonaId}
+          onFiltroZonaIdChange={setFiltroZonaId}
+        />
       )}
 
       <div className='mb-2 flex justify-end'>
@@ -291,52 +196,14 @@ export function BuscadorDeEquiposParaZona({
       <div>
         <div className='space-y-2 max-h-64 overflow-y-auto'>
           {equiposFiltrados.map((eq) => (
-            <div
+            <RenglonBuscadorDeEquipos
               key={eq.id}
-              draggable
-              onDragStart={(e) => handleDragStart(e, eq)}
-              onClick={
-                seleccionMultipleActiva && eq.id != null
-                  ? () => toggleSeleccion(eq.id!)
-                  : undefined
-              }
-              className={cn(
-                'flex items-center gap-3 rounded-lg border px-4 py-2 bg-background',
-                'cursor-grab active:cursor-grabbing hover:border-primary/50 transition-colors',
-                seleccionMultipleActiva && 'cursor-pointer'
-              )}
-            >
-              {seleccionMultipleActiva && (
-                <span
-                  onClick={(e) => e.stopPropagation()}
-                  onPointerDown={(e) => e.stopPropagation()}
-                >
-                  <Checkbox
-                    checked={idsSeleccionados.has(eq.id ?? 0)}
-                    onCheckedChange={() =>
-                      eq.id != null && toggleSeleccion(eq.id)
-                    }
-                    className='rounded-full h-4 w-4 shrink-0'
-                  />
-                </span>
-              )}
-              <span className='font-mono text-sm text-muted-foreground shrink-0'>
-                {eq.codigoAlfanumerico ?? '—'}
-              </span>
-              <span className='font-medium truncate'>{eq.nombre ?? '—'}</span>
-              <span className='text-muted-foreground text-sm truncate'>
-                {eq.clubNombre ?? '—'}
-              </span>
-              <span className='text-muted-foreground text-sm truncate'>
-                {eq.torneo ? `${eq.torneo} ·` : ''}
-              </span>
-              <span className='text-muted-foreground text-sm truncate'>
-                {eq.fase ? `${eq.fase} ·` : ''}
-              </span>
-              <span className='text-muted-foreground text-sm truncate'>
-                {eq.zonaActual ? `${eq.zonaActual} ·` : ''}
-              </span>
-            </div>
+              equipo={eq}
+              seleccionMultipleActiva={seleccionMultipleActiva}
+              idsSeleccionados={idsSeleccionados}
+              onToggleSeleccion={toggleSeleccion}
+              onDragStart={handleDragStart}
+            />
           ))}
           {equiposFiltrados.length === 0 && (
             <p className='text-sm text-muted-foreground py-4 text-center'>
