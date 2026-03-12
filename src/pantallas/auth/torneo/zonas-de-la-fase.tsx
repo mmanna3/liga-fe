@@ -1,17 +1,13 @@
 import { api } from '@/api/api'
 import useApiQuery from '@/api/hooks/use-api-query'
-import {
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/design-system/base-ui/card'
 import BotonVolver from '@/design-system/ykn-ui/boton-volver'
-import Icono from '@/design-system/ykn-ui/icono'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
+import { formatoNombreDesdeId } from './detalle-torneo/lib'
 import { CrearZonas } from './zonas/crear-zonas'
 import { ModificarZonas } from './zonas/modificar-zonas'
+import { ZonaHeader } from './zonas/zona-header'
 
 export default function ZonasDeLaFase() {
   const { id: torneoIdParam, faseId: faseIdParam } = useParams<{
@@ -39,16 +35,14 @@ export default function ZonasDeLaFase() {
   const pathVolver = `${rutasNavegacion.detalleTorneo}/${torneoId}`
 
   const headerCard = (
-    <CardHeader className='pb-2'>
-      <CardTitle className='text-2xl font-semibold text-gray-900 flex gap-2'>
-        <Icono nombre='Zonas' className='h-6 w-6 mt-1' />
-        Zonas
-      </CardTitle>
-      <CardDescription className='text-base mt-1'>
-        Torneo: {torneo?.nombre ?? '—'} · Fase: {fase?.nombre ?? '—'} ·{' '}
-        {fase?.esExcluyente ? 'Es excluyente' : 'No es excluyente'}
-      </CardDescription>
-    </CardHeader>
+    <ZonaHeader
+      nombreTorneo={torneo?.nombre}
+      nombreFase={fase?.nombre}
+      formatoFase={
+        fase?.faseFormatoNombre ?? formatoNombreDesdeId(fase?.faseFormatoId)
+      }
+      esExcluyente={fase?.esExcluyente}
+    />
   )
 
   const tieneZonas = zonasApi.length > 0
