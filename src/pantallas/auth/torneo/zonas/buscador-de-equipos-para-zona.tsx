@@ -1,5 +1,5 @@
 import { api } from '@/api/api'
-import { EquipoDTO, EquipoParaZonasDTO } from '@/api/clients'
+import { EquipoDTO, EquipoParaZonasDTO, ZonaDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
 import CajitaConTick from '@/design-system/ykn-ui/cajita-con-tick'
 import { Input } from '@/design-system/ykn-ui/input'
@@ -10,22 +10,42 @@ import { RenglonBuscadorDeEquipos } from './renglon-buscador-de-equipos'
 
 /** Convierte EquipoParaZonasDTO a EquipoDTO para compatibilidad con zona-fase y RenglonBuscadorDeEquipos */
 function equipoParaZonasAEquipoDto(e: EquipoParaZonasDTO): EquipoDTO {
-  const zonaExcluyente = e.zonas?.find((z) => z.esExcluyente)
-  const primeraZona = e.zonas?.[0]
-  return {
+  const zonaExcl = e.zonas?.find((z) => z.esExcluyente)
+  const zonasNoExcl = e.zonas?.filter((z) => !z.esExcluyente) ?? []
+  return new EquipoDTO({
     id: e.id,
     nombre: e.nombre,
     clubNombre: e.club,
     codigoAlfanumerico: e.codigoAlfanumerico,
     clubId: 0,
-    torneoId: primeraZona?.torneoId,
-    faseId: primeraZona?.faseId,
-    agrupadorId: primeraZona?.agrupadorId,
-    zonaExcluyenteId: zonaExcluyente?.id,
-    torneo: primeraZona?.torneo,
-    fase: primeraZona?.fase,
-    zonaExcluyente: zonaExcluyente?.nombre
-  } as EquipoDTO
+    zonaExcluyente: zonaExcl
+      ? new ZonaDTO({
+          id: zonaExcl.id,
+          nombre: zonaExcl.nombre,
+          torneo: zonaExcl.torneo,
+          fase: zonaExcl.fase,
+          agrupador: zonaExcl.agrupador,
+          agrupadorId: zonaExcl.agrupadorId,
+          torneoId: zonaExcl.torneoId,
+          faseId: zonaExcl.faseId,
+          esExcluyente: true
+        })
+      : undefined,
+    zonasNoExcluyentes: zonasNoExcl.map(
+      (z) =>
+        new ZonaDTO({
+          id: z.id,
+          nombre: z.nombre,
+          torneo: z.torneo,
+          fase: z.fase,
+          agrupador: z.agrupador,
+          agrupadorId: z.agrupadorId,
+          torneoId: z.torneoId,
+          faseId: z.faseId,
+          esExcluyente: false
+        })
+    )
+  })
 }
 
 const MODO_BUSCAR = 'buscar'

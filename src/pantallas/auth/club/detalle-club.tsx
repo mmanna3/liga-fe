@@ -215,15 +215,34 @@ export default function DetalleClub() {
                           >
                             {equipo.nombre}
                           </Boton>
-                          {equipo.torneo ? (
-                            <span className='text-sm px-3 py-1 bg-blue-100 text-blue-800 rounded-full'>
-                              {equipo.torneo}
-                            </span>
-                          ) : (
-                            <span className='text-sm px-3 py-1 bg-gray-100 text-gray-600 rounded-full'>
-                              Sin torneo
-                            </span>
-                          )}
+                          {(() => {
+                            const z = equipo.zonaExcluyente
+                            const torneoExcl = z
+                              ? [z.torneo, z.fase, z.nombre]
+                                  .filter(Boolean)
+                                  .join(' · ')
+                              : null
+                            const otros =
+                              equipo.zonasNoExcluyentes?.map((x) => x.torneo) ??
+                              []
+                            const torneosOtros = [
+                              ...new Set(otros.filter(Boolean))
+                            ].join(', ')
+                            const texto = torneoExcl
+                              ? torneosOtros
+                                ? `${torneoExcl} | Otros: ${torneosOtros}`
+                                : torneoExcl
+                              : torneosOtros || null
+                            return texto ? (
+                              <span className='text-sm px-3 py-1 bg-blue-100 text-blue-800 rounded-full'>
+                                {texto}
+                              </span>
+                            ) : (
+                              <span className='text-sm px-3 py-1 bg-gray-100 text-gray-600 rounded-full'>
+                                Sin torneo
+                              </span>
+                            )
+                          })()}
                         </li>
                       ))}
                     </ul>

@@ -14,6 +14,7 @@ export default function EquipoHome() {
       titulo='Equipos'
       iconoTitulo='Equipos'
       ocultarBotonVolver
+      contenedorClassName='max-w-6xl'
       contenido={
         <Tabla data={data || []} isLoading={isLoading} isError={isError} />
       }

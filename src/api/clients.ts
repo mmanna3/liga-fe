@@ -6048,13 +6048,8 @@ export class EquipoDTO implements IEquipoDTO {
   clubId!: number
   codigoAlfanumerico?: string | undefined
   clubNombre?: string | undefined
-  agrupadorId?: number | undefined
-  torneoId?: number | undefined
-  torneo?: string | undefined
-  faseId?: number | undefined
-  fase?: string | undefined
-  zonaExcluyenteId?: number | undefined
-  zonaExcluyente?: string | undefined
+  zonaExcluyente?: ZonaDTO
+  zonasNoExcluyentes?: ZonaDTO[] | undefined
   jugadores?: JugadorDelEquipoDTO[] | undefined
 
   constructor(data?: IEquipoDTO) {
@@ -6073,13 +6068,14 @@ export class EquipoDTO implements IEquipoDTO {
       this.clubId = _data['clubId']
       this.codigoAlfanumerico = _data['codigoAlfanumerico']
       this.clubNombre = _data['clubNombre']
-      this.agrupadorId = _data['agrupadorId']
-      this.torneoId = _data['torneoId']
-      this.torneo = _data['torneo']
-      this.faseId = _data['faseId']
-      this.fase = _data['fase']
-      this.zonaExcluyenteId = _data['zonaExcluyenteId']
       this.zonaExcluyente = _data['zonaExcluyente']
+        ? ZonaDTO.fromJS(_data['zonaExcluyente'])
+        : <any>undefined
+      if (Array.isArray(_data['zonasNoExcluyentes'])) {
+        this.zonasNoExcluyentes = [] as any
+        for (let item of _data['zonasNoExcluyentes'])
+          this.zonasNoExcluyentes!.push(ZonaDTO.fromJS(item))
+      }
       if (Array.isArray(_data['jugadores'])) {
         this.jugadores = [] as any
         for (let item of _data['jugadores'])
@@ -6102,13 +6098,14 @@ export class EquipoDTO implements IEquipoDTO {
     data['clubId'] = this.clubId
     data['codigoAlfanumerico'] = this.codigoAlfanumerico
     data['clubNombre'] = this.clubNombre
-    data['agrupadorId'] = this.agrupadorId
-    data['torneoId'] = this.torneoId
-    data['torneo'] = this.torneo
-    data['faseId'] = this.faseId
-    data['fase'] = this.fase
-    data['zonaExcluyenteId'] = this.zonaExcluyenteId
     data['zonaExcluyente'] = this.zonaExcluyente
+      ? this.zonaExcluyente.toJSON()
+      : <any>undefined
+    if (Array.isArray(this.zonasNoExcluyentes)) {
+      data['zonasNoExcluyentes'] = []
+      for (let item of this.zonasNoExcluyentes)
+        data['zonasNoExcluyentes'].push(item.toJSON())
+    }
     if (Array.isArray(this.jugadores)) {
       data['jugadores'] = []
       for (let item of this.jugadores) data['jugadores'].push(item.toJSON())
@@ -6123,13 +6120,8 @@ export interface IEquipoDTO {
   clubId: number
   codigoAlfanumerico?: string | undefined
   clubNombre?: string | undefined
-  agrupadorId?: number | undefined
-  torneoId?: number | undefined
-  torneo?: string | undefined
-  faseId?: number | undefined
-  fase?: string | undefined
-  zonaExcluyenteId?: number | undefined
-  zonaExcluyente?: string | undefined
+  zonaExcluyente?: ZonaDTO
+  zonasNoExcluyentes?: ZonaDTO[] | undefined
   jugadores?: JugadorDelEquipoDTO[] | undefined
 }
 

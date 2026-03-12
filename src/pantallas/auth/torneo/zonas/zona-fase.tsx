@@ -35,10 +35,10 @@ function equipoEnZonaExcluyente(
   idsEnZonas: Set<number>
 ): boolean {
   if (!esExcluyente) return false
-  return (
-    (eq.zonaExcluyenteId != null && eq.zonaExcluyenteId > 0) ||
+  const tieneZonaExcluyente =
+    (eq.zonaExcluyente?.id != null && eq.zonaExcluyente.id > 0) ||
     idsEnZonas.has(eq.id ?? 0)
-  )
+  return tieneZonaExcluyente
 }
 
 interface ZonaProps {

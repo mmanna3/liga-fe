@@ -1,4 +1,9 @@
-import { EquipoDeLaZonaDTO, EquipoDTO, TorneoZonaDTO } from '@/api/clients'
+import {
+  EquipoDeLaZonaDTO,
+  EquipoDTO,
+  TorneoZonaDTO,
+  ZonaDTO
+} from '@/api/clients'
 
 /** Estado de una zona en la UI (usa EquipoDTO para compatibilidad con el buscador) */
 export interface ZonaEstado {
@@ -9,14 +14,20 @@ export interface ZonaEstado {
 
 /** Convierte TorneoZonaDTO del API a ZonaEstado para la UI */
 export function zonaDtoAEstado(dto: TorneoZonaDTO): ZonaEstado {
-  const equipos = (dto.equipos ?? []).map((e) => ({
-    id: e.id ? parseInt(e.id, 10) : undefined,
-    codigoAlfanumerico: e.codigo,
-    nombre: e.nombre,
-    clubNombre: e.club,
-    zonaExcluyenteId: dto.id,
-    zonaExcluyente: dto.nombre
-  })) as EquipoDTO[]
+  const equipos = (dto.equipos ?? []).map(
+    (e) =>
+      new EquipoDTO({
+        id: e.id ? parseInt(e.id, 10) : undefined,
+        codigoAlfanumerico: e.codigo,
+        nombre: e.nombre,
+        clubNombre: e.club,
+        clubId: 0,
+        zonaExcluyente: new ZonaDTO({
+          id: dto.id,
+          nombre: dto.nombre
+        })
+      })
+  )
   return {
     id: dto.id,
     nombre: dto.nombre ?? 'Zona',
