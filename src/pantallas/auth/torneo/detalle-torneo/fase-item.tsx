@@ -32,17 +32,25 @@ import {
 interface FaseItemProps {
   torneoId: number
   fase: FaseEstado
+  faseIndex: number
   faseOriginal?: TorneoFaseDTO
   onActualizar: (campo: string, valor: string) => void
   onEliminar: () => void
+  /** Si se provee, se llama al hacer clic en el ícono de zonas (guarda antes de navegar). Recibe el index de la fase. */
+  onIrAZonas?: (faseIndex: number) => void
+  /** Muestra loading en el botón de zonas mientras se guarda */
+  estaGuardando?: boolean
 }
 
 export function FaseItem({
   torneoId,
   fase,
+  faseIndex,
   faseOriginal,
   onActualizar,
-  onEliminar
+  onEliminar,
+  onIrAZonas,
+  estaGuardando = false
 }: FaseItemProps) {
   const navigate = useNavigate()
   const [mostrarNoSePuedeEliminar, setMostrarNoSePuedeEliminar] =
@@ -58,7 +66,10 @@ export function FaseItem({
           type='button'
           variant='outline'
           className='h-10 w-10 min-w-10 p-0'
-          onClick={() => navigate(pathZonas)}
+          estaCargando={estaGuardando}
+          onClick={() =>
+            onIrAZonas ? onIrAZonas(faseIndex) : navigate(pathZonas)
+          }
         >
           <Icono nombre='Zonas' className='h-5 w-5 shrink-0' />
         </Boton>
@@ -128,6 +139,7 @@ export function FaseItem({
         </>
       ) : (
         <DatosFaseLectura
+          zonas={faseOriginal?.zonas ?? []}
           formato={
             faseOriginal?.faseFormatoNombre ??
             formatoNombreDesdeId(faseOriginal?.faseFormatoId)

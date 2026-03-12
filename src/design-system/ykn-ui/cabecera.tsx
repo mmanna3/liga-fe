@@ -17,6 +17,8 @@ export interface DetalleItemData {
 
 interface CabeceraProps {
   titulo: React.ReactNode
+  /** Texto secundario debajo del título */
+  subtitulo?: React.ReactNode
   botonera?: BotoneraProps
   ocultarBotonVolver?: boolean
   detalleItems?: DetalleItemData[]
@@ -30,6 +32,7 @@ interface CabeceraProps {
 
 export default function Cabecera({
   titulo,
+  subtitulo,
   botonera,
   ocultarBotonVolver = false,
   detalleItems,
@@ -53,9 +56,16 @@ export default function Cabecera({
       )}
       <Card className='mb-6 shadow-md'>
         <CardHeader className='flex flex-row items-center justify-between pb-4'>
-          <div className='flex items-center gap-4'>
+          <div
+            className={`flex gap-4 ${subtitulo ? 'items-start pt-5' : 'items-center'}`}
+          >
             {contenidoIcono}
-            <CardTitle className='text-3xl font-bold'>{titulo}</CardTitle>
+            <div className='flex flex-col gap-1'>
+              <CardTitle className='text-3xl font-bold'>{titulo}</CardTitle>
+              {subtitulo && (
+                <p className='text-muted-foreground text-sm'>{subtitulo}</p>
+              )}
+            </div>
           </div>
           {botonera && <Botonera {...botonera} />}
         </CardHeader>

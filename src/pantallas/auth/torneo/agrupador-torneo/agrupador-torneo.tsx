@@ -16,6 +16,7 @@ export default function AgrupadorTorneo() {
   return (
     <FlujoHomeLayout
       titulo='Agrupadores de torneos'
+      subtitulo='En la app, cada torneo aparecerá "adentro" de su agrupador.'
       iconoTitulo='Layout dashboard'
       pathBotonVolver={rutasNavegacion.torneos}
       botonera={{

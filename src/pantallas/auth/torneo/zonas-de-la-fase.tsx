@@ -21,7 +21,7 @@ export default function ZonasDeLaFase() {
   const torneoId = Number(torneoIdParam)
   const faseId = Number(faseIdParam)
 
-  const { data: torneo } = useApiQuery({
+  const { data: torneo, isLoading: torneoCargando } = useApiQuery({
     key: ['torneo', torneoId],
     fn: () => api.torneoGET(torneoId)
   })
@@ -45,20 +45,35 @@ export default function ZonasDeLaFase() {
         Zonas
       </CardTitle>
       <CardDescription className='text-base mt-1'>
-        Torneo: {torneo?.nombre ?? '—'} · Fase: {fase?.nombre ?? '—'}
+        Torneo: {torneo?.nombre ?? '—'} · Fase: {fase?.nombre ?? '—'} ·{' '}
+        {fase?.esExcluyente ? 'Es excluyente' : 'No es excluyente'}
       </CardDescription>
     </CardHeader>
   )
 
   const tieneZonas = zonasApi.length > 0
 
-  if (zonasCargando) {
+  if (torneoCargando || zonasCargando) {
     return (
       <div className='max-w-6xl mx-auto px-4'>
         <div className='mb-4'>
           <BotonVolver path={pathVolver} />
         </div>
         <p className='text-muted-foreground'>Cargando zonas...</p>
+      </div>
+    )
+  }
+
+  if (torneo && !fase) {
+    return (
+      <div className='max-w-6xl mx-auto px-4'>
+        <div className='mb-4'>
+          <BotonVolver path={pathVolver} />
+        </div>
+        <p className='text-muted-foreground'>
+          No se encontró la fase. Puede que el enlace sea inválido o la fase
+          haya sido eliminada.
+        </p>
       </div>
     )
   }

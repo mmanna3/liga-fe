@@ -2,6 +2,7 @@ import { api } from '@/api/api'
 import { TorneoCategoriaDTO, TorneoDTO, TorneoFaseDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/ykn-ui/input'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
@@ -22,6 +23,7 @@ import {
 export default function DetalleTorneo() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const torneoId = Number(id)
 
   const {
@@ -134,6 +136,32 @@ export default function DetalleTorneo() {
 
   const puedeEliminar = torneoFases.length === 0
 
+  const irAZonas = async (faseIndex: number) => {
+    const faseEnEstado = fasesEstado[faseIndex]
+    if (!faseEnEstado) return
+
+    if (puedeEditarTorneo) {
+      await guardarMutation.mutateAsync(undefined)
+      const torneoActualizado = await queryClient.fetchQuery({
+        queryKey: ['torneo', torneoId],
+        queryFn: () => api.torneoGET(torneoId)
+      })
+      const faseActualizada = torneoActualizado?.fases?.find(
+        (f) => f.numero === faseEnEstado.numero
+      )
+      if (!faseActualizada?.id) return
+      navigate(
+        `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${faseActualizada.id}/zonas`
+      )
+    } else {
+      const fase = torneoFases[faseIndex]
+      if (!fase?.id) return
+      navigate(
+        `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${fase.id}/zonas`
+      )
+    }
+  }
+
   return (
     <LayoutSegundoNivel
       titulo={`${torneo.nombre}`}
@@ -223,11 +251,14 @@ export default function DetalleTorneo() {
               key={fase.id ?? index}
               torneoId={torneoId}
               fase={fase}
+              faseIndex={index}
               faseOriginal={torneoFases[index]}
               onActualizar={(campo, valor) =>
                 actualizarFase(index, campo, valor)
               }
               onEliminar={() => eliminarFase(index)}
+              onIrAZonas={irAZonas}
+              estaGuardando={guardarMutation.isPending}
             />
           ))}
 
@@ -245,7 +276,7 @@ export default function DetalleTorneo() {
           )}
 
           {puedeEditarTorneo && (
-            <div className='flex justify-end pt-4 border-t'>
+            <div className='flex justify-end pt-4'>
               <Boton
                 type='submit'
                 className='h-11 w-40 text-sm'

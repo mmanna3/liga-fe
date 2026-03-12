@@ -9,6 +9,8 @@ export type { DetalleItemData }
 interface FlujoHomeLayoutProps {
   /** Título principal (obligatorio) */
   titulo: React.ReactNode
+  /** Texto secundario debajo del título */
+  subtitulo?: React.ReactNode
   /** Props de Botonera: siempre a la derecha cuando se proporciona */
   botonera?: BotoneraProps
   /** Oculta el BotonVolver (ej. en listas) */
@@ -31,6 +33,7 @@ interface FlujoHomeLayoutProps {
 
 export default function FlujoHomeLayout({
   titulo,
+  subtitulo,
   botonera,
   ocultarBotonVolver = false,
   detalleItems,
@@ -47,6 +50,7 @@ export default function FlujoHomeLayout({
     >
       <Cabecera
         titulo={titulo}
+        subtitulo={subtitulo}
         botonera={botonera}
         ocultarBotonVolver={ocultarBotonVolver}
         detalleItems={detalleItems}

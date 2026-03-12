@@ -7114,6 +7114,7 @@ export class TorneoFaseDTO implements ITorneoFaseDTO {
   esVisibleEnApp?: boolean
   esExcluyente?: boolean
   sePuedeEditar?: boolean
+  zonas?: ZonaDeFaseDTO[] | undefined
 
   constructor(data?: ITorneoFaseDTO) {
     if (data) {
@@ -7141,6 +7142,11 @@ export class TorneoFaseDTO implements ITorneoFaseDTO {
       this.esVisibleEnApp = _data['esVisibleEnApp']
       this.esExcluyente = _data['esExcluyente']
       this.sePuedeEditar = _data['sePuedeEditar']
+      if (Array.isArray(_data['zonas'])) {
+        this.zonas = [] as any
+        for (let item of _data['zonas'])
+          this.zonas!.push(ZonaDeFaseDTO.fromJS(item))
+      }
     }
   }
 
@@ -7167,6 +7173,10 @@ export class TorneoFaseDTO implements ITorneoFaseDTO {
     data['esVisibleEnApp'] = this.esVisibleEnApp
     data['esExcluyente'] = this.esExcluyente
     data['sePuedeEditar'] = this.sePuedeEditar
+    if (Array.isArray(this.zonas)) {
+      data['zonas'] = []
+      for (let item of this.zonas) data['zonas'].push(item.toJSON())
+    }
     return data
   }
 }
@@ -7185,6 +7195,7 @@ export interface ITorneoFaseDTO {
   esVisibleEnApp?: boolean
   esExcluyente?: boolean
   sePuedeEditar?: boolean
+  zonas?: ZonaDeFaseDTO[] | undefined
 }
 
 export class TorneoFechaDTO implements ITorneoFechaDTO {
@@ -7349,6 +7360,46 @@ export interface IUsuarioDTO {
   id?: number
   nombreUsuario?: string | undefined
   delegadoId?: number | undefined
+}
+
+export class ZonaDeFaseDTO implements IZonaDeFaseDTO {
+  nombre?: string | undefined
+  cantidadDeEquipos?: number
+
+  constructor(data?: IZonaDeFaseDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.nombre = _data['nombre']
+      this.cantidadDeEquipos = _data['cantidadDeEquipos']
+    }
+  }
+
+  static fromJS(data: any): ZonaDeFaseDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new ZonaDeFaseDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['nombre'] = this.nombre
+    data['cantidadDeEquipos'] = this.cantidadDeEquipos
+    return data
+  }
+}
+
+export interface IZonaDeFaseDTO {
+  nombre?: string | undefined
+  cantidadDeEquipos?: number
 }
 
 function formatDate(d: Date) {
