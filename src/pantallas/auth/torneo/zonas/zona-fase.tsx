@@ -45,8 +45,9 @@ export function Zona({
     const data = e.dataTransfer.getData('application/json')
     if (data) {
       try {
-        const equipo = JSON.parse(data) as EquipoDTO
-        onDropEquipo(equipo)
+        const parsed = JSON.parse(data) as EquipoDTO | EquipoDTO[]
+        const equipos = Array.isArray(parsed) ? parsed : [parsed]
+        equipos.forEach((eq) => onDropEquipo(eq))
       } catch {
         // ignore
       }

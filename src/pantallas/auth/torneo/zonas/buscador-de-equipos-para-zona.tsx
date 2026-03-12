@@ -1,6 +1,7 @@
 import { api } from '@/api/api'
 import { EquipoDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
+import { Checkbox } from '@/design-system/base-ui/checkbox'
 import { Label } from '@/design-system/base-ui/label'
 import {
   Select,
@@ -9,10 +10,11 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/design-system/base-ui/select'
+import CajitaConTick from '@/design-system/ykn-ui/cajita-con-tick'
 import { Input } from '@/design-system/ykn-ui/input'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
 import { cn } from '@/logica-compartida/utils'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 function obtenerOpcionesAnio(): { value: string; label: string }[] {
   const anioActual = new Date().getFullYear()
@@ -35,6 +37,10 @@ export function BuscadorDeEquiposParaZona({
 }: BuscadorDeEquiposParaZonaProps) {
   const [modo, setModo] = useState(MODO_BUSCAR)
   const [textoBusqueda, setTextoBusqueda] = useState('')
+  const [seleccionMultipleActiva, setSeleccionMultipleActiva] = useState(false)
+  const [idsSeleccionados, setIdsSeleccionados] = useState<Set<number>>(
+    new Set()
+  )
   const anioActual = new Date().getFullYear()
   const [filtroAnio, setFiltroAnio] = useState(anioActual)
   const [filtroAgrupadorId, setFiltroAgrupadorId] = useState<string>('')
@@ -46,6 +52,14 @@ export function BuscadorDeEquiposParaZona({
     () => new Set(equiposEnZonas.map((e) => e.id).filter(Boolean)),
     [equiposEnZonas]
   )
+
+  useEffect(() => {
+    const algunoMovido = [...idsSeleccionados].some((id) => idsEnZonas.has(id))
+    if (algunoMovido) {
+      setIdsSeleccionados(new Set())
+      setSeleccionMultipleActiva(false)
+    }
+  }, [equiposEnZonas, idsEnZonas, idsSeleccionados])
 
   const { data: equipos = [] } = useApiQuery({
     key: ['equipoAll'],
@@ -118,8 +132,30 @@ export function BuscadorDeEquiposParaZona({
 
   const opcionesAnio = useMemo(() => obtenerOpcionesAnio(), [])
 
+  const toggleSeleccion = (equipoId: number) => {
+    setIdsSeleccionados((prev) => {
+      const next = new Set(prev)
+      if (next.has(equipoId)) next.delete(equipoId)
+      else next.add(equipoId)
+      return next
+    })
+  }
+
+  const handleSeleccionVariosChange = (checked: boolean) => {
+    setSeleccionMultipleActiva(checked)
+    if (!checked) setIdsSeleccionados(new Set())
+  }
+
   const handleDragStart = (e: React.DragEvent, equipo: EquipoDTO) => {
-    e.dataTransfer.setData('application/json', JSON.stringify(equipo))
+    const equiposADrag: EquipoDTO[] =
+      seleccionMultipleActiva &&
+      idsSeleccionados.has(equipo.id ?? 0) &&
+      idsSeleccionados.size > 1
+        ? equiposFiltrados.filter(
+            (eq) => eq.id != null && idsSeleccionados.has(eq.id)
+          )
+        : [equipo]
+    e.dataTransfer.setData('application/json', JSON.stringify(equiposADrag))
     e.dataTransfer.effectAllowed = 'move'
   }
 
@@ -243,6 +279,15 @@ export function BuscadorDeEquiposParaZona({
         </div>
       )}
 
+      <div className='mb-2 flex justify-end'>
+        <CajitaConTick
+          id='seleccion-varios'
+          checked={seleccionMultipleActiva}
+          onCheckedChange={handleSeleccionVariosChange}
+          label='Seleccionar varios'
+        />
+      </div>
+
       <div>
         <div className='space-y-2 max-h-64 overflow-y-auto'>
           {equiposFiltrados.map((eq) => (
@@ -250,11 +295,31 @@ export function BuscadorDeEquiposParaZona({
               key={eq.id}
               draggable
               onDragStart={(e) => handleDragStart(e, eq)}
+              onClick={
+                seleccionMultipleActiva && eq.id != null
+                  ? () => toggleSeleccion(eq.id!)
+                  : undefined
+              }
               className={cn(
                 'flex items-center gap-3 rounded-lg border px-4 py-2 bg-background',
-                'cursor-grab active:cursor-grabbing hover:border-primary/50 transition-colors'
+                'cursor-grab active:cursor-grabbing hover:border-primary/50 transition-colors',
+                seleccionMultipleActiva && 'cursor-pointer'
               )}
             >
+              {seleccionMultipleActiva && (
+                <span
+                  onClick={(e) => e.stopPropagation()}
+                  onPointerDown={(e) => e.stopPropagation()}
+                >
+                  <Checkbox
+                    checked={idsSeleccionados.has(eq.id ?? 0)}
+                    onCheckedChange={() =>
+                      eq.id != null && toggleSeleccion(eq.id)
+                    }
+                    className='rounded-full h-4 w-4 shrink-0'
+                  />
+                </span>
+              )}
               <span className='font-mono text-sm text-muted-foreground shrink-0'>
                 {eq.codigoAlfanumerico ?? '—'}
               </span>
