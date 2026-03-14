@@ -14,6 +14,7 @@ const MAPEO_ICONOS: Record<
   Jugadores: LucideIcons.Users,
   Delegados: LucideIcons.UserCog,
   Reportes: LucideIcons.BarChart2,
+  Configuracion: LucideIcons.Settings,
   Usuario: LucideIcons.User,
   'Cerrar sesión': LucideIcons.LogOut,
   Menú: LucideIcons.Menu,
@@ -53,6 +54,7 @@ const MAPEO_ICONOS: Record<
   // Agrupadores / dashboards
   'Layout dashboard': LucideIcons.LayoutDashboard,
   Zonas: LucideIcons.Grid3X3,
+  Fixture: LucideIcons.Workflow,
 
   // Ubicación / datos
   Casa: LucideIcons.MapPin,

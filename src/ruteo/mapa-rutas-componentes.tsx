@@ -1,3 +1,4 @@
+import Configuracion from '@/pantallas/auth/configuracion/configuracion'
 import DetalleClub from '@/pantallas/auth/club/detalle-club'
 import AprobarRechazarDelegado from '@/pantallas/auth/delegados/aprobar-rechazar-delegado'
 import Delegados from '@/pantallas/auth/delegados/delegados'
@@ -97,6 +98,7 @@ export const mapaRutasComponentes = [
       },
       { path: rutas.reportes, element: <ReportesPage /> },
       { path: rutas.reportePagos, element: <ReportePagosPage /> },
+      { path: rutas.configuracion, element: <Configuracion /> },
       { path: rutas.delegados, element: <Delegados /> },
       { path: `${rutas.detalleDelegado}/:id`, element: <DetalleDelegado /> },
       {

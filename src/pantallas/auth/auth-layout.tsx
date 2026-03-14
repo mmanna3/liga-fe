@@ -26,6 +26,11 @@ const adminMenuItems = [
     name: 'Reportes',
     path: rutasNavegacion.reportes,
     icono: 'Reportes' as const
+  },
+  {
+    name: 'Configuración',
+    path: rutasNavegacion.configuracion,
+    icono: 'Configuracion' as const
   }
 ]
 
