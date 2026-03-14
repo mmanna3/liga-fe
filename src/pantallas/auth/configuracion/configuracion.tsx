@@ -6,8 +6,12 @@ import {
 } from '@/design-system/base-ui/card'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
 import Icono from '@/design-system/ykn-ui/icono'
+import { rutasNavegacion } from '@/ruteo/rutas'
+import { useNavigate } from 'react-router-dom'
 
 export default function Configuracion() {
+  const navigate = useNavigate()
+
   return (
     <FlujoHomeLayout
       titulo='Configuración'
@@ -20,7 +24,7 @@ export default function Configuracion() {
             className='cursor-pointer transition-colors hover:bg-muted/50'
             role='button'
             tabIndex={0}
-            onClick={() => {}}
+            onClick={() => navigate(rutasNavegacion.generacionDeFixtures)}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') e.currentTarget.click()
             }}

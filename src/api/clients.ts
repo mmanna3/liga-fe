@@ -1903,6 +1903,341 @@ export class Client {
   }
 
   /**
+   * @param body (optional)
+   * @return OK
+   */
+  fixtureAlgoritmoPOST(
+    body: FixtureAlgoritmoDTO | undefined
+  ): Promise<FixtureAlgoritmoDTO> {
+    let url_ = this.baseUrl + '/api/FixtureAlgoritmo'
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processFixtureAlgoritmoPOST(_response)
+    })
+  }
+
+  protected processFixtureAlgoritmoPOST(
+    response: Response
+  ): Promise<FixtureAlgoritmoDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = FixtureAlgoritmoDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<FixtureAlgoritmoDTO>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  fixtureAlgoritmoAll(): Promise<FixtureAlgoritmoDTO[]> {
+    let url_ = this.baseUrl + '/api/FixtureAlgoritmo'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processFixtureAlgoritmoAll(_response)
+    })
+  }
+
+  protected processFixtureAlgoritmoAll(
+    response: Response
+  ): Promise<FixtureAlgoritmoDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(FixtureAlgoritmoDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<FixtureAlgoritmoDTO[]>(null as any)
+  }
+
+  /**
+   * @param ids (optional)
+   * @return OK
+   */
+  fixtureAlgoritmosPorIds(
+    ids: number[] | undefined
+  ): Promise<FixtureAlgoritmoDTO[]> {
+    let url_ = this.baseUrl + '/api/FixtureAlgoritmo/por-ids?'
+    if (ids === null) throw new Error("The parameter 'ids' cannot be null.")
+    else if (ids !== undefined)
+      ids &&
+        ids.forEach((item) => {
+          url_ += 'ids=' + encodeURIComponent('' + item) + '&'
+        })
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processFixtureAlgoritmosPorIds(_response)
+    })
+  }
+
+  protected processFixtureAlgoritmosPorIds(
+    response: Response
+  ): Promise<FixtureAlgoritmoDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(FixtureAlgoritmoDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<FixtureAlgoritmoDTO[]>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  fixtureAlgoritmoGET(id: number): Promise<FixtureAlgoritmoDTO> {
+    let url_ = this.baseUrl + '/api/FixtureAlgoritmo/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processFixtureAlgoritmoGET(_response)
+    })
+  }
+
+  protected processFixtureAlgoritmoGET(
+    response: Response
+  ): Promise<FixtureAlgoritmoDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = FixtureAlgoritmoDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<FixtureAlgoritmoDTO>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  fixtureAlgoritmoPUT(
+    id: number,
+    body: FixtureAlgoritmoDTO | undefined
+  ): Promise<void> {
+    let url_ = this.baseUrl + '/api/FixtureAlgoritmo/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processFixtureAlgoritmoPUT(_response)
+    })
+  }
+
+  protected processFixtureAlgoritmoPUT(response: Response): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  fixtureAlgoritmoDELETE(id: number): Promise<number> {
+    let url_ = this.baseUrl + '/api/FixtureAlgoritmo/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'DELETE',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processFixtureAlgoritmoDELETE(_response)
+    })
+  }
+
+  protected processFixtureAlgoritmoDELETE(response: Response): Promise<number> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = resultData200 !== undefined ? resultData200 : <any>null
+
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<number>(null as any)
+  }
+
+  /**
    * @param ids (optional)
    * @return OK
    */
@@ -6482,6 +6817,109 @@ export interface IFicharEnOtroEquipoDTO {
   id?: number
   dni: string
   codigoAlfanumerico: string
+}
+
+export class FixtureAlgoritmoDTO implements IFixtureAlgoritmoDTO {
+  id?: number
+  fixtureAlgoritmoId!: number
+  cantidadDeEquipos!: number
+  fechas?: FixtureAlgoritmoFechaDTO[] | undefined
+
+  constructor(data?: IFixtureAlgoritmoDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.fixtureAlgoritmoId = _data['fixtureAlgoritmoId']
+      this.cantidadDeEquipos = _data['cantidadDeEquipos']
+      if (Array.isArray(_data['fechas'])) {
+        this.fechas = [] as any
+        for (let item of _data['fechas'])
+          this.fechas!.push(FixtureAlgoritmoFechaDTO.fromJS(item))
+      }
+    }
+  }
+
+  static fromJS(data: any): FixtureAlgoritmoDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new FixtureAlgoritmoDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['fixtureAlgoritmoId'] = this.fixtureAlgoritmoId
+    data['cantidadDeEquipos'] = this.cantidadDeEquipos
+    if (Array.isArray(this.fechas)) {
+      data['fechas'] = []
+      for (let item of this.fechas) data['fechas'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface IFixtureAlgoritmoDTO {
+  id?: number
+  fixtureAlgoritmoId: number
+  cantidadDeEquipos: number
+  fechas?: FixtureAlgoritmoFechaDTO[] | undefined
+}
+
+export class FixtureAlgoritmoFechaDTO implements IFixtureAlgoritmoFechaDTO {
+  id?: number
+  fecha!: number
+  equipoLocal!: number
+  equipoVisitante!: number
+
+  constructor(data?: IFixtureAlgoritmoFechaDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.fecha = _data['fecha']
+      this.equipoLocal = _data['equipoLocal']
+      this.equipoVisitante = _data['equipoVisitante']
+    }
+  }
+
+  static fromJS(data: any): FixtureAlgoritmoFechaDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new FixtureAlgoritmoFechaDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['fecha'] = this.fecha
+    data['equipoLocal'] = this.equipoLocal
+    data['equipoVisitante'] = this.equipoVisitante
+    return data
+  }
+}
+
+export interface IFixtureAlgoritmoFechaDTO {
+  id?: number
+  fecha: number
+  equipoLocal: number
+  equipoVisitante: number
 }
 
 export class JugadorBaseDTO implements IJugadorBaseDTO {

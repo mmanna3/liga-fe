@@ -26,7 +26,8 @@ export const rutas = {
   detalleDelegado: 'delegados/detalle',
   eliminarDelegado: 'delegados/eliminar',
   aprobarRechazarDelegado: 'delegados/aprobar-rechazar',
-  configuracion: 'configuracion'
+  configuracion: 'configuracion',
+  generacionDeFixtures: 'configuracion/generacion-de-fixtures'
 }
 
 export const rutasNavegacion: { [K in keyof typeof rutas]: string } =

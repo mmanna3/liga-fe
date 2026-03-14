@@ -1,4 +1,5 @@
 import Configuracion from '@/pantallas/auth/configuracion/configuracion'
+import GeneracionDeFixtures from '@/pantallas/auth/configuracion/generacion-de-fixtures/generacion-de-fixtures'
 import DetalleClub from '@/pantallas/auth/club/detalle-club'
 import AprobarRechazarDelegado from '@/pantallas/auth/delegados/aprobar-rechazar-delegado'
 import Delegados from '@/pantallas/auth/delegados/delegados'
@@ -99,6 +100,7 @@ export const mapaRutasComponentes = [
       { path: rutas.reportes, element: <ReportesPage /> },
       { path: rutas.reportePagos, element: <ReportePagosPage /> },
       { path: rutas.configuracion, element: <Configuracion /> },
+      { path: rutas.generacionDeFixtures, element: <GeneracionDeFixtures /> },
       { path: rutas.delegados, element: <Delegados /> },
       { path: `${rutas.detalleDelegado}/:id`, element: <DetalleDelegado /> },
       {
