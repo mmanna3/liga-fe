@@ -7,6 +7,7 @@ import useApiQuery from '@/api/hooks/use-api-query'
 import { useAuth } from '@/logica-compartida/hooks/use-auth'
 import { EstadoJugador } from '@/logica-compartida/utils'
 import { rutasNavegacion } from '@/ruteo/rutas'
+import { useUrlFiltroEstados } from '@/hooks/use-url-filtro-estados'
 import { ColumnDef } from '@tanstack/react-table'
 import {
   Popover,
@@ -14,8 +15,7 @@ import {
   PopoverTrigger
 } from '@/design-system/base-ui/popover'
 import Icono from '@/design-system/ykn-ui/icono'
-import { useEffect, useState } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const estadoConfigArray = [
   {
@@ -34,40 +34,8 @@ const estadoConfigArray = [
 
 export default function TablaJugador() {
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  const location = useLocation()
   const esAdmin = useAuth((state) => state.esAdmin)
-  const [filtroEstados, setFiltroEstados] = useState<EstadoJugador[]>([])
-
-  useEffect(() => {
-    const filtrosParam = searchParams.get('filtros')
-    if (filtrosParam) {
-      const estadosFromUrl = filtrosParam
-        .split(',')
-        .map(Number) as EstadoJugador[]
-      setFiltroEstados(estadosFromUrl)
-    }
-  }, [searchParams])
-
-  const toggleFiltro = (estado: EstadoJugador) => {
-    const nuevosEstados = filtroEstados.includes(estado)
-      ? filtroEstados.filter((e) => e !== estado)
-      : [...filtroEstados, estado]
-
-    setFiltroEstados(nuevosEstados)
-
-    const newSearchParams = new URLSearchParams(searchParams)
-    if (nuevosEstados.length > 0) {
-      newSearchParams.set('filtros', nuevosEstados.join(','))
-    } else {
-      newSearchParams.delete('filtros')
-    }
-
-    navigate({
-      pathname: location.pathname,
-      search: newSearchParams.toString()
-    })
-  }
+  const { filtroEstados, toggleFiltro } = useUrlFiltroEstados<EstadoJugador>()
 
   const { data, isLoading, isError } = useApiQuery({
     key: ['jugadores', filtroEstados.toString()],

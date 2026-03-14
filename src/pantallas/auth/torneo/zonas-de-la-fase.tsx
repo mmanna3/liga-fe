@@ -5,8 +5,7 @@ import { rutasNavegacion } from '@/ruteo/rutas'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { formatoNombreDesdeId } from './detalle-torneo/lib'
-import { CrearZonas } from './zonas/crear-zonas'
-import { ModificarZonas } from './zonas/modificar-zonas'
+import { GestorZonas } from './zonas/gestor-zonas'
 import { ZonaHeader } from './zonas/zona-header'
 
 export default function ZonasDeLaFase() {
@@ -71,9 +70,11 @@ export default function ZonasDeLaFase() {
     )
   }
 
-  if (tieneZonas) {
-    return <ModificarZonas headerCard={headerCard} pathVolver={pathVolver} />
-  }
-
-  return <CrearZonas headerCard={headerCard} pathVolver={pathVolver} />
+  return (
+    <GestorZonas
+      modo={tieneZonas ? 'modificar' : 'crear'}
+      headerCard={headerCard}
+      pathVolver={pathVolver}
+    />
+  )
 }

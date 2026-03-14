@@ -3,8 +3,7 @@ import { EquipoDTO, ZonaDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { Boton } from '@/design-system/ykn-ui/boton'
-import { Input } from '@/design-system/base-ui/input'
-import { Label } from '@/design-system/base-ui/label'
+import { Input } from '@/design-system/ykn-ui/input'
 import { ListaDesplegable } from '@/design-system/ykn-ui/lista-desplegable'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import ContenedorBotones from '@/design-system/ykn-ui/contenedor-botones'
@@ -78,17 +77,15 @@ export default function CrearEquipo() {
       titulo='Crear Equipo'
       contenido={
         <form onSubmit={handleSubmit} className='space-y-4'>
-          <div className='space-y-2'>
-            <Label htmlFor='nombre'>Nombre</Label>
-            <Input
-              id='nombre'
-              type='text'
-              placeholder='Nombre'
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-              required
-            />
-          </div>
+          <Input
+            titulo='Nombre'
+            id='nombre'
+            type='text'
+            placeholder='Nombre'
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            required
+          />
 
           <ListaDesplegable
             titulo='Torneo (año actual)'

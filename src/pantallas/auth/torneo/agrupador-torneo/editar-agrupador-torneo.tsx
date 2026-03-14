@@ -4,17 +4,13 @@ import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
 import { Boton } from '@/design-system/ykn-ui/boton'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from '@/design-system/base-ui/card'
-import { Input } from '@/design-system/base-ui/input'
 import { Label } from '@/design-system/base-ui/label'
 import { Switch } from '@/design-system/base-ui/switch'
-import BotonVolver from '@/design-system/ykn-ui/boton-volver'
+import CampoLectura from '@/design-system/ykn-ui/campo-lectura'
 import ContenedorBotones from '@/design-system/ykn-ui/contenedor-botones'
+import { Input } from '@/design-system/ykn-ui/input'
+import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
+import MensajeListaVacia from '@/design-system/ykn-ui/mensaje-lista-vacia'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -83,26 +79,21 @@ export default function EditarAgrupadorTorneo() {
       hayError={isError}
       mensajeDeError='No se pudieron recuperar los datos del agrupador'
     >
-      <div className='mb-4'>
-        <BotonVolver path={rutasNavegacion.agrupadoresTorneo} />
-      </div>
-      <Card className='max-w-md mx-auto p-4'>
-        <CardHeader>
-          <CardTitle>Editar agrupador</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <LayoutSegundoNivel
+        titulo='Editar agrupador'
+        pathBotonVolver={rutasNavegacion.agrupadoresTorneo}
+        maxWidth='md'
+        contenido={
           <form onSubmit={handleSubmit} className='space-y-6'>
-            <div className='space-y-2'>
-              <Label htmlFor='nombre'>Nombre</Label>
-              <Input
-                id='nombre'
-                type='text'
-                placeholder='Nombre del agrupador'
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
-                required
-              />
-            </div>
+            <Input
+              titulo='Nombre'
+              id='nombre'
+              type='text'
+              placeholder='Nombre del agrupador'
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              required
+            />
 
             <div className='flex items-center justify-between space-x-2'>
               <Label htmlFor='visibleEnApp'>Visible en la app</Label>
@@ -113,32 +104,32 @@ export default function EditarAgrupadorTorneo() {
               />
             </div>
 
-            <div className='space-y-2'>
-              <Label>Torneos</Label>
-              {torneos.length > 0 ? (
-                <ul className='space-y-2 divide-y divide-gray-100'>
-                  {torneos.map((torneo) => (
-                    <li key={torneo.id} className='pt-2 first:pt-0'>
-                      <Boton
-                        variant='ghost'
-                        className='w-full justify-start font-normal hover:bg-gray-50'
-                        onClick={() =>
-                          navigate(
-                            `${rutasNavegacion.detalleTorneo}/${torneo.id}`
-                          )
-                        }
-                      >
-                        {torneo.nombre}
-                      </Boton>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className='text-gray-500 text-sm italic py-4'>
-                  No hay torneos en este agrupador
-                </p>
-              )}
-            </div>
+            <CampoLectura
+              titulo='Torneos'
+              valor={
+                torneos.length > 0 ? (
+                  <ul className='space-y-2 divide-y divide-gray-100'>
+                    {torneos.map((torneo) => (
+                      <li key={torneo.id} className='pt-2 first:pt-0'>
+                        <Boton
+                          variant='ghost'
+                          className='w-full justify-start font-normal hover:bg-gray-50'
+                          onClick={() =>
+                            navigate(
+                              `${rutasNavegacion.detalleTorneo}/${torneo.id}`
+                            )
+                          }
+                        >
+                          {torneo.nombre}
+                        </Boton>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <MensajeListaVacia mensaje='No hay torneos en este agrupador' />
+                )
+              }
+            />
 
             <ContenedorBotones>
               <Boton
@@ -153,8 +144,8 @@ export default function EditarAgrupadorTorneo() {
               </Boton>
             </ContenedorBotones>
           </form>
-        </CardContent>
-      </Card>
+        }
+      />
     </ContenedorCargandoYError>
   )
 }

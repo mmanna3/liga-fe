@@ -2,7 +2,7 @@ import { api } from '@/api/api'
 import { TorneoAgrupadorDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import { Boton } from '@/design-system/ykn-ui/boton'
-import { Input } from '@/design-system/base-ui/input'
+import { Input } from '@/design-system/ykn-ui/input'
 import { Label } from '@/design-system/base-ui/label'
 import { Switch } from '@/design-system/base-ui/switch'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
@@ -40,17 +40,15 @@ export default function CrearAgrupadorTorneo() {
       pathBotonVolver={rutasNavegacion.agrupadoresTorneo}
       contenido={
         <form onSubmit={handleSubmit} className='space-y-4'>
-          <div className='space-y-2'>
-            <Label htmlFor='nombre'>Nombre</Label>
-            <Input
-              id='nombre'
-              type='text'
-              placeholder='Nombre del agrupador'
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-              required
-            />
-          </div>
+          <Input
+            titulo='Nombre'
+            id='nombre'
+            type='text'
+            placeholder='Nombre del agrupador'
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            required
+          />
           <div className='flex items-center justify-between space-x-2'>
             <div className='space-y-0.5'>
               <Label htmlFor='visibleEnApp'>Es visible en la app</Label>

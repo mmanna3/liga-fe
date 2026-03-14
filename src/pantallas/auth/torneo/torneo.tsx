@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/design-system/base-ui/card'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
 import { ListaDesplegable } from '@/design-system/ykn-ui/lista-desplegable'
 import { rutasNavegacion } from '@/ruteo/rutas'
+import MensajeListaVacia from '@/design-system/ykn-ui/mensaje-lista-vacia'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -163,9 +164,7 @@ export default function Torneo() {
             ) : isError ? (
               <p className='text-destructive'>Error al cargar los torneos</p>
             ) : torneosAMostrar.length === 0 ? (
-              <p className='text-muted-foreground ml-2'>
-                No hay torneos para el año seleccionado
-              </p>
+              <MensajeListaVacia mensaje='No hay torneos para el año seleccionado' />
             ) : (
               <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
                 {torneosAMostrar.map((torneo) => (

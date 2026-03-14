@@ -4,15 +4,9 @@ import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
 import { Boton } from '@/design-system/ykn-ui/boton'
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '@/design-system/base-ui/card'
-import { Input } from '@/design-system/base-ui/input'
-import BotonVolver from '@/design-system/ykn-ui/boton-volver'
+import ContenedorBotones from '@/design-system/ykn-ui/contenedor-botones'
+import { Input } from '@/design-system/ykn-ui/input'
+import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -65,43 +59,30 @@ export default function EditarEquipo() {
   const isLoading = isLoadingEquipo || mutation.isPending
 
   return (
-    <div>
-      <div className='mb-4'>
-        <BotonVolver />
-      </div>
-      <ContenedorCargandoYError
-        estaCargando={isLoading}
-        hayError={isErrorEquipo}
-      >
-        <Card className='max-w-md mx-auto'>
-          <CardHeader>
-            <CardTitle>Editar Equipo</CardTitle>
-          </CardHeader>
-          <form onSubmit={handleSubmit}>
-            <CardContent className='space-y-4'>
-              <div className='space-y-2'>
-                <label htmlFor='nombre' className='block text-sm font-medium'>
-                  Nombre del equipo
-                </label>
-                <Input
-                  id='nombre'
-                  value={nombre}
-                  onChange={(e) => setNombre(e.target.value)}
-                  placeholder='Nombre del equipo'
-                  required
-                />
-              </div>
-              <p className='text-sm text-muted-foreground'>
-                Las zonas del equipo se gestionan desde el torneo
-                correspondiente.
-              </p>
-            </CardContent>
-            <CardFooter className='flex justify-between'>
+    <ContenedorCargandoYError estaCargando={isLoading} hayError={isErrorEquipo}>
+      <LayoutSegundoNivel
+        titulo='Editar Equipo'
+        pathBotonVolver={rutasNavegacion.equipos}
+        maxWidth='md'
+        contenido={
+          <form onSubmit={handleSubmit} className='space-y-4'>
+            <Input
+              titulo='Nombre del equipo'
+              id='nombre'
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              placeholder='Nombre del equipo'
+              required
+            />
+            <p className='text-sm text-muted-foreground'>
+              Las zonas del equipo se gestionan desde el torneo correspondiente.
+            </p>
+            <ContenedorBotones>
               <Boton type='submit'>Guardar</Boton>
-            </CardFooter>
+            </ContenedorBotones>
           </form>
-        </Card>
-      </ContenedorCargandoYError>
-    </div>
+        }
+      />
+    </ContenedorCargandoYError>
   )
 }

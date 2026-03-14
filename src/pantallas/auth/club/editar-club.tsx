@@ -2,20 +2,14 @@ import { api } from '@/api/api'
 import { CambiarEscudoDTO, ClubDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from '@/design-system/base-ui/card'
-import { Input } from '@/design-system/base-ui/input'
 import { Label } from '@/design-system/base-ui/label'
 import { Switch } from '@/design-system/base-ui/switch'
 import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
 import { Boton } from '@/design-system/ykn-ui/boton'
-import BotonVolver from '@/design-system/ykn-ui/boton-volver'
 import ContenedorBotones from '@/design-system/ykn-ui/contenedor-botones'
 import Icono from '@/design-system/ykn-ui/icono'
+import { Input } from '@/design-system/ykn-ui/input'
+import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -151,48 +145,39 @@ export default function EditarClub() {
       hayError={isError}
       mensajeDeError='No se pudieron recuperar los datos del club'
     >
-      <div className='mb-4'>
-        <BotonVolver path={`${rutasNavegacion.detalleClub}/${id}`} />
-      </div>
-      <Card className='max-w-md mx-auto p-4'>
-        <CardHeader>
-          <CardTitle>Editar Club</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <LayoutSegundoNivel
+        titulo='Editar Club'
+        pathBotonVolver={`${rutasNavegacion.detalleClub}/${id}`}
+        maxWidth='md'
+        contenido={
           <form onSubmit={handleSubmit} className='space-y-6'>
-            <div className='space-y-2'>
-              <Label htmlFor='nombre'>Nombre</Label>
-              <Input
-                id='nombre'
-                type='text'
-                placeholder='Nombre del club'
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
-                required
-              />
-            </div>
+            <Input
+              titulo='Nombre'
+              id='nombre'
+              type='text'
+              placeholder='Nombre del club'
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              required
+            />
 
-            <div className='space-y-2'>
-              <Label htmlFor='direccion'>Dirección</Label>
-              <Input
-                id='direccion'
-                type='text'
-                placeholder='Dirección'
-                value={direccion}
-                onChange={(e) => setDireccion(e.target.value)}
-              />
-            </div>
+            <Input
+              titulo='Dirección'
+              id='direccion'
+              type='text'
+              placeholder='Dirección'
+              value={direccion}
+              onChange={(e) => setDireccion(e.target.value)}
+            />
 
-            <div className='space-y-2'>
-              <Label htmlFor='localidad'>Localidad</Label>
-              <Input
-                id='localidad'
-                type='text'
-                placeholder='Localidad'
-                value={localidad}
-                onChange={(e) => setLocalidad(e.target.value)}
-              />
-            </div>
+            <Input
+              titulo='Localidad'
+              id='localidad'
+              type='text'
+              placeholder='Localidad'
+              value={localidad}
+              onChange={(e) => setLocalidad(e.target.value)}
+            />
 
             <div className='flex items-center justify-between space-x-2'>
               <Label htmlFor='esTechado'>¿Es techado?</Label>
@@ -276,8 +261,8 @@ export default function EditarClub() {
               </Boton>
             </ContenedorBotones>
           </form>
-        </CardContent>
-      </Card>
+        }
+      />
     </ContenedorCargandoYError>
   )
 }

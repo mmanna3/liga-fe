@@ -17,6 +17,7 @@ import {
   TableHeader,
   TableRow
 } from '@/design-system/base-ui/table'
+import MensajeListaVacia from '@/design-system/ykn-ui/mensaje-lista-vacia'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -150,9 +151,7 @@ export default function ReportePagosPage() {
               </TableBody>
             </Table>
           ) : (
-            <div className='text-center p-4'>
-              No hay datos para mostrar con los filtros seleccionados
-            </div>
+            <MensajeListaVacia mensaje='No hay datos para mostrar con los filtros seleccionados' />
           )}
         </CardContent>
       </Card>

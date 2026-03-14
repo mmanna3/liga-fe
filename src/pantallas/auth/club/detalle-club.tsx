@@ -17,6 +17,8 @@ import { VisibleSoloParaAdmin } from '@/design-system/visible-solo-para-admin'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
 import Icono from '@/design-system/ykn-ui/icono'
+import MensajeListaVacia from '@/design-system/ykn-ui/mensaje-lista-vacia'
+import TorneoBadge from '@/design-system/ykn-ui/torneo-badge'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -169,9 +171,7 @@ export default function DetalleClub() {
                       ))}
                     </ul>
                   ) : (
-                    <p className='text-gray-500 text-sm italic text-center py-4'>
-                      No hay delegados registrados
-                    </p>
+                    <MensajeListaVacia mensaje='No hay delegados registrados' />
                   )}
                 </CardContent>
               </Card>
@@ -215,33 +215,12 @@ export default function DetalleClub() {
                           >
                             {equipo.nombre}
                           </Boton>
-                          {(() => {
-                            const texto = equipo.zonas?.length
-                              ? [
-                                  ...new Set(
-                                    equipo.zonas
-                                      .map((z) => z.torneo)
-                                      .filter(Boolean)
-                                  )
-                                ].join(', ')
-                              : null
-                            return texto ? (
-                              <span className='text-sm px-3 py-1 bg-blue-100 text-blue-800 rounded-full'>
-                                {texto}
-                              </span>
-                            ) : (
-                              <span className='text-sm px-3 py-1 bg-gray-100 text-gray-600 rounded-full'>
-                                Sin torneo
-                              </span>
-                            )
-                          })()}
+                          <TorneoBadge zonas={equipo.zonas} />
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p className='text-gray-500 text-sm italic text-center py-4'>
-                      No hay equipos registrados
-                    </p>
+                    <MensajeListaVacia mensaje='No hay equipos registrados' />
                   )}
                 </CardContent>
               </Card>

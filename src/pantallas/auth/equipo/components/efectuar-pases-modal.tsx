@@ -3,13 +3,8 @@ import { EfectuarPaseDTO, EquipoDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import { Boton } from '@/design-system/ykn-ui/boton'
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from '@/design-system/base-ui/dialog'
+import { DialogFooter } from '@/design-system/base-ui/dialog'
+import ModalConAccion from '@/design-system/ykn-ui/modal-con-accion'
 import { ListaDesplegable } from '@/design-system/ykn-ui/lista-desplegable'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
@@ -93,35 +88,34 @@ export default function EfectuarPasesModal({
     }))
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='sm:max-w-md'>
-        <DialogHeader>
-          <DialogTitle>Efectuar pases</DialogTitle>
-        </DialogHeader>
-        <div className='space-y-4'>
-          <ListaDesplegable
-            titulo='Equipo destino'
-            id='equipoDestinoId'
-            opciones={opcionesEquipos}
-            valor={equipoDestinoId}
-            alCambiar={setEquipoDestinoId}
-            placeholder='Seleccionar equipo destino'
-            requerido
-          />
-        </div>
-        <DialogFooter>
-          <Boton variant='outline' onClick={() => onOpenChange(false)}>
-            Volver
-          </Boton>
-          <Boton
-            onClick={handleEfectuarPase}
-            disabled={selectedJugadores.length === 0 || !equipoDestinoId}
-            estaCargando={efectuarPasesMutation.isPending}
-          >
-            Efectuar pase
-          </Boton>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <ModalConAccion
+      titulo='Efectuar pases'
+      open={open}
+      onOpenChange={onOpenChange}
+    >
+      <div className='space-y-4'>
+        <ListaDesplegable
+          titulo='Equipo destino'
+          id='equipoDestinoId'
+          opciones={opcionesEquipos}
+          valor={equipoDestinoId}
+          alCambiar={setEquipoDestinoId}
+          placeholder='Seleccionar equipo destino'
+          requerido
+        />
+      </div>
+      <DialogFooter>
+        <Boton variant='outline' onClick={() => onOpenChange(false)}>
+          Volver
+        </Boton>
+        <Boton
+          onClick={handleEfectuarPase}
+          disabled={selectedJugadores.length === 0 || !equipoDestinoId}
+          estaCargando={efectuarPasesMutation.isPending}
+        >
+          Efectuar pase
+        </Boton>
+      </DialogFooter>
+    </ModalConAccion>
   )
 }

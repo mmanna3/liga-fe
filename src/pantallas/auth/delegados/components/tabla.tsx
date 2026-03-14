@@ -10,9 +10,9 @@ import {
   EstadoDelegado
 } from '@/logica-compartida/utils'
 import { rutasNavegacion } from '@/ruteo/rutas'
+import { useUrlFiltroEstados } from '@/hooks/use-url-filtro-estados'
 import { ColumnDef } from '@tanstack/react-table'
-import { useEffect, useState } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 const estadoConfigArray = [
   { key: EstadoDelegado.PendienteDeAprobacion, label: 'Pendiente' },
@@ -22,40 +22,7 @@ const estadoConfigArray = [
 export default function TablaDelegados() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const location = useLocation()
-  const [filtroEstados, setFiltroEstados] = useState<EstadoDelegado[]>([])
-
-  useEffect(() => {
-    const filtrosParam = searchParams.get('filtros')
-    if (filtrosParam) {
-      const estadosFromUrl = filtrosParam
-        .split(',')
-        .map(Number) as EstadoDelegado[]
-      setFiltroEstados(estadosFromUrl)
-    } else {
-      setFiltroEstados([])
-    }
-  }, [searchParams])
-
-  const toggleFiltro = (estado: EstadoDelegado) => {
-    const nuevosEstados = filtroEstados.includes(estado)
-      ? filtroEstados.filter((e) => e !== estado)
-      : [...filtroEstados, estado]
-
-    setFiltroEstados(nuevosEstados)
-
-    const newSearchParams = new URLSearchParams(searchParams)
-    if (nuevosEstados.length > 0) {
-      newSearchParams.set('filtros', nuevosEstados.join(','))
-    } else {
-      newSearchParams.delete('filtros')
-    }
-
-    navigate({
-      pathname: location.pathname,
-      search: newSearchParams.toString()
-    })
-  }
+  const { filtroEstados, toggleFiltro } = useUrlFiltroEstados<EstadoDelegado>()
 
   const { data, isLoading, isError } = useApiQuery({
     key: ['delegados', filtroEstados.toString()],

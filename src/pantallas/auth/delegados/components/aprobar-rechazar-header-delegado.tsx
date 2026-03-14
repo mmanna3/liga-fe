@@ -2,8 +2,7 @@ import { AprobarDelegadoEnElClubDTO, DelegadoDTO } from '@/api/clients'
 import { CardTitle } from '@/design-system/base-ui/card'
 import { Skeleton } from '@/design-system/base-ui/skeleton'
 import { TextoEditable } from '@/design-system/ykn-ui/texto-editable'
-import Icono from '@/design-system/ykn-ui/icono'
-import InputFecha from '@/pantallas/auth/jugador/components/fecha-input-editable'
+import ItemFechaEditable from '@/design-system/ykn-ui/item-fecha-editable'
 import { useEffect, useState } from 'react'
 
 interface IProps {
@@ -108,39 +107,4 @@ export default function AprobarRechazarHeaderDelegado({
       />
     </>
   )
-}
-
-interface IItemFechaEditableProps {
-  valor: Date | undefined
-  setValor: (value: Date | undefined) => void
-}
-
-function ItemFechaEditable({ valor, setValor }: IItemFechaEditableProps) {
-  const [esEdicion, setEsEdicion] = useState(false)
-
-  if (!esEdicion)
-    return (
-      <div className='flex group'>
-        <p
-          className='text-sm text-gray-500 group-hover:text-blue-700 group-hover:font-semibold'
-          onClick={() => setEsEdicion(true)}
-        >
-          {valor ? valor.toLocaleDateString('es-AR') : 'Sin fecha'}
-        </p>
-        <Icono
-          nombre='Editar'
-          className='w-3 ml-1 pb-1 text-gray-500 hidden group-hover:block group-hover:text-blue-700 group-hover:font-semibold'
-        />
-      </div>
-    )
-  else
-    return (
-      <InputFecha
-        fechaInicial={valor!}
-        onChange={(date) => {
-          setValor(date || undefined)
-          setEsEdicion(false)
-        }}
-      />
-    )
 }
