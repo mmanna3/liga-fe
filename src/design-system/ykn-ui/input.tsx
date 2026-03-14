@@ -9,6 +9,9 @@ interface InputProps extends React.ComponentProps<typeof BaseInput> {
   tipo?: React.ComponentProps<typeof BaseInput>['type']
 }
 
+const claseSinFlechasNumber =
+  '[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&]:[-moz-appearance:textfield]'
+
 function Input({
   className,
   error,
@@ -18,6 +21,7 @@ function Input({
   type,
   ...props
 }: InputProps) {
+  const typeEfectivo = tipo ?? type
   return (
     <div>
       {titulo && (
@@ -27,8 +31,13 @@ function Input({
       )}
       <BaseInput
         id={id}
-        type={tipo ?? type}
-        className={cn('h-11', error && 'border-destructive', className)}
+        type={typeEfectivo}
+        className={cn(
+          'h-11',
+          error && 'border-destructive',
+          typeEfectivo === 'number' && claseSinFlechasNumber,
+          className
+        )}
         aria-invalid={!!error}
         {...props}
       />
