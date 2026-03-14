@@ -1,15 +1,8 @@
 import { api } from '@/api/api'
 import type { TorneoDTO } from '@/api/clients'
 import { Card, CardContent } from '@/design-system/base-ui/card'
-import { Label } from '@/design-system/base-ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/design-system/base-ui/select'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
+import { ListaDesplegable } from '@/design-system/ykn-ui/lista-desplegable'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
@@ -105,10 +98,7 @@ export default function Torneo() {
   const opcionesAnio = useMemo(
     () =>
       (aniosDisponibles.length > 0 ? aniosDisponibles : [anioActual]).map(
-        (anio) => ({
-          id: String(anio),
-          titulo: String(anio)
-        })
+        (anio) => ({ value: String(anio), label: String(anio) })
       ),
     [aniosDisponibles, anioActual]
   )
@@ -141,43 +131,28 @@ export default function Torneo() {
           <Card className='shadow-md'>
             <CardContent className='pt-4'>
               <div className='flex flex-col gap-4 sm:flex-row sm:gap-6'>
-                <div className='space-y-2 sm:min-w-[140px]'>
-                  <Label>Año</Label>
-                  <Select
-                    value={String(anioEfectivo)}
-                    onValueChange={setAnioSeleccionado}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder='Seleccionar año' />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {opcionesAnio.map((opcion) => (
-                        <SelectItem key={opcion.id} value={opcion.id}>
-                          {opcion.titulo}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className='space-y-2 sm:min-w-[200px]'>
-                  <Label>Agrupador</Label>
-                  <Select
-                    value={agrupadorEfectivo}
-                    onValueChange={setAgrupadorSeleccionado}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder='Seleccionar agrupador' />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value={VALOR_TODOS}>Todos</SelectItem>
-                      {agrupadoresDisponibles.map((agrupador) => (
-                        <SelectItem key={agrupador.id} value={agrupador.id}>
-                          {agrupador.nombre}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <ListaDesplegable
+                  titulo='Año'
+                  opciones={opcionesAnio}
+                  valor={String(anioEfectivo)}
+                  alCambiar={setAnioSeleccionado}
+                  placeholder='Seleccionar año'
+                  className='sm:min-w-[140px]'
+                />
+                <ListaDesplegable
+                  titulo='Agrupador'
+                  opciones={[
+                    { value: VALOR_TODOS, label: 'Todos' },
+                    ...agrupadoresDisponibles.map((a) => ({
+                      value: a.id,
+                      label: a.nombre
+                    }))
+                  ]}
+                  valor={agrupadorEfectivo}
+                  alCambiar={setAgrupadorSeleccionado}
+                  placeholder='Seleccionar agrupador'
+                  className='sm:min-w-[200px]'
+                />
               </div>
             </CardContent>
           </Card>

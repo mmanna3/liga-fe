@@ -8,20 +8,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/design-system/base-ui/card'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel
-} from '@/design-system/base-ui/form'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/design-system/base-ui/select'
+import { ListaDesplegable } from '@/design-system/ykn-ui/lista-desplegable'
 import {
   Table,
   TableBody,
@@ -30,13 +17,8 @@ import {
   TableHeader,
   TableRow
 } from '@/design-system/base-ui/table'
-import { useForm } from 'react-hook-form'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
-interface FormValues {
-  mes: string
-  anio: string
-}
 
 const meses = [
   { value: '1', label: 'Enero' },
@@ -67,31 +49,17 @@ const getNombreMes = (mes: number) => {
 
 export default function ReportePagosPage() {
   const navigate = useNavigate()
-  const form = useForm<FormValues>({
-    defaultValues: {
-      mes: new Date().getMonth() + 1 + '',
-      anio: new Date().getFullYear() + ''
-    }
-  })
+  const [mes, setMes] = useState<string>(new Date().getMonth() + 1 + '')
+  const [anio, setAnio] = useState<string>(new Date().getFullYear() + '')
 
   const { data, isLoading, refetch } = useApiQuery<ReportePagosDTO[]>({
-    key: ['reporte-pagos', form.watch('mes'), form.watch('anio')],
+    key: ['reporte-pagos', mes, anio],
     fn: async () => {
-      const mesValue = form.watch('mes')
-      const anioValue = form.watch('anio')
-
-      const mes =
-        mesValue && mesValue !== 'todos' ? parseInt(mesValue) : undefined
-      const anio =
-        anioValue && anioValue !== 'todos' ? parseInt(anioValue) : undefined
-
-      return await api.obtenerReportePagos(mes, anio)
+      const mesNum = mes && mes !== 'todos' ? parseInt(mes) : undefined
+      const anioNum = anio && anio !== 'todos' ? parseInt(anio) : undefined
+      return await api.obtenerReportePagos(mesNum, anioNum)
     }
   })
-
-  const onSubmit = () => {
-    refetch()
-  }
 
   return (
     <div className='space-y-4'>
@@ -107,80 +75,33 @@ export default function ReportePagosPage() {
           <CardTitle>Filtros</CardTitle>
         </CardHeader>
         <CardContent>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className='flex flex-col md:flex-row gap-4'
-            >
-              <FormField
-                control={form.control}
-                name='mes'
-                render={({
-                  field
-                }: {
-                  field: { onChange: (value: string) => void; value: string }
-                }) => (
-                  <FormItem className='flex-1'>
-                    <FormLabel>Mes</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder='Seleccionar mes' />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value='todos'>Todos</SelectItem>
-                        {meses.map((mes) => (
-                          <SelectItem key={mes.value} value={mes.value}>
-                            {mes.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name='anio'
-                render={({
-                  field
-                }: {
-                  field: { onChange: (value: string) => void; value: string }
-                }) => (
-                  <FormItem className='flex-1'>
-                    <FormLabel>Año</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder='Seleccionar año' />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value='todos'>Todos</SelectItem>
-                        {anios().map((anio) => (
-                          <SelectItem key={anio.value} value={anio.value}>
-                            {anio.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormItem>
-                )}
-              />
-
-              <Boton type='submit' className='mt-auto'>
-                Filtrar
-              </Boton>
-            </form>
-          </Form>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              refetch()
+            }}
+            className='flex flex-col md:flex-row gap-4'
+          >
+            <ListaDesplegable
+              titulo='Mes'
+              opciones={[{ value: 'todos', label: 'Todos' }, ...meses]}
+              valor={mes}
+              alCambiar={setMes}
+              placeholder='Seleccionar mes'
+              className='flex-1'
+            />
+            <ListaDesplegable
+              titulo='Año'
+              opciones={[{ value: 'todos', label: 'Todos' }, ...anios()]}
+              valor={anio}
+              alCambiar={setAnio}
+              placeholder='Seleccionar año'
+              className='flex-1'
+            />
+            <Boton type='submit' className='mt-auto'>
+              Filtrar
+            </Boton>
+          </form>
         </CardContent>
       </Card>
 

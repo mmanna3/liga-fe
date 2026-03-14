@@ -10,13 +10,7 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/design-system/base-ui/dialog'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/design-system/base-ui/select'
+import { ListaDesplegable } from '@/design-system/ykn-ui/lista-desplegable'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 
@@ -91,6 +85,13 @@ export default function EfectuarPasesModal({
     efectuarPasesMutation.mutate(dtos)
   }
 
+  const opcionesEquipos = (equipos ?? [])
+    .filter((e: EquipoDTO) => e.id !== equipo?.id)
+    .map((e: EquipoDTO) => ({
+      value: e.id!.toString(),
+      label: e.nombre ?? ''
+    }))
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='sm:max-w-md'>
@@ -98,29 +99,15 @@ export default function EfectuarPasesModal({
           <DialogTitle>Efectuar pases</DialogTitle>
         </DialogHeader>
         <div className='space-y-4'>
-          <div className='space-y-2'>
-            <label htmlFor='equipoDestinoId' className='text-sm font-medium'>
-              Equipo destino
-            </label>
-            <Select
-              value={equipoDestinoId}
-              onValueChange={setEquipoDestinoId}
-              required
-            >
-              <SelectTrigger id='equipoDestinoId'>
-                <SelectValue placeholder='Seleccionar equipo destino' />
-              </SelectTrigger>
-              <SelectContent>
-                {(equipos ?? [])
-                  .filter((e: EquipoDTO) => e.id !== equipo?.id)
-                  .map((e: EquipoDTO) => (
-                    <SelectItem key={e.id} value={e.id!.toString()}>
-                      {e.nombre}
-                    </SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <ListaDesplegable
+            titulo='Equipo destino'
+            id='equipoDestinoId'
+            opciones={opcionesEquipos}
+            valor={equipoDestinoId}
+            alCambiar={setEquipoDestinoId}
+            placeholder='Seleccionar equipo destino'
+            requerido
+          />
         </div>
         <DialogFooter>
           <Boton variant='outline' onClick={() => onOpenChange(false)}>

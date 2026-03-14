@@ -136,7 +136,10 @@ export function BuscadorDeEquiposParaZona({
       })
     }
 
-    return lista.map(equipoParaZonasAEquipoDto)
+    const ordenada = [...lista].sort((a, b) =>
+      (a.nombre ?? '').localeCompare(b.nombre ?? '', 'es')
+    )
+    return ordenada.map(equipoParaZonasAEquipoDto)
   }, [
     equiposParaZonas,
     idsEnZonas,

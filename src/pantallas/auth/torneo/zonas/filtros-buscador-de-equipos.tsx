@@ -1,13 +1,6 @@
 import { api } from '@/api/api'
 import useApiQuery from '@/api/hooks/use-api-query'
-import { Label } from '@/design-system/base-ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/design-system/base-ui/select'
+import { ListaDesplegable } from '@/design-system/ykn-ui/lista-desplegable'
 import { useMemo } from 'react'
 
 function obtenerOpcionesAnio(): { value: string; label: string }[] {
@@ -93,104 +86,65 @@ export function FiltrosBuscadorDeEquipos({
 
   return (
     <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 p-4 rounded-lg border bg-muted/30'>
-      <div className='space-y-2'>
-        <Label>Año</Label>
-        <Select
-          value={String(filtroAnio)}
-          onValueChange={(v) =>
-            onFiltroAnioChange(parseInt(v, 10) || anioActual)
-          }
-        >
-          <SelectTrigger>
-            <SelectValue placeholder='Año' />
-          </SelectTrigger>
-          <SelectContent>
-            {opcionesAnio.map((op) => (
-              <SelectItem key={op.value} value={op.value}>
-                {op.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      <div className='space-y-2'>
-        <Label>Agrupador</Label>
-        <Select
-          value={filtroAgrupadorId || 'todos'}
-          onValueChange={(v) =>
-            onFiltroAgrupadorIdChange(v === 'todos' ? '' : v)
-          }
-        >
-          <SelectTrigger>
-            <SelectValue placeholder='Agrupador' />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value='todos'>Todos</SelectItem>
-            {agrupadores.map((a) => (
-              <SelectItem key={a.id} value={String(a.id ?? 0)}>
-                {a.nombre ?? ''}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      <div className='space-y-2'>
-        <Label>Torneo</Label>
-        <Select
-          value={filtroTorneoId || 'todos'}
-          onValueChange={(v) => onFiltroTorneoIdChange(v === 'todos' ? '' : v)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder='Torneo' />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value='todos'>Todos</SelectItem>
-            {torneos.map((t) => (
-              <SelectItem key={t.id} value={String(t.id ?? 0)}>
-                {t.nombre ?? ''} ({t.anio ?? ''})
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      <div className='space-y-2'>
-        <Label>Fase</Label>
-        <Select
-          value={filtroFaseId || 'todas'}
-          onValueChange={(v) => onFiltroFaseIdChange(v === 'todas' ? '' : v)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder='Fase' />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value='todas'>Todas</SelectItem>
-            {fases.map((f) => (
-              <SelectItem key={f.id} value={String(f.id ?? 0)}>
-                {f.nombre ?? ''}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      <div className='space-y-2'>
-        <Label>Zona</Label>
-        <Select
-          value={filtroZonaId || 'todas'}
-          onValueChange={(v) => onFiltroZonaIdChange(v === 'todas' ? '' : v)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder='Zona' />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value='todas'>Todas</SelectItem>
-            {zonas.map((z) => (
-              <SelectItem key={z.id} value={String(z.id ?? 0)}>
-                {z.nombre ?? ''}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <ListaDesplegable
+        titulo='Año'
+        opciones={opcionesAnio}
+        valor={String(filtroAnio)}
+        alCambiar={(v) => onFiltroAnioChange(parseInt(v, 10) || anioActual)}
+        placeholder='Año'
+      />
+      <ListaDesplegable
+        titulo='Agrupador'
+        opciones={[
+          { value: 'todos', label: 'Todos' },
+          ...agrupadores.map((a) => ({
+            value: String(a.id ?? 0),
+            label: a.nombre ?? ''
+          }))
+        ]}
+        valor={filtroAgrupadorId || 'todos'}
+        alCambiar={(v) => onFiltroAgrupadorIdChange(v === 'todos' ? '' : v)}
+        placeholder='Agrupador'
+      />
+      <ListaDesplegable
+        titulo='Torneo'
+        opciones={[
+          { value: 'todos', label: 'Todos' },
+          ...torneos.map((t) => ({
+            value: String(t.id ?? 0),
+            label: `${t.nombre ?? ''} (${t.anio ?? ''})`
+          }))
+        ]}
+        valor={filtroTorneoId || 'todos'}
+        alCambiar={(v) => onFiltroTorneoIdChange(v === 'todos' ? '' : v)}
+        placeholder='Torneo'
+      />
+      <ListaDesplegable
+        titulo='Fase'
+        opciones={[
+          { value: 'todas', label: 'Todas' },
+          ...fases.map((f) => ({
+            value: String(f.id ?? 0),
+            label: f.nombre ?? ''
+          }))
+        ]}
+        valor={filtroFaseId || 'todas'}
+        alCambiar={(v) => onFiltroFaseIdChange(v === 'todas' ? '' : v)}
+        placeholder='Fase'
+      />
+      <ListaDesplegable
+        titulo='Zona'
+        opciones={[
+          { value: 'todas', label: 'Todas' },
+          ...zonas.map((z) => ({
+            value: String(z.id ?? 0),
+            label: z.nombre ?? ''
+          }))
+        ]}
+        valor={filtroZonaId || 'todas'}
+        alCambiar={(v) => onFiltroZonaIdChange(v === 'todas' ? '' : v)}
+        placeholder='Zona'
+      />
     </div>
   )
 }

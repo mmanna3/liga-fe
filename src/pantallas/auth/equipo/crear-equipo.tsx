@@ -2,19 +2,12 @@ import { api } from '@/api/api'
 import { EquipoDTO, ZonaDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/design-system/base-ui/select'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/base-ui/input'
 import { Label } from '@/design-system/base-ui/label'
+import { ListaDesplegable } from '@/design-system/ykn-ui/lista-desplegable'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import ContenedorBotones from '@/design-system/ykn-ui/contenedor-botones'
-import { cn } from '@/logica-compartida/utils'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -97,86 +90,56 @@ export default function CrearEquipo() {
             />
           </div>
 
-          <div className='space-y-2'>
-            <Label>Torneo (año actual)</Label>
-            <Select
-              value={torneoId || '_none'}
-              onValueChange={(v) => {
-                setTorneoId(v === '_none' ? '' : v)
-                setFaseId('')
-                setZonaId('')
-              }}
-            >
-              <SelectTrigger
-                className={cn(!torneoId && 'text-muted-foreground')}
-              >
-                <SelectValue placeholder='Seleccionar torneo' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='_none'>Sin torneo / sin zona</SelectItem>
-                {torneos.map((t) => (
-                  <SelectItem key={t.id} value={String(t.id)}>
-                    {t.nombre} {t.anio != null ? `(${t.anio})` : ''}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <ListaDesplegable
+            titulo='Torneo (año actual)'
+            opciones={[
+              { value: '_none', label: 'Sin torneo / sin zona' },
+              ...torneos.map((t) => ({
+                value: String(t.id),
+                label: `${t.nombre}${t.anio != null ? ` (${t.anio})` : ''}`
+              }))
+            ]}
+            valor={torneoId || '_none'}
+            alCambiar={(v) => {
+              setTorneoId(v === '_none' ? '' : v)
+              setFaseId('')
+              setZonaId('')
+            }}
+            triggerClassName={!torneoId ? 'text-muted-foreground' : undefined}
+          />
 
-          <div className='space-y-2'>
-            <Label>Fase</Label>
-            <Select
-              value={faseId || '_none'}
-              onValueChange={(v) => {
-                setFaseId(v === '_none' ? '' : v)
-                setZonaId('')
-              }}
-              disabled={!torneoId || torneosCargando}
-            >
-              <SelectTrigger
-                className={cn(
-                  !faseId && 'text-muted-foreground',
-                  !torneoId && 'opacity-60'
-                )}
-              >
-                <SelectValue placeholder='Seleccionar fase' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='_none'>Sin zona</SelectItem>
-                {fases.map((f) => (
-                  <SelectItem key={f.id} value={String(f.id)}>
-                    {f.nombre}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <ListaDesplegable
+            titulo='Fase'
+            opciones={[
+              { value: '_none', label: 'Sin zona' },
+              ...fases.map((f) => ({
+                value: String(f.id),
+                label: f.nombre ?? ''
+              }))
+            ]}
+            valor={faseId || '_none'}
+            alCambiar={(v) => {
+              setFaseId(v === '_none' ? '' : v)
+              setZonaId('')
+            }}
+            deshabilitado={!torneoId || torneosCargando}
+            triggerClassName={!faseId ? 'text-muted-foreground' : undefined}
+          />
 
-          <div className='space-y-2'>
-            <Label>Zona</Label>
-            <Select
-              value={zonaId || '_none'}
-              onValueChange={(v) => setZonaId(v === '_none' ? '' : v)}
-              disabled={!faseId || zonasCargando}
-            >
-              <SelectTrigger
-                className={cn(
-                  !zonaId && 'text-muted-foreground',
-                  !faseId && 'opacity-60'
-                )}
-              >
-                <SelectValue placeholder='Seleccionar zona' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='_none'>Sin asignar zona</SelectItem>
-                {zonas.map((z) => (
-                  <SelectItem key={z.id} value={String(z.id)}>
-                    {z.nombre ?? 'Zona'}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <ListaDesplegable
+            titulo='Zona'
+            opciones={[
+              { value: '_none', label: 'Sin asignar zona' },
+              ...zonas.map((z) => ({
+                value: String(z.id),
+                label: z.nombre ?? 'Zona'
+              }))
+            ]}
+            valor={zonaId || '_none'}
+            alCambiar={(v) => setZonaId(v === '_none' ? '' : v)}
+            deshabilitado={!faseId || zonasCargando}
+            triggerClassName={!zonaId ? 'text-muted-foreground' : undefined}
+          />
 
           {hayZonaCompleta && (
             <p className='text-sm text-muted-foreground'>

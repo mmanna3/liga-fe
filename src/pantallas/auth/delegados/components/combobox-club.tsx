@@ -1,13 +1,7 @@
 import { api } from '@/api/api'
 import { ClubDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/design-system/base-ui/select'
+import { ListaDesplegable } from '@/design-system/ykn-ui/lista-desplegable'
 
 interface ComboboxClubProps {
   value: number | null
@@ -21,22 +15,18 @@ export function ComboboxClub({ value, onChange, required }: ComboboxClubProps) {
     fn: async () => await api.clubAll()
   })
 
+  const opciones = (clubs ?? []).map((club: ClubDTO) => ({
+    value: club.id?.toString() || '',
+    label: club.nombre ?? ''
+  }))
+
   return (
-    <Select
-      value={value?.toString() || ''}
-      onValueChange={(value) => onChange(value ? Number(value) : null)}
-      required={required}
-    >
-      <SelectTrigger>
-        <SelectValue placeholder='Seleccionar club...' />
-      </SelectTrigger>
-      <SelectContent>
-        {clubs?.map((club: ClubDTO) => (
-          <SelectItem key={club.id} value={club.id?.toString() || ''}>
-            {club.nombre}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <ListaDesplegable
+      opciones={opciones}
+      valor={value?.toString() || ''}
+      alCambiar={(v) => onChange(v ? Number(v) : null)}
+      placeholder='Seleccionar club...'
+      requerido={required}
+    />
   )
 }
