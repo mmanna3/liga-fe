@@ -102,7 +102,7 @@ export function FaseItem({
           soloLectura={!fase.sePuedeEditar}
         />
         <div className='flex gap-2 shrink-0'>
-          {faseId > 0 && botonZonas}
+          {botonZonas}
           {fase.sePuedeEditar ? (
             <ModalEliminacion
               titulo='Eliminar fase'

@@ -137,7 +137,10 @@ export default function DetalleTorneo() {
     const faseEnEstado = fasesEstado[faseIndex]
     if (!faseEnEstado) return
 
-    if (puedeEditarTorneo) {
+    const faseTieneId = faseEnEstado.id != null && faseEnEstado.id > 0
+
+    if (!faseTieneId) {
+      // Fase nueva: hay que guardar antes para que exista en el backend y tenga id
       await guardarMutation.mutateAsync(undefined)
       const torneoActualizado = await queryClient.fetchQuery({
         queryKey: ['torneo', torneoId],
@@ -150,11 +153,25 @@ export default function DetalleTorneo() {
       navigate(
         `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${faseActualizada.id}/zonas`
       )
-    } else {
-      const fase = torneoFases[faseIndex]
-      if (!fase?.id) return
+      return
+    }
+
+    if (puedeEditarTorneo) {
+      await guardarMutation.mutateAsync(undefined)
+      const torneoActualizado = await queryClient.fetchQuery({
+        queryKey: ['torneo', torneoId],
+        queryFn: () => api.torneoGET(torneoId)
+      })
+      const faseActualizada = torneoActualizado?.fases?.find(
+        (f) => f.id === faseEnEstado.id
+      )
+      if (!faseActualizada?.id) return
       navigate(
-        `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${fase.id}/zonas`
+        `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${faseActualizada.id}/zonas`
+      )
+    } else {
+      navigate(
+        `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${faseEnEstado.id}/zonas`
       )
     }
   }
