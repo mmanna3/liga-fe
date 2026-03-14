@@ -3,13 +3,13 @@ import type {
   FixtureAlgoritmoFechaDTO,
   IFixtureAlgoritmoFechaDTO
 } from '@/api/clients'
+import { ApiException } from '@/api/clients'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle
 } from '@/design-system/base-ui/card'
-import { Input } from '@/design-system/ykn-ui/input'
 import {
   Table,
   TableBody,
@@ -18,13 +18,15 @@ import {
   TableHeader,
   TableRow
 } from '@/design-system/base-ui/table'
-import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
 import { Boton } from '@/design-system/ykn-ui/boton'
+import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
+import { Input } from '@/design-system/ykn-ui/input'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { toast } from 'sonner'
+import TablaLocalVisitante from './generacion-fixture-tabla-local-visitante'
 
 function agruparPorFecha(
   fechas: FixtureAlgoritmoFechaDTO[] | undefined
@@ -137,6 +139,26 @@ export default function FechasGeneracionFixture() {
       })
       toast.success('Se guardaron los cambios')
       navigate(-1)
+    } catch (err) {
+      let mensaje = 'Error al guardar.'
+      if (ApiException.isApiException(err) && err.status === 400) {
+        try {
+          const body = JSON.parse(err.response) as {
+            title?: string
+            errors?: Record<string, string[]>
+          }
+          if (body?.title) mensaje = body.title
+          else if (body?.errors && typeof body.errors === 'object') {
+            const first = Object.entries(body.errors)[0]
+            mensaje = first
+              ? `${first[0]}: ${first[1]?.join?.(' ') ?? first[1]}`
+              : err.response
+          } else mensaje = err.response || mensaje
+        } catch {
+          mensaje = err.response || mensaje
+        }
+      } else if (err instanceof Error) mensaje = err.message
+      toast.error(mensaje)
     } finally {
       setGuardando(false)
     }
@@ -152,6 +174,8 @@ export default function FechasGeneracionFixture() {
     </p>
   ) : (
     <div className='space-y-4 py-6'>
+      <TablaLocalVisitante fechas={fechasEdicion} cantidadDeEquipos={N} />
+
       <div className='flex justify-end'>
         <Boton
           onClick={handleGuardar}
@@ -161,6 +185,7 @@ export default function FechasGeneracionFixture() {
           Guardar
         </Boton>
       </div>
+
       <div className='grid grid-cols-3 gap-4'>
         {Array.from({ length: numFechas }, (_, i) => i + 1).map((numFecha) => (
           <Card key={numFecha}>
@@ -241,6 +266,7 @@ export default function FechasGeneracionFixture() {
       pathBotonVolver={rutasNavegacion.generacionDeFixtures}
       contenidoEnCard={false}
       contenido={contenido}
+      contenedorClassName='max-w-6xl'
     />
   )
 }
