@@ -22,10 +22,7 @@ export function zonaDtoAEstado(dto: TorneoZonaDTO): ZonaEstado {
         nombre: e.nombre,
         clubNombre: e.club,
         clubId: 0,
-        zonaExcluyente: new ZonaDTO({
-          id: dto.id,
-          nombre: dto.nombre
-        })
+        zonas: [new ZonaDTO({ id: dto.id, nombre: dto.nombre })]
       })
   )
   return {

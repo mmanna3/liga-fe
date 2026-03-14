@@ -29,20 +29,10 @@ export default function TablaEquipo({
       cell: ({ row }) => <span>{row.getValue('clubNombre')}</span>
     },
     {
-      id: 'torneoExcluyente',
-      header: 'Torneo excluyente',
+      id: 'torneos',
+      header: 'Torneos',
       cell: ({ row }) => {
-        const z = row.original.zonaExcluyente
-        if (!z) return <span>-</span>
-        const partes = [z.torneo, z.fase, z.nombre].filter(Boolean)
-        return <span>{partes.join(' · ') || '-'}</span>
-      }
-    },
-    {
-      id: 'otrosTorneos',
-      header: 'Otros torneos',
-      cell: ({ row }) => {
-        const zonas = row.original.zonasNoExcluyentes ?? []
+        const zonas = row.original.zonas ?? []
         const torneos = [...new Set(zonas.map((z) => z.torneo).filter(Boolean))]
         return <span>{torneos.length ? torneos.join(', ') : '-'}</span>
       }

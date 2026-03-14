@@ -54,17 +54,9 @@ export function RenglonBuscadorDeEquipos({
         {equipo.clubNombre ?? '—'}
       </span>
       <span className='text-muted-foreground text-sm truncate'>
-        {equipo.zonaExcluyente
-          ? `(${[
-              equipo.zonaExcluyente.torneo,
-              equipo.zonaExcluyente.fase,
-              equipo.zonaExcluyente.nombre
-            ]
-              .filter(Boolean)
-              .join(' · ')})`
-          : equipo.zonasNoExcluyentes?.length
-            ? `(${[...new Set(equipo.zonasNoExcluyentes.map((z) => z.torneo).filter(Boolean))].join(', ')})`
-            : ''}
+        {equipo.zonas?.length
+          ? `(${[...new Set(equipo.zonas.map((z) => z.torneo).filter(Boolean))].join(', ')})`
+          : ''}
       </span>
     </div>
   )

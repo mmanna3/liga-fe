@@ -22,12 +22,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { DatosFaseLectura } from '../crear-torneo/components/datos-fase-lectura'
 import { TituloFase } from '../crear-torneo/components/titulo-fase'
-import {
-  OPCIONES_EXCLUYENTE,
-  OPCIONES_FORMATO,
-  formatoNombreDesdeId,
-  type FaseEstado
-} from './lib'
+import { OPCIONES_FORMATO, formatoNombreDesdeId, type FaseEstado } from './lib'
 
 interface FaseItemProps {
   torneoId: number
@@ -123,31 +118,18 @@ export function FaseItem({
       </div>
 
       {fase.sePuedeEditar ? (
-        <>
-          <SelectorSimple
-            titulo='Formato'
-            opciones={OPCIONES_FORMATO}
-            valorActual={fase.formato}
-            alElegirOpcion={(v) => onActualizar('formato', v)}
-          />
-          <SelectorSimple
-            titulo='Excluyente'
-            opciones={OPCIONES_EXCLUYENTE}
-            valorActual={fase.excluyente}
-            alElegirOpcion={(v) => onActualizar('excluyente', v)}
-          />
-        </>
+        <SelectorSimple
+          titulo='Formato'
+          opciones={OPCIONES_FORMATO}
+          valorActual={fase.formato}
+          alElegirOpcion={(v) => onActualizar('formato', v)}
+        />
       ) : (
         <DatosFaseLectura
           zonas={faseOriginal?.zonas ?? []}
           formato={
             faseOriginal?.faseFormatoNombre ??
             formatoNombreDesdeId(faseOriginal?.faseFormatoId)
-          }
-          excluyente={
-            faseOriginal?.esExcluyente
-              ? 'Fase excluyente'
-              : 'Fase no excluyente'
           }
         />
       )}

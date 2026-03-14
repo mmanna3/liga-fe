@@ -105,24 +105,10 @@ function ReporteJugadoresDocument({ equipo }: { equipo: EquipoDTO }) {
         </Text>
         <Text style={styles.info}>Club: {equipo.clubNombre}</Text>
         <Text style={styles.info}>
-          Torneo excluyente:{' '}
-          {equipo.zonaExcluyente
+          Torneos:{' '}
+          {equipo.zonas?.length
             ? [
-                equipo.zonaExcluyente.torneo,
-                equipo.zonaExcluyente.fase,
-                equipo.zonaExcluyente.nombre
-              ]
-                .filter(Boolean)
-                .join(' · ')
-            : 'No asignado'}
-        </Text>
-        <Text style={styles.info}>
-          Otros torneos:{' '}
-          {equipo.zonasNoExcluyentes?.length
-            ? [
-                ...new Set(
-                  equipo.zonasNoExcluyentes.map((z) => z.torneo).filter(Boolean)
-                )
+                ...new Set(equipo.zonas.map((z) => z.torneo).filter(Boolean))
               ].join(', ') || '-'
             : '-'}
         </Text>

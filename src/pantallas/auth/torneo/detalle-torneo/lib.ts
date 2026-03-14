@@ -7,26 +7,11 @@ export const OPCIONES_FORMATO: OpcionSelector[] = [
   { id: 'eliminacion-directa', titulo: 'Eliminación directa' }
 ]
 
-export const OPCIONES_EXCLUYENTE: OpcionSelector[] = [
-  {
-    id: 'excluyente',
-    titulo: 'Fase excluyente',
-    descripcion:
-      'Los equipos que juegan esta fase no pueden jugar otra fase excluyente.'
-  },
-  {
-    id: 'no-excluyente',
-    titulo: 'Fase no excluyente',
-    descripcion: 'Cualquier equipo de la liga puede jugar esta fase.'
-  }
-]
-
 export interface FaseEstado {
   id?: number
   numero: number
   nombre: string
   formato: string
-  excluyente: string
   sePuedeEditar: boolean
 }
 

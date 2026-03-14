@@ -57,8 +57,7 @@ export default function EditarEquipo() {
         id: Number(id),
         nombre,
         clubId,
-        zonaExcluyente: equipo?.zonaExcluyente,
-        zonasNoExcluyentes: equipo?.zonasNoExcluyentes ?? []
+        zonas: equipo?.zonas ?? []
       })
     )
   }

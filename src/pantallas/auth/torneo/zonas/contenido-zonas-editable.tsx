@@ -1,7 +1,6 @@
 import { EquipoDTO } from '@/api/clients'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { Plus } from 'lucide-react'
-import { useMemo } from 'react'
 import type { ZonaEstado } from './tipos-zona'
 import { Zona } from './zona-fase'
 
@@ -12,8 +11,6 @@ interface ContenidoZonasEditableProps {
   onDropEquipo: (index: number, equipo: EquipoDTO) => void
   onEliminarZona: (index: number) => void
   onAgregarZona: () => void
-  esExcluyente?: boolean
-  equiposEnZonas?: EquipoDTO[]
 }
 
 /** Contenido compartido: grid de zonas editables + buscador. Usado en CrearZonas y ModificarZonas. */
@@ -23,18 +20,8 @@ export function ContenidoZonasEditable({
   onQuitarEquipo,
   onDropEquipo,
   onEliminarZona,
-  onAgregarZona,
-  esExcluyente = false,
-  equiposEnZonas = []
+  onAgregarZona
 }: ContenidoZonasEditableProps) {
-  const idsEnZonas = useMemo(
-    () =>
-      new Set(
-        equiposEnZonas.map((e) => e.id).filter((id): id is number => id != null)
-      ),
-    [equiposEnZonas]
-  )
-
   return (
     <div className='space-y-6'>
       <Boton
@@ -58,8 +45,6 @@ export function ContenidoZonasEditable({
               onDropEquipo={(eq) => onDropEquipo(index, eq)}
               onEliminar={() => onEliminarZona(index)}
               editable
-              esExcluyente={esExcluyente}
-              idsEnZonas={idsEnZonas}
             />
           </div>
         ))}

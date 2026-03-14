@@ -18,13 +18,11 @@ import {
 interface ModificarZonasProps {
   headerCard?: React.ReactNode
   pathVolver: string
-  esExcluyente?: boolean
 }
 
 export function ModificarZonas({
   headerCard,
-  pathVolver,
-  esExcluyente = false
+  pathVolver
 }: ModificarZonasProps) {
   const navigate = useNavigate()
   const { faseId: faseIdParam } = useParams<{ id: string; faseId: string }>()
@@ -104,8 +102,6 @@ export function ModificarZonas({
           onDropEquipo={agregarEquipoAZona}
           onEliminarZona={eliminarZona}
           onAgregarZona={agregarZona}
-          esExcluyente={esExcluyente}
-          equiposEnZonas={equiposEnZonas}
         />
       }
     />

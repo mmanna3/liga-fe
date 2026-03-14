@@ -216,23 +216,15 @@ export default function DetalleClub() {
                             {equipo.nombre}
                           </Boton>
                           {(() => {
-                            const z = equipo.zonaExcluyente
-                            const torneoExcl = z
-                              ? [z.torneo, z.fase, z.nombre]
-                                  .filter(Boolean)
-                                  .join(' · ')
+                            const texto = equipo.zonas?.length
+                              ? [
+                                  ...new Set(
+                                    equipo.zonas
+                                      .map((z) => z.torneo)
+                                      .filter(Boolean)
+                                  )
+                                ].join(', ')
                               : null
-                            const otros =
-                              equipo.zonasNoExcluyentes?.map((x) => x.torneo) ??
-                              []
-                            const torneosOtros = [
-                              ...new Set(otros.filter(Boolean))
-                            ].join(', ')
-                            const texto = torneoExcl
-                              ? torneosOtros
-                                ? `${torneoExcl} | Otros: ${torneosOtros}`
-                                : torneoExcl
-                              : torneosOtros || null
                             return texto ? (
                               <span className='text-sm px-3 py-1 bg-blue-100 text-blue-800 rounded-full'>
                                 {texto}

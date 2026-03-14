@@ -151,26 +151,10 @@ export default function DetalleEquipo() {
         detalleItems={[
           { clave: 'Club', valor: equipo!.clubNombre! },
           {
-            clave: 'Torneo excluyente',
-            valor: equipo!.zonaExcluyente
+            clave: 'Torneos',
+            valor: equipo!.zonas?.length
               ? [
-                  equipo!.zonaExcluyente.torneo,
-                  equipo!.zonaExcluyente.fase,
-                  equipo!.zonaExcluyente.nombre
-                ]
-                  .filter(Boolean)
-                  .join(' · ')
-              : 'No asignado'
-          },
-          {
-            clave: 'Otros torneos',
-            valor: equipo!.zonasNoExcluyentes?.length
-              ? [
-                  ...new Set(
-                    equipo!.zonasNoExcluyentes
-                      .map((z) => z.torneo)
-                      .filter(Boolean)
-                  )
+                  ...new Set(equipo!.zonas.map((z) => z.torneo).filter(Boolean))
                 ].join(', ') || '-'
               : '-'
           },

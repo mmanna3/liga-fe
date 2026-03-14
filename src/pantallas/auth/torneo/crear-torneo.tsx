@@ -27,20 +27,6 @@ const OPCIONES_FORMATO: OpcionSelector[] = [
   { id: 'eliminacion-directa', titulo: 'Eliminación directa' }
 ]
 
-const OPCIONES_EXCLUYENTE: OpcionSelector[] = [
-  {
-    id: 'excluyente',
-    titulo: 'Fase excluyente',
-    descripcion:
-      'Los equipos que juegan esta fase no pueden jugar otra fase excluyente.'
-  },
-  {
-    id: 'no-excluyente',
-    titulo: 'Fase no excluyente',
-    descripcion: 'Cualquier equipo de la liga puede jugar esta fase.'
-  }
-]
-
 const esquema = z
   .object({
     nombre: z.string().min(1, 'El nombre es requerido'),
@@ -84,7 +70,6 @@ export default function CrearTorneo() {
   const navigate = useNavigate()
   const [tituloFase, setTituloFase] = useState('Primera Fase')
   const [formatoFase, setFormatoFase] = useState('')
-  const [excluyenteFase, setExcluyenteFase] = useState('')
 
   const {
     handleSubmit,
@@ -101,17 +86,16 @@ export default function CrearTorneo() {
       datos: DatosFormulario
       tituloFase: string
       formatoFase: string
-      excluyenteFase: string
     }) => {
-      const { datos, tituloFase, formatoFase, excluyenteFase } = payload
+      const { datos, tituloFase, formatoFase } = payload
       if (datos.agrupadorId == null) {
         throw new Error('El agrupador es requerido')
       }
       if (!tituloFase?.trim()) {
         throw new Error('El nombre de la fase es requerido')
       }
-      if (!formatoFase || !excluyenteFase) {
-        throw new Error('Seleccioná el formato y si la fase es excluyente')
+      if (!formatoFase) {
+        throw new Error('Seleccioná el formato de la fase')
       }
 
       const categoriasValidas = datos.categorias
@@ -131,13 +115,11 @@ export default function CrearTorneo() {
         )
 
       const faseFormatoId = formatoFase === 'todos-contra-todos' ? 1 : 2
-      const esExcluyente = excluyenteFase === 'excluyente'
 
       const primeraFase = new TorneoFaseDTO({
         numero: 1,
         nombre: tituloFase.trim(),
         faseFormatoId,
-        esExcluyente,
         estadoFaseId: 100,
         esVisibleEnApp: true
       })
@@ -175,8 +157,7 @@ export default function CrearTorneo() {
             mutacion.mutate({
               datos: d,
               tituloFase,
-              formatoFase,
-              excluyenteFase
+              formatoFase
             })
           )}
           className='space-y-4'
@@ -223,12 +204,6 @@ export default function CrearTorneo() {
               opciones={OPCIONES_FORMATO}
               valorActual={formatoFase}
               alElegirOpcion={setFormatoFase}
-            />
-            <SelectorSimple
-              titulo='Excluyente'
-              opciones={OPCIONES_EXCLUYENTE}
-              valorActual={excluyenteFase}
-              alElegirOpcion={setExcluyenteFase}
             />
           </div>
 

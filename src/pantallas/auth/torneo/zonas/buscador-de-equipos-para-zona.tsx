@@ -10,28 +10,13 @@ import { RenglonBuscadorDeEquipos } from './renglon-buscador-de-equipos'
 
 /** Convierte EquipoParaZonasDTO a EquipoDTO para compatibilidad con zona-fase y RenglonBuscadorDeEquipos */
 function equipoParaZonasAEquipoDto(e: EquipoParaZonasDTO): EquipoDTO {
-  const zonaExcl = e.zonas?.find((z) => z.esExcluyente)
-  const zonasNoExcl = e.zonas?.filter((z) => !z.esExcluyente) ?? []
   return new EquipoDTO({
     id: e.id,
     nombre: e.nombre,
     clubNombre: e.club,
     codigoAlfanumerico: e.codigoAlfanumerico,
     clubId: 0,
-    zonaExcluyente: zonaExcl
-      ? new ZonaDTO({
-          id: zonaExcl.id,
-          nombre: zonaExcl.nombre,
-          torneo: zonaExcl.torneo,
-          fase: zonaExcl.fase,
-          agrupador: zonaExcl.agrupador,
-          agrupadorId: zonaExcl.agrupadorId,
-          torneoId: zonaExcl.torneoId,
-          faseId: zonaExcl.faseId,
-          esExcluyente: true
-        })
-      : undefined,
-    zonasNoExcluyentes: zonasNoExcl.map(
+    zonas: e.zonas?.map(
       (z) =>
         new ZonaDTO({
           id: z.id,
@@ -41,8 +26,7 @@ function equipoParaZonasAEquipoDto(e: EquipoParaZonasDTO): EquipoDTO {
           agrupador: z.agrupador,
           agrupadorId: z.agrupadorId,
           torneoId: z.torneoId,
-          faseId: z.faseId,
-          esExcluyente: false
+          faseId: z.faseId
         })
     )
   })

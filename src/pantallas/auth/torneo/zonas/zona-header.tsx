@@ -9,14 +9,12 @@ interface ZonaHeaderProps {
   nombreTorneo?: string
   nombreFase?: string
   formatoFase?: string
-  esExcluyente?: boolean
 }
 
 export function ZonaHeader({
   nombreTorneo,
   nombreFase,
-  formatoFase,
-  esExcluyente
+  formatoFase
 }: ZonaHeaderProps) {
   return (
     <CardHeader className='pb-2'>
@@ -25,8 +23,7 @@ export function ZonaHeader({
         Zonas
       </CardTitle>
       <CardDescription className='text-base mt-1'>
-        {nombreTorneo ?? '—'} · {nombreFase ?? '—'} · {formatoFase ?? '—'} ·{' '}
-        {esExcluyente ? 'Es excluyente' : 'No es excluyente'}
+        {nombreTorneo ?? '—'} · {nombreFase ?? '—'} · {formatoFase ?? '—'}
       </CardDescription>
     </CardHeader>
   )

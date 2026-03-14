@@ -6048,8 +6048,7 @@ export class EquipoDTO implements IEquipoDTO {
   clubId!: number
   codigoAlfanumerico?: string | undefined
   clubNombre?: string | undefined
-  zonaExcluyente?: ZonaDTO
-  zonasNoExcluyentes?: ZonaDTO[] | undefined
+  zonas?: ZonaDTO[] | undefined
   jugadores?: JugadorDelEquipoDTO[] | undefined
 
   constructor(data?: IEquipoDTO) {
@@ -6068,13 +6067,9 @@ export class EquipoDTO implements IEquipoDTO {
       this.clubId = _data['clubId']
       this.codigoAlfanumerico = _data['codigoAlfanumerico']
       this.clubNombre = _data['clubNombre']
-      this.zonaExcluyente = _data['zonaExcluyente']
-        ? ZonaDTO.fromJS(_data['zonaExcluyente'])
-        : <any>undefined
-      if (Array.isArray(_data['zonasNoExcluyentes'])) {
-        this.zonasNoExcluyentes = [] as any
-        for (let item of _data['zonasNoExcluyentes'])
-          this.zonasNoExcluyentes!.push(ZonaDTO.fromJS(item))
+      if (Array.isArray(_data['zonas'])) {
+        this.zonas = [] as any
+        for (let item of _data['zonas']) this.zonas!.push(ZonaDTO.fromJS(item))
       }
       if (Array.isArray(_data['jugadores'])) {
         this.jugadores = [] as any
@@ -6098,13 +6093,9 @@ export class EquipoDTO implements IEquipoDTO {
     data['clubId'] = this.clubId
     data['codigoAlfanumerico'] = this.codigoAlfanumerico
     data['clubNombre'] = this.clubNombre
-    data['zonaExcluyente'] = this.zonaExcluyente
-      ? this.zonaExcluyente.toJSON()
-      : <any>undefined
-    if (Array.isArray(this.zonasNoExcluyentes)) {
-      data['zonasNoExcluyentes'] = []
-      for (let item of this.zonasNoExcluyentes)
-        data['zonasNoExcluyentes'].push(item.toJSON())
+    if (Array.isArray(this.zonas)) {
+      data['zonas'] = []
+      for (let item of this.zonas) data['zonas'].push(item.toJSON())
     }
     if (Array.isArray(this.jugadores)) {
       data['jugadores'] = []
@@ -6120,8 +6111,7 @@ export interface IEquipoDTO {
   clubId: number
   codigoAlfanumerico?: string | undefined
   clubNombre?: string | undefined
-  zonaExcluyente?: ZonaDTO
-  zonasNoExcluyentes?: ZonaDTO[] | undefined
+  zonas?: ZonaDTO[] | undefined
   jugadores?: JugadorDelEquipoDTO[] | undefined
 }
 
@@ -7238,7 +7228,6 @@ export class TorneoFaseDTO implements ITorneoFaseDTO {
   estadoFaseId?: number
   estadoFaseNombre?: string | undefined
   esVisibleEnApp?: boolean
-  esExcluyente?: boolean
   sePuedeEditar?: boolean
   zonas?: ZonaDeFaseDTO[] | undefined
 
@@ -7266,7 +7255,6 @@ export class TorneoFaseDTO implements ITorneoFaseDTO {
       this.estadoFaseId = _data['estadoFaseId']
       this.estadoFaseNombre = _data['estadoFaseNombre']
       this.esVisibleEnApp = _data['esVisibleEnApp']
-      this.esExcluyente = _data['esExcluyente']
       this.sePuedeEditar = _data['sePuedeEditar']
       if (Array.isArray(_data['zonas'])) {
         this.zonas = [] as any
@@ -7297,7 +7285,6 @@ export class TorneoFaseDTO implements ITorneoFaseDTO {
     data['estadoFaseId'] = this.estadoFaseId
     data['estadoFaseNombre'] = this.estadoFaseNombre
     data['esVisibleEnApp'] = this.esVisibleEnApp
-    data['esExcluyente'] = this.esExcluyente
     data['sePuedeEditar'] = this.sePuedeEditar
     if (Array.isArray(this.zonas)) {
       data['zonas'] = []
@@ -7319,7 +7306,6 @@ export interface ITorneoFaseDTO {
   estadoFaseId?: number
   estadoFaseNombre?: string | undefined
   esVisibleEnApp?: boolean
-  esExcluyente?: boolean
   sePuedeEditar?: boolean
   zonas?: ZonaDeFaseDTO[] | undefined
 }
@@ -7497,7 +7483,6 @@ export class ZonaDTO implements IZonaDTO {
   agrupadorId?: number | undefined
   fase?: string | undefined
   faseId?: number | undefined
-  esExcluyente?: boolean
 
   constructor(data?: IZonaDTO) {
     if (data) {
@@ -7518,7 +7503,6 @@ export class ZonaDTO implements IZonaDTO {
       this.agrupadorId = _data['agrupadorId']
       this.fase = _data['fase']
       this.faseId = _data['faseId']
-      this.esExcluyente = _data['esExcluyente']
     }
   }
 
@@ -7539,7 +7523,6 @@ export class ZonaDTO implements IZonaDTO {
     data['agrupadorId'] = this.agrupadorId
     data['fase'] = this.fase
     data['faseId'] = this.faseId
-    data['esExcluyente'] = this.esExcluyente
     return data
   }
 }
@@ -7553,7 +7536,6 @@ export interface IZonaDTO {
   agrupadorId?: number | undefined
   fase?: string | undefined
   faseId?: number | undefined
-  esExcluyente?: boolean
 }
 
 export class ZonaDeFaseDTO implements IZonaDeFaseDTO {

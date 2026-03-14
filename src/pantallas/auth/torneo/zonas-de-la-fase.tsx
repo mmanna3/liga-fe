@@ -41,7 +41,6 @@ export default function ZonasDeLaFase() {
       formatoFase={
         fase?.faseFormatoNombre ?? formatoNombreDesdeId(fase?.faseFormatoId)
       }
-      esExcluyente={fase?.esExcluyente}
     />
   )
 
@@ -73,20 +72,8 @@ export default function ZonasDeLaFase() {
   }
 
   if (tieneZonas) {
-    return (
-      <ModificarZonas
-        headerCard={headerCard}
-        pathVolver={pathVolver}
-        esExcluyente={fase?.esExcluyente ?? false}
-      />
-    )
+    return <ModificarZonas headerCard={headerCard} pathVolver={pathVolver} />
   }
 
-  return (
-    <CrearZonas
-      headerCard={headerCard}
-      pathVolver={pathVolver}
-      esExcluyente={fase?.esExcluyente ?? false}
-    />
-  )
+  return <CrearZonas headerCard={headerCard} pathVolver={pathVolver} />
 }

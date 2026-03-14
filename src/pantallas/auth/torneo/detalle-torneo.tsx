@@ -57,7 +57,6 @@ export default function DetalleTorneo() {
         numero: f.numero ?? 0,
         nombre: f.nombre ?? '',
         formato: formatoIdAOpción(f.faseFormatoId),
-        excluyente: f.esExcluyente ? 'excluyente' : 'no-excluyente',
         sePuedeEditar: f.sePuedeEditar !== false
       }))
     )
@@ -85,7 +84,6 @@ export default function DetalleTorneo() {
         numero: maxNumero + 1,
         nombre: 'Nueva fase',
         formato: 'todos-contra-todos',
-        excluyente: 'excluyente',
         sePuedeEditar: true
       }
     ])
@@ -103,13 +101,12 @@ export default function DetalleTorneo() {
     fn: async () => {
       if (!torneo) return
       const fasesValidas = fasesEstado
-        .filter((f) => f.nombre.trim() && f.formato && f.excluyente)
+        .filter((f) => f.nombre.trim() && f.formato)
         .map((f) => ({
           id: f.id,
           numero: f.numero,
           nombre: f.nombre.trim(),
           faseFormatoId: f.formato === 'todos-contra-todos' ? 1 : 2,
-          esExcluyente: f.excluyente === 'excluyente',
           estadoFaseId: 100,
           esVisibleEnApp: true
         }))
