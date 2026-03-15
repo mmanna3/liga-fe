@@ -36,12 +36,13 @@ function ContenidoMenu({
 }) {
   return (
     <>
-      <nav className={navClassName}>
+      <nav className={navClassName} data-testid='menu-nav'>
         {menuItems.map(({ name, path, icono }) => (
           <NavLink
             key={path}
             to={path}
             onClick={onLinkClick}
+            data-testid={`nav-${name.toLowerCase()}`}
             className={({ isActive }) =>
               cn(
                 'flex items-center gap-2 px-3 py-2 rounded-lg transition',
@@ -95,7 +96,10 @@ export default function MenuLateral({
   return (
     <>
       {/* Desktop */}
-      <aside className='admin-sidebar hidden md:flex flex-col w-64 bg-gray-900 text-white p-4'>
+      <aside
+        className='admin-sidebar hidden md:flex flex-col w-64 bg-gray-900 text-white p-4'
+        data-testid='menu-lateral'
+      >
         <ContenidoMenu
           menuItems={menuItems}
           userName={userName}

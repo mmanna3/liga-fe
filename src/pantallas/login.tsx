@@ -61,6 +61,7 @@ export default function Login() {
                 onChange={(e) => setUsuario(e.target.value)}
                 required
                 disabled={isLoading}
+                data-testid='input-usuario'
               />
             </div>
             <div className='space-y-2'>
@@ -74,12 +75,18 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading}
+                data-testid='input-password'
               />
             </div>
             {error && (
               <div className='text-sm text-red-500 text-center'>{error}</div>
             )}
-            <Boton type='submit' className='w-full' estaCargando={isLoading}>
+            <Boton
+              type='submit'
+              className='w-full'
+              estaCargando={isLoading}
+              data-testid='boton-ingresar'
+            >
               Ingresar
             </Boton>
           </form>
