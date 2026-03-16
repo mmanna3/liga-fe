@@ -62,6 +62,7 @@ export function FaseItem({
           variant='outline'
           className='h-10 w-10 min-w-10 p-0'
           estaCargando={estaGuardando}
+          aria-label='Zonas de la fase'
           onClick={() =>
             onIrAZonas ? onIrAZonas(faseIndex) : navigate(pathZonas)
           }
