@@ -8,6 +8,7 @@ import Icono from '@/design-system/ykn-ui/icono'
 import { TextoEditable } from '@/design-system/ykn-ui/texto-editable'
 import { cn } from '@/logica-compartida/utils'
 import { X } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import type { ZonaEstado } from './tipos-zona'
 
 function textoEquipoCompleto(eq: EquipoDTO): string {
@@ -25,6 +26,8 @@ interface ZonaProps {
   onDropEquipo: (equipo: EquipoDTO) => void
   onEliminar?: () => void
   editable?: boolean
+  /** Ruta a la pantalla Fixture de esta zona (solo en modo modificar, cuando la zona tiene id). */
+  pathFixture?: string
 }
 
 export function Zona({
@@ -33,7 +36,8 @@ export function Zona({
   onQuitarEquipo,
   onDropEquipo,
   onEliminar,
-  editable = true
+  editable = true,
+  pathFixture
 }: ZonaProps) {
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
@@ -59,21 +63,39 @@ export function Zona({
       className={cn(
         'rounded-lg p-4 bg-yellow-50 bg-[radial-gradient(#0001_1px,transparent_1px)] bg-size-[8px_8px] min-h-[120px]',
         'transition-colors relative',
-        editable && onEliminar && 'pr-12'
+        (editable && onEliminar) || pathFixture ? 'pr-12' : ''
       )}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
-      {editable && onEliminar && (
-        <button
-          type='button'
-          onClick={onEliminar}
-          className='absolute top-4 right-4 p-1.5 rounded text-muted-foreground hover:text-destructive transition-colors'
-          aria-label='Eliminar zona'
-        >
-          <Icono nombre='Eliminar' className='h-4 w-4' />
-        </button>
-      )}
+      <div className='absolute top-4 right-4 flex items-center gap-1'>
+        {pathFixture && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                to={pathFixture}
+                className='p-1.5 rounded text-muted-foreground hover:text-primary transition-colors'
+                aria-label='Ver fixture'
+              >
+                <Icono nombre='Fixture' className='h-4 w-4' />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side='left'>
+              <p>Fixture</p>
+            </TooltipContent>
+          </Tooltip>
+        )}
+        {editable && onEliminar && (
+          <button
+            type='button'
+            onClick={onEliminar}
+            className='p-1.5 rounded text-muted-foreground hover:text-destructive transition-colors'
+            aria-label='Eliminar zona'
+          >
+            <Icono nombre='Eliminar' className='h-4 w-4' />
+          </button>
+        )}
+      </div>
       <div className='mb-2'>
         {editable ? (
           <TextoEditable

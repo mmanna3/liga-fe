@@ -28,8 +28,12 @@ export function GestorZonas({
   pathVolver
 }: GestorZonasProps) {
   const navigate = useNavigate()
-  const { faseId: faseIdParam } = useParams<{ id: string; faseId: string }>()
+  const { id: torneoIdParam, faseId: faseIdParam } = useParams<{
+    id: string
+    faseId: string
+  }>()
   const queryClient = useQueryClient()
+  const torneoId = Number(torneoIdParam)
   const faseId = Number(faseIdParam)
 
   const { data: zonasApi = [], refetch } = useApiQuery({
@@ -115,6 +119,8 @@ export function GestorZonas({
       contenido={
         <ContenidoZonasEditable
           zonasEstado={zonasEstado}
+          torneoId={torneoId}
+          faseId={faseId}
           onActualizarNombre={(i, n) => actualizarZona(i, 'nombre', n)}
           onQuitarEquipo={quitarEquipoDeZona}
           onDropEquipo={agregarEquipoAZona}
