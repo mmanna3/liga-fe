@@ -41,81 +41,175 @@ const TOKEN_E2E = `${headerB64}.${payloadB64}.fake-e2e-signature`
 // ---------------------------------------------------------------------------
 
 const CLUB_1 = {
-  id: 1, nombre: 'Club Defensores del Norte',
-  direccion: 'Av. Siempreviva 742', localidad: 'Capital',
-  esTechado: false, escudo: null, delegados: [], equipos: []
+  id: 1,
+  nombre: 'Club Defensores del Norte',
+  direccion: 'Av. Siempreviva 742',
+  localidad: 'Capital',
+  esTechado: false,
+  escudo: null,
+  delegados: [],
+  equipos: []
 }
 const CLUB_2 = {
-  id: 2, nombre: 'Atlético San Martín',
-  direccion: null, localidad: 'Villa del Parque',
-  esTechado: true, escudo: null, delegados: [], equipos: []
+  id: 2,
+  nombre: 'Atlético San Martín',
+  direccion: null,
+  localidad: 'Villa del Parque',
+  esTechado: true,
+  escudo: null,
+  delegados: [],
+  equipos: []
 }
 
 const JUGADOR_1 = {
-  id: 1, nombre: 'Juan', apellido: 'González', dni: '12345678',
-  fechaNacimiento: '2010-05-15T00:00:00', delegadoId: null,
-  fotoDNIFrente: null, fotoDNIDorso: null, fotoCarnet: null,
-  equipos: [{ id: 10, nombre: 'Infantil A', torneo: 'Torneo Apertura 2026', estado: 3, club: 'Club Defensores del Norte', motivo: null }]
+  id: 1,
+  nombre: 'Juan',
+  apellido: 'González',
+  dni: '12345678',
+  fechaNacimiento: '2010-05-15T00:00:00',
+  delegadoId: null,
+  fotoDNIFrente: null,
+  fotoDNIDorso: null,
+  fotoCarnet: null,
+  equipos: [
+    {
+      id: 10,
+      nombre: 'Infantil A',
+      torneo: 'Torneo Apertura 2026',
+      estado: 3,
+      club: 'Club Defensores del Norte',
+      motivo: null
+    }
+  ]
 }
 
 const JUGADOR_PENDIENTE = {
-  id: 1, nombre: 'Juan', apellido: 'González', dni: '12345678',
-  fechaNacimiento: '2010-05-15T00:00:00', delegadoId: null,
-  fotoDNIFrente: null, fotoDNIDorso: null, fotoCarnet: null,
-  equipos: [{ id: 10, nombre: 'Infantil A', torneo: 'Torneo Apertura 2026', estado: 1, club: 'Club Defensores del Norte', motivo: null }]
+  id: 1,
+  nombre: 'Juan',
+  apellido: 'González',
+  dni: '12345678',
+  fechaNacimiento: '2010-05-15T00:00:00',
+  delegadoId: null,
+  fotoDNIFrente: null,
+  fotoDNIDorso: null,
+  fotoCarnet: null,
+  equipos: [
+    {
+      id: 10,
+      nombre: 'Infantil A',
+      torneo: 'Torneo Apertura 2026',
+      estado: 1,
+      club: 'Club Defensores del Norte',
+      motivo: null
+    }
+  ]
 }
 
 const DELEGADO_1 = {
-  id: 1, nombre: 'Carlos', apellido: 'Martínez',
-  dni: '87654321', fechaNacimiento: '1990-01-15T00:00:00',
-  email: 'carlos@example.com', telefonoCelular: '1122334455',
-  jugadorId: null, blanqueoPendiente: false,
-  fotoDNIFrente: null, fotoDNIDorso: null,
+  id: 1,
+  nombre: 'Carlos',
+  apellido: 'Martínez',
+  dni: '87654321',
+  fechaNacimiento: '1990-01-15T00:00:00',
+  email: 'carlos@example.com',
+  telefonoCelular: '1122334455',
+  jugadorId: null,
+  blanqueoPendiente: false,
+  fotoDNIFrente: null,
+  fotoDNIDorso: null,
   usuario: { nombreUsuario: 'carlos.martinez' },
-  delegadoClubs: [{ id: 10, clubNombre: 'Club Defensores del Norte', estadoDelegado: { id: 2, estado: 'Activo' } }]
+  delegadoClubs: [
+    {
+      id: 10,
+      clubNombre: 'Club Defensores del Norte',
+      estadoDelegado: { id: 2, estado: 'Activo' }
+    }
+  ]
 }
 
 const DELEGADO_PENDIENTE = {
-  id: 1, nombre: 'Carlos', apellido: 'Martínez',
-  dni: '87654321', fechaNacimiento: '1990-01-15T00:00:00',
-  email: 'carlos@example.com', telefonoCelular: '1122334455',
-  jugadorId: null, blanqueoPendiente: false,
-  fotoDNIFrente: null, fotoDNIDorso: null,
+  id: 1,
+  nombre: 'Carlos',
+  apellido: 'Martínez',
+  dni: '87654321',
+  fechaNacimiento: '1990-01-15T00:00:00',
+  email: 'carlos@example.com',
+  telefonoCelular: '1122334455',
+  jugadorId: null,
+  blanqueoPendiente: false,
+  fotoDNIFrente: null,
+  fotoDNIDorso: null,
   usuario: { nombreUsuario: 'carlos.martinez' },
-  delegadoClubs: [{ id: 10, clubNombre: 'Club Defensores del Norte', estadoDelegado: { id: 1, estado: 'Pendiente de aprobación' } }]
+  delegadoClubs: [
+    {
+      id: 10,
+      clubNombre: 'Club Defensores del Norte',
+      estadoDelegado: { id: 1, estado: 'Pendiente de aprobación' }
+    }
+  ]
 }
 
 const AGRUPADOR_1 = { id: 1, nombre: 'Liga Infantil' }
 
 const EQUIPO_PARA_ZONA_1 = {
-  id: 1, nombre: 'Infantil A', club: 'Club Defensores del Norte',
-  codigoAlfanumerico: 'A001', zonas: []
+  id: 1,
+  nombre: 'Infantil A',
+  club: 'Club Defensores del Norte',
+  codigoAlfanumerico: 'A001',
+  zonas: []
 }
 const EQUIPO_PARA_ZONA_2 = {
-  id: 2, nombre: 'Infantil B', club: 'Atlético San Martín',
-  codigoAlfanumerico: 'B002', zonas: []
+  id: 2,
+  nombre: 'Infantil B',
+  club: 'Atlético San Martín',
+  codigoAlfanumerico: 'B002',
+  zonas: []
 }
 
 const ZONA_1 = {
-  id: 1, nombre: 'Zona A',
-  equipos: [{ id: '1', nombre: 'Infantil A', club: 'Club Defensores del Norte', codigo: 'A001' }]
+  id: 1,
+  nombre: 'Zona A',
+  equipos: [
+    {
+      id: '1',
+      nombre: 'Infantil A',
+      club: 'Club Defensores del Norte',
+      codigo: 'A001'
+    }
+  ]
 }
 
 const TORNEO_1 = {
-  id: 1, nombre: 'Torneo Apertura 2026', anio: 2026,
-  torneoAgrupadorId: null, torneoAgrupadorNombre: null, fases: []
+  id: 1,
+  nombre: 'Torneo Apertura 2026',
+  anio: 2026,
+  torneoAgrupadorId: null,
+  torneoAgrupadorNombre: null,
+  fases: []
 }
 
 const TORNEO_CON_FASES = {
-  id: 1, nombre: 'Torneo Apertura 2026', anio: 2026,
-  torneoAgrupadorId: 1, torneoAgrupadorNombre: 'Liga Infantil',
+  id: 1,
+  nombre: 'Torneo Apertura 2026',
+  anio: 2026,
+  torneoAgrupadorId: 1,
+  torneoAgrupadorNombre: 'Liga Infantil',
   sePuedeEditar: false,
-  categorias: [{ id: 1, nombre: 'Sub 12', anioDesde: 2014, anioHasta: 2015, torneoId: 1 }],
-  fases: [{
-    id: 100, numero: 1, nombre: 'Primera Fase',
-    faseFormatoId: 1, faseFormatoNombre: 'Todos contra todos',
-    sePuedeEditar: false, zonas: [], estadoFaseId: 100
-  }]
+  categorias: [
+    { id: 1, nombre: 'Sub 12', anioDesde: 2014, anioHasta: 2015, torneoId: 1 }
+  ],
+  fases: [
+    {
+      id: 100,
+      numero: 1,
+      nombre: 'Primera Fase',
+      faseFormatoId: 1,
+      faseFormatoNombre: 'Todos contra todos',
+      sePuedeEditar: false,
+      zonas: [],
+      estadoFaseId: 100
+    }
+  ]
 }
 
 const TORNEO_EDITABLE = {
@@ -131,7 +225,8 @@ const TORNEO_EDITABLE = {
 const ROUTES = [
   // Auth
   {
-    method: 'POST', pattern: '/api/Auth/login',
+    method: 'POST',
+    pattern: '/api/Auth/login',
     scenarios: {
       happy: { exito: true, token: TOKEN_E2E },
       credenciales_invalidas: { exito: false, token: null }
@@ -140,28 +235,39 @@ const ROUTES = [
 
   // Clubs — lista
   {
-    method: 'GET', pattern: '/api/Club',
+    method: 'GET',
+    pattern: '/api/Club',
     scenarios: { happy: [], clubs_con_datos: [CLUB_1, CLUB_2] }
   },
   // Clubs — detalle
   {
-    method: 'GET', pattern: /^\/api\/Club\/\d+$/,
+    method: 'GET',
+    pattern: /^\/api\/Club\/\d+$/,
     scenarios: { happy: CLUB_1, clubs_con_datos: CLUB_1 }
   },
   // Clubs — crear
-  { method: 'POST', pattern: '/api/Club', scenarios: { happy: { ...CLUB_1, id: 99 } } },
+  {
+    method: 'POST',
+    pattern: '/api/Club',
+    scenarios: { happy: { ...CLUB_1, id: 99 } }
+  },
   // Clubs — editar
   { method: 'PUT', pattern: /^\/api\/Club\/\d+$/, scenarios: { happy: null } },
   // Clubs — eliminar
   { method: 'DELETE', pattern: /^\/api\/Club\/\d+$/, scenarios: { happy: 1 } },
   // Clubs — cambiar escudo
-  { method: 'PUT', pattern: /^\/api\/Club\/\d+\/cambiar-escudo$/, scenarios: { happy: null } },
+  {
+    method: 'PUT',
+    pattern: /^\/api\/Club\/\d+\/cambiar-escudo$/,
+    scenarios: { happy: null }
+  },
 
   // Equipos — lista
   { method: 'GET', pattern: '/api/Equipo', scenarios: { happy: [] } },
   // Equipos — para zonas
   {
-    method: 'GET', pattern: '/api/Equipo/equipos-para-zonas',
+    method: 'GET',
+    pattern: '/api/Equipo/equipos-para-zonas',
     scenarios: {
       happy: [],
       torneo_zonas_vacio: [EQUIPO_PARA_ZONA_1, EQUIPO_PARA_ZONA_2],
@@ -171,7 +277,8 @@ const ROUTES = [
 
   // Jugadores — lista con filtro
   {
-    method: 'GET', pattern: /^\/api\/Jugador\/listar-con-filtro/,
+    method: 'GET',
+    pattern: /^\/api\/Jugador\/listar-con-filtro/,
     scenarios: {
       happy: [],
       jugadores_con_datos: [JUGADOR_1],
@@ -180,7 +287,8 @@ const ROUTES = [
   },
   // Jugadores — detalle
   {
-    method: 'GET', pattern: /^\/api\/Jugador\/\d+$/,
+    method: 'GET',
+    pattern: /^\/api\/Jugador\/\d+$/,
     scenarios: {
       happy: JUGADOR_1,
       jugadores_con_datos: JUGADOR_1,
@@ -188,13 +296,22 @@ const ROUTES = [
     }
   },
   // Jugadores — aprobar
-  { method: 'POST', pattern: '/api/Jugador/aprobar-jugador', scenarios: { happy: 1 } },
+  {
+    method: 'POST',
+    pattern: '/api/Jugador/aprobar-jugador',
+    scenarios: { happy: 1 }
+  },
   // Jugadores — rechazar
-  { method: 'POST', pattern: '/api/Jugador/rechazar-jugador', scenarios: { happy: 1 } },
+  {
+    method: 'POST',
+    pattern: '/api/Jugador/rechazar-jugador',
+    scenarios: { happy: 1 }
+  },
 
   // Delegados — lista con filtro
   {
-    method: 'GET', pattern: /^\/api\/Delegado\/listar-delegados-con-filtro/,
+    method: 'GET',
+    pattern: /^\/api\/Delegado\/listar-delegados-con-filtro/,
     scenarios: {
       happy: [],
       delegados_con_datos: [DELEGADO_1],
@@ -203,7 +320,8 @@ const ROUTES = [
   },
   // Delegados — detalle
   {
-    method: 'GET', pattern: /^\/api\/Delegado\/\d+$/,
+    method: 'GET',
+    pattern: /^\/api\/Delegado\/\d+$/,
     scenarios: {
       happy: DELEGADO_1,
       delegados_con_datos: DELEGADO_1,
@@ -211,13 +329,22 @@ const ROUTES = [
     }
   },
   // Delegados — aprobar
-  { method: 'POST', pattern: '/api/Delegado/aprobar-delegado-en-el-club', scenarios: { happy: {} } },
+  {
+    method: 'POST',
+    pattern: '/api/Delegado/aprobar-delegado-en-el-club',
+    scenarios: { happy: {} }
+  },
   // Delegados — eliminar/rechazar
-  { method: 'DELETE', pattern: /^\/api\/Delegado\/\d+$/, scenarios: { happy: 1 } },
+  {
+    method: 'DELETE',
+    pattern: /^\/api\/Delegado\/\d+$/,
+    scenarios: { happy: 1 }
+  },
 
   // Torneos — filtrar
   {
-    method: 'GET', pattern: /^\/api\/Torneo\/filtrar/,
+    method: 'GET',
+    pattern: /^\/api\/Torneo\/filtrar/,
     scenarios: {
       happy: [],
       torneos_con_datos: [TORNEO_1],
@@ -228,7 +355,8 @@ const ROUTES = [
   },
   // Torneos — detalle
   {
-    method: 'GET', pattern: /^\/api\/Torneo\/\d+$/,
+    method: 'GET',
+    pattern: /^\/api\/Torneo\/\d+$/,
     scenarios: {
       happy: TORNEO_1,
       torneo_detalle: TORNEO_CON_FASES,
@@ -239,17 +367,30 @@ const ROUTES = [
   },
   // Torneos — crear
   {
-    method: 'POST', pattern: '/api/Torneo',
-    scenarios: { happy: TORNEO_1, torneo_con_agrupadores: { ...TORNEO_1, id: 2 } }
+    method: 'POST',
+    pattern: '/api/Torneo',
+    scenarios: {
+      happy: TORNEO_1,
+      torneo_con_agrupadores: { ...TORNEO_1, id: 2 }
+    }
   },
   // Torneos — actualizar
-  { method: 'PUT', pattern: /^\/api\/Torneo\/\d+$/, scenarios: { happy: null } },
+  {
+    method: 'PUT',
+    pattern: /^\/api\/Torneo\/\d+$/,
+    scenarios: { happy: null }
+  },
   // Torneos — eliminar
-  { method: 'DELETE', pattern: /^\/api\/Torneo\/\d+$/, scenarios: { happy: 1 } },
+  {
+    method: 'DELETE',
+    pattern: /^\/api\/Torneo\/\d+$/,
+    scenarios: { happy: 1 }
+  },
 
   // Agrupadores de torneo
   {
-    method: 'GET', pattern: '/api/TorneoAgrupador',
+    method: 'GET',
+    pattern: '/api/TorneoAgrupador',
     scenarios: {
       happy: [],
       torneo_con_agrupadores: [AGRUPADOR_1],
@@ -262,7 +403,8 @@ const ROUTES = [
 
   // Zonas de una fase — lista
   {
-    method: 'GET', pattern: /^\/api\/TorneoFase\/\d+\/zonas$/,
+    method: 'GET',
+    pattern: /^\/api\/TorneoFase\/\d+\/zonas$/,
     scenarios: {
       happy: [],
       torneo_zonas_vacio: [],
@@ -271,12 +413,14 @@ const ROUTES = [
   },
   // Zonas — crear masivamente
   {
-    method: 'POST', pattern: /^\/api\/TorneoFase\/\d+\/zonas\/crear-zonas-masivamente$/,
+    method: 'POST',
+    pattern: /^\/api\/TorneoFase\/\d+\/zonas\/crear-zonas-masivamente$/,
     scenarios: { happy: [ZONA_1] }
   },
   // Zonas — modificar masivamente
   {
-    method: 'PUT', pattern: /^\/api\/TorneoFase\/\d+\/zonas\/modificar-zonas-masivamente$/,
+    method: 'PUT',
+    pattern: /^\/api\/TorneoFase\/\d+\/zonas\/modificar-zonas-masivamente$/,
     scenarios: { happy: null }
   }
 ]
@@ -315,7 +459,9 @@ const server = http.createServer((req, res) => {
 
   if (req.method === 'POST' && pathname === '/_set-scenario') {
     let body = ''
-    req.on('data', (chunk) => { body += chunk })
+    req.on('data', (chunk) => {
+      body += chunk
+    })
     req.on('end', () => {
       try {
         const { scenario } = JSON.parse(body)
@@ -336,7 +482,9 @@ const server = http.createServer((req, res) => {
   if (!route) {
     console.warn(`[mock] sin handler para ${req.method} ${pathname}`)
     res.writeHead(404, { 'Content-Type': 'application/json' })
-    res.end(JSON.stringify({ error: `Sin mock para ${req.method} ${pathname}` }))
+    res.end(
+      JSON.stringify({ error: `Sin mock para ${req.method} ${pathname}` })
+    )
     return
   }
 
@@ -348,7 +496,9 @@ const server = http.createServer((req, res) => {
 
   if (req.method === 'POST' || req.method === 'PUT') {
     let body = ''
-    req.on('data', (chunk) => { body += chunk })
+    req.on('data', (chunk) => {
+      body += chunk
+    })
     req.on('end', respond)
   } else {
     respond()
