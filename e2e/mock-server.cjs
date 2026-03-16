@@ -88,17 +88,17 @@ const DELEGADO_PENDIENTE = {
 const AGRUPADOR_1 = { id: 1, nombre: 'Liga Infantil' }
 
 const EQUIPO_PARA_ZONA_1 = {
-  id: 1, nombre: 'Infantil A', clubNombre: 'Club Defensores del Norte',
-  codEquipo: 'A001', zonas: []
+  id: 1, nombre: 'Infantil A', club: 'Club Defensores del Norte',
+  codigoAlfanumerico: 'A001', zonas: []
 }
 const EQUIPO_PARA_ZONA_2 = {
-  id: 2, nombre: 'Infantil B', clubNombre: 'Atlético San Martín',
-  codEquipo: 'B002', zonas: []
+  id: 2, nombre: 'Infantil B', club: 'Atlético San Martín',
+  codigoAlfanumerico: 'B002', zonas: []
 }
 
 const ZONA_1 = {
   id: 1, nombre: 'Zona A',
-  equipos: [{ id: 1, nombre: 'Infantil A', clubNombre: 'Club Defensores del Norte', codEquipo: 'A001', zonas: [] }]
+  equipos: [{ id: '1', nombre: 'Infantil A', club: 'Club Defensores del Norte', codigo: 'A001' }]
 }
 
 const TORNEO_1 = {

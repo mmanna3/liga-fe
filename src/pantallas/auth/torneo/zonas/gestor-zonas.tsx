@@ -1,11 +1,12 @@
 import { api } from '@/api/api'
+import { TorneoZonaDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BuscadorDeEquiposParaZona } from './buscador-de-equipos-para-zona'
 import { ContenidoZonasEditable } from './contenido-zonas-editable'
@@ -55,15 +56,24 @@ export function GestorZonas({
     modo === 'crear' ? [{ nombre: 'Zona A', equipos: [] }] : []
   )
 
+  // Solo sincronizar desde la API en la carga inicial.
+  // Un refetch en background (ej: window focus) NO debe pisar los cambios del usuario.
+  const yaInicializado = useRef(false)
   useEffect(() => {
-    if (modo === 'modificar' && zonasApi.length > 0) {
+    if (
+      modo === 'modificar' &&
+      zonasApi.length > 0 &&
+      !yaInicializado.current
+    ) {
       setZonasEstado(zonasApi.map(zonaDtoAEstado))
+      yaInicializado.current = true
     }
   }, [zonasApi, setZonasEstado, modo])
 
-  const guardarMutation = useApiMutation<void>({
-    fn: async () => {
-      const body = zonasEstado.map((z) => zonaEstadoADto(z, faseId))
+  // El body se pasa como argumento a mutate() para que siempre sea el estado actual,
+  // independientemente de qué closure tenga useMutation internamente.
+  const guardarMutation = useApiMutation<TorneoZonaDTO[]>({
+    fn: async (body) => {
       if (modo === 'crear') {
         return await api.crearZonasMasivamente(faseId, body)
       } else {
@@ -84,18 +94,15 @@ export function GestorZonas({
     }
   })
 
-  const validacion = useMemo(
-    () => validarZonasParaGuardar(zonasEstado),
-    [zonasEstado]
-  )
-
   const handleGuardar = useCallback(() => {
+    const validacion = validarZonasParaGuardar(zonasEstado)
     if (!validacion.valido) {
       toast.error(validacion.mensaje)
       return
     }
-    guardarMutation.mutate(undefined)
-  }, [guardarMutation, validacion.valido, validacion.mensaje])
+    const body = zonasEstado.map((z) => zonaEstadoADto(z, faseId))
+    guardarMutation.mutate(body)
+  }, [zonasEstado, faseId, guardarMutation])
 
   return (
     <LayoutSegundoNivel
