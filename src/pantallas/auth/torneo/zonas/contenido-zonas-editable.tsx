@@ -1,5 +1,4 @@
 import { EquipoDTO } from '@/api/clients'
-import { rutasNavegacion } from '@/ruteo/rutas'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { Plus } from 'lucide-react'
 import type { ZonaEstado } from './tipos-zona'
@@ -7,25 +6,23 @@ import { Zona } from './zona-fase'
 
 interface ContenidoZonasEditableProps {
   zonasEstado: ZonaEstado[]
-  torneoId: number
-  faseId: number
   onActualizarNombre: (index: number, nombre: string) => void
   onQuitarEquipo: (index: number, equipoId: number) => void
   onDropEquipo: (index: number, equipo: EquipoDTO) => void
   onEliminarZona: (index: number) => void
   onAgregarZona: () => void
+  onIrAFixture?: (zonaId: number) => void
 }
 
 /** Contenido compartido: grid de zonas editables + buscador. Usado en CrearZonas y ModificarZonas. */
 export function ContenidoZonasEditable({
   zonasEstado,
-  torneoId,
-  faseId,
   onActualizarNombre,
   onQuitarEquipo,
   onDropEquipo,
   onEliminarZona,
-  onAgregarZona
+  onAgregarZona,
+  onIrAFixture
 }: ContenidoZonasEditableProps) {
   return (
     <div className='space-y-6'>
@@ -50,9 +47,9 @@ export function ContenidoZonasEditable({
               onDropEquipo={(eq) => onDropEquipo(index, eq)}
               onEliminar={() => onEliminarZona(index)}
               editable
-              pathFixture={
-                zona.id != null
-                  ? `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${faseId}/zonas/${zona.id}/fixture`
+              onIrAFixture={
+                zona.id != null && onIrAFixture
+                  ? () => onIrAFixture(zona.id!)
                   : undefined
               }
             />

@@ -8,7 +8,6 @@ import Icono from '@/design-system/ykn-ui/icono'
 import { TextoEditable } from '@/design-system/ykn-ui/texto-editable'
 import { cn } from '@/logica-compartida/utils'
 import { X } from 'lucide-react'
-import { Link } from 'react-router-dom'
 import type { ZonaEstado } from './tipos-zona'
 
 function textoEquipoCompleto(eq: EquipoDTO): string {
@@ -26,8 +25,8 @@ interface ZonaProps {
   onDropEquipo: (equipo: EquipoDTO) => void
   onEliminar?: () => void
   editable?: boolean
-  /** Ruta a la pantalla Fixture de esta zona (solo en modo modificar, cuando la zona tiene id). */
-  pathFixture?: string
+  /** Guarda zonas y navega al fixture. Solo disponible cuando la zona ya tiene id. */
+  onIrAFixture?: () => void
 }
 
 export function Zona({
@@ -37,7 +36,7 @@ export function Zona({
   onDropEquipo,
   onEliminar,
   editable = true,
-  pathFixture
+  onIrAFixture
 }: ZonaProps) {
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
@@ -64,22 +63,23 @@ export function Zona({
       className={cn(
         'rounded-lg p-4 bg-yellow-50 bg-[radial-gradient(#0001_1px,transparent_1px)] bg-size-[8px_8px] min-h-[120px]',
         'transition-colors relative',
-        (editable && onEliminar) || pathFixture ? 'pr-12' : ''
+        (editable && onEliminar) || onIrAFixture ? 'pr-12' : ''
       )}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
       <div className='absolute top-4 right-4 flex items-center gap-1'>
-        {pathFixture && (
+        {onIrAFixture && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <Link
-                to={pathFixture}
+              <button
+                type='button'
+                onClick={onIrAFixture}
                 className='p-1.5 rounded text-muted-foreground hover:text-primary transition-colors'
                 aria-label='Ver fixture'
               >
                 <Icono nombre='Fixture' className='h-4 w-4' />
-              </Link>
+              </button>
             </TooltipTrigger>
             <TooltipContent side='left'>
               <p>Fixture</p>

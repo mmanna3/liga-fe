@@ -6,6 +6,7 @@ import { Boton } from '@/design-system/ykn-ui/boton'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { rutasNavegacion } from '@/ruteo/rutas'
 import { useCallback, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BuscadorDeEquiposParaZona } from './buscador-de-equipos-para-zona'
@@ -70,8 +71,8 @@ export function GestorZonas({
     }
   }, [zonasApi, setZonasEstado, modo])
 
-  // El body se pasa como argumento a mutate() para que siempre sea el estado actual,
-  // independientemente de qué closure tenga useMutation internamente.
+  const navegarHacia = useRef(pathVolver)
+
   const guardarMutation = useApiMutation<TorneoZonaDTO[]>({
     fn: async (body) => {
       if (modo === 'crear') {
@@ -90,19 +91,36 @@ export function GestorZonas({
       } else {
         refetch()
       }
-      navigate(pathVolver)
+      navigate(navegarHacia.current)
     }
   })
 
-  const handleGuardar = useCallback(() => {
-    const validacion = validarZonasParaGuardar(zonasEstado)
-    if (!validacion.valido) {
-      toast.error(validacion.mensaje)
-      return
-    }
-    const body = zonasEstado.map((z) => zonaEstadoADto(z, faseId))
-    guardarMutation.mutate(body)
-  }, [zonasEstado, faseId, guardarMutation])
+  const guardar = useCallback(
+    (destino: string) => {
+      const validacion = validarZonasParaGuardar(zonasEstado)
+      if (!validacion.valido) {
+        toast.error(validacion.mensaje)
+        return
+      }
+      navegarHacia.current = destino
+      const body = zonasEstado.map((z) => zonaEstadoADto(z, faseId))
+      guardarMutation.mutate(body)
+    },
+    [zonasEstado, faseId, guardarMutation]
+  )
+
+  const handleGuardar = useCallback(
+    () => guardar(pathVolver),
+    [guardar, pathVolver]
+  )
+
+  const handleIrAFixture = useCallback(
+    (zonaId: number) => {
+      const path = `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${faseId}/zonas/${zonaId}/fixture`
+      guardar(path)
+    },
+    [guardar, torneoId, faseId]
+  )
 
   return (
     <LayoutSegundoNivel
@@ -126,13 +144,12 @@ export function GestorZonas({
       contenido={
         <ContenidoZonasEditable
           zonasEstado={zonasEstado}
-          torneoId={torneoId}
-          faseId={faseId}
           onActualizarNombre={(i, n) => actualizarZona(i, 'nombre', n)}
           onQuitarEquipo={quitarEquipoDeZona}
           onDropEquipo={agregarEquipoAZona}
           onEliminarZona={eliminarZona}
           onAgregarZona={agregarZona}
+          onIrAFixture={modo === 'modificar' ? handleIrAFixture : undefined}
         />
       }
     />
