@@ -1,20 +1,20 @@
-import type { EquipoDeLaZonaDTO } from '@/api/clients'
+import { api } from '@/api/api'
+import type { EquipoDeLaZonaDTO, FixtureAlgoritmoDTO } from '@/api/clients'
+import useApiQuery from '@/api/hooks/use-api-query'
+import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
+import { rutasNavegacion } from '@/ruteo/rutas'
 import {
   DndContext,
   type DragEndEvent,
   PointerSensor,
+  useDraggable,
+  useDroppable,
   useSensor,
   useSensors
 } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
-import { api } from '@/api/api'
-import useApiQuery from '@/api/hooks/use-api-query'
-import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
-import { rutasNavegacion } from '@/ruteo/rutas'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useDraggable } from '@dnd-kit/core'
-import { useDroppable } from '@dnd-kit/core'
 
 type ItemFixture =
   | { type: 'equipo'; equipo: EquipoDeLaZonaDTO }
@@ -149,6 +149,11 @@ export default function Fixture() {
     activado: Number.isFinite(faseId)
   })
 
+  const { data: algoritmos = [] } = useApiQuery({
+    key: ['fixtureAlgoritmoAll'],
+    fn: () => api.fixtureAlgoritmoAll()
+  })
+
   const fase = useMemo(
     () => torneo?.fases?.find((f) => f.id === faseId),
     [torneo, faseId]
@@ -242,10 +247,28 @@ export default function Fixture() {
     zona?.nombre ?? '—'
   ].join(' · ')
 
+  const cantidadEquipos = listaOrdenada.length
+
   const contenido = !zona ? (
     <p className='text-muted-foreground py-4'>Cargando zona...</p>
   ) : (
     <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+      <p className='text-sm text-muted-foreground mb-4'>
+        Algoritmos de fixture disponibles:{' '}
+        {algoritmos.map((a: FixtureAlgoritmoDTO) => (
+          <span key={a.id ?? a.cantidadDeEquipos}>
+            <span
+              className={
+                a.cantidadDeEquipos === cantidadEquipos
+                  ? 'py-1 px-2 rounded-md mx-1 bg-primary text-primary-foreground'
+                  : 'py-1 px-2 rounded-md bg-muted-foreground/10 mx-1 text-muted-foreground'
+              }
+            >
+              {a.cantidadDeEquipos}
+            </span>
+          </span>
+        ))}
+      </p>
       <div className='flex gap-8 py-6'>
         <div className='flex-1 min-w-0'>
           <h3 className='text-sm font-medium text-muted-foreground mb-2'>
