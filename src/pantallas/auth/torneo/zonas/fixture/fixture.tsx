@@ -173,6 +173,7 @@ export default function Fixture() {
       subtitulo={subtitulo}
       iconoTitulo='Fixture'
       pathBotonVolver={pathVolver}
+      contenedorClassName='max-w-6xl'
       contenido={contenido}
     />
   )

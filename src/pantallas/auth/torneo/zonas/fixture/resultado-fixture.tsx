@@ -8,7 +8,7 @@ function buildFechasConJornadas(
   fechas: FixtureAlgoritmoFechaDTO[]
 ): FechaConJornadas[] {
   const map = new Map<number, JornadaItem[]>()
-  for (const f of fechas) {
+  for (const f of [...fechas].sort((a, b) => (a.id ?? 0) - (b.id ?? 0))) {
     if (!map.has(f.fecha)) map.set(f.fecha, [])
     map
       .get(f.fecha)!
@@ -37,25 +37,52 @@ export function ResultadoFixture({
   const fechasConJornadas = buildFechasConJornadas(fechas)
 
   return (
-    <div className='space-y-4 py-4'>
+    <div className='grid grid-cols-3 gap-4 py-4'>
       {fechasConJornadas.map((f) => (
         <div key={f.fecha} className='rounded-lg border bg-card p-4'>
-          <h3 className='font-semibold mb-3'>Fecha {f.fecha}</h3>
-          <div className='grid grid-cols-2 gap-4 text-xs font-medium text-muted-foreground mb-1'>
-            <span>LOCAL</span>
-            <span>VISITANTE</span>
+          <h3 className='font-semibold mb-3 text-center'>Fecha {f.fecha}</h3>
+
+          <div className='grid grid-cols-[10px_1fr_1fr_10px] gap-4 text-xs font-medium text-muted-foreground mb-1'>
+            <span></span>
+            <span className='text-right'>LOCAL</span>
+            <span className='text-left'>VISITANTE</span>
+            <span></span>
           </div>
+
           <div className='space-y-1'>
-            {f.jornadas.map((j, i) => (
-              <div key={i} className='grid grid-cols-2 gap-4 text-sm py-1'>
-                <span>
-                  {j.local} {resolverNombre(j.local, lista)}
-                </span>
-                <span className='text-muted-foreground'>
-                  {j.visitante} {resolverNombre(j.visitante, lista)}
-                </span>
-              </div>
-            ))}
+            <div className='space-y-1 [&>div:not(:last-child)]:border-b [&>div:not(:last-child)]:border-muted-foreground/10'>
+              {f.jornadas.map((j, i) => {
+                const localNombre = resolverNombre(j.local, lista)
+                const visitanteNombre = resolverNombre(j.visitante, lista)
+
+                const getClase = (nombre: string) => {
+                  if (nombre === 'Interzonal')
+                    return 'text-blue-700 bg-blue-100 px-1 rounded'
+                  if (nombre === 'Libre')
+                    return 'text-yellow-700 bg-yellow-100 px-1 rounded'
+                  return ''
+                }
+
+                return (
+                  <div
+                    key={i}
+                    className='grid grid-cols-[10px_1fr_1fr_10px] gap-4 text-sm py-1'
+                  >
+                    <span className='text-center'>{j.local}</span>
+
+                    <span className={`text-right ${getClase(localNombre)}`}>
+                      {localNombre}
+                    </span>
+
+                    <span className={`text-left ${getClase(visitanteNombre)}`}>
+                      {visitanteNombre}
+                    </span>
+
+                    <span className='text-center'>{j.visitante}</span>
+                  </div>
+                )
+              })}
+            </div>
           </div>
         </div>
       ))}
