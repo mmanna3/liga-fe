@@ -1,7 +1,9 @@
 import { api } from '@/api/api'
 import type { EquipoDeLaZonaDTO, FixtureAlgoritmoDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
+import { Button } from '@/design-system/base-ui/button'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
+import Icono from '@/design-system/ykn-ui/icono'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import {
   DndContext,
@@ -249,6 +251,17 @@ export default function Fixture() {
 
   const cantidadEquipos = listaOrdenada.length
 
+  const algoritmoSeleccionado = useMemo(
+    () =>
+      algoritmos.find(
+        (a: FixtureAlgoritmoDTO) => a.cantidadDeEquipos === cantidadEquipos
+      ),
+    [algoritmos, cantidadEquipos]
+  )
+
+  const tieneAlgoritmoConfigurado =
+    (algoritmoSeleccionado?.fechas?.length ?? 0) > 0
+
   const contenido = !zona ? (
     <p className='text-muted-foreground py-4'>Cargando zona...</p>
   ) : (
@@ -269,6 +282,20 @@ export default function Fixture() {
           </span>
         ))}
       </p>
+      <div className='flex items-center gap-4 mb-2'>
+        <Button disabled={!tieneAlgoritmoConfigurado}>Generar fixture</Button>
+        {algoritmoSeleccionado != null && !tieneAlgoritmoConfigurado && (
+          <p className='text-sm text-muted-foreground'>
+            No hay fixture para este número de equipos. Configuralo desde el
+            menú{' '}
+            <span className='inline-flex items-center gap-1'>
+              <Icono nombre='Configuracion' className='size-4' />
+              Configuración
+            </span>
+            .
+          </p>
+        )}
+      </div>
       <div className='flex gap-8 py-6'>
         <div className='flex-1 min-w-0'>
           <h3 className='text-sm font-medium text-muted-foreground mb-2'>
