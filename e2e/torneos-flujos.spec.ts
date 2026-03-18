@@ -166,7 +166,7 @@ test.describe('Torneos — flujos profundos', () => {
     await page.getByText('Infantil A').first().dragTo(zonaCard)
 
     await page.getByRole('button', { name: 'Guardar' }).click()
-    await expect(page).toHaveURL('/torneos/detalle/1')
+    await expect(page.getByText('Zonas creadas correctamente')).toBeVisible()
 
     expect(bodyEnviado).toBeTruthy()
     const body = bodyEnviado as Array<{ nombre: string; equipos: Array<{ id: string }> }>
@@ -206,7 +206,7 @@ test.describe('Torneos — flujos profundos', () => {
     await expect(zonaCard.getByText('Infantil B')).toBeVisible()
 
     await page.getByRole('button', { name: 'Guardar' }).click()
-    await expect(page).toHaveURL('/torneos/detalle/1')
+    await expect(page.getByText('Zonas actualizadas correctamente')).toBeVisible()
 
     expect(bodyEnviado).toBeTruthy()
     const body = bodyEnviado as Array<{ nombre: string; equipos: Array<{ id: string }> }>
@@ -242,7 +242,7 @@ test.describe('Torneos — flujos profundos', () => {
     await inputNombre.blur()
 
     await page.getByRole('button', { name: 'Guardar' }).click()
-    await expect(page).toHaveURL('/torneos/detalle/1')
+    await expect(page.getByText('Zonas actualizadas correctamente')).toBeVisible()
 
     expect(bodyEnviado).toBeTruthy()
     const body = bodyEnviado as Array<{ nombre: string }>
@@ -279,7 +279,7 @@ test.describe('Torneos — flujos profundos', () => {
     await page.getByText('Infantil B').first().dragTo(zonaCard)
 
     await page.getByRole('button', { name: 'Guardar' }).click()
-    await expect(page).toHaveURL('/torneos/detalle/1')
+    await expect(page.getByText('Zonas actualizadas correctamente')).toBeVisible()
 
     expect(bodyEnviado).toBeTruthy()
     const body = bodyEnviado as Array<{
@@ -325,7 +325,7 @@ test.describe('Torneos — flujos profundos', () => {
     await rowInfantilA.getByRole('button', { name: 'Quitar equipo' }).click()
 
     await page.getByRole('button', { name: 'Guardar' }).click()
-    await expect(page).toHaveURL('/torneos/detalle/1')
+    await expect(page.getByText('Zonas actualizadas correctamente')).toBeVisible()
 
     expect(bodyEnviado).toBeTruthy()
     const body = bodyEnviado as Array<{ equipos: Array<{ id: string }> }>
@@ -367,7 +367,7 @@ test.describe('Torneos — flujos profundos', () => {
     await page.getByText('Infantil B').first().dragTo(zona2)
 
     await page.getByRole('button', { name: 'Guardar' }).click()
-    await expect(page).toHaveURL('/torneos/detalle/1')
+    await expect(page.getByText('Zonas creadas correctamente')).toBeVisible()
 
     expect(bodyEnviado).toBeTruthy()
     const body = bodyEnviado as Array<{ nombre: string; equipos: Array<{ id: string }> }>
