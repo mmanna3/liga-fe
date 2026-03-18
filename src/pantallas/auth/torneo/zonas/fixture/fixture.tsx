@@ -8,6 +8,7 @@ import { rutasNavegacion } from '@/ruteo/rutas'
 import { DndContext } from '@dnd-kit/core'
 import { useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { FechasZona } from './fechas-zona'
 import { FilaLista, SlotDroppable } from './fila-lista'
 import { EspecialDraggable, ZonaDerechaDroppable } from './panel-especiales'
 import { ResultadoFixture } from './resultado-fixture'
@@ -39,6 +40,12 @@ export default function Fixture() {
   const { data: algoritmos = [] } = useApiQuery({
     key: ['fixtureAlgoritmoAll'],
     fn: () => api.fixtureAlgoritmoAll()
+  })
+
+  const { data: fechasExistentes = [] } = useApiQuery({
+    key: ['fechasAll', zonaId],
+    fn: () => api.fechasAll(zonaId),
+    activado: Number.isFinite(zonaId)
   })
 
   const fase = useMemo(
@@ -83,6 +90,8 @@ export default function Fixture() {
 
   const contenido = !zona ? (
     <p className='text-muted-foreground py-4'>Cargando zona...</p>
+  ) : fechasExistentes.length > 0 ? (
+    <FechasZona fechas={fechasExistentes} equipos={zona.equipos ?? []} />
   ) : (
     <>
       {listaFijada == null && (
@@ -162,6 +171,7 @@ export default function Fixture() {
         <ResultadoFixture
           fechas={algoritmoSeleccionado!.fechas!}
           lista={listaFijada}
+          zonaId={zonaId}
         />
       )}
     </>

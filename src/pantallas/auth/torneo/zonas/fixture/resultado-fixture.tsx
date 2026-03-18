@@ -1,4 +1,12 @@
-import type { FixtureAlgoritmoFechaDTO } from '@/api/clients'
+import { api } from '@/api/api'
+import {
+  type FixtureAlgoritmoFechaDTO,
+  type JornadaDTO,
+  type TorneoFechaDTO
+} from '@/api/clients'
+import useApiMutation from '@/api/hooks/use-api-mutation'
+import { Boton } from '@/design-system/ykn-ui/boton'
+import { useQueryClient } from '@tanstack/react-query'
 import type { ItemFixture } from './types'
 
 type JornadaItem = { local: number; visitante: number }
@@ -27,65 +35,146 @@ function resolverNombre(numero: number, lista: ItemFixture[]): string {
   return item.equipo.nombre ?? '—'
 }
 
+function buildJornada(j: JornadaItem, lista: ItemFixture[]): JornadaDTO {
+  const local = lista[j.local - 1]
+  const visitante = lista[j.visitante - 1]
+
+  if (local?.type === 'equipo' && visitante?.type === 'equipo') {
+    return {
+      tipo: 'Normal',
+      resultadosVerificados: false,
+      localId: local.equipo.id!,
+      visitanteId: visitante.equipo.id!
+    } as unknown as JornadaDTO
+  }
+  if (local?.type === 'equipo' && visitante?.type === 'especial') {
+    return visitante.valor === 'LIBRE'
+      ? ({
+          tipo: 'Libre',
+          resultadosVerificados: false,
+          equipoId: local.equipo.id!
+        } as unknown as JornadaDTO)
+      : ({
+          tipo: 'Interzonal',
+          resultadosVerificados: false,
+          equipoId: local.equipo.id!,
+          localOVisitante: 1
+        } as unknown as JornadaDTO)
+  }
+  if (local?.type === 'especial' && visitante?.type === 'equipo') {
+    return local.valor === 'LIBRE'
+      ? ({
+          tipo: 'Libre',
+          resultadosVerificados: false,
+          equipoId: visitante.equipo.id!
+        } as unknown as JornadaDTO)
+      : ({
+          tipo: 'Interzonal',
+          resultadosVerificados: false,
+          equipoId: visitante.equipo.id!,
+          localOVisitante: 2
+        } as unknown as JornadaDTO)
+  }
+  return {
+    tipo: 'Normal',
+    resultadosVerificados: false
+  } as unknown as JornadaDTO
+}
+
+function buildPayload(
+  fechas: FixtureAlgoritmoFechaDTO[],
+  lista: ItemFixture[]
+): TorneoFechaDTO[] {
+  return buildFechasConJornadas(fechas).map(
+    (f) =>
+      ({
+        numero: f.fecha,
+        esVisibleEnApp: false,
+        jornadas: f.jornadas.map((j) => buildJornada(j, lista))
+      }) as TorneoFechaDTO
+  )
+}
+
+const claseEspecial = (nombre: string) => {
+  if (nombre === 'Interzonal') return 'text-blue-700 bg-blue-100 px-1 rounded'
+  if (nombre === 'Libre') return 'text-yellow-700 bg-yellow-100 px-1 rounded'
+  return ''
+}
+
 export function ResultadoFixture({
   fechas,
-  lista
+  lista,
+  zonaId
 }: {
   fechas: FixtureAlgoritmoFechaDTO[]
   lista: ItemFixture[]
+  zonaId: number
 }) {
+  const queryClient = useQueryClient()
   const fechasConJornadas = buildFechasConJornadas(fechas)
 
+  const crearMutation = useApiMutation<TorneoFechaDTO[]>({
+    fn: (body) => api.crearFechasMasivamente(zonaId, body),
+    mensajeDeExito: 'Fechas y jornadas creadas correctamente',
+    antesDeMensajeExito: () => {
+      queryClient.invalidateQueries({ queryKey: ['fechasAll', zonaId] })
+    }
+  })
+
   return (
-    <div className='grid grid-cols-3 gap-4 py-4'>
-      {fechasConJornadas.map((f) => (
-        <div key={f.fecha} className='rounded-lg border bg-card p-4'>
-          <h3 className='font-semibold mb-3 text-center'>Fecha {f.fecha}</h3>
+    <div>
+      <div className='mb-4'>
+        <Boton
+          onClick={() => crearMutation.mutate(buildPayload(fechas, lista))}
+          estaCargando={crearMutation.isPending}
+        >
+          Crear fechas y jornadas
+        </Boton>
+        <p className='text-sm text-muted-foreground font-light mt-2 ml-1'>
+          El fixture generado podrá modificarse luego.
+        </p>
+      </div>
 
-          <div className='grid grid-cols-[10px_1fr_1fr_10px] gap-4 text-xs font-medium text-muted-foreground mb-1'>
-            <span></span>
-            <span className='text-right'>LOCAL</span>
-            <span className='text-left'>VISITANTE</span>
-            <span></span>
-          </div>
+      <div className='grid grid-cols-3 gap-4 py-4'>
+        {fechasConJornadas.map((f) => (
+          <div key={f.fecha} className='rounded-lg border bg-card p-4'>
+            <h3 className='font-semibold mb-3 text-center'>Fecha {f.fecha}</h3>
 
-          <div className='space-y-1'>
+            <div className='grid grid-cols-[10px_1fr_1fr_10px] gap-4 text-xs font-medium text-muted-foreground mb-1'>
+              <span></span>
+              <span className='text-right'>LOCAL</span>
+              <span className='text-left'>VISITANTE</span>
+              <span></span>
+            </div>
+
             <div className='space-y-1 [&>div:not(:last-child)]:border-b [&>div:not(:last-child)]:border-muted-foreground/10'>
               {f.jornadas.map((j, i) => {
                 const localNombre = resolverNombre(j.local, lista)
                 const visitanteNombre = resolverNombre(j.visitante, lista)
-
-                const getClase = (nombre: string) => {
-                  if (nombre === 'Interzonal')
-                    return 'text-blue-700 bg-blue-100 px-1 rounded'
-                  if (nombre === 'Libre')
-                    return 'text-yellow-700 bg-yellow-100 px-1 rounded'
-                  return ''
-                }
-
                 return (
                   <div
                     key={i}
                     className='grid grid-cols-[10px_1fr_1fr_10px] gap-4 text-sm py-1'
                   >
                     <span className='text-center'>{j.local}</span>
-
-                    <span className={`text-right ${getClase(localNombre)}`}>
+                    <span
+                      className={`text-right ${claseEspecial(localNombre)}`}
+                    >
                       {localNombre}
                     </span>
-
-                    <span className={`text-left ${getClase(visitanteNombre)}`}>
+                    <span
+                      className={`text-left ${claseEspecial(visitanteNombre)}`}
+                    >
                       {visitanteNombre}
                     </span>
-
                     <span className='text-center'>{j.visitante}</span>
                   </div>
                 )
               })}
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   )
 }

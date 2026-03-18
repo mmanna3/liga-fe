@@ -179,6 +179,46 @@ const ZONA_1 = {
   ]
 }
 
+const ZONA_FIXTURE = {
+  id: 1,
+  nombre: 'Zona A',
+  equipos: [
+    { id: 1, nombre: 'Infantil A', club: 'Club Defensores del Norte', codigo: 'A001' },
+    { id: 2, nombre: 'Infantil B', club: 'Atlético San Martín', codigo: 'B002' }
+  ]
+}
+
+const ALGORITMO_2_EQUIPOS = {
+  id: 1,
+  fixtureAlgoritmoId: 1,
+  cantidadDeEquipos: 2,
+  fechas: [{ id: 1, fecha: 1, equipoLocal: 1, equipoVisitante: 2 }]
+}
+
+const ALGORITMO_2_EQUIPOS_SIN_FECHAS = {
+  id: 1,
+  fixtureAlgoritmoId: 1,
+  cantidadDeEquipos: 2,
+  fechas: []
+}
+
+const FECHA_ZONA_1 = {
+  id: 1,
+  numero: 1,
+  zonaId: 1,
+  esVisibleEnApp: false,
+  jornadas: [
+    {
+      id: 1,
+      tipo: 'Normal',
+      resultadosVerificados: false,
+      fechaId: 1,
+      localEquipoId: 1,
+      visitanteEquipoId: 2
+    }
+  ]
+}
+
 const TORNEO_1 = {
   id: 1,
   nombre: 'Torneo Apertura 2026',
@@ -362,7 +402,10 @@ const ROUTES = [
       torneo_detalle: TORNEO_CON_FASES,
       torneo_editable: TORNEO_EDITABLE,
       torneo_zonas_vacio: TORNEO_CON_FASES,
-      torneo_zonas_con_datos: TORNEO_CON_FASES
+      torneo_zonas_con_datos: TORNEO_CON_FASES,
+      fixture_sin_fechas: TORNEO_CON_FASES,
+      fixture_algoritmo_sin_configurar: TORNEO_CON_FASES,
+      fixture_con_fechas: TORNEO_CON_FASES
     }
   },
   // Torneos — crear
@@ -408,7 +451,10 @@ const ROUTES = [
     scenarios: {
       happy: [],
       torneo_zonas_vacio: [],
-      torneo_zonas_con_datos: [ZONA_1]
+      torneo_zonas_con_datos: [ZONA_1],
+      fixture_sin_fechas: [ZONA_FIXTURE],
+      fixture_algoritmo_sin_configurar: [ZONA_FIXTURE],
+      fixture_con_fechas: [ZONA_FIXTURE]
     }
   },
   // Zonas — crear masivamente
@@ -422,6 +468,37 @@ const ROUTES = [
     method: 'PUT',
     pattern: /^\/api\/TorneoFase\/\d+\/zonas\/modificar-zonas-masivamente$/,
     scenarios: { happy: null }
+  },
+
+  // FixtureAlgoritmo — lista
+  {
+    method: 'GET',
+    pattern: '/api/FixtureAlgoritmo',
+    scenarios: {
+      happy: [],
+      fixture_sin_fechas: [ALGORITMO_2_EQUIPOS],
+      fixture_algoritmo_sin_configurar: [ALGORITMO_2_EQUIPOS_SIN_FECHAS],
+      fixture_con_fechas: [ALGORITMO_2_EQUIPOS]
+    }
+  },
+
+  // Fechas de una zona — lista
+  {
+    method: 'GET',
+    pattern: /^\/api\/TorneoZona\/\d+\/fechas$/,
+    scenarios: {
+      happy: [],
+      fixture_sin_fechas: [],
+      fixture_algoritmo_sin_configurar: [],
+      fixture_con_fechas: [FECHA_ZONA_1]
+    }
+  },
+
+  // Fechas — crear masivamente
+  {
+    method: 'POST',
+    pattern: /^\/api\/TorneoZona\/\d+\/fechas\/crear-fechas-masivamente$/,
+    scenarios: { happy: [FECHA_ZONA_1] }
   }
 ]
 
