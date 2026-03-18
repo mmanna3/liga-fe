@@ -205,6 +205,7 @@ const ALGORITMO_2_EQUIPOS_SIN_FECHAS = {
 const FECHA_ZONA_1 = {
   id: 1,
   numero: 1,
+  dia: null,
   zonaId: 1,
   esVisibleEnApp: false,
   jornadas: [
@@ -213,10 +214,17 @@ const FECHA_ZONA_1 = {
       tipo: 'Normal',
       resultadosVerificados: false,
       fechaId: 1,
-      localEquipoId: 1,
-      visitanteEquipoId: 2
+      localId: 1,
+      visitanteId: 2,
+      local: 'Infantil A',
+      visitante: 'Infantil B'
     }
   ]
+}
+
+const FECHA_ZONA_CON_DIA = {
+  ...FECHA_ZONA_1,
+  dia: '2026-05-15T00:00:00'
 }
 
 const TORNEO_1 = {
@@ -405,7 +413,8 @@ const ROUTES = [
       torneo_zonas_con_datos: TORNEO_CON_FASES,
       fixture_sin_fechas: TORNEO_CON_FASES,
       fixture_algoritmo_sin_configurar: TORNEO_CON_FASES,
-      fixture_con_fechas: TORNEO_CON_FASES
+      fixture_con_fechas: TORNEO_CON_FASES,
+      fixture_con_fechas_con_dia: TORNEO_CON_FASES
     }
   },
   // Torneos — crear
@@ -454,7 +463,8 @@ const ROUTES = [
       torneo_zonas_con_datos: [ZONA_1],
       fixture_sin_fechas: [ZONA_FIXTURE],
       fixture_algoritmo_sin_configurar: [ZONA_FIXTURE],
-      fixture_con_fechas: [ZONA_FIXTURE]
+      fixture_con_fechas: [ZONA_FIXTURE],
+      fixture_con_fechas_con_dia: [ZONA_FIXTURE]
     }
   },
   // Zonas — crear masivamente
@@ -478,7 +488,8 @@ const ROUTES = [
       happy: [],
       fixture_sin_fechas: [ALGORITMO_2_EQUIPOS],
       fixture_algoritmo_sin_configurar: [ALGORITMO_2_EQUIPOS_SIN_FECHAS],
-      fixture_con_fechas: [ALGORITMO_2_EQUIPOS]
+      fixture_con_fechas: [ALGORITMO_2_EQUIPOS],
+      fixture_con_fechas_con_dia: [ALGORITMO_2_EQUIPOS]
     }
   },
 
@@ -490,7 +501,8 @@ const ROUTES = [
       happy: [],
       fixture_sin_fechas: [],
       fixture_algoritmo_sin_configurar: [],
-      fixture_con_fechas: [FECHA_ZONA_1]
+      fixture_con_fechas: [FECHA_ZONA_1],
+      fixture_con_fechas_con_dia: [FECHA_ZONA_CON_DIA]
     }
   },
 
@@ -499,6 +511,27 @@ const ROUTES = [
     method: 'POST',
     pattern: /^\/api\/TorneoZona\/\d+\/fechas\/crear-fechas-masivamente$/,
     scenarios: { happy: [FECHA_ZONA_1] }
+  },
+
+  // Fechas — crear individual
+  {
+    method: 'POST',
+    pattern: /^\/api\/TorneoZona\/\d+\/fechas$/,
+    scenarios: { happy: FECHA_ZONA_1, fixture_con_fechas: FECHA_ZONA_1, fixture_con_fechas_con_dia: FECHA_ZONA_CON_DIA }
+  },
+
+  // Fechas — editar
+  {
+    method: 'PUT',
+    pattern: /^\/api\/TorneoZona\/\d+\/fechas\/\d+$/,
+    scenarios: { happy: FECHA_ZONA_1, fixture_con_fechas: FECHA_ZONA_1, fixture_con_fechas_con_dia: FECHA_ZONA_CON_DIA }
+  },
+
+  // Fechas — eliminar
+  {
+    method: 'DELETE',
+    pattern: /^\/api\/TorneoZona\/\d+\/fechas\/\d+$/,
+    scenarios: { happy: 1, fixture_con_fechas: 1, fixture_con_fechas_con_dia: 1 }
   }
 ]
 

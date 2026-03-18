@@ -91,7 +91,11 @@ export default function Fixture() {
   const contenido = !zona ? (
     <p className='text-muted-foreground py-4'>Cargando zona...</p>
   ) : fechasExistentes.length > 0 ? (
-    <FechasZona fechas={fechasExistentes} equipos={zona.equipos ?? []} />
+    <FechasZona
+      fechas={fechasExistentes}
+      equipos={zona.equipos ?? []}
+      zonaId={zonaId}
+    />
   ) : (
     <>
       {listaFijada == null && (
