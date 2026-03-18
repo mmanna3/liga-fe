@@ -71,7 +71,7 @@ export function GestorZonas({
     }
   }, [zonasApi, setZonasEstado, modo])
 
-  const navegarHacia = useRef(pathVolver)
+  const navegarHacia = useRef<string | null>(null)
 
   const guardarMutation = useApiMutation<TorneoZonaDTO[]>({
     fn: async (body) => {
@@ -91,28 +91,28 @@ export function GestorZonas({
       } else {
         refetch()
       }
-      navigate(navegarHacia.current)
+      const destino = navegarHacia.current
+      if (destino != null) {
+        navigate(destino)
+      }
     }
   })
 
   const guardar = useCallback(
-    (destino: string) => {
+    (destino?: string) => {
       const validacion = validarZonasParaGuardar(zonasEstado)
       if (!validacion.valido) {
         toast.error(validacion.mensaje)
         return
       }
-      navegarHacia.current = destino
+      navegarHacia.current = destino ?? null
       const body = zonasEstado.map((z) => zonaEstadoADto(z, faseId))
       guardarMutation.mutate(body)
     },
     [zonasEstado, faseId, guardarMutation]
   )
 
-  const handleGuardar = useCallback(
-    () => guardar(pathVolver),
-    [guardar, pathVolver]
-  )
+  const handleGuardar = useCallback(() => guardar(), [guardar])
 
   const handleIrAFixture = useCallback(
     (zonaId: number) => {
