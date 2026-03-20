@@ -2,6 +2,7 @@ import { api } from '@/api/api'
 import { TorneoCategoriaDTO, TorneoDTO, TorneoFaseDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
+import { Card, CardContent } from '@/design-system/base-ui/card'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/ykn-ui/input'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
@@ -181,6 +182,7 @@ export default function DetalleTorneo() {
       titulo={`${torneo.nombre}`}
       pathBotonVolver={rutasNavegacion.torneos}
       maxWidth='2xl'
+      contenidoEnCard={false}
       botonera={{
         iconos: [
           {
@@ -205,75 +207,86 @@ export default function DetalleTorneo() {
           }}
           className='space-y-4'
         >
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
-            {puedeEditarTorneo ? (
-              <>
-                <Input
-                  tipo='text'
-                  titulo='Nombre del torneo *'
-                  value={nombre}
-                  onChange={(e) => setNombre(e.target.value)}
-                  placeholder='Ej: Torneo Anual 2026'
+          <Card className='shadow-md'>
+            <CardContent className='pt-6 space-y-4'>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
+                {puedeEditarTorneo ? (
+                  <>
+                    <Input
+                      tipo='text'
+                      titulo='Nombre del torneo *'
+                      value={nombre}
+                      onChange={(e) => setNombre(e.target.value)}
+                      placeholder='Ej: Torneo Anual 2026'
+                    />
+                    <Input
+                      tipo='number'
+                      titulo='Temporada/Año *'
+                      value={temporada}
+                      onChange={(e) => setTemporada(e.target.value)}
+                      placeholder='2026'
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div>
+                      <label className='text-sm font-semibold text-muted-foreground block mb-2'>
+                        Nombre del torneo
+                      </label>
+                      <p className='font-medium'>{nombre || '—'}</p>
+                    </div>
+                    <div>
+                      <label className='text-sm font-semibold text-muted-foreground block mb-2'>
+                        Temporada/Año
+                      </label>
+                      <p className='font-medium'>{temporada || '—'}</p>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {puedeEditarTorneo ? (
+                <SelectorAgrupador
+                  valor={agrupadorId}
+                  alCambiar={setAgrupadorId}
                 />
-                <Input
-                  tipo='number'
-                  titulo='Temporada/Año *'
-                  value={temporada}
-                  onChange={(e) => setTemporada(e.target.value)}
-                  placeholder='2026'
-                />
-              </>
-            ) : (
-              <>
+              ) : (
                 <div>
                   <label className='text-sm font-semibold text-muted-foreground block mb-2'>
-                    Nombre del torneo
+                    Agrupador
                   </label>
-                  <p className='font-medium'>{nombre || '—'}</p>
+                  <p className='font-medium'>
+                    {torneo.torneoAgrupadorNombre ?? '—'}
+                  </p>
                 </div>
-                <div>
-                  <label className='text-sm font-semibold text-muted-foreground block mb-2'>
-                    Temporada/Año
-                  </label>
-                  <p className='font-medium'>{temporada || '—'}</p>
-                </div>
-              </>
-            )}
-          </div>
+              )}
 
-          {puedeEditarTorneo ? (
-            <SelectorAgrupador valor={agrupadorId} alCambiar={setAgrupadorId} />
-          ) : (
-            <div>
-              <label className='text-sm font-semibold text-muted-foreground block mb-2'>
-                Agrupador
-              </label>
-              <p className='font-medium'>
-                {torneo.torneoAgrupadorNombre ?? '—'}
-              </p>
-            </div>
-          )}
-
-          <Categorias
-            valor={categorias}
-            alCambiar={setCategorias}
-            soloLectura={false}
-          />
+              <Categorias
+                valor={categorias}
+                alCambiar={setCategorias}
+                soloLectura={false}
+              />
+            </CardContent>
+          </Card>
 
           {fasesEstado.map((fase, index) => (
-            <FaseItem
-              key={fase.id ?? index}
-              torneoId={torneoId}
-              fase={fase}
-              faseIndex={index}
-              faseOriginal={torneoFases[index]}
-              onActualizar={(campo, valor) =>
-                actualizarFase(index, campo, valor)
-              }
-              onEliminar={() => eliminarFase(index)}
-              onIrAZonas={irAZonas}
-              estaGuardando={guardarMutation.isPending}
-            />
+            <Card key={fase.id ?? index} className='shadow-md'>
+              <CardContent className='pt-6'>
+                <FaseItem
+                  torneoId={torneoId}
+                  fase={fase}
+                  faseIndex={index}
+                  faseOriginal={torneoFases[index]}
+                  onActualizar={(campo, valor) =>
+                    actualizarFase(index, campo, valor)
+                  }
+                  onEliminar={() => eliminarFase(index)}
+                  onIrAZonas={irAZonas}
+                  estaGuardando={guardarMutation.isPending}
+                  enCard
+                />
+              </CardContent>
+            </Card>
           ))}
 
           <Boton

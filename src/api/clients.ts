@@ -8277,6 +8277,7 @@ export interface IZonaDTO {
 }
 
 export class ZonaDeFaseDTO implements IZonaDeFaseDTO {
+  id?: number
   nombre?: string | undefined
   cantidadDeEquipos?: number
 
@@ -8291,6 +8292,7 @@ export class ZonaDeFaseDTO implements IZonaDeFaseDTO {
 
   init(_data?: any) {
     if (_data) {
+      this.id = _data['id']
       this.nombre = _data['nombre']
       this.cantidadDeEquipos = _data['cantidadDeEquipos']
     }
@@ -8305,6 +8307,7 @@ export class ZonaDeFaseDTO implements IZonaDeFaseDTO {
 
   toJSON(data?: any) {
     data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
     data['nombre'] = this.nombre
     data['cantidadDeEquipos'] = this.cantidadDeEquipos
     return data
@@ -8312,6 +8315,7 @@ export class ZonaDeFaseDTO implements IZonaDeFaseDTO {
 }
 
 export interface IZonaDeFaseDTO {
+  id?: number
   nombre?: string | undefined
   cantidadDeEquipos?: number
 }

@@ -35,6 +35,8 @@ interface FaseItemProps {
   onIrAZonas?: (faseIndex: number) => void
   /** Muestra loading en el botón de zonas mientras se guarda */
   estaGuardando?: boolean
+  /** Si true, no muestra borde superior ni padding extra (para uso dentro de Card) */
+  enCard?: boolean
 }
 
 export function FaseItem({
@@ -45,7 +47,8 @@ export function FaseItem({
   onActualizar,
   onEliminar,
   onIrAZonas,
-  estaGuardando = false
+  estaGuardando = false,
+  enCard = false
 }: FaseItemProps) {
   const navigate = useNavigate()
   const [mostrarNoSePuedeEliminar, setMostrarNoSePuedeEliminar] =
@@ -94,7 +97,7 @@ export function FaseItem({
   )
 
   return (
-    <div className='space-y-4 pt-6 border-t'>
+    <div className={enCard ? 'space-y-4' : 'space-y-4 pt-6 border-t'}>
       <div className='flex items-start justify-between gap-2'>
         <TituloFase
           numero={fase.numero}
@@ -132,6 +135,8 @@ export function FaseItem({
             faseOriginal?.faseFormatoNombre ??
             formatoNombreDesdeId(faseOriginal?.faseFormatoId)
           }
+          torneoId={torneoId}
+          faseId={faseId}
         />
       )}
 

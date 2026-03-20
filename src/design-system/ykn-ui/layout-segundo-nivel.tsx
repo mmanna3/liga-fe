@@ -41,6 +41,8 @@ interface LayoutSegundoNivelProps {
   maxWidth?: 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl'
   /** Texto opcional debajo del título */
   subtitulo?: string
+  /** Si false, el contenido no se envuelve en una Card (ej. cuando son varias cards separadas) */
+  contenidoEnCard?: boolean
 }
 
 export default function LayoutSegundoNivel({
@@ -53,10 +55,28 @@ export default function LayoutSegundoNivel({
   footer,
   botonera,
   maxWidth = 'lg',
-  subtitulo
+  subtitulo,
+  contenidoEnCard = true
 }: LayoutSegundoNivelProps) {
   const maxWidthClass = MAX_WIDTH_CLASSES[maxWidth] ?? 'max-w-lg'
   const mostrarHeaderEnCardPrincipal = !headerCard && titulo != null
+
+  const headerCardContent = mostrarHeaderEnCardPrincipal && (
+    <CardHeader
+      className={
+        headerClassName ??
+        (botonera ? 'flex flex-row items-start justify-between' : undefined)
+      }
+    >
+      <div>
+        <CardTitle className='text-3xl font-semibold text-gray-900'>
+          {titulo}
+        </CardTitle>
+        {subtitulo && <CardDescription>{subtitulo}</CardDescription>}
+      </div>
+      {botonera && <Botonera {...botonera} />}
+    </CardHeader>
+  )
 
   return (
     <div className={`${maxWidthClass} mx-auto px-4 space-y-4`}>
@@ -68,32 +88,26 @@ export default function LayoutSegundoNivel({
           {headerCard}
         </Card>
       )}
-      <Card className='p-6 rounded-xl border bg-white shadow-md'>
-        {mostrarHeaderEnCardPrincipal && (
-          <CardHeader
-            className={
-              headerClassName ??
-              (botonera
-                ? 'flex flex-row items-start justify-between'
-                : undefined)
-            }
+      {contenidoEnCard ? (
+        <Card className='p-6 rounded-xl border bg-white shadow-md'>
+          {headerCardContent}
+          <CardContent
+            className={mostrarHeaderEnCardPrincipal ? 'pt-0' : undefined}
           >
-            <div>
-              <CardTitle className='text-3xl font-semibold text-gray-900'>
-                {titulo}
-              </CardTitle>
-              {subtitulo && <CardDescription>{subtitulo}</CardDescription>}
-            </div>
-            {botonera && <Botonera {...botonera} />}
-          </CardHeader>
-        )}
-        <CardContent
-          className={mostrarHeaderEnCardPrincipal ? 'pt-0' : undefined}
-        >
+            {contenido}
+          </CardContent>
+          {footer}
+        </Card>
+      ) : (
+        <>
+          {headerCardContent && (
+            <Card className='p-6 rounded-xl border bg-white shadow-md'>
+              {headerCardContent}
+            </Card>
+          )}
           {contenido}
-        </CardContent>
-        {footer}
-      </Card>
+        </>
+      )}
       {cardAdicional && (
         <Card className='p-6 rounded-xl border bg-white shadow-md'>
           <CardContent>{cardAdicional}</CardContent>
