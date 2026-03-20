@@ -38,8 +38,8 @@ export default function DetalleTorneo() {
   })
 
   const torneoFases = torneo?.fases ?? []
-  const puedeEditarTorneo = torneo?.sePuedeEditar !== false
 
+  const [editando, setEditando] = useState(false)
   const [nombre, setNombre] = useState('')
   const [temporada, setTemporada] = useState('')
   const [agrupadorId, setAgrupadorId] = useState<number | null>(null)
@@ -90,12 +90,54 @@ export default function DetalleTorneo() {
     ])
   }
 
+  function handleCancelarEdicion() {
+    if (!torneo) return
+    setNombre(torneo.nombre ?? '')
+    setTemporada(String(torneo.anio ?? ''))
+    setAgrupadorId(torneo.torneoAgrupadorId ?? null)
+    setCategorias(categoriasDtoACategoria(torneo.categorias ?? []))
+    setFasesEstado(
+      (torneo.fases ?? []).map((f) => ({
+        id: f.id,
+        numero: f.numero ?? 0,
+        nombre: f.nombre ?? '',
+        formato: formatoIdAOpción(f.faseFormatoId),
+        sePuedeEditar: f.sePuedeEditar !== false
+      }))
+    )
+    setEditando(false)
+  }
+
   const eliminarMutation = useApiMutation<void>({
     fn: async () => {
       await api.torneoDELETE(torneoId)
     },
     antesDeMensajeExito: () => navigate(rutasNavegacion.torneos),
     mensajeDeExito: `El torneo "${torneo?.nombre ?? ''}" fue eliminado.`
+  })
+
+  const guardarDatosBasicosMutation = useApiMutation<void>({
+    fn: async () => {
+      if (!torneo) return
+      const body = new TorneoDTO({
+        id: torneo.id,
+        nombre,
+        anio: parseInt(temporada, 10),
+        torneoAgrupadorId: agrupadorId ?? undefined,
+        categorias: categoriasACategoriaDto(categorias).map(
+          (c) => new TorneoCategoriaDTO({ ...c, torneoId })
+        ),
+        fases: (torneo.fases ?? []).map(
+          (f) => new TorneoFaseDTO({ ...f, torneoId })
+        )
+      })
+      await api.torneoPUT(torneoId, body)
+    },
+    antesDeMensajeExito: () => {
+      refetch()
+      setEditando(false)
+    },
+    mensajeDeExito: 'Torneo actualizado correctamente'
   })
 
   const guardarMutation = useApiMutation<void>({
@@ -157,24 +199,18 @@ export default function DetalleTorneo() {
       return
     }
 
-    if (puedeEditarTorneo) {
-      await guardarMutation.mutateAsync(undefined)
-      const torneoActualizado = await queryClient.fetchQuery({
-        queryKey: ['torneo', torneoId],
-        queryFn: () => api.torneoGET(torneoId)
-      })
-      const faseActualizada = torneoActualizado?.fases?.find(
-        (f) => f.id === faseEnEstado.id
-      )
-      if (!faseActualizada?.id) return
-      navigate(
-        `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${faseActualizada.id}/zonas`
-      )
-    } else {
-      navigate(
-        `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${faseEnEstado.id}/zonas`
-      )
-    }
+    await guardarMutation.mutateAsync(undefined)
+    const torneoActualizado = await queryClient.fetchQuery({
+      queryKey: ['torneo', torneoId],
+      queryFn: () => api.torneoGET(torneoId)
+    })
+    const faseActualizada = torneoActualizado?.fases?.find(
+      (f) => f.id === faseEnEstado.id
+    )
+    if (!faseActualizada?.id) return
+    navigate(
+      `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${faseActualizada.id}/zonas`
+    )
   }
 
   return (
@@ -185,6 +221,11 @@ export default function DetalleTorneo() {
       contenidoEnCard={false}
       botonera={{
         iconos: [
+          {
+            icono: 'Editar' as const,
+            alApretar: () => setEditando(true),
+            tooltip: 'Editar torneo'
+          },
           {
             alApretar: () => eliminarMutation.mutate(undefined),
             tooltip: 'Eliminar',
@@ -200,17 +241,11 @@ export default function DetalleTorneo() {
         ]
       }}
       contenido={
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            guardarMutation.mutate(undefined)
-          }}
-          className='space-y-4'
-        >
+        <div className='space-y-4'>
           <Card className='shadow-md'>
             <CardContent className='pt-6 space-y-4'>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
-                {puedeEditarTorneo ? (
+                {editando ? (
                   <>
                     <Input
                       tipo='text'
@@ -245,7 +280,7 @@ export default function DetalleTorneo() {
                 )}
               </div>
 
-              {puedeEditarTorneo ? (
+              {editando ? (
                 <SelectorAgrupador
                   valor={agrupadorId}
                   alCambiar={setAgrupadorId}
@@ -264,8 +299,26 @@ export default function DetalleTorneo() {
               <Categorias
                 valor={categorias}
                 alCambiar={setCategorias}
-                soloLectura={false}
+                soloLectura={!editando}
               />
+
+              {editando && (
+                <div className='flex justify-end gap-2 pt-2 border-t'>
+                  <Boton
+                    variant='outline'
+                    onClick={handleCancelarEdicion}
+                    disabled={guardarDatosBasicosMutation.isPending}
+                  >
+                    Cancelar
+                  </Boton>
+                  <Boton
+                    estaCargando={guardarDatosBasicosMutation.isPending}
+                    onClick={() => guardarDatosBasicosMutation.mutate()}
+                  >
+                    Guardar
+                  </Boton>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -289,29 +342,19 @@ export default function DetalleTorneo() {
             </Card>
           ))}
 
-          <Boton
-            type='button'
-            variant='outline'
-            size='sm'
-            onClick={agregarFase}
-            className='my-2'
-          >
-            <Plus className='w-3 h-3' />
-            Agregar fase
-          </Boton>
-
-          {puedeEditarTorneo && (
-            <div className='flex justify-end pt-4'>
-              <Boton
-                type='submit'
-                className='h-11 w-40 text-sm'
-                estaCargando={guardarMutation.isPending}
-              >
-                Guardar
-              </Boton>
-            </div>
+          {editando && (
+            <Boton
+              type='button'
+              variant='outline'
+              size='sm'
+              onClick={agregarFase}
+              className='my-2'
+            >
+              <Plus className='w-3 h-3' />
+              Agregar fase
+            </Boton>
           )}
-        </form>
+        </div>
       }
     />
   )
