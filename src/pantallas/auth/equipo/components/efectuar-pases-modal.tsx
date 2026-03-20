@@ -1,16 +1,16 @@
 import { api } from '@/api/api'
 import { EfectuarPaseDTO, EquipoDTO } from '@/api/clients'
-import useApiQuery from '@/api/hooks/use-api-query'
 import useApiMutation from '@/api/hooks/use-api-mutation'
+import useApiQuery from '@/api/hooks/use-api-query'
+import { DialogFooter } from '@/design-system/base-ui/dialog'
 import { Input } from '@/design-system/base-ui/input'
+import { Label } from '@/design-system/base-ui/label'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger
 } from '@/design-system/base-ui/popover'
 import { Boton } from '@/design-system/ykn-ui/boton'
-import { DialogFooter } from '@/design-system/base-ui/dialog'
-import { Label } from '@/design-system/base-ui/label'
 import ModalConAccion from '@/design-system/ykn-ui/modal-con-accion'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
@@ -102,15 +102,20 @@ export default function EfectuarPasesModal({
     const t = busquedaEquipo.trim().toLowerCase()
     if (!t) return equiposDisponibles
     return equiposDisponibles.filter(
-      (e) => e.nombre?.toLowerCase().includes(t) ?? false
+      (e) =>
+        (e.nombre?.toLowerCase().includes(t) ?? false) ||
+        (e.codigoAlfanumerico?.toLowerCase().includes(t) ?? false)
     )
   }, [equiposDisponibles, busquedaEquipo])
 
   const equipoSeleccionado = equiposDisponibles.find(
     (e) => e.id?.toString() === equipoDestinoId
   )
-  const textoTrigger =
-    equipoSeleccionado?.nombre ?? 'Buscar equipo por nombre...'
+  const textoTrigger = equipoSeleccionado
+    ? [equipoSeleccionado.codigoAlfanumerico, equipoSeleccionado.nombre]
+        .filter(Boolean)
+        .join(' ') || 'Buscar equipo por nombre...'
+    : 'Buscar equipo por nombre...'
 
   return (
     <ModalConAccion
@@ -174,7 +179,7 @@ export default function EfectuarPasesModal({
                       setBusquedaEquipo('')
                     }}
                   >
-                    {e.nombre ?? ''}
+                    {[e.codigoAlfanumerico, e.nombre].filter(Boolean).join(' ')}
                   </button>
                 ))}
                 {equiposFiltrados.length === 0 && (
