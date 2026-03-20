@@ -142,7 +142,7 @@ export function FaseItem({
           valor={fase.nombre}
           alCambiar={(v) => onActualizar('nombre', v)}
           alConfirmar={(v) => cambiarNombreMutation.mutate(v)}
-          soloLectura={!fase.sePuedeEditar}
+          soloLectura={false}
         />
         <div className='flex gap-2 shrink-0'>
           {botonZonas}
