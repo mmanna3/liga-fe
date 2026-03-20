@@ -128,6 +128,7 @@ export default function FechasGeneracionFixture() {
         id: data.id,
         fixtureAlgoritmoId: data.fixtureAlgoritmoId,
         cantidadDeEquipos: data.cantidadDeEquipos,
+        nombre: data.nombre,
         fechas: fechasEdicion
       }
       await api.fixtureAlgoritmoPUT(
@@ -260,7 +261,7 @@ export default function FechasGeneracionFixture() {
 
   return (
     <FlujoHomeLayout
-      titulo={`Generación de fixture · ${N} equipos`}
+      titulo={`Generación de fixture · ${N} equipos - ${data?.nombre ?? ''}`}
       subtitulo={`Usá los números desde el 1 hasta el ${N} para indicar cómo se van a generar las fechas en zonas con este número de equipos.`}
       iconoTitulo='Fixture'
       pathBotonVolver={rutasNavegacion.generacionDeFixtures}

@@ -7027,6 +7027,7 @@ export class FixtureAlgoritmoDTO implements IFixtureAlgoritmoDTO {
   id?: number
   fixtureAlgoritmoId!: number
   cantidadDeEquipos!: number
+  nombre!: string | undefined
   fechas?: FixtureAlgoritmoFechaDTO[] | undefined
 
   constructor(data?: IFixtureAlgoritmoDTO) {
@@ -7043,6 +7044,7 @@ export class FixtureAlgoritmoDTO implements IFixtureAlgoritmoDTO {
       this.id = _data['id']
       this.fixtureAlgoritmoId = _data['fixtureAlgoritmoId']
       this.cantidadDeEquipos = _data['cantidadDeEquipos']
+      this.nombre = _data['nombre']
       if (Array.isArray(_data['fechas'])) {
         this.fechas = [] as any
         for (let item of _data['fechas'])
@@ -7063,6 +7065,7 @@ export class FixtureAlgoritmoDTO implements IFixtureAlgoritmoDTO {
     data['id'] = this.id
     data['fixtureAlgoritmoId'] = this.fixtureAlgoritmoId
     data['cantidadDeEquipos'] = this.cantidadDeEquipos
+    data['nombre'] = this.nombre
     if (Array.isArray(this.fechas)) {
       data['fechas'] = []
       for (let item of this.fechas) data['fechas'].push(item.toJSON())
@@ -7075,6 +7078,7 @@ export interface IFixtureAlgoritmoDTO {
   id?: number
   fixtureAlgoritmoId: number
   cantidadDeEquipos: number
+  nombre: string | undefined
   fechas?: FixtureAlgoritmoFechaDTO[] | undefined
 }
 

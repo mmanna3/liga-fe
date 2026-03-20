@@ -44,7 +44,9 @@ export default function GeneracionDeFixtures() {
             }}
           >
             <CardHeader>
-              <CardTitle>{algo.cantidadDeEquipos} equipos</CardTitle>
+              <CardTitle>
+                {algo.cantidadDeEquipos} equipos - {algo.nombre}
+              </CardTitle>
               <CardDescription>
                 Algoritmo de generación de fixture para {algo.cantidadDeEquipos}{' '}
                 equipos.
