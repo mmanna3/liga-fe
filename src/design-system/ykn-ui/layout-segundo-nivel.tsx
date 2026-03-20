@@ -8,6 +8,8 @@ import {
 import BotonVolver from '@/design-system/ykn-ui/boton-volver'
 import type { BotoneraProps } from '@/design-system/ykn-ui/botonera'
 import Botonera from '@/design-system/ykn-ui/botonera'
+import Icono, { type NombreIcono } from '@/design-system/ykn-ui/icono'
+import { cn } from '@/logica-compartida/utils'
 
 const MAX_WIDTH_CLASSES: Record<string, string> = {
   md: 'max-w-md',
@@ -43,6 +45,8 @@ interface LayoutSegundoNivelProps {
   subtitulo?: string
   /** Si false, el contenido no se envuelve en una Card (ej. cuando son varias cards separadas) */
   contenidoEnCard?: boolean
+  /** Nombre del icono a la izquierda del título (ej. 'Torneos') */
+  iconoTitulo?: NombreIcono
 }
 
 export default function LayoutSegundoNivel({
@@ -56,43 +60,56 @@ export default function LayoutSegundoNivel({
   botonera,
   maxWidth = 'lg',
   subtitulo,
-  contenidoEnCard = true
+  contenidoEnCard = true,
+  iconoTitulo
 }: LayoutSegundoNivelProps) {
   const maxWidthClass = MAX_WIDTH_CLASSES[maxWidth] ?? 'max-w-lg'
   const mostrarHeaderEnCardPrincipal = !headerCard && titulo != null
 
   const headerCardContent = mostrarHeaderEnCardPrincipal && (
     <CardHeader
-      className={
+      className={cn(
+        'px-2!',
         headerClassName ??
-        (botonera ? 'flex flex-row items-start justify-between' : undefined)
-      }
+          (botonera ? 'flex flex-row items-start justify-between' : undefined)
+      )}
     >
-      <div>
-        <CardTitle className='text-3xl font-semibold text-gray-900'>
-          {titulo}
-        </CardTitle>
-        {subtitulo && <CardDescription>{subtitulo}</CardDescription>}
+      <div className='flex items-center gap-2'>
+        {iconoTitulo && (
+          <Icono
+            nombre={iconoTitulo}
+            className='h-8 w-8 shrink-0 text-primary'
+          />
+        )}
+        <div>
+          <CardTitle className='text-3xl font-semibold text-gray-900'>
+            {titulo}
+          </CardTitle>
+          {subtitulo && <CardDescription>{subtitulo}</CardDescription>}
+        </div>
       </div>
       {botonera && <Botonera {...botonera} />}
     </CardHeader>
   )
 
   return (
-    <div className={`${maxWidthClass} mx-auto px-4 space-y-4`}>
+    <div className={`${maxWidthClass} mx-auto px-2 space-y-4`}>
       <div className='mb-4'>
         <BotonVolver path={pathBotonVolver} />
       </div>
       {headerCard && (
-        <Card className='p-6 rounded-xl border bg-white shadow-md'>
+        <Card className='px-4 py-6 rounded-xl border bg-white shadow-md'>
           {headerCard}
         </Card>
       )}
       {contenidoEnCard ? (
-        <Card className='p-6 rounded-xl border bg-white shadow-md'>
+        <Card className='px-4 py-6 rounded-xl border bg-white shadow-md'>
           {headerCardContent}
           <CardContent
-            className={mostrarHeaderEnCardPrincipal ? 'pt-0' : undefined}
+            className={cn(
+              'px-0!',
+              mostrarHeaderEnCardPrincipal ? 'pt-0' : undefined
+            )}
           >
             {contenido}
           </CardContent>
@@ -101,7 +118,7 @@ export default function LayoutSegundoNivel({
       ) : (
         <>
           {headerCardContent && (
-            <Card className='p-6 rounded-xl border bg-white shadow-md'>
+            <Card className='px-4 py-6 rounded-xl border bg-white shadow-md'>
               {headerCardContent}
             </Card>
           )}
@@ -109,8 +126,8 @@ export default function LayoutSegundoNivel({
         </>
       )}
       {cardAdicional && (
-        <Card className='p-6 rounded-xl border bg-white shadow-md'>
-          <CardContent>{cardAdicional}</CardContent>
+        <Card className='px-4 py-6 rounded-xl border bg-white shadow-md'>
+          <CardContent className='px-0!'>{cardAdicional}</CardContent>
         </Card>
       )}
     </div>

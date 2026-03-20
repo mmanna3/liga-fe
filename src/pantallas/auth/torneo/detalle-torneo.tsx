@@ -211,6 +211,7 @@ export default function DetalleTorneo() {
   return (
     <LayoutSegundoNivel
       titulo={`${torneo.nombre}`}
+      iconoTitulo='Torneos'
       pathBotonVolver={rutasNavegacion.torneos}
       maxWidth='2xl'
       contenidoEnCard={false}
