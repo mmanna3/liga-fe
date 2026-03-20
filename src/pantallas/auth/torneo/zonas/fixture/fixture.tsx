@@ -12,6 +12,7 @@ import { useParams } from 'react-router-dom'
 import { FechasZona } from './fechas-zona'
 import { ResultadoFixture } from './resultado-fixture'
 import type { ItemFixture } from './types'
+import { toDateOnly } from '@/logica-compartida/utils'
 import { useListaFixture } from './use-lista-fixture'
 
 export default function Fixture() {
@@ -75,7 +76,9 @@ export default function Fixture() {
     (algoritmoSeleccionado?.fechas?.length ?? 0) > 0
 
   const [listaFijada, setListaFijada] = useState<ItemFixture[] | null>(null)
-  const [primeraFecha, setPrimeraFecha] = useState<Date>(() => new Date())
+  const [primeraFecha, setPrimeraFecha] = useState<Date>(() =>
+    toDateOnly(new Date())
+  )
 
   function handleGenerarFixture() {
     setListaFijada(listaOrdenada)

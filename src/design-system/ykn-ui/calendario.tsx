@@ -4,7 +4,7 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/design-system/base-ui/popover'
-import { cn } from '@/logica-compartida/utils'
+import { cn, toDateOnly } from '@/logica-compartida/utils'
 import { es } from 'date-fns/locale'
 import { CalendarIcon } from 'lucide-react'
 import { useState } from 'react'
@@ -63,7 +63,7 @@ export function Calendario({
           mode='single'
           selected={selected}
           onSelect={(date) => {
-            onSelect?.(date)
+            onSelect?.(date ? toDateOnly(date) : undefined)
             setOpen(false)
           }}
           locale={LOCALE_ES}

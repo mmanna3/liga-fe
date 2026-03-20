@@ -21,7 +21,7 @@ import {
   type JornadaBorrador,
   type PendienteReemplazo
 } from './_jornada-edicion'
-import { DiaMesPicker } from './dia-mes-picker'
+import { Calendario } from '@/design-system/ykn-ui/calendario'
 import { ModalAgregarJornada } from './modal-agregar-jornada'
 import { ModalReemplazarEquipo } from './modal-reemplazar-equipo'
 import type { ItemFixture } from './types'
@@ -245,9 +245,9 @@ export function FechaCard({
           <>
             {/* Día editable — arriba del header de columnas */}
             <div className='mb-3'>
-              <DiaMesPicker
-                dia={borrador.dia}
-                onChange={(dia) => setBorrador((p) => (p ? { ...p, dia } : p))}
+              <Calendario
+                selected={borrador.dia}
+                onSelect={(dia) => setBorrador((p) => (p ? { ...p, dia } : p))}
               />
             </div>
 

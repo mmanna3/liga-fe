@@ -5,6 +5,16 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+/**
+ * Normaliza un Date a "solo día" (mediodía UTC) para evitar desfasajes por zona
+ * horaria al serializar (ej. 19/3 23:00 GMT-3 → 20/3 en UTC si se usa ISO).
+ */
+export function toDateOnly(date: Date): Date {
+  return new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0, 0)
+  )
+}
+
 // Moverlo a estado-jugador
 export enum EstadoJugador {
   FichajePendienteDeAprobacion = 1,
