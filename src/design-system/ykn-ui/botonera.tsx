@@ -62,6 +62,7 @@ function IconoBoton({ item }: { item: IconoBotonera }) {
   const boton = (
     <Boton
       variant='outline'
+      aria-label={item.tooltip}
       className={cn(
         'h-10 w-10 min-w-10 p-0',
         esEliminar &&

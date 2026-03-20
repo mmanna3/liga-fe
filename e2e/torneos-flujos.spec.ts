@@ -74,16 +74,23 @@ test.describe('Torneos — flujos profundos', () => {
 
     await expect(page.getByText('Primera Fase')).toBeVisible()
 
+    // Cambiamos el escenario para que el POST y el refetch GET devuelvan la fase nueva
+    await setScenario('torneo_editable_con_nueva_fase')
     await page.getByRole('button', { name: 'Agregar fase' }).click()
 
     await expect(page.getByText('Nueva fase')).toBeVisible()
   })
 
-  test('el torneo editable muestra botón Guardar', async ({ page }) => {
+  test('el botón Guardar aparece al entrar en modo edición', async ({ page }) => {
     await setScenario('torneo_editable')
     await login(page)
     await page.goto('/torneos/detalle/1')
 
+    // Por defecto no hay botón Guardar
+    await expect(page.getByRole('button', { name: 'Guardar' })).not.toBeVisible()
+
+    // Al hacer clic en el lápiz, aparece Guardar
+    await page.getByRole('button', { name: 'Editar torneo' }).click()
     await expect(page.getByRole('button', { name: 'Guardar' })).toBeVisible()
   })
 

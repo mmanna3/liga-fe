@@ -266,6 +266,14 @@ const TORNEO_EDITABLE = {
   fases: [{ ...TORNEO_CON_FASES.fases[0], sePuedeEditar: true }]
 }
 
+const TORNEO_EDITABLE_CON_NUEVA_FASE = {
+  ...TORNEO_EDITABLE,
+  fases: [
+    ...TORNEO_EDITABLE.fases,
+    { id: 101, numero: 2, nombre: 'Nueva fase', faseFormatoId: 1, faseFormatoNombre: 'Todos contra todos', sePuedeEditar: true, zonas: [], estadoFaseId: 100 }
+  ]
+}
+
 // ---------------------------------------------------------------------------
 // Tabla de rutas
 // ---------------------------------------------------------------------------
@@ -409,6 +417,7 @@ const ROUTES = [
       happy: TORNEO_1,
       torneo_detalle: TORNEO_CON_FASES,
       torneo_editable: TORNEO_EDITABLE,
+      torneo_editable_con_nueva_fase: TORNEO_EDITABLE_CON_NUEVA_FASE,
       torneo_zonas_vacio: TORNEO_CON_FASES,
       torneo_zonas_con_datos: TORNEO_CON_FASES,
       fixture_sin_fechas: TORNEO_CON_FASES,
@@ -424,6 +433,15 @@ const ROUTES = [
     scenarios: {
       happy: TORNEO_1,
       torneo_con_agrupadores: { ...TORNEO_1, id: 2 }
+    }
+  },
+  // Fases de torneo — crear
+  {
+    method: 'POST',
+    pattern: /^\/api\/Torneo\/\d+\/fases$/,
+    scenarios: {
+      happy: null,
+      torneo_editable_con_nueva_fase: { id: 101, numero: 2, nombre: 'Nueva fase', faseFormatoId: 1, estadoFaseId: 100, esVisibleEnApp: true, sePuedeEditar: true, torneoId: 1 }
     }
   },
   // Torneos — actualizar
