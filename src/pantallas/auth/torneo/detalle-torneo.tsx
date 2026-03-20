@@ -257,7 +257,7 @@ export default function DetalleTorneo() {
           <Categorias
             valor={categorias}
             alCambiar={setCategorias}
-            soloLectura={!puedeEditarTorneo}
+            soloLectura={false}
           />
 
           {fasesEstado.map((fase, index) => (

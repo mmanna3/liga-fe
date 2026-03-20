@@ -75,7 +75,7 @@ test.describe('Fixture', () => {
   // Flujo "Generar vista previa del fixture"
   // -------------------------------------------------------------------------
 
-  test('al clic en "Generar vista previa del fixture" desaparece la lista y se muestran las fechas del algoritmo', async ({
+  test('al clic en "Generar vista previa del fixture" se muestran las cards con las fechas del algoritmo', async ({
     page
   }) => {
     await setScenario('fixture_sin_fechas')
@@ -86,15 +86,13 @@ test.describe('Fixture', () => {
       .getByRole('button', { name: 'Generar vista previa del fixture' })
       .click()
 
-    await expect(
-      page.getByText('Orden de equipos (arrastrá para reordenar)')
-    ).not.toBeVisible()
     await expect(page.getByText('Fecha 1')).toBeVisible()
-    await expect(page.getByText('Infantil A')).toBeVisible()
-    await expect(page.getByText('Infantil B')).toBeVisible()
+    await expect(
+      page.getByRole('button', { name: /Crear el fixture/ })
+    ).toBeVisible()
   })
 
-  test('luego de generar el fixture muestra el botón "Crear fechas y jornadas"', async ({
+  test('luego de generar el fixture muestra el botón para crear y el texto informativo', async ({
     page
   }) => {
     await setScenario('fixture_sin_fechas')
@@ -106,10 +104,10 @@ test.describe('Fixture', () => {
       .click()
 
     await expect(
-      page.getByRole('button', { name: 'Crear fechas y jornadas' })
+      page.getByRole('button', { name: /Crear el fixture/ })
     ).toBeVisible()
     await expect(
-      page.getByText('El fixture generado podrá modificarse luego.')
+      page.getByText('El fixture generado', { exact: false })
     ).toBeVisible()
   })
 
@@ -142,7 +140,7 @@ test.describe('Fixture', () => {
     await page
       .getByRole('button', { name: 'Generar vista previa del fixture' })
       .click()
-    await page.getByRole('button', { name: 'Crear fechas y jornadas' }).click()
+    await page.getByRole('button', { name: /Crear el fixture/ }).click()
     await expect(
       page.getByText('Fechas y jornadas creadas correctamente')
     ).toBeVisible()
@@ -226,8 +224,8 @@ test.describe('Fixture', () => {
 
     // El card de nueva fecha muestra el número siguiente (Fecha 2 ya que hay una Fecha 1)
     await expect(page.getByText('Fecha 2')).toBeVisible()
-    // Muestra selectores de día y mes
-    await expect(page.locator('select').first()).toBeVisible()
+    // Muestra el selector de fecha (Calendario)
+    await expect(page.getByText('Seleccioná una fecha')).toBeVisible()
     // Muestra botones Guardar y Cancelar
     await expect(page.getByRole('button', { name: 'Guardar' })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Cancelar' })).toBeVisible()
@@ -274,7 +272,7 @@ test.describe('Fixture', () => {
   // Editar fecha existente
   // -------------------------------------------------------------------------
 
-  test('al clic en el lápiz se activa el modo edición con selectores de día y mes', async ({
+  test('al clic en el lápiz se activa el modo edición con el selector de fecha', async ({
     page
   }) => {
     await setScenario('fixture_con_fechas')
@@ -290,8 +288,8 @@ test.describe('Fixture', () => {
       .first()
       .click()
 
-    // Aparecen los selects de día y mes
-    await expect(page.locator('select').first()).toBeVisible()
+    // Aparece el selector de fecha (Calendario)
+    await expect(page.getByText('Seleccioná una fecha')).toBeVisible()
     // Y los botones de acción
     await expect(page.getByRole('button', { name: 'Guardar' })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Cancelar' })).toBeVisible()
@@ -353,10 +351,6 @@ test.describe('Fixture', () => {
       .locator('button')
       .first()
       .click()
-
-    // Seleccionar mes Mayo (índice 4) y luego día 10
-    await page.locator('select').first().selectOption('4')
-    await page.locator('select').nth(1).selectOption('10')
 
     await page.getByRole('button', { name: 'Guardar' }).click()
 
@@ -440,7 +434,7 @@ test.describe('Fixture', () => {
     await expect(page.getByText('— 15/5')).toBeVisible()
   })
 
-  test('el modo edición pre-selecciona el día y mes actuales de la fecha', async ({
+  test('el modo edición pre-selecciona la fecha actual en el selector', async ({
     page
   }) => {
     await setScenario('fixture_con_fechas_con_dia')
@@ -455,8 +449,9 @@ test.describe('Fixture', () => {
       .first()
       .click()
 
-    // mes = 4 (Mayo, índice 4 en 0-indexed), día = 15
-    await expect(page.locator('select').first()).toHaveValue('4')
-    await expect(page.locator('select').nth(1)).toHaveValue('15')
+    // dia = 2026-05-15 → el Calendario debe mostrar la fecha formateada
+    await expect(
+      page.getByText('15 de mayo de 2026', { exact: false })
+    ).toBeVisible()
   })
 })

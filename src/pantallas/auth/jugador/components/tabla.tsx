@@ -103,6 +103,19 @@ export default function TablaJugador() {
       )
     },
     {
+      id: 'club',
+      accessorFn: (row) =>
+        row.equipos?.length ? (row.equipos[0].club ?? '') : '',
+      header: 'Club',
+      cell: ({ row }) => (
+        <span>
+          {row.original.equipos?.length
+            ? (row.original.equipos[0].club ?? '')
+            : ''}
+        </span>
+      )
+    },
+    {
       accessorKey: 'equipos',
       header: 'Torneo',
       cell: ({ row }) => (

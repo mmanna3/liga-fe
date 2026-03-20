@@ -7,6 +7,7 @@ export default function Jugador() {
       titulo='Jugadores'
       iconoTitulo='Jugadores'
       ocultarBotonVolver
+      contenedorClassName='max-w-6xl'
       contenido={<TablaJugador />}
     />
   )
