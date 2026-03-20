@@ -4,10 +4,12 @@ import {
   type JornadaDTO,
   type TorneoFechaDTO
 } from '@/api/clients'
-import { addWeeks } from 'date-fns'
 import useApiMutation from '@/api/hooks/use-api-mutation'
+import { Card, CardContent } from '@/design-system/base-ui/card'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { useQueryClient } from '@tanstack/react-query'
+import { addWeeks, format } from 'date-fns'
+import { es } from 'date-fns/locale'
 import type { ItemFixture } from './types'
 
 type JornadaItem = { local: number; visitante: number }
@@ -128,59 +130,72 @@ export function ResultadoFixture({
 
   return (
     <div>
-      <div className='mb-4'>
-        <Boton
-          onClick={() =>
-            crearMutation.mutate(buildPayload(fechas, lista, primeraFecha))
-          }
-          estaCargando={crearMutation.isPending}
-        >
-          Crear fechas y jornadas
-        </Boton>
-        <p className='text-sm text-muted-foreground font-light mt-2 ml-1'>
-          El fixture generado podrá modificarse luego.
-        </p>
-      </div>
+      <Card className=''>
+        {/* <CardHeader>
+          <CardTitle>Crear fixture</CardTitle>
+        </CardHeader> */}
+        <CardContent>
+          <Boton
+            onClick={() =>
+              crearMutation.mutate(buildPayload(fechas, lista, primeraFecha))
+            }
+            estaCargando={crearMutation.isPending}
+          >
+            Crear el fixture con las fechas que aparecen a continuación
+          </Boton>
+          <span className='text-sm text-muted-foreground font-light mt-2 ml-3'>
+            El fixture generado, de ser necesario, podrá modificarse luego.
+          </span>
+        </CardContent>
+      </Card>
 
       <div className='grid grid-cols-3 gap-4 py-4'>
-        {fechasConJornadas.map((f) => (
-          <div key={f.fecha} className='rounded-lg border bg-card p-4'>
-            <h3 className='font-semibold mb-3 text-center'>Fecha {f.fecha}</h3>
+        {fechasConJornadas.map((f, index) => {
+          const dia = addWeeks(primeraFecha, index)
+          return (
+            <div key={f.fecha} className='rounded-lg border bg-card p-4'>
+              <h3 className='font-semibold mb-1 text-center'>
+                Fecha {f.fecha}
+              </h3>
+              <p className='text-xs text-muted-foreground mb-6 text-center'>
+                {format(dia, "EEEE d 'de' MMMM", { locale: es })}
+              </p>
 
-            <div className='grid grid-cols-[10px_1fr_1fr_10px] gap-4 text-xs font-medium text-muted-foreground mb-1'>
-              <span></span>
-              <span className='text-right'>LOCAL</span>
-              <span className='text-left'>VISITANTE</span>
-              <span></span>
-            </div>
+              <div className='grid grid-cols-[10px_1fr_1fr_10px] gap-4 text-xs font-medium text-muted-foreground mb-1'>
+                <span></span>
+                <span className='text-right'>LOCAL</span>
+                <span className='text-left'>VISITANTE</span>
+                <span></span>
+              </div>
 
-            <div className='space-y-1 [&>div:not(:last-child)]:border-b [&>div:not(:last-child)]:border-muted-foreground/10'>
-              {f.jornadas.map((j, i) => {
-                const localNombre = resolverNombre(j.local, lista)
-                const visitanteNombre = resolverNombre(j.visitante, lista)
-                return (
-                  <div
-                    key={i}
-                    className='grid grid-cols-[10px_1fr_1fr_10px] gap-4 text-sm py-1'
-                  >
-                    <span className='text-center'>{j.local}</span>
-                    <span
-                      className={`text-right ${claseEspecial(localNombre)}`}
+              <div className='space-y-1 [&>div:not(:last-child)]:border-b [&>div:not(:last-child)]:border-muted-foreground/10'>
+                {f.jornadas.map((j, i) => {
+                  const localNombre = resolverNombre(j.local, lista)
+                  const visitanteNombre = resolverNombre(j.visitante, lista)
+                  return (
+                    <div
+                      key={i}
+                      className='grid grid-cols-[10px_1fr_1fr_10px] gap-4 text-sm py-1'
                     >
-                      {localNombre}
-                    </span>
-                    <span
-                      className={`text-left ${claseEspecial(visitanteNombre)}`}
-                    >
-                      {visitanteNombre}
-                    </span>
-                    <span className='text-center'>{j.visitante}</span>
-                  </div>
-                )
-              })}
+                      <span className='text-center'>{j.local}</span>
+                      <span
+                        className={`text-right ${claseEspecial(localNombre)}`}
+                      >
+                        {localNombre}
+                      </span>
+                      <span
+                        className={`text-left ${claseEspecial(visitanteNombre)}`}
+                      >
+                        {visitanteNombre}
+                      </span>
+                      <span className='text-center'>{j.visitante}</span>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )

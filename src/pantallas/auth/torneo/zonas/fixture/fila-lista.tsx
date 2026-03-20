@@ -30,7 +30,7 @@ export function FilaLista({
     <li
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-3 rounded-md border bg-background px-3 py-2 transition-colors touch-none ${
+      className={`flex items-center gap-3 rounded-md border bg-background px-3 py-2 text-sm transition-colors touch-none ${
         dragging
           ? 'opacity-50 shadow-lg'
           : 'cursor-grab active:cursor-grabbing hover:bg-muted/50'

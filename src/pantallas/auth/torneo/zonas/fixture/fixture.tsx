@@ -1,17 +1,15 @@
 import { api } from '@/api/api'
 import type { FixtureAlgoritmoDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
-import { Button } from '@/design-system/base-ui/button'
-import { Calendario } from '@/design-system/ykn-ui/calendario'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
-import Icono from '@/design-system/ykn-ui/icono'
+import { FixtureAlgoritmosDisponiblesParaGenerar } from './fixture-algoritmos-disponibles-para-generar'
+import { FixtureGeneracionListaEquipos } from './fixture-generacion-lista-equipos'
+import { FixtureSelectorFecha } from './fixture-selector-fecha'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { DndContext } from '@dnd-kit/core'
 import { useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { FechasZona } from './fechas-zona'
-import { FilaLista, SlotDroppable } from './fila-lista'
-import { EspecialDraggable, ZonaDerechaDroppable } from './panel-especiales'
 import { ResultadoFixture } from './resultado-fixture'
 import type { ItemFixture } from './types'
 import { useListaFixture } from './use-lista-fixture'
@@ -99,93 +97,24 @@ export default function Fixture() {
       zonaId={zonaId}
     />
   ) : (
-    <>
-      {listaFijada == null && (
-        <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-          <div className='mb-6'>
-            <label className='block text-sm font-medium mb-2'>
-              ¿Cuándo es la primera fecha?
-            </label>
-            <Calendario
-              mode='single'
-              selected={primeraFecha}
-              onSelect={(date) => date && setPrimeraFecha(date)}
-            />
-            <p className='text-sm text-muted-foreground mt-2'>
-              Las otras fechas se configurarán el mismo día de la semana que la
-              primera fecha para las semanas siguientes.
-            </p>
-          </div>
-          <p className='text-sm text-muted-foreground mb-4'>
-            Algoritmos de fixture disponibles:{' '}
-            {algoritmos.map((a: FixtureAlgoritmoDTO) => (
-              <span key={a.id ?? a.cantidadDeEquipos}>
-                <span
-                  className={
-                    a.cantidadDeEquipos === cantidadEquipos
-                      ? 'py-1 px-2 rounded-md mx-1 bg-primary text-primary-foreground'
-                      : 'py-1 px-2 rounded-md bg-muted-foreground/10 mx-1 text-muted-foreground'
-                  }
-                >
-                  {a.cantidadDeEquipos}
-                </span>
-              </span>
-            ))}
-          </p>
-          <div className='flex items-center gap-4 mb-2'>
-            <Button
-              disabled={!tieneAlgoritmoConfigurado}
-              onClick={handleGenerarFixture}
-            >
-              Generar fixture
-            </Button>
-            {algoritmoSeleccionado != null && !tieneAlgoritmoConfigurado && (
-              <p className='text-sm text-muted-foreground'>
-                El fixture para esta cantidad de equipos no está configurado.
-                Configuralo desde el menú{' '}
-                <span className='inline-flex items-center gap-1'>
-                  <Icono nombre='Configuracion' className='size-4' />
-                  Configuración
-                </span>
-                .
-              </p>
-            )}
-          </div>
-          <div className='flex gap-8 py-6'>
-            <div className='flex-1 min-w-0'>
-              <h3 className='text-sm font-medium text-muted-foreground mb-2'>
-                Orden de equipos (arrastrá para reordenar)
-              </h3>
-              <ul className='space-y-2 list-none p-0 m-0'>
-                {listaOrdenada.map((item, index) => (
-                  <SlotDroppable key={`slot-${index}`} index={index}>
-                    <FilaLista item={item} index={index} />
-                  </SlotDroppable>
-                ))}
-                <SlotDroppable index={listaOrdenada.length}>
-                  <div className='rounded-md border-2 border-dashed border-muted-foreground/25 px-3 py-2 min-h-[44px]' />
-                </SlotDroppable>
-              </ul>
-            </div>
+    <div className='space-y-6'>
+      <div className='grid grid-cols-2 gap-6'>
+        <FixtureSelectorFecha
+          primeraFecha={primeraFecha}
+          onFechaChange={setPrimeraFecha}
+        />
+        <FixtureAlgoritmosDisponiblesParaGenerar
+          algoritmos={algoritmos}
+          cantidadEquipos={cantidadEquipos}
+          tieneAlgoritmoConfigurado={tieneAlgoritmoConfigurado}
+          algoritmoSeleccionado={algoritmoSeleccionado}
+          onGenerarFixture={handleGenerarFixture}
+        />
+      </div>
 
-            <div className='w-48 shrink-0'>
-              <h3 className='text-sm font-medium text-muted-foreground mb-2'>
-                Agregar a la lista
-              </h3>
-              <ZonaDerechaDroppable>
-                <div className='space-y-2'>
-                  <EspecialDraggable valor='INTERZONAL' />
-                  <EspecialDraggable valor='LIBRE' />
-                </div>
-                <p className='text-xs text-muted-foreground pt-2'>
-                  Arrastrá Libre o Interzonal a la lista para sumarlos. Arrastrá
-                  desde la lista acá para quitarlos.
-                </p>
-              </ZonaDerechaDroppable>
-            </div>
-          </div>
-        </DndContext>
-      )}
+      <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+        <FixtureGeneracionListaEquipos listaOrdenada={listaOrdenada} />
+      </DndContext>
 
       {listaFijada != null && (
         <ResultadoFixture
@@ -195,7 +124,7 @@ export default function Fixture() {
           primeraFecha={primeraFecha}
         />
       )}
-    </>
+    </div>
   )
 
   return (
@@ -206,6 +135,7 @@ export default function Fixture() {
       pathBotonVolver={pathVolver}
       contenedorClassName='max-w-6xl'
       contenido={contenido}
+      contenidoEnCard={false}
     />
   )
 }

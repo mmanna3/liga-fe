@@ -28,7 +28,7 @@ test.describe('Fixture', () => {
     await expect(page.getByText('Infantil B')).toBeVisible()
   })
 
-  test('el botón "Generar fixture" está habilitado cuando el algoritmo tiene fechas', async ({
+  test('el botón "Generar vista previa del fixture" está habilitado cuando el algoritmo tiene fechas', async ({
     page
   }) => {
     await setScenario('fixture_sin_fechas')
@@ -36,11 +36,11 @@ test.describe('Fixture', () => {
     await page.goto(FIXTURE_URL)
 
     await expect(
-      page.getByRole('button', { name: 'Generar fixture' })
+      page.getByRole('button', { name: 'Generar vista previa del fixture' })
     ).toBeEnabled()
   })
 
-  test('el botón "Generar fixture" está deshabilitado cuando el algoritmo no tiene fechas configuradas', async ({
+  test('el botón "Generar vista previa del fixture" está deshabilitado cuando el algoritmo no tiene fechas configuradas', async ({
     page
   }) => {
     await setScenario('fixture_algoritmo_sin_configurar')
@@ -48,7 +48,7 @@ test.describe('Fixture', () => {
     await page.goto(FIXTURE_URL)
 
     await expect(
-      page.getByRole('button', { name: 'Generar fixture' })
+      page.getByRole('button', { name: 'Generar vista previa del fixture' })
     ).toBeDisabled()
     await expect(
       page.getByText(
@@ -72,17 +72,19 @@ test.describe('Fixture', () => {
   })
 
   // -------------------------------------------------------------------------
-  // Flujo "Generar fixture"
+  // Flujo "Generar vista previa del fixture"
   // -------------------------------------------------------------------------
 
-  test('al clic en "Generar fixture" desaparece la lista y se muestran las fechas del algoritmo', async ({
+  test('al clic en "Generar vista previa del fixture" desaparece la lista y se muestran las fechas del algoritmo', async ({
     page
   }) => {
     await setScenario('fixture_sin_fechas')
     await login(page)
     await page.goto(FIXTURE_URL)
 
-    await page.getByRole('button', { name: 'Generar fixture' }).click()
+    await page
+      .getByRole('button', { name: 'Generar vista previa del fixture' })
+      .click()
 
     await expect(
       page.getByText('Orden de equipos (arrastrá para reordenar)')
@@ -99,7 +101,9 @@ test.describe('Fixture', () => {
     await login(page)
     await page.goto(FIXTURE_URL)
 
-    await page.getByRole('button', { name: 'Generar fixture' }).click()
+    await page
+      .getByRole('button', { name: 'Generar vista previa del fixture' })
+      .click()
 
     await expect(
       page.getByRole('button', { name: 'Crear fechas y jornadas' })
@@ -135,7 +139,9 @@ test.describe('Fixture', () => {
       }
     )
 
-    await page.getByRole('button', { name: 'Generar fixture' }).click()
+    await page
+      .getByRole('button', { name: 'Generar vista previa del fixture' })
+      .click()
     await page.getByRole('button', { name: 'Crear fechas y jornadas' }).click()
     await expect(
       page.getByText('Fechas y jornadas creadas correctamente')
@@ -177,7 +183,7 @@ test.describe('Fixture', () => {
       page.getByText('Orden de equipos (arrastrá para reordenar)')
     ).not.toBeVisible()
     await expect(
-      page.getByRole('button', { name: 'Generar fixture' })
+      page.getByRole('button', { name: 'Generar vista previa del fixture' })
     ).not.toBeVisible()
     await expect(page.getByText('Fecha 1')).toBeVisible()
   })
@@ -308,8 +314,12 @@ test.describe('Fixture', () => {
 
     await page.getByRole('button', { name: 'Cancelar' }).click()
 
-    await expect(page.getByRole('button', { name: 'Guardar' })).not.toBeVisible()
-    await expect(page.getByRole('button', { name: 'Cancelar' })).not.toBeVisible()
+    await expect(
+      page.getByRole('button', { name: 'Guardar' })
+    ).not.toBeVisible()
+    await expect(
+      page.getByRole('button', { name: 'Cancelar' })
+    ).not.toBeVisible()
     // Los equipos siguen visibles en modo vista
     await expect(page.getByText('Infantil A')).toBeVisible()
   })
@@ -375,7 +385,9 @@ test.describe('Fixture', () => {
       .click()
 
     await expect(
-      page.getByText('¿Confirmás que querés eliminar la Fecha 1?', { exact: false })
+      page.getByText('¿Confirmás que querés eliminar la Fecha 1?', {
+        exact: false
+      })
     ).toBeVisible()
   })
 
