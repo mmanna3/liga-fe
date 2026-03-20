@@ -77,18 +77,24 @@ export default function DetalleTorneo() {
     )
   }
 
-  const agregarFase = () => {
-    const maxNumero = Math.max(0, ...fasesEstado.map((f) => f.numero))
-    setFasesEstado((prev) => [
-      ...prev,
-      {
-        numero: maxNumero + 1,
-        nombre: 'Nueva fase',
-        formato: 'todos-contra-todos',
-        sePuedeEditar: true
-      }
-    ])
-  }
+  const agregarFaseMutation = useApiMutation<void>({
+    fn: async () => {
+      const maxNumero = Math.max(0, ...fasesEstado.map((f) => f.numero))
+      await api.fasesPOST(
+        torneoId,
+        new TorneoFaseDTO({
+          numero: maxNumero + 1,
+          nombre: 'Nueva fase',
+          faseFormatoId: 1,
+          estadoFaseId: 100,
+          esVisibleEnApp: true,
+          torneoId
+        })
+      )
+    },
+    antesDeMensajeExito: () => refetch(),
+    mensajeDeExito: 'Fase creada'
+  })
 
   function handleCancelarEdicion() {
     if (!torneo) return
@@ -127,9 +133,7 @@ export default function DetalleTorneo() {
         categorias: categoriasACategoriaDto(categorias).map(
           (c) => new TorneoCategoriaDTO({ ...c, torneoId })
         ),
-        fases: (torneo.fases ?? []).map(
-          (f) => new TorneoFaseDTO({ ...f, torneoId })
-        )
+        fases: undefined
       })
       await api.torneoPUT(torneoId, body)
     },
@@ -186,7 +190,7 @@ export default function DetalleTorneo() {
       // Fase nueva: hay que guardar antes para que exista en el backend y tenga id
       await guardarMutation.mutateAsync(undefined)
       const torneoActualizado = await queryClient.fetchQuery({
-        queryKey: ['torneo', torneoId],
+        queryKey: ['torneo', id],
         queryFn: () => api.torneoGET(torneoId)
       })
       const faseActualizada = torneoActualizado?.fases?.find(
@@ -199,17 +203,8 @@ export default function DetalleTorneo() {
       return
     }
 
-    await guardarMutation.mutateAsync(undefined)
-    const torneoActualizado = await queryClient.fetchQuery({
-      queryKey: ['torneo', torneoId],
-      queryFn: () => api.torneoGET(torneoId)
-    })
-    const faseActualizada = torneoActualizado?.fases?.find(
-      (f) => f.id === faseEnEstado.id
-    )
-    if (!faseActualizada?.id) return
     navigate(
-      `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${faseActualizada.id}/zonas`
+      `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${faseEnEstado.id}/zonas`
     )
   }
 
@@ -342,12 +337,13 @@ export default function DetalleTorneo() {
             </Card>
           ))}
 
-          {editando && (
+          {!editando && (
             <Boton
               type='button'
               variant='outline'
               size='sm'
-              onClick={agregarFase}
+              onClick={() => agregarFaseMutation.mutate()}
+              estaCargando={agregarFaseMutation.isPending}
               className='my-2'
             >
               <Plus className='w-3 h-3' />

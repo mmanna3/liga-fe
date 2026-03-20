@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from 'react'
 interface TextoEditableProps {
   valor: string
   alCambiar: (v: string) => void
+  /** Llamado al perder el foco (confirmar edición) con el valor final */
+  alConfirmar?: (v: string) => void
   /** Tamaño visual: 'detalle' (texto chico), 'default', 'titulo' (texto grande) */
   tamanio?: 'detalle' | 'default' | 'titulo'
   /** Texto mostrado cuando valor está vacío */
@@ -49,6 +51,7 @@ function textoAMostrar(
 export function TextoEditable({
   valor,
   alCambiar,
+  alConfirmar,
   tamanio = 'default',
   valorPorDefecto,
   etiqueta,
@@ -112,7 +115,10 @@ export function TextoEditable({
       className={cn(clases.input, className)}
       value={valor}
       onChange={(e) => alCambiar(e.target.value)}
-      onBlur={() => setEsEdicion(false)}
+      onBlur={() => {
+        setEsEdicion(false)
+        alConfirmar?.(valor)
+      }}
       placeholder={placeholder}
     />
   )

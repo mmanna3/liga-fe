@@ -4,6 +4,7 @@ import { cn } from '@/logica-compartida/utils'
 interface TituloFaseProps {
   valor: string
   alCambiar?: (v: string) => void
+  alConfirmar?: (v: string) => void
   className?: string
   /** Si true, solo muestra el texto sin posibilidad de editar */
   soloLectura?: boolean
@@ -14,6 +15,7 @@ interface TituloFaseProps {
 export function TituloFase({
   valor,
   alCambiar,
+  alConfirmar,
   className,
   soloLectura = false,
   numero
@@ -31,6 +33,7 @@ export function TituloFase({
       <TextoEditable
         valor={valor}
         alCambiar={alCambiar ?? (() => {})}
+        alConfirmar={alConfirmar}
         tamanio='default'
         valorPorDefecto={soloLectura ? 'Sin nombre' : 'Primera Fase'}
         soloLectura={soloLectura}

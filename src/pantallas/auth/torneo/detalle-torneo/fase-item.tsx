@@ -1,4 +1,6 @@
+import { api } from '@/api/api'
 import { TorneoFaseDTO } from '@/api/clients'
+import useApiMutation from '@/api/hooks/use-api-mutation'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -18,6 +20,7 @@ import { Boton } from '@/design-system/ykn-ui/boton'
 import Icono from '@/design-system/ykn-ui/icono'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
 import { rutasNavegacion } from '@/ruteo/rutas'
+import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { DatosFaseLectura } from '../crear-torneo/components/datos-fase-lectura'
@@ -51,8 +54,43 @@ export function FaseItem({
   enCard = false
 }: FaseItemProps) {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [mostrarNoSePuedeEliminar, setMostrarNoSePuedeEliminar] =
     useState(false)
+
+  const cambiarNombreMutation = useApiMutation<string>({
+    fn: async (nuevoNombre) => {
+      if (!faseOriginal?.id) return
+      await api.fasesPUT(
+        torneoId,
+        faseOriginal.id,
+        new TorneoFaseDTO({ ...faseOriginal, nombre: nuevoNombre, torneoId })
+      )
+    },
+    antesDeMensajeExito: () => {
+      queryClient.invalidateQueries({ queryKey: ['torneo'] })
+    },
+    mensajeDeExito: 'Nombre actualizado'
+  })
+
+  const cambiarFormatoMutation = useApiMutation<string>({
+    fn: async (nuevoFormato) => {
+      if (!faseOriginal?.id) return
+      await api.fasesPUT(
+        torneoId,
+        faseOriginal.id,
+        new TorneoFaseDTO({
+          ...faseOriginal,
+          faseFormatoId: nuevoFormato === 'todos-contra-todos' ? 1 : 2,
+          torneoId
+        })
+      )
+    },
+    antesDeMensajeExito: () => {
+      queryClient.invalidateQueries({ queryKey: ['torneo'] })
+    },
+    mensajeDeExito: 'Formato actualizado'
+  })
 
   const faseId = fase.id ?? 0
   const pathZonas = `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${faseId}/zonas`
@@ -103,6 +141,7 @@ export function FaseItem({
           numero={fase.numero}
           valor={fase.nombre}
           alCambiar={(v) => onActualizar('nombre', v)}
+          alConfirmar={(v) => cambiarNombreMutation.mutate(v)}
           soloLectura={!fase.sePuedeEditar}
         />
         <div className='flex gap-2 shrink-0'>
@@ -126,7 +165,10 @@ export function FaseItem({
           titulo='Formato'
           opciones={OPCIONES_FORMATO}
           valorActual={fase.formato}
-          alElegirOpcion={(v) => onActualizar('formato', v)}
+          alElegirOpcion={(v) => {
+            onActualizar('formato', v)
+            cambiarFormatoMutation.mutate(v)
+          }}
         />
       ) : (
         <DatosFaseLectura
