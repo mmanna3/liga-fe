@@ -4,6 +4,7 @@ import {
   type JornadaDTO,
   type TorneoFechaDTO
 } from '@/api/clients'
+import { addWeeks } from 'date-fns'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { useQueryClient } from '@tanstack/react-query'
@@ -83,16 +84,18 @@ function buildJornada(j: JornadaItem, lista: ItemFixture[]): JornadaDTO {
 
 function buildPayload(
   fechas: FixtureAlgoritmoFechaDTO[],
-  lista: ItemFixture[]
+  lista: ItemFixture[],
+  primeraFecha: Date
 ): TorneoFechaDTO[] {
-  return buildFechasConJornadas(fechas).map(
-    (f) =>
-      ({
-        numero: f.fecha,
-        esVisibleEnApp: false,
-        jornadas: f.jornadas.map((j) => buildJornada(j, lista))
-      }) as TorneoFechaDTO
-  )
+  return buildFechasConJornadas(fechas).map((f, index) => {
+    const dia = addWeeks(primeraFecha, index)
+    return {
+      numero: f.fecha,
+      dia,
+      esVisibleEnApp: false,
+      jornadas: f.jornadas.map((j) => buildJornada(j, lista))
+    } as TorneoFechaDTO
+  })
 }
 
 const claseEspecial = (nombre: string) => {
@@ -104,11 +107,13 @@ const claseEspecial = (nombre: string) => {
 export function ResultadoFixture({
   fechas,
   lista,
-  zonaId
+  zonaId,
+  primeraFecha
 }: {
   fechas: FixtureAlgoritmoFechaDTO[]
   lista: ItemFixture[]
   zonaId: number
+  primeraFecha: Date
 }) {
   const queryClient = useQueryClient()
   const fechasConJornadas = buildFechasConJornadas(fechas)
@@ -125,7 +130,9 @@ export function ResultadoFixture({
     <div>
       <div className='mb-4'>
         <Boton
-          onClick={() => crearMutation.mutate(buildPayload(fechas, lista))}
+          onClick={() =>
+            crearMutation.mutate(buildPayload(fechas, lista, primeraFecha))
+          }
           estaCargando={crearMutation.isPending}
         >
           Crear fechas y jornadas

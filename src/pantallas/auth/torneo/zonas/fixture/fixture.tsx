@@ -2,6 +2,7 @@ import { api } from '@/api/api'
 import type { FixtureAlgoritmoDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { Button } from '@/design-system/base-ui/button'
+import { Calendario } from '@/design-system/ykn-ui/calendario'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
 import Icono from '@/design-system/ykn-ui/icono'
 import { rutasNavegacion } from '@/ruteo/rutas'
@@ -76,6 +77,7 @@ export default function Fixture() {
     (algoritmoSeleccionado?.fechas?.length ?? 0) > 0
 
   const [listaFijada, setListaFijada] = useState<ItemFixture[] | null>(null)
+  const [primeraFecha, setPrimeraFecha] = useState<Date>(() => new Date())
 
   function handleGenerarFixture() {
     setListaFijada(listaOrdenada)
@@ -100,6 +102,20 @@ export default function Fixture() {
     <>
       {listaFijada == null && (
         <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+          <div className='mb-6'>
+            <label className='block text-sm font-medium mb-2'>
+              ¿Cuándo es la primera fecha?
+            </label>
+            <Calendario
+              mode='single'
+              selected={primeraFecha}
+              onSelect={(date) => date && setPrimeraFecha(date)}
+            />
+            <p className='text-sm text-muted-foreground mt-2'>
+              Las otras fechas se configurarán el mismo día de la semana que la
+              primera fecha para las semanas siguientes.
+            </p>
+          </div>
           <p className='text-sm text-muted-foreground mb-4'>
             Algoritmos de fixture disponibles:{' '}
             {algoritmos.map((a: FixtureAlgoritmoDTO) => (
@@ -176,6 +192,7 @@ export default function Fixture() {
           fechas={algoritmoSeleccionado!.fechas!}
           lista={listaFijada}
           zonaId={zonaId}
+          primeraFecha={primeraFecha}
         />
       )}
     </>
