@@ -8,8 +8,29 @@ export function cn(...inputs: ClassValue[]) {
 /**
  * Normaliza un Date a "solo día" (mediodía UTC) para evitar desfasajes por zona
  * horaria al serializar (ej. 19/3 23:00 GMT-3 → 20/3 en UTC si se usa ISO).
+ * También corrige fechas que vienen del backend (ISO "YYYY-MM-DD" → UTC midnight),
+ * que en zonas negativas se mostrarían como el día anterior.
  */
 export function toDateOnly(date: Date): Date {
+  const isUtcMidnight =
+    date.getUTCHours() === 0 &&
+    date.getUTCMinutes() === 0 &&
+    date.getUTCSeconds() === 0 &&
+    date.getUTCMilliseconds() === 0
+
+  if (isUtcMidnight) {
+    return new Date(
+      Date.UTC(
+        date.getUTCFullYear(),
+        date.getUTCMonth(),
+        date.getUTCDate(),
+        12,
+        0,
+        0,
+        0
+      )
+    )
+  }
   return new Date(
     Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0, 0)
   )

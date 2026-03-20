@@ -21,7 +21,8 @@ const LOCALE_ES = {
 
 function formatearFecha(date: Date | undefined): string {
   if (!date) return ''
-  return date.toLocaleDateString('es-AR', {
+  const normalizada = toDateOnly(date)
+  return normalizada.toLocaleDateString('es-AR', {
     day: 'numeric',
     month: 'long',
     year: 'numeric'
@@ -61,7 +62,7 @@ export function Calendario({
       <PopoverContent className='w-auto p-0' align='start'>
         <Calendar
           mode='single'
-          selected={selected}
+          selected={selected ? toDateOnly(selected) : undefined}
           onSelect={(date) => {
             onSelect?.(date ? toDateOnly(date) : undefined)
             setOpen(false)
