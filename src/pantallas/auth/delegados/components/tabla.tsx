@@ -56,6 +56,11 @@ export default function TablaDelegados() {
     },
     {
       id: 'clubs',
+      accessorFn: (row) =>
+        row.delegadoClubs
+          ?.map((dc: DelegadoClubDTO) => dc.clubNombre)
+          .filter(Boolean)
+          .join(', ') ?? '',
       header: 'Clubs',
       cell: ({ row }) => (
         <span>

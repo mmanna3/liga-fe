@@ -7,7 +7,7 @@ import { FixtureGeneracionListaEquipos } from './fixture-generacion-lista-equipo
 import { FixtureSelectorFecha } from './fixture-selector-fecha'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { DndContext } from '@dnd-kit/core'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { FechasZona } from './fechas-zona'
 import { ResultadoFixture } from './resultado-fixture'
@@ -64,16 +64,30 @@ export default function Fixture() {
 
   const cantidadEquipos = listaOrdenada.length
 
-  const algoritmoSeleccionado = useMemo(
-    () =>
-      algoritmos.find(
-        (a: FixtureAlgoritmoDTO) => a.cantidadDeEquipos === cantidadEquipos
-      ),
-    [algoritmos, cantidadEquipos]
-  )
+  const [algoritmoSeleccionado, setAlgoritmoSeleccionado] = useState<
+    FixtureAlgoritmoDTO | undefined
+  >(undefined)
 
-  const tieneAlgoritmoConfigurado =
-    (algoritmoSeleccionado?.fechas?.length ?? 0) > 0
+  useEffect(() => {
+    const match = algoritmos.filter(
+      (a) => a.cantidadDeEquipos === cantidadEquipos
+    )
+    if (match.length === 0) {
+      setAlgoritmoSeleccionado(undefined)
+      setListaFijada(null)
+    } else {
+      setAlgoritmoSeleccionado((prev) => {
+        const stillValid =
+          prev != null &&
+          match.some(
+            (a) =>
+              (a.id ?? a.fixtureAlgoritmoId) ===
+              (prev!.id ?? prev!.fixtureAlgoritmoId)
+          )
+        return stillValid ? prev : match[0]
+      })
+    }
+  }, [algoritmos, cantidadEquipos])
 
   const [listaFijada, setListaFijada] = useState<ItemFixture[] | null>(null)
   const [primeraFecha, setPrimeraFecha] = useState<Date>(() =>
@@ -109,8 +123,11 @@ export default function Fixture() {
         <FixtureAlgoritmosDisponiblesParaGenerar
           algoritmos={algoritmos}
           cantidadEquipos={cantidadEquipos}
-          tieneAlgoritmoConfigurado={tieneAlgoritmoConfigurado}
           algoritmoSeleccionado={algoritmoSeleccionado}
+          onAlgoritmoSeleccionadoChange={(algo) => {
+            setAlgoritmoSeleccionado(algo)
+            if ((algo?.fechas?.length ?? 0) === 0) setListaFijada(null)
+          }}
           onGenerarFixture={handleGenerarFixture}
         />
       </div>
@@ -119,14 +136,16 @@ export default function Fixture() {
         <FixtureGeneracionListaEquipos listaOrdenada={listaOrdenada} />
       </DndContext>
 
-      {listaFijada != null && (
-        <ResultadoFixture
-          fechas={algoritmoSeleccionado!.fechas!}
-          lista={listaFijada}
-          zonaId={zonaId}
-          primeraFecha={primeraFecha}
-        />
-      )}
+      {listaFijada != null &&
+        algoritmoSeleccionado?.fechas != null &&
+        algoritmoSeleccionado.fechas.length > 0 && (
+          <ResultadoFixture
+            fechas={algoritmoSeleccionado.fechas}
+            lista={listaFijada}
+            zonaId={zonaId}
+            primeraFecha={primeraFecha}
+          />
+        )}
     </div>
   )
 
