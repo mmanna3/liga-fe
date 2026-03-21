@@ -341,6 +341,219 @@ test.describe('Torneos — flujos profundos', () => {
     expect(body[0].equipos[0].id).toBe('2')
   })
 
+  // -------------------------------------------------------------------------
+  // Edición de datos básicos del torneo
+  // -------------------------------------------------------------------------
+
+  test('en modo edición los inputs muestran los valores actuales del torneo', async ({
+    page
+  }) => {
+    await setScenario('torneo_editable')
+    await login(page)
+    await page.goto('/torneos/detalle/1')
+
+    await page.getByRole('button', { name: 'Editar torneo' }).click()
+
+    await expect(page.getByPlaceholder('Ej: Torneo Anual 2026')).toHaveValue(
+      'Torneo Apertura 2026'
+    )
+    await expect(page.getByPlaceholder('2026', { exact: true })).toHaveValue('2026')
+  })
+
+  test('guardar envía torneoPUT con los datos actualizados y sin fases en el body', async ({
+    page
+  }) => {
+    await setScenario('torneo_editable')
+    await login(page)
+    await page.goto('/torneos/detalle/1')
+
+    await page.getByRole('button', { name: 'Editar torneo' }).click()
+
+    await page
+      .getByPlaceholder('Ej: Torneo Anual 2026')
+      .fill('Torneo Modificado 2026')
+
+    let bodyEnviado: unknown = null
+    await page.route('**/api/Torneo/1', async (route) => {
+      if (route.request().method() === 'PUT') {
+        bodyEnviado = JSON.parse(route.request().postData() ?? '{}')
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(null)
+        })
+      } else {
+        await route.continue()
+      }
+    })
+
+    await page.getByRole('button', { name: 'Guardar' }).click()
+
+    await expect(page.getByText('Torneo actualizado correctamente')).toBeVisible()
+    expect(bodyEnviado).toBeTruthy()
+    const body = bodyEnviado as Record<string, unknown>
+    expect(body.nombre).toBe('Torneo Modificado 2026')
+    expect(body.fases).toBeUndefined()
+  })
+
+  test('cancelar edición restaura los valores originales y oculta el formulario', async ({
+    page
+  }) => {
+    await setScenario('torneo_editable')
+    await login(page)
+    await page.goto('/torneos/detalle/1')
+
+    await page.getByRole('button', { name: 'Editar torneo' }).click()
+
+    const inputNombre = page.getByPlaceholder('Ej: Torneo Anual 2026')
+    await inputNombre.fill('Nombre Diferente')
+
+    await page.getByRole('button', { name: 'Cancelar' }).click()
+
+    await expect(inputNombre).not.toBeVisible()
+    await expect(page.getByText('Torneo Apertura 2026').first()).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Guardar' })).not.toBeVisible()
+  })
+
+  // -------------------------------------------------------------------------
+  // Edición de fases
+  // -------------------------------------------------------------------------
+
+  test('cambiar nombre de fase llama a fasesPUT con el nuevo nombre', async ({
+    page
+  }) => {
+    await setScenario('torneo_editable')
+    await login(page)
+    await page.goto('/torneos/detalle/1')
+
+    let bodyEnviado: unknown = null
+    await page.route('**/api/Torneo/*/fases/*', async (route) => {
+      if (route.request().method() === 'PUT') {
+        bodyEnviado = JSON.parse(route.request().postData() ?? '{}')
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(null)
+        })
+      } else {
+        await route.continue()
+      }
+    })
+
+    // Clic en el texto editable "Primera Fase" → aparece el input
+    await page.getByText('Primera Fase').first().click()
+    const inputFase = page.locator('input').first()
+    await inputFase.fill('Primera Fase Modificada')
+    await inputFase.blur()
+
+    await expect(page.getByText('Nombre actualizado')).toBeVisible()
+    expect(bodyEnviado).toBeTruthy()
+    const body = bodyEnviado as { nombre: string }
+    expect(body.nombre).toBe('Primera Fase Modificada')
+  })
+
+  test('cambiar formato de fase llama a fasesPUT con el nuevo formatoId', async ({
+    page
+  }) => {
+    await setScenario('torneo_editable')
+    await login(page)
+    await page.goto('/torneos/detalle/1')
+
+    // TORNEO_EDITABLE tiene faseFormatoId: 1 = 'todos-contra-todos'
+    await expect(
+      page.getByRole('button', { name: 'Todos contra todos' })
+    ).toBeVisible()
+
+    let bodyEnviado: unknown = null
+    await page.route('**/api/Torneo/*/fases/*', async (route) => {
+      if (route.request().method() === 'PUT') {
+        bodyEnviado = JSON.parse(route.request().postData() ?? '{}')
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(null)
+        })
+      } else {
+        await route.continue()
+      }
+    })
+
+    await page.getByRole('button', { name: 'Eliminación directa' }).click()
+
+    await expect(page.getByText('Formato actualizado')).toBeVisible()
+    expect(bodyEnviado).toBeTruthy()
+    const body = bodyEnviado as { faseFormatoId: number }
+    expect(body.faseFormatoId).toBe(2)
+  })
+
+  // -------------------------------------------------------------------------
+  // Eliminar torneo
+  // -------------------------------------------------------------------------
+
+  test('eliminar torneo: modal de confirmación y llamada a torneoDELETE', async ({
+    page
+  }) => {
+    // happy: TORNEO_1 tiene fases: [] → puedeEliminar = true
+    await setScenario('happy')
+    await login(page)
+    await page.goto('/torneos/detalle/1')
+
+    let deleteLlamado = false
+    await page.route('**/api/Torneo/1', async (route) => {
+      if (route.request().method() === 'DELETE') {
+        deleteLlamado = true
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(1)
+        })
+      } else {
+        await route.continue()
+      }
+    })
+
+    // Clic en el botón eliminar (aria-label='Eliminar') → abre el modal
+    await page.locator('button[aria-label="Eliminar"]').click()
+
+    await expect(page.getByText('Eliminar torneo').first()).toBeVisible()
+    await expect(
+      page.getByText('¿Estás seguro', { exact: false })
+    ).toBeVisible()
+
+    // Confirmar en el modal
+    await page.getByRole('button', { name: 'Eliminar torneo' }).click()
+
+    await page.waitForURL('/torneos')
+    expect(deleteLlamado).toBe(true)
+  })
+
+  // -------------------------------------------------------------------------
+  // Zonas — equipo desaparece del buscador al asignarlo
+  // -------------------------------------------------------------------------
+
+  test('equipo asignado a zona desaparece del panel de equipos disponibles', async ({
+    page
+  }) => {
+    await setScenario('torneo_zonas_vacio')
+    await login(page)
+    await page.goto('/torneos/detalle/1/fases/100/zonas')
+
+    // Ambos equipos visibles en el buscador
+    await expect(page.getByText('Infantil A').first()).toBeVisible()
+    await expect(page.getByText('Infantil B').first()).toBeVisible()
+
+    const zonaCard = page.getByTestId('zona-card').first()
+    await page.getByText('Infantil A').first().dragTo(zonaCard)
+
+    // Infantil A ahora está en la zona-card
+    await expect(zonaCard.getByText('Infantil A')).toBeVisible()
+
+    // Infantil A aparece solo una vez (en la zona-card, no en el buscador)
+    await expect(page.getByText('Infantil A')).toHaveCount(1)
+    // Infantil B sigue disponible en el buscador
+    await expect(page.getByText('Infantil B')).toBeVisible()
+  })
+
   test('crear zonas: dos zonas con equipos distintos envía ambas', async ({ page }) => {
     await setScenario('torneo_zonas_vacio')
     await login(page)

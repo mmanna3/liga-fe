@@ -454,4 +454,115 @@ test.describe('Fixture', () => {
       page.getByText('15 de mayo de 2026', { exact: false })
     ).toBeVisible()
   })
+
+  // -------------------------------------------------------------------------
+  // Cambiar primera fecha → actualiza preview del fixture
+  // -------------------------------------------------------------------------
+
+  test('cambiar la primera fecha actualiza las fechas en las cards del fixture generado', async ({
+    page
+  }) => {
+    await setScenario('fixture_sin_fechas')
+    await login(page)
+    await page.goto(FIXTURE_URL)
+
+    // Abrir el Calendario del selector "¿Cuándo es la primera fecha?"
+    // El trigger muestra la fecha actual (ej: "21 de marzo de 2026")
+    await page
+      .getByText('¿Cuándo es la primera fecha?')
+      .locator('xpath=../..//button')
+      .click()
+
+    // Navegar al mes siguiente (abril 2026)
+    await page.locator('.rdp-button_next').click()
+
+    // Seleccionar el día 15 de abril de 2026
+    await page.locator('[data-day="15/4/2026"]').click()
+
+    // Generar la vista previa del fixture
+    await page
+      .getByRole('button', { name: 'Generar vista previa del fixture' })
+      .click()
+
+    // La card de Fecha 1 debe mostrar "miércoles 15 de abril" (abril 15, 2026 = miércoles)
+    await expect(page.getByText('miércoles 15 de abril')).toBeVisible()
+  })
+
+  // -------------------------------------------------------------------------
+  // Reordenar equipos con drag-and-drop
+  // -------------------------------------------------------------------------
+
+  test('la lista de equipos se muestra en el orden correcto', async ({
+    page
+  }) => {
+    await setScenario('fixture_sin_fechas')
+    await login(page)
+    await page.goto(FIXTURE_URL)
+
+    await expect(
+      page.getByText('Orden de equipos (arrastrá para reordenar)')
+    ).toBeVisible()
+
+    // Orden inicial: alfabético por nombre (Infantil A antes que Infantil B)
+    // labelItem incluye: codigo · nombre · club
+    const liItems = page.locator('li').filter({ hasText: /Infantil/ })
+    await expect(liItems).toHaveCount(2)
+    await expect(liItems.nth(0)).toContainText('Infantil A')
+    await expect(liItems.nth(1)).toContainText('Infantil B')
+
+    // Reordenar: arrastrar Infantil B encima de Infantil A usando page.mouse
+    // dnd-kit usa PointerSensor con activationConstraint distance=8
+    await liItems.nth(1).scrollIntoViewIfNeeded()
+    const boxB = (await liItems.nth(1).boundingBox())!
+    const boxA = (await liItems.nth(0).boundingBox())!
+
+    const srcX = boxB.x + boxB.width / 2
+    const srcY = boxB.y + boxB.height / 2
+    const tgtX = boxA.x + boxA.width / 2
+    const tgtY = boxA.y + boxA.height / 2
+
+    await page.mouse.move(srcX, srcY)
+    await page.mouse.down()
+    // Mover > 8px para activar el sensor
+    await page.mouse.move(srcX + 10, srcY)
+    await page.mouse.move(tgtX, tgtY, { steps: 20 })
+    await page.mouse.up()
+
+    // Verificar que el reorden se aplicó
+    await expect(liItems.nth(0)).toContainText('Infantil B')
+    await expect(liItems.nth(1)).toContainText('Infantil A')
+  })
+
+  // -------------------------------------------------------------------------
+  // Agregar jornada a fecha existente
+  // -------------------------------------------------------------------------
+
+  test('agregar jornada a fecha existente abre el modal con slots LOCAL y VISITANTE', async ({
+    page
+  }) => {
+    await setScenario('fixture_con_fechas')
+    await login(page)
+    await page.goto(FIXTURE_URL)
+
+    // Entrar en modo edición de Fecha 1
+    await page
+      .locator('h3', { hasText: 'Fecha 1' })
+      .locator('..')
+      .locator('..')
+      .locator('button')
+      .first()
+      .click()
+
+    // Clic en "Agregar jornada +" → abre el modal
+    await page.getByText('Agregar jornada +').click()
+
+    // El modal debe mostrar el título y los slots
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByRole('heading', { name: 'Agregar jornada' })).toBeVisible()
+    await expect(dialog.getByText('LOCAL')).toBeVisible()
+    await expect(dialog.getByText('VISITANTE')).toBeVisible()
+
+    // El botón Agregar está deshabilitado (slots vacíos)
+    await expect(dialog.getByRole('button', { name: 'Agregar' })).toBeDisabled()
+  })
 })

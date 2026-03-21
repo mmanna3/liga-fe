@@ -444,6 +444,12 @@ const ROUTES = [
       torneo_editable_con_nueva_fase: { id: 101, numero: 2, nombre: 'Nueva fase', faseFormatoId: 1, estadoFaseId: 100, esVisibleEnApp: true, sePuedeEditar: true, torneoId: 1 }
     }
   },
+  // Fases de torneo — actualizar
+  {
+    method: 'PUT',
+    pattern: /^\/api\/Torneo\/\d+\/fases\/\d+$/,
+    scenarios: { happy: null }
+  },
   // Torneos — actualizar
   {
     method: 'PUT',
