@@ -62,7 +62,7 @@ export const useAuth = create<AuthState>()(
       },
       esAdmin: () => {
         const { userRole } = get()
-        return userRole === 'Administrador'
+        return userRole === 'Administrador' || userRole === 'SuperAdministrador'
       }
     }),
     {
