@@ -65,7 +65,11 @@ const MAPEO_ICONOS: Record<
   Carnet: LucideIcons.IdCard,
   Clave: LucideIcons.Key,
   Email: LucideIcons.Mail,
-  Teléfono: LucideIcons.Phone
+  Teléfono: LucideIcons.Phone,
+
+  // SuperAdmin
+  SuperAdmin: LucideIcons.ShieldCheck,
+  BaseDeDatos: LucideIcons.Database
 }
 
 export type NombreIcono = keyof typeof MAPEO_ICONOS

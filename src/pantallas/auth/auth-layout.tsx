@@ -34,12 +34,25 @@ const adminMenuItems = [
   }
 ]
 
+const superAdminMenuItems = [
+  {
+    name: 'SuperAdmin',
+    path: rutasNavegacion.superAdmin,
+    icono: 'SuperAdmin' as const
+  }
+]
+
 export default function AuthLayout() {
   const esAdmin = useAuth((state) => state.esAdmin)
   const { userRole, userName, logout } = useAuth()
   const navigate = useNavigate()
 
-  const menuItems = [...baseMenuItems, ...(esAdmin() ? adminMenuItems : [])]
+  const esSuperAdmin = userRole === 'SuperAdministrador'
+  const menuItems = [
+    ...baseMenuItems,
+    ...(esAdmin() ? adminMenuItems : []),
+    ...(esSuperAdmin ? superAdminMenuItems : [])
+  ]
   const { pathname } = useLocation()
   const isHome = pathname === '/' || pathname === ''
 

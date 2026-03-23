@@ -1,4 +1,5 @@
 import Configuracion from '@/pantallas/auth/configuracion/configuracion'
+import SuperAdmin from '@/pantallas/auth/super-admin/super-admin'
 import FechasGeneracionFixture from '@/pantallas/auth/configuracion/generacion-de-fixtures/fechas-generacion-fixture'
 import GeneracionDeFixtures from '@/pantallas/auth/configuracion/generacion-de-fixtures/generacion-de-fixtures'
 import DetalleClub from '@/pantallas/auth/club/detalle-club'
@@ -111,6 +112,7 @@ export const mapaRutasComponentes = [
         path: `${rutas.fechasGeneracionFixture}/:id`,
         element: <FechasGeneracionFixture />
       },
+      { path: rutas.superAdmin, element: <SuperAdmin /> },
       { path: rutas.delegados, element: <Delegados /> },
       { path: `${rutas.detalleDelegado}/:id`, element: <DetalleDelegado /> },
       {

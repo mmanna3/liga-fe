@@ -5,7 +5,6 @@ import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
 import { FixtureAlgoritmosDisponiblesParaGenerar } from './fixture-algoritmos-disponibles-para-generar'
 import { FixtureGeneracionListaEquipos } from './fixture-generacion-lista-equipos'
 import { FixtureSelectorFecha } from './fixture-selector-fecha'
-import { rutasNavegacion } from '@/ruteo/rutas'
 import { DndContext } from '@dnd-kit/core'
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -98,7 +97,6 @@ export default function Fixture() {
     setListaFijada(listaOrdenada)
   }
 
-  const pathVolver = `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${faseId}/zonas`
   const subtitulo = [
     torneo?.nombre ?? '—',
     fase?.nombre ?? '—',
@@ -154,7 +152,6 @@ export default function Fixture() {
       titulo='Fixture'
       subtitulo={subtitulo}
       iconoTitulo='Fixture'
-      pathBotonVolver={pathVolver}
       contenedorClassName='max-w-6xl'
       contenido={contenido}
       contenidoEnCard={false}
