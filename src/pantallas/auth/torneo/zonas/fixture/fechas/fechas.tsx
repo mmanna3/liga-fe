@@ -1,7 +1,7 @@
 import type { EquipoDeLaZonaDTO, TorneoFechaDTO } from '@/api/clients'
 import { useState } from 'react'
-import { FechaCard } from './fecha-card'
-import { NuevaFechaCard } from './nueva-fecha-card'
+import { FechaCard } from '../fecha-card'
+import { NuevaFechaCard } from '../nueva-fecha-card'
 
 export function FechasZona({
   fechas,

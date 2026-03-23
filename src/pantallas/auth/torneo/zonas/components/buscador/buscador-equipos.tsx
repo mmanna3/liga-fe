@@ -5,8 +5,8 @@ import CajitaConTick from '@/design-system/ykn-ui/cajita-con-tick'
 import { Input } from '@/design-system/ykn-ui/input'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
 import { useEffect, useMemo, useState } from 'react'
-import { FiltrosBuscadorDeEquipos } from './filtros-buscador-de-equipos'
-import { RenglonBuscadorDeEquipos } from './renglon-buscador-de-equipos'
+import { FiltrosBuscadorDeEquipos } from './filtros-buscador'
+import { RenglonBuscadorDeEquipos } from './renglon-equipo'
 
 /** Convierte EquipoParaZonasDTO a EquipoDTO para compatibilidad con zona-fase y RenglonBuscadorDeEquipos */
 function equipoParaZonasAEquipoDto(e: EquipoParaZonasDTO): EquipoDTO {

@@ -9,7 +9,7 @@ import {
   validarZonasParaGuardar,
   zonaDtoAEstado,
   zonaEstadoADto
-} from './tipos-zona'
+} from './tipos'
 
 // ---------------------------------------------------------------------------
 // validarZonasParaGuardar

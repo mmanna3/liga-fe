@@ -4,9 +4,9 @@ import BotonVolver from '@/design-system/ykn-ui/boton-volver'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import { formatoNombreDesdeId } from './detalle-torneo/lib'
-import { GestorZonas } from './zonas/gestor-zonas'
-import { ZonaHeader } from './zonas/zona-header'
+import { formatoNombreDesdeId } from '../detalle-torneo/lib'
+import { GestorZonas } from './gestor-zonas'
+import { ZonaHeader } from './zona-header'
 
 export default function ZonasDeLaFase() {
   const { id: torneoIdParam, faseId: faseIdParam } = useParams<{

@@ -124,7 +124,7 @@ export function JornadaFilaEdicion({
 // Construcción de JornadaBorrador desde ItemFixture
 // ---------------------------------------------------------------------------
 
-import type { ItemFixture } from './types'
+import type { ItemFixture } from '../tipos'
 
 export function buildJornadaBorrador(
   local: ItemFixture,

@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/design-system/base-ui/card'
-import { FilaLista, SlotDroppable } from './fila-lista'
-import { EspecialDraggable, ZonaDerechaDroppable } from './panel-especiales'
-import type { ItemFixture } from './types'
+import { FilaLista, SlotDroppable } from '../fila-lista'
+import { EspecialDraggable, ZonaDerechaDroppable } from '../panel-especiales'
+import type { ItemFixture } from '../tipos'
 
 interface FixtureGeneracionListaEquiposProps {
   listaOrdenada: ItemFixture[]

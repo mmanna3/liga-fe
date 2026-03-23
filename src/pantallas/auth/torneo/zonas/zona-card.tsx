@@ -8,7 +8,7 @@ import Icono from '@/design-system/ykn-ui/icono'
 import { TextoEditable } from '@/design-system/ykn-ui/texto-editable'
 import { cn } from '@/logica-compartida/utils'
 import { X } from 'lucide-react'
-import type { ZonaEstado } from './tipos-zona'
+import type { ZonaEstado } from './tipos'
 
 function textoEquipoCompleto(eq: EquipoDTO): string {
   const partes: string[] = []

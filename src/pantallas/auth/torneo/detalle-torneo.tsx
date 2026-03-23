@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Categorias } from './crear-torneo/components/categorias'
 import { SelectorAgrupador } from './crear-torneo/components/selector-agrupador'
-import { FaseItem } from './detalle-torneo/fase-item'
+import { FaseItem } from './detalle-torneo/components/fase-item/fase-item'
 import {
   categoriasACategoriaDto,
   categoriasDtoACategoria,

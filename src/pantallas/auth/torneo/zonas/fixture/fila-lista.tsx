@@ -1,7 +1,7 @@
 import { useDraggable, useDroppable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
-import type { ItemFixture } from './types'
-import { labelItem } from './types'
+import type { ItemFixture } from './tipos'
+import { labelItem } from './tipos'
 
 export function FilaLista({
   item,

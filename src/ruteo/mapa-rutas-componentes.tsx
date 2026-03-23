@@ -25,7 +25,7 @@ import EditarAgrupadorTorneo from '@/pantallas/auth/torneo/agrupador-torneo/edit
 import CrearTorneo from '@/pantallas/auth/torneo/crear-torneo'
 import DetalleTorneo from '@/pantallas/auth/torneo/detalle-torneo'
 import Fixture from '@/pantallas/auth/torneo/zonas/fixture/fixture'
-import ZonasDeLaFase from '@/pantallas/auth/torneo/zonas-de-la-fase'
+import ZonasDeLaFase from '@/pantallas/auth/torneo/zonas/zonas'
 import Torneo from '@/pantallas/auth/torneo/torneo'
 import ErrorPage from '@/pantallas/error'
 import Login from '@/pantallas/login'

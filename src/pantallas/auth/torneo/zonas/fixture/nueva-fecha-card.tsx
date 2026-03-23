@@ -14,11 +14,11 @@ import {
   type CampoReemplazo,
   type JornadaBorrador,
   type PendienteReemplazo
-} from './_jornada-edicion'
+} from './fechas/jornada-edicion'
 import { Calendario } from '@/design-system/ykn-ui/calendario'
 import { ModalAgregarJornada } from './modal-agregar-jornada'
 import { ModalReemplazarEquipo } from './modal-reemplazar-equipo'
-import type { ItemFixture } from './types'
+import type { ItemFixture } from './tipos'
 
 export function NuevaFechaCard({
   nextNumero,

@@ -1,8 +1,8 @@
 import { EquipoDTO } from '@/api/clients'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { Plus } from 'lucide-react'
-import type { ZonaEstado } from './tipos-zona'
-import { Zona } from './zona-fase'
+import type { ZonaEstado } from './tipos'
+import { Zona } from './zona-card'
 
 interface ContenidoZonasEditableProps {
   zonasEstado: ZonaEstado[]

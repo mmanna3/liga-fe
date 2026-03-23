@@ -23,9 +23,13 @@ import { rutasNavegacion } from '@/ruteo/rutas'
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { DatosFaseLectura } from '../crear-torneo/components/datos-fase-lectura'
-import { TituloFase } from '../crear-torneo/components/titulo-fase'
-import { OPCIONES_FORMATO, formatoNombreDesdeId, type FaseEstado } from './lib'
+import { DatosFaseLectura } from '../../../crear-torneo/components/datos-fase-lectura'
+import { TituloFase } from '../../../crear-torneo/components/titulo-fase'
+import {
+  OPCIONES_FORMATO,
+  formatoNombreDesdeId,
+  type FaseEstado
+} from '../../lib'
 
 interface FaseItemProps {
   torneoId: number
@@ -140,8 +144,8 @@ export function FaseItem({
         <TituloFase
           numero={fase.numero}
           valor={fase.nombre}
-          alCambiar={(v) => onActualizar('nombre', v)}
-          alConfirmar={(v) => cambiarNombreMutation.mutate(v)}
+          alCambiar={(v: string) => onActualizar('nombre', v)}
+          alConfirmar={(v: string) => cambiarNombreMutation.mutate(v)}
           soloLectura={false}
         />
         <div className='flex gap-2 shrink-0'>

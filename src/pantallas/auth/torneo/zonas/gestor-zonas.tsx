@@ -9,14 +9,14 @@ import { toast } from 'sonner'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useCallback, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { BuscadorDeEquiposParaZona } from './buscador-de-equipos-para-zona'
-import { ContenidoZonasEditable } from './contenido-zonas-editable'
-import { useZonasEstado } from './use-zonas-estado'
+import { BuscadorDeEquiposParaZona } from './components/buscador/buscador-equipos'
+import { ContenidoZonasEditable } from './zonas-grid'
+import { useZonasEstado } from './hooks/use-zonas'
 import {
   validarZonasParaGuardar,
   zonaDtoAEstado,
   zonaEstadoADto
-} from './tipos-zona'
+} from './tipos'
 
 interface GestorZonasProps {
   modo: 'crear' | 'modificar'

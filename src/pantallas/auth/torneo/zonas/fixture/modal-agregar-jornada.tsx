@@ -18,7 +18,7 @@ import {
 } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
 import { useState } from 'react'
-import type { ItemFixture } from './types'
+import type { ItemFixture } from './tipos'
 
 type Slots = { local: ItemFixture | null; visitante: ItemFixture | null }
 

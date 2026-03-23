@@ -6,7 +6,7 @@ import {
   useSensors
 } from '@dnd-kit/core'
 import type { EquipoDeLaZonaDTO } from '@/api/clients'
-import type { ItemFixture } from './types'
+import type { ItemFixture } from '../tipos'
 
 export function useListaFixture(equipos: EquipoDeLaZonaDTO[]) {
   const inicialOrdenado = useMemo(() => {
