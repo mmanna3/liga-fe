@@ -1,22 +1,14 @@
 import { api } from '@/api/api'
-import { TorneoZonaDTO } from '@/api/clients'
-import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
-import { useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
-import { rutasNavegacion } from '@/ruteo/rutas'
-import { useCallback, useEffect, useRef } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useEffect, useRef } from 'react'
+import { useParams } from 'react-router-dom'
 import { BuscadorDeEquiposParaZona } from './components/buscador/buscador-equipos'
 import { ContenidoZonasEditable } from './zonas-grid'
+import { useGuardarZonas } from './hooks/use-guardar-zonas'
 import { useZonasEstado } from './hooks/use-zonas'
-import {
-  validarZonasParaGuardar,
-  zonaDtoAEstado,
-  zonaEstadoADto
-} from './tipos'
+import { zonaDtoAEstado } from './tipos'
 
 interface GestorZonasProps {
   modo: 'crear' | 'modificar'
@@ -29,13 +21,10 @@ export function GestorZonas({
   headerCard,
   pathVolver
 }: GestorZonasProps) {
-  const navigate = useNavigate()
-  const { id: torneoIdParam, faseId: faseIdParam } = useParams<{
+  const { faseId: faseIdParam } = useParams<{
     id: string
     faseId: string
   }>()
-  const queryClient = useQueryClient()
-  const torneoId = Number(torneoIdParam)
   const faseId = Number(faseIdParam)
 
   const { data: zonasApi = [], refetch } = useApiQuery({
@@ -71,56 +60,11 @@ export function GestorZonas({
     }
   }, [zonasApi, setZonasEstado, modo])
 
-  const navegarHacia = useRef<string | null>(null)
-
-  const guardarMutation = useApiMutation<TorneoZonaDTO[]>({
-    fn: async (body) => {
-      if (modo === 'crear') {
-        return await api.crearZonasMasivamente(faseId, body)
-      } else {
-        await api.modificarZonasMasivamente(faseId, body)
-      }
-    },
-    mensajeDeExito:
-      modo === 'crear'
-        ? 'Zonas creadas correctamente'
-        : 'Zonas actualizadas correctamente',
-    antesDeMensajeExito: () => {
-      if (modo === 'crear') {
-        queryClient.invalidateQueries({ queryKey: ['zonasAll', faseId] })
-      } else {
-        refetch()
-      }
-      const destino = navegarHacia.current
-      if (destino != null) {
-        navigate(destino)
-      }
-    }
+  const { guardarMutation, handleGuardar, handleIrAFixture } = useGuardarZonas({
+    zonasEstado,
+    modo,
+    refetch
   })
-
-  const guardar = useCallback(
-    (destino?: string) => {
-      const validacion = validarZonasParaGuardar(zonasEstado)
-      if (!validacion.valido) {
-        toast.error(validacion.mensaje)
-        return
-      }
-      navegarHacia.current = destino ?? null
-      const body = zonasEstado.map((z) => zonaEstadoADto(z, faseId))
-      guardarMutation.mutate(body)
-    },
-    [zonasEstado, faseId, guardarMutation]
-  )
-
-  const handleGuardar = useCallback(() => guardar(), [guardar])
-
-  const handleIrAFixture = useCallback(
-    (zonaId: number) => {
-      const path = `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${faseId}/zonas/${zonaId}/fixture`
-      guardar(path)
-    },
-    [guardar, torneoId, faseId]
-  )
 
   return (
     <LayoutSegundoNivel
