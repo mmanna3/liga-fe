@@ -2,6 +2,9 @@ import { expect, test } from '@playwright/test'
 import { login, setScenario } from './helpers'
 
 test.describe('Delegados', () => {
+  test.beforeEach(async () => {
+    await setScenario('happy')
+  })
   test.afterEach(async () => {
     await setScenario('happy')
   })

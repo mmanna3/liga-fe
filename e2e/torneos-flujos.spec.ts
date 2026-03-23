@@ -4,6 +4,9 @@ import { login, setScenario } from './helpers'
 test.describe('Torneos — flujos profundos', () => {
   test.describe.configure({ mode: 'serial' })
 
+  test.beforeEach(async () => {
+    await setScenario('happy')
+  })
   test.afterEach(async () => {
     await setScenario('happy')
   })
@@ -339,6 +342,173 @@ test.describe('Torneos — flujos profundos', () => {
     expect(body).toHaveLength(1)
     expect(body[0].equipos).toHaveLength(1)
     expect(body[0].equipos[0].id).toBe('2')
+  })
+
+  // -------------------------------------------------------------------------
+  // Edición de categorías
+  // -------------------------------------------------------------------------
+
+  test('agregar categoría en modo edición: la nueva categoría aparece como badge', async ({
+    page
+  }) => {
+    await setScenario('torneo_editable')
+    await login(page)
+    await page.goto('/torneos/detalle/1')
+
+    await page.getByRole('button', { name: 'Editar torneo' }).click()
+
+    // Abrir el formulario de nueva categoría
+    await page.getByRole('button', { name: 'Agregar' }).click()
+
+    // Llenar el formulario
+    await page.getByPlaceholder('Ej: +40, Sub 15, Mayores').fill('Sub 15')
+    await page.getByPlaceholder('Desde').fill('2011')
+    await page.getByPlaceholder('Hasta').fill('2012')
+
+    // Guardar la categoría (primer Guardar — el del formulario de categoría)
+    await page.getByRole('button', { name: 'Guardar' }).first().click()
+
+    // El badge de la nueva categoría debe aparecer
+    await expect(page.getByText('Sub 15')).toBeVisible()
+  })
+
+  test('agregar categoría y guardar torneo: el body incluye la nueva categoría', async ({
+    page
+  }) => {
+    await setScenario('torneo_editable')
+    await login(page)
+    await page.goto('/torneos/detalle/1')
+
+    await page.getByRole('button', { name: 'Editar torneo' }).click()
+
+    await page.getByRole('button', { name: 'Agregar' }).click()
+    await page.getByPlaceholder('Ej: +40, Sub 15, Mayores').fill('Sub 15')
+    await page.getByPlaceholder('Desde').fill('2011')
+    await page.getByPlaceholder('Hasta').fill('2012')
+    await page.getByRole('button', { name: 'Guardar' }).first().click()
+
+    let bodyEnviado: unknown = null
+    await page.route('**/api/Torneo/1', async (route) => {
+      if (route.request().method() === 'PUT') {
+        bodyEnviado = JSON.parse(route.request().postData() ?? '{}')
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(null)
+        })
+      } else {
+        await route.continue()
+      }
+    })
+
+    // Guardar el torneo (único Guardar restante en la página)
+    await page.getByRole('button', { name: 'Guardar' }).click()
+
+    await expect(page.getByText('Torneo actualizado correctamente')).toBeVisible()
+    const body = bodyEnviado as { categorias: Array<{ nombre: string }> }
+    expect(body.categorias).toHaveLength(2)
+    const nombres = body.categorias.map((c) => c.nombre)
+    expect(nombres).toContain('Sub 12')
+    expect(nombres).toContain('Sub 15')
+  })
+
+  test('quitar categoría y guardar torneo: el body no incluye la categoría eliminada', async ({
+    page
+  }) => {
+    await setScenario('torneo_editable')
+    await login(page)
+    await page.goto('/torneos/detalle/1')
+
+    await page.getByRole('button', { name: 'Editar torneo' }).click()
+
+    // "Sub 12" debe estar visible como badge
+    await expect(page.getByText('Sub 12')).toBeVisible()
+
+    // Clic en la X del badge "Sub 12"
+    // El badge contiene un <button> con el icono X para quitar la categoría
+    await page.getByText('Sub 12').locator('button').click()
+
+    await expect(page.getByText('Sub 12')).not.toBeVisible()
+
+    let bodyEnviado: unknown = null
+    await page.route('**/api/Torneo/1', async (route) => {
+      if (route.request().method() === 'PUT') {
+        bodyEnviado = JSON.parse(route.request().postData() ?? '{}')
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(null)
+        })
+      } else {
+        await route.continue()
+      }
+    })
+
+    await page.getByRole('button', { name: 'Guardar' }).click()
+
+    await expect(page.getByText('Torneo actualizado correctamente')).toBeVisible()
+    const body = bodyEnviado as { categorias: Array<{ nombre: string }> }
+    expect(body.categorias).toHaveLength(0)
+  })
+
+  // -------------------------------------------------------------------------
+  // Eliminar fase
+  // -------------------------------------------------------------------------
+
+  test('eliminar fase (editable): modal de confirmación aparece', async ({
+    page
+  }) => {
+    await setScenario('torneo_editable')
+    await login(page)
+    await page.goto('/torneos/detalle/1')
+
+    // El botón eliminar de la fase está junto al botón "Zonas de la fase"
+    const botonesContainer = page
+      .getByRole('button', { name: 'Zonas de la fase' })
+      .locator('..')
+    await botonesContainer.locator('button').last().click()
+
+    await expect(page.getByRole('alertdialog')).toBeVisible()
+    await expect(page.getByRole('alertdialog')).toContainText('Eliminar fase')
+  })
+
+  test('eliminar fase (editable): confirmar elimina la fase de la UI', async ({
+    page
+  }) => {
+    await setScenario('torneo_editable')
+    await login(page)
+    await page.goto('/torneos/detalle/1')
+
+    await expect(page.getByText('Primera Fase')).toBeVisible()
+
+    const botonesContainer = page
+      .getByRole('button', { name: 'Zonas de la fase' })
+      .locator('..')
+    await botonesContainer.locator('button').last().click()
+
+    await page.getByRole('alertdialog').getByRole('button', { name: 'Eliminar' }).click()
+
+    await expect(page.getByText('Primera Fase')).not.toBeVisible()
+  })
+
+  test('eliminar fase no editable: muestra aviso "No se puede eliminar"', async ({
+    page
+  }) => {
+    await setScenario('torneo_detalle')
+    await login(page)
+    await page.goto('/torneos/detalle/1')
+
+    // En torneo_detalle la fase tiene sePuedeEditar: false
+    const botonesContainer = page
+      .getByRole('button', { name: 'Zonas de la fase' })
+      .locator('..')
+    await botonesContainer.locator('button').last().click()
+
+    await expect(page.getByRole('alertdialog')).toBeVisible()
+    await expect(page.getByRole('alertdialog')).toContainText('No se puede eliminar')
+
+    await page.getByRole('alertdialog').getByRole('button', { name: 'Volver' }).click()
+    await expect(page.getByRole('alertdialog')).not.toBeVisible()
   })
 
   // -------------------------------------------------------------------------

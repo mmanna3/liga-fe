@@ -4,6 +4,9 @@ import { login, setScenario } from './helpers'
 test.describe('Clubes', () => {
   test.describe.configure({ mode: 'serial' })
 
+  test.beforeEach(async () => {
+    await setScenario('happy')
+  })
   test.afterEach(async () => {
     await setScenario('happy')
   })

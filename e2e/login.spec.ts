@@ -1,7 +1,13 @@
 import { expect, test } from '@playwright/test'
+import { setScenario } from './helpers'
 
 test.describe('Login', () => {
   test.describe.configure({ mode: 'serial' })
+
+  test.beforeEach(async () => {
+    await setScenario('happy')
+  })
+
   test('muestra la pantalla de login', async ({ page }) => {
     await page.goto('/login')
     await expect(page.getByText('Iniciar Sesión')).toBeVisible()
@@ -17,8 +23,9 @@ test.describe('Login', () => {
     await page.getByTestId('input-password').fill('admin123')
     await page.getByTestId('boton-ingresar').click()
 
-    // Después del login exitoso redirige a home "/"
-    await page.waitForURL('/')
+    // Después del login exitoso el menú lateral es visible
+    // (no usamos waitForURL porque Playwright trata trailing slash como URL distinta)
+    await page.getByTestId('menu-lateral').waitFor({ state: 'visible' })
 
     // El menú lateral es visible
     await expect(page.getByTestId('menu-lateral')).toBeVisible()

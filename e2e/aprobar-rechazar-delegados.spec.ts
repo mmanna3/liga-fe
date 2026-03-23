@@ -4,6 +4,9 @@ import { login, setScenario } from './helpers'
 test.describe('Aprobación y rechazo de delegados', () => {
   test.describe.configure({ mode: 'serial' })
 
+  test.beforeEach(async () => {
+    await setScenario('happy')
+  })
   test.afterEach(async () => {
     await setScenario('happy')
   })

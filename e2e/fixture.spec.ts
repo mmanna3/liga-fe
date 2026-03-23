@@ -6,6 +6,9 @@ const FIXTURE_URL = '/torneos/detalle/1/fases/100/zonas/1/fixture'
 test.describe('Fixture', () => {
   test.describe.configure({ mode: 'serial' })
 
+  test.beforeEach(async () => {
+    await setScenario('happy')
+  })
   test.afterEach(async () => {
     await setScenario('happy')
   })
@@ -564,5 +567,217 @@ test.describe('Fixture', () => {
 
     // El botón Agregar está deshabilitado (slots vacíos)
     await expect(dialog.getByRole('button', { name: 'Agregar' })).toBeDisabled()
+  })
+
+  // -------------------------------------------------------------------------
+  // Completar el modal de agregar jornada (drag → confirmar)
+  // -------------------------------------------------------------------------
+
+  test('completar el modal: drag de equipos a slots habilita el botón Agregar', async ({
+    page
+  }) => {
+    await setScenario('fixture_con_fechas')
+    await login(page)
+    await page.goto(FIXTURE_URL)
+
+    // Entrar en modo edición y abrir el modal
+    await page
+      .locator('h3', { hasText: 'Fecha 1' })
+      .locator('..')
+      .locator('..')
+      .locator('button')
+      .first()
+      .click()
+    await page.getByText('Agregar jornada +').click()
+
+    const dialog = page.getByRole('dialog')
+
+    // Localizar los slots (el div padre del label LOCAL/VISITANTE)
+    const localSlot = dialog
+      .locator('p')
+      .filter({ hasText: /^LOCAL$/ })
+      .locator('xpath=parent::div')
+    const visitanteSlot = dialog
+      .locator('p')
+      .filter({ hasText: /^VISITANTE$/ })
+      .locator('xpath=parent::div')
+
+    // Arrastar Infantil A → LOCAL, Infantil B → VISITANTE
+    // Usamos page.mouse para activar el PointerSensor de dnd-kit (distance: 8)
+    const itemA = dialog.getByText('Infantil A').first()
+    const itemB = dialog.getByText('Infantil B').first()
+
+    const boxA = (await itemA.boundingBox())!
+    const tgtLocal = (await localSlot.boundingBox())!
+    await page.mouse.move(boxA.x + boxA.width / 2, boxA.y + boxA.height / 2)
+    await page.mouse.down()
+    await page.mouse.move(boxA.x + boxA.width / 2 + 10, boxA.y + boxA.height / 2)
+    await page.mouse.move(
+      tgtLocal.x + tgtLocal.width / 2,
+      tgtLocal.y + tgtLocal.height / 2,
+      { steps: 20 }
+    )
+    await page.mouse.up()
+
+    const boxB = (await itemB.boundingBox())!
+    const tgtVisitante = (await visitanteSlot.boundingBox())!
+    await page.mouse.move(boxB.x + boxB.width / 2, boxB.y + boxB.height / 2)
+    await page.mouse.down()
+    await page.mouse.move(boxB.x + boxB.width / 2 + 10, boxB.y + boxB.height / 2)
+    await page.mouse.move(
+      tgtVisitante.x + tgtVisitante.width / 2,
+      tgtVisitante.y + tgtVisitante.height / 2,
+      { steps: 20 }
+    )
+    await page.mouse.up()
+
+    // Con ambos slots llenos, el botón debe habilitarse
+    await expect(dialog.getByRole('button', { name: 'Agregar' })).toBeEnabled()
+  })
+
+  test('completar el modal: clic en Agregar cierra el modal y la jornada queda en el borrador', async ({
+    page
+  }) => {
+    await setScenario('fixture_con_fechas')
+    await login(page)
+    await page.goto(FIXTURE_URL)
+
+    // Entrar en modo edición
+    await page
+      .locator('h3', { hasText: 'Fecha 1' })
+      .locator('..')
+      .locator('..')
+      .locator('button')
+      .first()
+      .click()
+    await page.getByText('Agregar jornada +').click()
+
+    const dialog = page.getByRole('dialog')
+
+    const localSlot = dialog
+      .locator('p')
+      .filter({ hasText: /^LOCAL$/ })
+      .locator('xpath=parent::div')
+    const visitanteSlot = dialog
+      .locator('p')
+      .filter({ hasText: /^VISITANTE$/ })
+      .locator('xpath=parent::div')
+
+    const itemA = dialog.getByText('Infantil A').first()
+    const itemB = dialog.getByText('Infantil B').first()
+
+    const boxA = (await itemA.boundingBox())!
+    const tgtLocal = (await localSlot.boundingBox())!
+    await page.mouse.move(boxA.x + boxA.width / 2, boxA.y + boxA.height / 2)
+    await page.mouse.down()
+    await page.mouse.move(boxA.x + boxA.width / 2 + 10, boxA.y + boxA.height / 2)
+    await page.mouse.move(
+      tgtLocal.x + tgtLocal.width / 2,
+      tgtLocal.y + tgtLocal.height / 2,
+      { steps: 20 }
+    )
+    await page.mouse.up()
+
+    const boxB = (await itemB.boundingBox())!
+    const tgtVisitante = (await visitanteSlot.boundingBox())!
+    await page.mouse.move(boxB.x + boxB.width / 2, boxB.y + boxB.height / 2)
+    await page.mouse.down()
+    await page.mouse.move(boxB.x + boxB.width / 2 + 10, boxB.y + boxB.height / 2)
+    await page.mouse.move(
+      tgtVisitante.x + tgtVisitante.width / 2,
+      tgtVisitante.y + tgtVisitante.height / 2,
+      { steps: 20 }
+    )
+    await page.mouse.up()
+
+    await dialog.getByRole('button', { name: 'Agregar' }).click()
+
+    // El modal debe cerrarse
+    await expect(dialog).not.toBeVisible()
+
+    // Ahora el modo edición sigue activo y "Agregar jornada +" sigue disponible
+    await expect(page.getByText('Agregar jornada +')).toBeVisible()
+  })
+
+  test('completar el modal: guardar la fecha envía PUT con la jornada agregada', async ({
+    page
+  }) => {
+    await setScenario('fixture_con_fechas')
+    await login(page)
+    await page.goto(FIXTURE_URL)
+
+    // Entrar en modo edición
+    await page
+      .locator('h3', { hasText: 'Fecha 1' })
+      .locator('..')
+      .locator('..')
+      .locator('button')
+      .first()
+      .click()
+    await page.getByText('Agregar jornada +').click()
+
+    const dialog = page.getByRole('dialog')
+
+    const localSlot = dialog
+      .locator('p')
+      .filter({ hasText: /^LOCAL$/ })
+      .locator('xpath=parent::div')
+    const visitanteSlot = dialog
+      .locator('p')
+      .filter({ hasText: /^VISITANTE$/ })
+      .locator('xpath=parent::div')
+
+    const itemA = dialog.getByText('Infantil A').first()
+    const itemB = dialog.getByText('Infantil B').first()
+
+    const boxA = (await itemA.boundingBox())!
+    const tgtLocal = (await localSlot.boundingBox())!
+    await page.mouse.move(boxA.x + boxA.width / 2, boxA.y + boxA.height / 2)
+    await page.mouse.down()
+    await page.mouse.move(boxA.x + boxA.width / 2 + 10, boxA.y + boxA.height / 2)
+    await page.mouse.move(
+      tgtLocal.x + tgtLocal.width / 2,
+      tgtLocal.y + tgtLocal.height / 2,
+      { steps: 20 }
+    )
+    await page.mouse.up()
+
+    const boxB = (await itemB.boundingBox())!
+    const tgtVisitante = (await visitanteSlot.boundingBox())!
+    await page.mouse.move(boxB.x + boxB.width / 2, boxB.y + boxB.height / 2)
+    await page.mouse.down()
+    await page.mouse.move(boxB.x + boxB.width / 2 + 10, boxB.y + boxB.height / 2)
+    await page.mouse.move(
+      tgtVisitante.x + tgtVisitante.width / 2,
+      tgtVisitante.y + tgtVisitante.height / 2,
+      { steps: 20 }
+    )
+    await page.mouse.up()
+
+    await dialog.getByRole('button', { name: 'Agregar' }).click()
+    await expect(dialog).not.toBeVisible()
+
+    // Interceptar el PUT y guardar
+    let bodyEnviado: unknown = null
+    await page.route('**/api/TorneoZona/*/fechas/*', async (route) => {
+      if (route.request().method() === 'PUT') {
+        bodyEnviado = JSON.parse(route.request().postData() ?? '{}')
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ id: 1, numero: 1, dia: null, jornadas: [] })
+        })
+      } else {
+        await route.continue()
+      }
+    })
+
+    await page.getByRole('button', { name: 'Guardar' }).click()
+    await expect(page.getByText('Fecha actualizada')).toBeVisible()
+
+    expect(bodyEnviado).toBeTruthy()
+    const body = bodyEnviado as { jornadas: unknown[] }
+    // La fecha original tenía 1 jornada, ahora debe tener 2
+    expect(body.jornadas).toHaveLength(2)
   })
 })

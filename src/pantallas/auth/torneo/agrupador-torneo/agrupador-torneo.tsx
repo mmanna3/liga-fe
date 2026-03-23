@@ -23,8 +23,7 @@ export default function AgrupadorTorneo() {
         iconos: [
           {
             alApretar: () => navigate(rutasNavegacion.crearAgrupadorTorneo),
-            tooltip:
-              'Mientras el agrupador no tenga torneos, no se mostrará en la app.',
+            tooltip: 'Crear agrupador',
             icono: 'Agregar',
             visibleSoloParaAdmin: true
           }

@@ -236,6 +236,13 @@ const TORNEO_1 = {
   fases: []
 }
 
+const AGRUPADOR_DETALLE = {
+  id: 1,
+  nombre: 'Liga Infantil',
+  visibleEnApp: true,
+  torneos: [TORNEO_1]
+}
+
 const TORNEO_CON_FASES = {
   id: 1,
   nombre: 'Torneo Apertura 2026',
@@ -463,7 +470,7 @@ const ROUTES = [
     scenarios: { happy: 1 }
   },
 
-  // Agrupadores de torneo
+  // Agrupadores de torneo — lista
   {
     method: 'GET',
     pattern: '/api/TorneoAgrupador',
@@ -474,6 +481,33 @@ const ROUTES = [
       torneo_editable: [AGRUPADOR_1],
       torneo_zonas_vacio: [AGRUPADOR_1],
       torneo_zonas_con_datos: [AGRUPADOR_1]
+    }
+  },
+  // Agrupadores de torneo — detalle
+  {
+    method: 'GET',
+    pattern: /^\/api\/TorneoAgrupador\/\d+$/,
+    scenarios: {
+      happy: AGRUPADOR_DETALLE,
+      torneo_con_agrupadores: AGRUPADOR_DETALLE
+    }
+  },
+  // Agrupadores de torneo — crear
+  {
+    method: 'POST',
+    pattern: '/api/TorneoAgrupador',
+    scenarios: {
+      happy: { id: 99, nombre: 'Nuevo Agrupador', visibleEnApp: true },
+      torneo_con_agrupadores: { id: 99, nombre: 'Nuevo Agrupador', visibleEnApp: true }
+    }
+  },
+  // Agrupadores de torneo — editar
+  {
+    method: 'PUT',
+    pattern: /^\/api\/TorneoAgrupador\/\d+$/,
+    scenarios: {
+      happy: null,
+      torneo_con_agrupadores: null
     }
   },
 
