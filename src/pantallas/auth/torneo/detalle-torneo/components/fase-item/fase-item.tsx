@@ -1,6 +1,4 @@
-import { api } from '@/api/api'
-import { TorneoFaseDTO } from '@/api/clients'
-import useApiMutation from '@/api/hooks/use-api-mutation'
+import { rutasNavegacion } from '@/ruteo/rutas'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -19,10 +17,10 @@ import ModalEliminacion from '@/design-system/modal-eliminacion'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import Icono from '@/design-system/ykn-ui/icono'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
-import { rutasNavegacion } from '@/ruteo/rutas'
-import { useQueryClient } from '@tanstack/react-query'
+import type { TorneoFaseDTO } from '@/api/clients'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useFaseItem } from './use-fase-item'
 import { DatosFaseLectura } from '../../../crear-torneo/components/datos-fase-lectura'
 import { TituloFase } from '../../../crear-torneo/components/titulo-fase'
 import {
@@ -58,42 +56,11 @@ export function FaseItem({
   enCard = false
 }: FaseItemProps) {
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
   const [mostrarNoSePuedeEliminar, setMostrarNoSePuedeEliminar] =
     useState(false)
-
-  const cambiarNombreMutation = useApiMutation<string>({
-    fn: async (nuevoNombre) => {
-      if (!faseOriginal?.id) return
-      await api.fasesPUT(
-        torneoId,
-        faseOriginal.id,
-        new TorneoFaseDTO({ ...faseOriginal, nombre: nuevoNombre, torneoId })
-      )
-    },
-    antesDeMensajeExito: () => {
-      queryClient.invalidateQueries({ queryKey: ['torneo'] })
-    },
-    mensajeDeExito: 'Nombre actualizado'
-  })
-
-  const cambiarFormatoMutation = useApiMutation<string>({
-    fn: async (nuevoFormato) => {
-      if (!faseOriginal?.id) return
-      await api.fasesPUT(
-        torneoId,
-        faseOriginal.id,
-        new TorneoFaseDTO({
-          ...faseOriginal,
-          faseFormatoId: nuevoFormato === 'todos-contra-todos' ? 1 : 2,
-          torneoId
-        })
-      )
-    },
-    antesDeMensajeExito: () => {
-      queryClient.invalidateQueries({ queryKey: ['torneo'] })
-    },
-    mensajeDeExito: 'Formato actualizado'
+  const { cambiarNombreMutation, cambiarFormatoMutation } = useFaseItem({
+    torneoId,
+    faseOriginal
   })
 
   const faseId = fase.id ?? 0
