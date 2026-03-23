@@ -4,11 +4,11 @@ import {
   SheetTrigger
 } from '@/design-system/base-ui/sheet'
 import { Boton } from '@/design-system/ykn-ui/boton'
+import type { NombreIcono } from '@/design-system/ykn-ui/icono'
 import Icono from '@/design-system/ykn-ui/icono'
 import { cn } from '@/logica-compartida/utils'
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
-import type { NombreIcono } from '@/design-system/ykn-ui/icono'
 
 interface MenuItem {
   name: string
@@ -59,6 +59,11 @@ function ContenidoMenu({
       </nav>
 
       <div className='mt-auto pt-4 border-t border-gray-700'>
+        {import.meta.env.DEV && (
+          <div className='text-xs font-medium text-yellow-400 mb-0.5 ml-16'>
+            env: desarrollo
+          </div>
+        )}
         <div className='flex items-center gap-3 px-3 py-2 group'>
           <div className='w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center'>
             <Icono nombre='Usuario' className='w-5 h-5 text-gray-300' />
