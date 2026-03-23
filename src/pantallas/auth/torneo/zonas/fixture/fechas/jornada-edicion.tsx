@@ -40,13 +40,19 @@ export function claseEspecial(label: string) {
 
 export function JornadaFilaEdicion({
   j,
+  jornadaIdx,
   equipoMap,
   onClickEquipo,
   onEliminar
 }: {
   j: JornadaBorrador
+  jornadaIdx: number
   equipoMap: Map<number, EquipoDeLaZonaDTO>
-  onClickEquipo: (campo: CampoReemplazo, nombreActual: string) => void
+  onClickEquipo: (
+    jornadaIdx: number,
+    campo: CampoReemplazo,
+    nombreActual: string
+  ) => void
   onEliminar: () => void
 }) {
   const nombreEquipo = (id: number | undefined) =>
@@ -85,7 +91,7 @@ export function JornadaFilaEdicion({
       {localCampo ? (
         <button
           className='text-right underline decoration-dotted underline-offset-2 hover:text-primary transition-colors'
-          onClick={() => onClickEquipo(localCampo!, localLabel)}
+          onClick={() => onClickEquipo(jornadaIdx, localCampo!, localLabel)}
         >
           {localLabel}
         </button>
@@ -98,7 +104,9 @@ export function JornadaFilaEdicion({
       {visitanteCampo ? (
         <button
           className='text-left underline decoration-dotted underline-offset-2 hover:text-primary transition-colors'
-          onClick={() => onClickEquipo(visitanteCampo!, visitanteLabel)}
+          onClick={() =>
+            onClickEquipo(jornadaIdx, visitanteCampo!, visitanteLabel)
+          }
         >
           {visitanteLabel}
         </button>

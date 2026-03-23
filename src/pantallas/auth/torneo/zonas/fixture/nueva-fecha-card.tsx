@@ -11,7 +11,6 @@ import { useState } from 'react'
 import {
   buildJornadaBorrador,
   JornadaFilaEdicion,
-  type CampoReemplazo,
   type JornadaBorrador,
   type PendienteReemplazo
 } from './fechas/jornada-edicion'
@@ -103,9 +102,10 @@ export function NuevaFechaCard({
             <JornadaFilaEdicion
               key={i}
               j={j}
+              jornadaIdx={i}
               equipoMap={equipoMap}
-              onClickEquipo={(campo: CampoReemplazo, nombreActual: string) =>
-                setPendienteReemplazo({ jornadaIdx: i, campo, nombreActual })
+              onClickEquipo={(jornadaIdx, campo, nombreActual) =>
+                setPendienteReemplazo({ jornadaIdx, campo, nombreActual })
               }
               onEliminar={() => handleEliminarJornada(i)}
             />
