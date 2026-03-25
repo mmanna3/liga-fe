@@ -1,4 +1,6 @@
 import { Card, CardContent } from '@/design-system/base-ui/card'
+import { addWeeks, format } from 'date-fns'
+import { es } from 'date-fns/locale'
 import type { ItemFixture } from '../tipos'
 
 function nombreParaBracket(item: ItemFixture): string {
@@ -56,6 +58,12 @@ export function buildBracket(nombres: string[]): InstanciaBracket[] {
   return instancias
 }
 
+function claseEspecial(nombre: string | null): string {
+  if (nombre === 'Interzonal') return 'text-blue-700 bg-blue-100 px-1 rounded'
+  if (nombre === 'Libre') return 'text-yellow-700 bg-yellow-100 px-1 rounded'
+  return ''
+}
+
 function PartidoCard({
   local,
   visitante
@@ -66,12 +74,16 @@ function PartidoCard({
   return (
     <div className='rounded border bg-card text-sm w-full'>
       <div className='px-3 py-2 border-b truncate'>
-        {local ?? (
+        {local != null ? (
+          <span className={claseEspecial(local)}>{local}</span>
+        ) : (
           <span className='text-muted-foreground italic'>Por definir</span>
         )}
       </div>
       <div className='px-3 py-2 truncate'>
-        {visitante ?? (
+        {visitante != null ? (
+          <span className={claseEspecial(visitante)}>{visitante}</span>
+        ) : (
           <span className='text-muted-foreground italic'>Por definir</span>
         )}
       </div>
@@ -85,9 +97,11 @@ function PartidoCard({
 const ALTURA_SLOT_BASE = 96
 
 export function ResultadoEliminacionDirecta({
-  lista
+  lista,
+  primeraFecha
 }: {
   lista: ItemFixture[]
+  primeraFecha: Date
 }) {
   const nombres = lista.map(nombreParaBracket)
   const instancias = buildBracket(nombres)
@@ -96,14 +110,17 @@ export function ResultadoEliminacionDirecta({
     <div>
       {/* Títulos de instancias — fuera de la card */}
       <div className='flex gap-6 mb-2'>
-        {instancias.map((instancia, rIdx) => (
-          <h4
-            key={rIdx}
-            className='flex-1 min-w-[200px] text-sm font-semibold text-center'
-          >
-            {instancia.nombre}
-          </h4>
-        ))}
+        {instancias.map((instancia, rIdx) => {
+          const fecha = addWeeks(primeraFecha, rIdx)
+          return (
+            <div key={rIdx} className='flex-1 min-w-[200px] text-center'>
+              <h4 className='text-sm font-semibold'>{instancia.nombre}</h4>
+              <p className='text-xs text-muted-foreground'>
+                {format(fecha, "EEEE d 'de' MMMM", { locale: es })}
+              </p>
+            </div>
+          )
+        })}
       </div>
 
       {/* Card que contiene todas las rondas */}

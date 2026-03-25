@@ -77,7 +77,10 @@ export function PanelEliminacionDirecta({
       </DndContext>
 
       {listaFijada != null && (
-        <ResultadoEliminacionDirecta lista={listaFijada} />
+        <ResultadoEliminacionDirecta
+          lista={listaFijada}
+          primeraFecha={primeraFecha}
+        />
       )}
     </div>
   )
