@@ -1,4 +1,3 @@
-import { Boton } from '@/design-system/ykn-ui/boton'
 import {
   Card,
   CardContent,
@@ -6,6 +5,7 @@ import {
   CardTitle
 } from '@/design-system/base-ui/card'
 import { Input } from '@/design-system/base-ui/input'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import { useAuth } from '@/logica-compartida/hooks/use-auth'
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -83,7 +83,7 @@ export default function Login() {
             )}
             <Boton
               type='submit'
-              className='w-full'
+              className='w-full py-7 text-base'
               estaCargando={isLoading}
               data-testid='boton-ingresar'
             >

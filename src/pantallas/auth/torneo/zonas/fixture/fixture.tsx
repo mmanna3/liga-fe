@@ -1,18 +1,15 @@
 import { api } from '@/api/api'
-import type { FixtureAlgoritmoDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
-import { FixtureAlgoritmosDisponiblesParaGenerar } from './generacion/algoritmos'
-import { FixtureGeneracionListaEquipos } from './generacion/lista-equipos'
-import { FixtureSelectorFecha } from './generacion/selector-fecha'
-import { DndContext } from '@dnd-kit/core'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { FechasZona } from './fechas/fechas'
-import { ResultadoFixture } from './resultado-fixture'
-import type { ItemFixture } from './tipos'
-import { toDateOnly } from '@/logica-compartida/utils'
+import { PanelEliminacionDirecta } from './generacion/panel-eliminacion-directa'
+import { PanelTodosContraTodos } from './generacion/panel-todos-contra-todos'
 import { useListaFixture } from './hooks/use-lista-fixture'
+import { toDateOnly } from '@/logica-compartida/utils'
+
+const FASE_FORMATO_ELIMINACION_DIRECTA = 2
 
 export default function Fixture() {
   const {
@@ -61,41 +58,9 @@ export default function Fixture() {
     zona?.equipos ?? []
   )
 
-  const cantidadEquipos = listaOrdenada.length
-
-  const [algoritmoSeleccionado, setAlgoritmoSeleccionado] = useState<
-    FixtureAlgoritmoDTO | undefined
-  >(undefined)
-
-  useEffect(() => {
-    const match = algoritmos.filter(
-      (a) => a.cantidadDeEquipos === cantidadEquipos
-    )
-    if (match.length === 0) {
-      setAlgoritmoSeleccionado(undefined)
-      setListaFijada(null)
-    } else {
-      setAlgoritmoSeleccionado((prev) => {
-        const stillValid =
-          prev != null &&
-          match.some(
-            (a) =>
-              (a.id ?? a.fixtureAlgoritmoId) ===
-              (prev!.id ?? prev!.fixtureAlgoritmoId)
-          )
-        return stillValid ? prev : match[0]
-      })
-    }
-  }, [algoritmos, cantidadEquipos])
-
-  const [listaFijada, setListaFijada] = useState<ItemFixture[] | null>(null)
   const [primeraFecha, setPrimeraFecha] = useState<Date>(() =>
     toDateOnly(new Date())
   )
-
-  function handleGenerarFixture() {
-    setListaFijada(listaOrdenada)
-  }
 
   const subtitulo = [
     torneo?.nombre ?? '—',
@@ -111,40 +76,24 @@ export default function Fixture() {
       equipos={zona.equipos ?? []}
       zonaId={zonaId}
     />
+  ) : fase?.faseFormatoId === FASE_FORMATO_ELIMINACION_DIRECTA ? (
+    <PanelEliminacionDirecta
+      listaOrdenada={listaOrdenada}
+      sensors={sensors}
+      handleDragEnd={handleDragEnd as never}
+      primeraFecha={primeraFecha}
+      onPrimeraFechaChange={setPrimeraFecha}
+    />
   ) : (
-    <div className='space-y-6'>
-      <div className='grid grid-cols-2 gap-6'>
-        <FixtureSelectorFecha
-          primeraFecha={primeraFecha}
-          onFechaChange={setPrimeraFecha}
-        />
-        <FixtureAlgoritmosDisponiblesParaGenerar
-          algoritmos={algoritmos}
-          cantidadEquipos={cantidadEquipos}
-          algoritmoSeleccionado={algoritmoSeleccionado}
-          onAlgoritmoSeleccionadoChange={(algo) => {
-            setAlgoritmoSeleccionado(algo)
-            if ((algo?.fechas?.length ?? 0) === 0) setListaFijada(null)
-          }}
-          onGenerarFixture={handleGenerarFixture}
-        />
-      </div>
-
-      <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-        <FixtureGeneracionListaEquipos listaOrdenada={listaOrdenada} />
-      </DndContext>
-
-      {listaFijada != null &&
-        algoritmoSeleccionado?.fechas != null &&
-        algoritmoSeleccionado.fechas.length > 0 && (
-          <ResultadoFixture
-            fechas={algoritmoSeleccionado.fechas}
-            lista={listaFijada}
-            zonaId={zonaId}
-            primeraFecha={primeraFecha}
-          />
-        )}
-    </div>
+    <PanelTodosContraTodos
+      algoritmos={algoritmos}
+      listaOrdenada={listaOrdenada}
+      sensors={sensors}
+      handleDragEnd={handleDragEnd as never}
+      zonaId={zonaId}
+      primeraFecha={primeraFecha}
+      onPrimeraFechaChange={setPrimeraFecha}
+    />
   )
 
   return (
