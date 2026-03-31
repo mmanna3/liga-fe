@@ -114,7 +114,7 @@ export function Zona({
           ? '1 equipo'
           : `${zona.equipos.length} equipos`}
       </p>
-      <div className='space-y-2'>
+      <div className='grid grid-cols-2 gap-2'>
         {zona.equipos.map((eq) => (
           <Tooltip key={eq.id}>
             <TooltipTrigger asChild>
@@ -132,7 +132,7 @@ export function Zona({
                     : undefined
                 }
                 className={cn(
-                  'flex items-center justify-between gap-2 rounded-md bg-background px-3 py-2 border text-sm',
+                  'flex min-w-0 items-center justify-between gap-2 rounded-md bg-background px-3 py-2 border text-sm',
                   editable
                     ? 'cursor-grab active:cursor-grabbing'
                     : 'cursor-default'

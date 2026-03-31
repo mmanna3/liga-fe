@@ -2,13 +2,14 @@ import { api } from '@/api/api'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
-import { useEffect, useRef } from 'react'
+import { EquipoDTO } from '@/api/clients'
+import { useCallback, useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { BuscadorDeEquiposParaZona } from './components/buscador/buscador-equipos'
-import { ContenidoZonasEditable } from './zonas-grid'
 import { useGuardarZonas } from './hooks/use-guardar-zonas'
 import { useZonasEstado } from './hooks/use-zonas'
 import { zonaDtoAEstado } from './tipos'
+import { ContenidoZonasEditable } from './zonas-grid'
 
 interface GestorZonasProps {
   modo: 'crear' | 'modificar'
@@ -66,25 +67,25 @@ export function GestorZonas({
     refetch
   })
 
+  const agregarSeleccionadosAZona = useCallback(
+    (indiceZona: number, equipos: EquipoDTO[]) => {
+      for (const equipo of equipos) {
+        agregarEquipoAZona(indiceZona, equipo)
+      }
+    },
+    [agregarEquipoAZona]
+  )
+
+  const zonasParaElegirEnModal = zonasEstado.map((z, indice) => ({
+    indice,
+    nombre: z.nombre
+  }))
+
   return (
     <LayoutSegundoNivel
       headerCard={headerCard}
-      cardAdicional={
-        <BuscadorDeEquiposParaZona equiposEnZonas={equiposEnZonas} />
-      }
       pathBotonVolver={pathVolver}
       maxWidth='6xl'
-      footer={
-        <div className='flex justify-end pt-4 border-t mt-4'>
-          <Boton
-            type='button'
-            onClick={handleGuardar}
-            estaCargando={guardarMutation.isPending}
-          >
-            Guardar
-          </Boton>
-        </div>
-      }
       contenido={
         <ContenidoZonasEditable
           zonasEstado={zonasEstado}
@@ -95,6 +96,24 @@ export function GestorZonas({
           onAgregarZona={agregarZona}
           onIrAFixture={modo === 'modificar' ? handleIrAFixture : undefined}
         />
+      }
+      cardAdicional={
+        <BuscadorDeEquiposParaZona
+          equiposEnZonas={equiposEnZonas}
+          zonasVisibles={zonasParaElegirEnModal}
+          onAgregarSeleccionadosAZona={agregarSeleccionadosAZona}
+        />
+      }
+      footer={
+        <div className='flex justify-end pt-4 border-t mt-4'>
+          <Boton
+            type='button'
+            onClick={handleGuardar}
+            estaCargando={guardarMutation.isPending}
+          >
+            Guardar
+          </Boton>
+        </div>
       }
     />
   )
