@@ -17,7 +17,7 @@ interface ElegirZonaBuscadorEquiposProps {
   onElegirZona: (indiceZona: number) => void
 }
 
-export function ElegirZonaBuscadorEquipos({
+export function ModalElegirZonaBuscadorEquipos({
   open,
   onOpenChange,
   zonasVisibles,

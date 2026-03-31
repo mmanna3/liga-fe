@@ -1,15 +1,16 @@
 import { EquipoDTO } from '@/api/clients'
 import { Boton } from '@/design-system/ykn-ui/boton'
+import Icono from '@/design-system/ykn-ui/icono'
 import CajitaConTick from '@/design-system/ykn-ui/cajita-con-tick'
 import { Input } from '@/design-system/ykn-ui/input'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
 import { useMemo, useState } from 'react'
-import {
-  ElegirZonaBuscadorEquipos,
-  type ZonaVisibleParaModal
-} from './elegir-zona-buscador-equipos'
 import { FiltrosBuscadorDeEquipos } from './filtros-buscador'
 import { useBuscadorEquipos } from './hooks/use-buscador-equipos'
+import {
+  ModalElegirZonaBuscadorEquipos,
+  type ZonaVisibleParaModal
+} from './modal-elegir-zona-buscador-equipos'
 import { RenglonBuscadorDeEquipos } from './renglon-equipo'
 
 interface BuscadorDeEquiposParaZonaProps {
@@ -46,19 +47,29 @@ export function BuscadorDeEquiposParaZona({
     filtroZonaId,
     setFiltroZonaId,
     equiposFiltrados,
+    catalogoEquiposDisponibles,
     opcionesModo,
     toggleSeleccion,
     handleSeleccionVariosChange,
+    limpiarSeleccion,
     handleDragStart
   } = useBuscadorEquipos({ equiposEnZonas })
 
   const equiposSeleccionados = useMemo(
     () =>
-      equiposFiltrados.filter(
+      catalogoEquiposDisponibles.filter(
         (eq) => eq.id != null && idsSeleccionados.has(eq.id)
       ),
-    [equiposFiltrados, idsSeleccionados]
+    [catalogoEquiposDisponibles, idsSeleccionados]
   )
+
+  const cantidadSeleccionados = equiposSeleccionados.length
+  const textoCantidadSeleccionados =
+    cantidadSeleccionados === 0
+      ? ''
+      : cantidadSeleccionados === 1
+        ? '1 equipo seleccionado'
+        : `${cantidadSeleccionados} equipos seleccionados`
 
   const elegirZonaYAgregar = (indiceZona: number) => {
     if (equiposSeleccionados.length === 0) return
@@ -98,24 +109,42 @@ export function BuscadorDeEquiposParaZona({
         />
       )}
 
-      <div className='mb-2 flex flex-wrap items-center justify-end gap-3'>
-        <Boton
-          type='button'
-          variant='outline'
-          size='sm'
-          disabled={equiposSeleccionados.length === 0}
-          onClick={() => setModalZonaAbierto(true)}
-        >
-          Agregar seleccionados a la zona
-        </Boton>
-        <CajitaConTick
-          id='seleccion-varios'
-          checked={seleccionMultipleActiva}
-          onCheckedChange={handleSeleccionVariosChange}
-          label='Seleccionar varios'
-        />
+      <div className='mb-2 flex flex-wrap items-center justify-between gap-3'>
+        <span className='text-sm text-foreground min-w-0'>
+          {textoCantidadSeleccionados}
+        </span>
+        <div className='flex flex-wrap items-center gap-3'>
+          <div className='flex flex-wrap items-center gap-2'>
+            <Boton
+              type='button'
+              variant='outline'
+              size='sm'
+              disabled={cantidadSeleccionados === 0}
+              onClick={limpiarSeleccion}
+              className='gap-1.5'
+            >
+              <Icono nombre='limpiar' className='size-4' />
+              Limpiar selección
+            </Boton>
+            <Boton
+              type='button'
+              variant='outline'
+              size='sm'
+              disabled={cantidadSeleccionados === 0}
+              onClick={() => setModalZonaAbierto(true)}
+            >
+              Agregar seleccionados a la zona
+            </Boton>
+          </div>
+          <CajitaConTick
+            id='seleccion-varios'
+            checked={seleccionMultipleActiva}
+            onCheckedChange={handleSeleccionVariosChange}
+            label='Seleccionar varios'
+          />
+        </div>
 
-        <ElegirZonaBuscadorEquipos
+        <ModalElegirZonaBuscadorEquipos
           open={modalZonaAbierto}
           onOpenChange={setModalZonaAbierto}
           zonasVisibles={zonasVisibles}

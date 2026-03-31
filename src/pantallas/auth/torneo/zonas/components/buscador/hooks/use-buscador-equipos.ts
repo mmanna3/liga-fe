@@ -1,7 +1,7 @@
 import { api } from '@/api/api'
 import { EquipoDTO, EquipoParaZonasDTO, ZonaDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 const MODO_BUSCAR = 'buscar'
 const MODO_OTRO_TORNEO = 'otro-torneo'
@@ -55,12 +55,11 @@ export function useBuscadorEquipos({
   )
 
   useEffect(() => {
-    const algunoMovido = [...idsSeleccionados].some((id) => idsEnZonas.has(id))
-    if (algunoMovido) {
-      setIdsSeleccionados(new Set())
-      setSeleccionMultipleActiva(false)
-    }
-  }, [equiposEnZonas, idsEnZonas, idsSeleccionados])
+    setIdsSeleccionados((prev) => {
+      const next = new Set([...prev].filter((id) => !idsEnZonas.has(id)))
+      return next.size === prev.size ? prev : next
+    })
+  }, [idsEnZonas])
 
   const { data: equiposParaZonas = [] } = useApiQuery({
     key: ['equiposParaZonas'],
@@ -85,10 +84,19 @@ export function useBuscadorEquipos({
     })
   }, [torneosTodos, filtroAnio, filtroAgrupadorId])
 
-  const equiposFiltrados = useMemo(() => {
-    let lista = equiposParaZonas.filter(
+  /** Equipos que aún no están en ninguna zona (catálogo para selección y drag). */
+  const catalogoEquiposDisponibles = useMemo(() => {
+    const lista = equiposParaZonas.filter(
       (e) => e.id != null && !idsEnZonas.has(e.id)
     )
+    const ordenada = [...lista].sort((a, b) =>
+      (a.nombre ?? '').localeCompare(b.nombre ?? '', 'es')
+    )
+    return ordenada.map(equipoParaZonasAEquipoDto)
+  }, [equiposParaZonas, idsEnZonas])
+
+  const equiposFiltrados = useMemo(() => {
+    let lista = catalogoEquiposDisponibles
 
     if (modo === MODO_BUSCAR) {
       const t = textoBusqueda.trim().toLowerCase()
@@ -97,7 +105,7 @@ export function useBuscadorEquipos({
           (e) =>
             (e.nombre?.toLowerCase().includes(t) ?? false) ||
             (e.codigoAlfanumerico?.toLowerCase().includes(t) ?? false) ||
-            (e.club?.toLowerCase().includes(t) ?? false)
+            (e.clubNombre?.toLowerCase().includes(t) ?? false)
         )
       }
     } else {
@@ -131,13 +139,9 @@ export function useBuscadorEquipos({
       })
     }
 
-    const ordenada = [...lista].sort((a, b) =>
-      (a.nombre ?? '').localeCompare(b.nombre ?? '', 'es')
-    )
-    return ordenada.map(equipoParaZonasAEquipoDto)
+    return lista
   }, [
-    equiposParaZonas,
-    idsEnZonas,
+    catalogoEquiposDisponibles,
     modo,
     textoBusqueda,
     torneosFiltrados,
@@ -166,12 +170,16 @@ export function useBuscadorEquipos({
     if (!checked) setIdsSeleccionados(new Set())
   }
 
+  const limpiarSeleccion = useCallback(() => {
+    setIdsSeleccionados(new Set())
+  }, [])
+
   const handleDragStart = (e: React.DragEvent, equipo: EquipoDTO) => {
     const equiposADrag: EquipoDTO[] =
       seleccionMultipleActiva &&
       idsSeleccionados.has(equipo.id ?? 0) &&
       idsSeleccionados.size > 1
-        ? equiposFiltrados.filter(
+        ? catalogoEquiposDisponibles.filter(
             (eq) => eq.id != null && idsSeleccionados.has(eq.id)
           )
         : [equipo]
@@ -197,9 +205,11 @@ export function useBuscadorEquipos({
     filtroZonaId,
     setFiltroZonaId,
     equiposFiltrados,
+    catalogoEquiposDisponibles,
     opcionesModo,
     toggleSeleccion,
     handleSeleccionVariosChange,
+    limpiarSeleccion,
     handleDragStart
   }
 }

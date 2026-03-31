@@ -24,6 +24,7 @@ const MAPEO_ICONOS: Record<
   Descargar: LucideIcons.Download,
   Editar: LucideIcons.Pencil,
   Eliminar: LucideIcons.Trash2,
+  limpiar: LucideIcons.BrushCleaning,
   Agregar: LucideIcons.Plus,
   'Agregar equipo': LucideIcons.CirclePlus,
   Subir: LucideIcons.Upload,
