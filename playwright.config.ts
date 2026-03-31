@@ -14,8 +14,8 @@ export default defineConfig({
       reuseExistingServer: !process.env.CI
     },
     {
-      command: 'npm run dev',
-      url: 'http://localhost:5173',
+      command: 'npm run dev -- --port 5174',
+      url: 'http://localhost:5174',
       reuseExistingServer: !process.env.CI,
       stdout: 'pipe',
       timeout: 60 * 1000,
@@ -25,7 +25,7 @@ export default defineConfig({
     }
   ],
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: 'http://localhost:5174',
     trace: 'on-first-retry'
   },
   projects: [

@@ -510,6 +510,12 @@ const ROUTES = [
       torneo_con_agrupadores: null
     }
   },
+  // Agrupadores de torneo — eliminar
+  {
+    method: 'DELETE',
+    pattern: /^\/api\/TorneoAgrupador\/\d+$/,
+    scenarios: { happy: 1, torneo_con_agrupadores: 1 }
+  },
 
   // Zonas de una fase — lista
   {
