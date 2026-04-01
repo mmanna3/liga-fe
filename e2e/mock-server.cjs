@@ -527,7 +527,7 @@ const ROUTES = [
   // Zonas de una fase — lista
   {
     method: 'GET',
-    pattern: /^\/api\/TorneoFase\/\d+\/zonas$/,
+    pattern: /^\/api\/Fase\/\d+\/zonas$/,
     scenarios: {
       happy: [],
       torneo_zonas_vacio: [],
@@ -541,13 +541,13 @@ const ROUTES = [
   // Zonas — crear masivamente
   {
     method: 'POST',
-    pattern: /^\/api\/TorneoFase\/\d+\/zonas\/crear-zonas-masivamente$/,
+    pattern: /^\/api\/Fase\/\d+\/zonas\/crear-zonas-masivamente$/,
     scenarios: { happy: [ZONA_1] }
   },
   // Zonas — modificar masivamente
   {
     method: 'PUT',
-    pattern: /^\/api\/TorneoFase\/\d+\/zonas\/modificar-zonas-masivamente$/,
+    pattern: /^\/api\/Fase\/\d+\/zonas\/modificar-zonas-masivamente$/,
     scenarios: { happy: null }
   },
 
@@ -567,7 +567,7 @@ const ROUTES = [
   // Fechas de una zona — lista
   {
     method: 'GET',
-    pattern: /^\/api\/TorneoZona\/\d+\/fechas$/,
+    pattern: /^\/api\/Zona\/\d+\/fechas$/,
     scenarios: {
       happy: [],
       fixture_sin_fechas: [],
@@ -580,28 +580,28 @@ const ROUTES = [
   // Fechas — crear masivamente
   {
     method: 'POST',
-    pattern: /^\/api\/TorneoZona\/\d+\/fechas\/crear-fechas-masivamente$/,
+    pattern: /^\/api\/Zona\/\d+\/fechas\/crear-fechas-masivamente$/,
     scenarios: { happy: [FECHA_ZONA_1] }
   },
 
   // Fechas — crear individual
   {
     method: 'POST',
-    pattern: /^\/api\/TorneoZona\/\d+\/fechas$/,
+    pattern: /^\/api\/Zona\/\d+\/fechas$/,
     scenarios: { happy: FECHA_ZONA_1, fixture_con_fechas: FECHA_ZONA_1, fixture_con_fechas_con_dia: FECHA_ZONA_CON_DIA }
   },
 
   // Fechas — editar
   {
     method: 'PUT',
-    pattern: /^\/api\/TorneoZona\/\d+\/fechas\/\d+$/,
+    pattern: /^\/api\/Zona\/\d+\/fechas\/\d+$/,
     scenarios: { happy: FECHA_ZONA_1, fixture_con_fechas: FECHA_ZONA_1, fixture_con_fechas_con_dia: FECHA_ZONA_CON_DIA }
   },
 
   // Fechas — eliminar
   {
     method: 'DELETE',
-    pattern: /^\/api\/TorneoZona\/\d+\/fechas\/\d+$/,
+    pattern: /^\/api\/Zona\/\d+\/fechas\/\d+$/,
     scenarios: { happy: 1, fixture_con_fechas: 1, fixture_con_fechas_con_dia: 1 }
   }
 ]

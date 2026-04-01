@@ -127,7 +127,7 @@ test.describe('Fixture', () => {
 
     let bodyEnviado: unknown = null
     await page.route(
-      '**/api/TorneoZona/*/fechas/crear-fechas-masivamente',
+      '**/api/Zona/*/fechas/crear-fechas-masivamente',
       async (route) => {
         if (route.request().method() === 'POST') {
           bodyEnviado = JSON.parse(route.request().postData() ?? '[]')
@@ -253,7 +253,7 @@ test.describe('Fixture', () => {
     await login(page)
     await page.goto(FIXTURE_URL)
 
-    await page.route('**/api/TorneoZona/*/fechas', async (route) => {
+    await page.route('**/api/Zona/*/fechas', async (route) => {
       if (route.request().method() === 'POST') {
         await route.fulfill({
           status: 200,
@@ -333,7 +333,7 @@ test.describe('Fixture', () => {
     await page.goto(FIXTURE_URL)
 
     let bodyEnviado: unknown = null
-    await page.route('**/api/TorneoZona/*/fechas/*', async (route) => {
+    await page.route('**/api/Zona/*/fechas/*', async (route) => {
       if (route.request().method() === 'PUT') {
         bodyEnviado = JSON.parse(route.request().postData() ?? '{}')
         await route.fulfill({
@@ -395,7 +395,7 @@ test.describe('Fixture', () => {
     await login(page)
     await page.goto(FIXTURE_URL)
 
-    await page.route('**/api/TorneoZona/*/fechas/*', async (route) => {
+    await page.route('**/api/Zona/*/fechas/*', async (route) => {
       if (route.request().method() === 'DELETE') {
         await route.fulfill({
           status: 200,
@@ -761,7 +761,7 @@ test.describe('Fixture', () => {
 
     // Interceptar el PUT y guardar
     let bodyEnviado: unknown = null
-    await page.route('**/api/TorneoZona/*/fechas/*', async (route) => {
+    await page.route('**/api/Zona/*/fechas/*', async (route) => {
       if (route.request().method() === 'PUT') {
         bodyEnviado = JSON.parse(route.request().postData() ?? '{}')
         await route.fulfill({

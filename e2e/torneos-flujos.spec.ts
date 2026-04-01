@@ -158,7 +158,7 @@ test.describe('Torneos — flujos profundos', () => {
 
     let bodyEnviado: unknown = null
     await page.route(
-      '**/api/TorneoFase/*/zonas/crear-zonas-masivamente',
+      '**/api/Fase/*/zonas/crear-zonas-masivamente',
       async (route) => {
         if (route.request().method() === 'POST') {
           bodyEnviado = JSON.parse(route.request().postData() ?? '[]')
@@ -199,7 +199,7 @@ test.describe('Torneos — flujos profundos', () => {
 
     let bodyEnviado: unknown = null
     await page.route(
-      '**/api/TorneoFase/*/zonas/modificar-zonas-masivamente',
+      '**/api/Fase/*/zonas/modificar-zonas-masivamente',
       async (route) => {
         if (route.request().method() === 'PUT') {
           bodyEnviado = JSON.parse(route.request().postData() ?? '[]')
@@ -236,7 +236,7 @@ test.describe('Torneos — flujos profundos', () => {
 
     let bodyEnviado: unknown = null
     await page.route(
-      '**/api/TorneoFase/*/zonas/modificar-zonas-masivamente',
+      '**/api/Fase/*/zonas/modificar-zonas-masivamente',
       async (route) => {
         if (route.request().method() === 'PUT') {
           bodyEnviado = JSON.parse(route.request().postData() ?? '[]')
@@ -269,7 +269,7 @@ test.describe('Torneos — flujos profundos', () => {
 
     let bodyEnviado: unknown = null
     await page.route(
-      '**/api/TorneoFase/*/zonas/modificar-zonas-masivamente',
+      '**/api/Fase/*/zonas/modificar-zonas-masivamente',
       async (route) => {
         if (route.request().method() === 'PUT') {
           bodyEnviado = JSON.parse(route.request().postData() ?? '[]')
@@ -318,7 +318,7 @@ test.describe('Torneos — flujos profundos', () => {
 
     let bodyEnviado: unknown = null
     await page.route(
-      '**/api/TorneoFase/*/zonas/modificar-zonas-masivamente',
+      '**/api/Fase/*/zonas/modificar-zonas-masivamente',
       async (route) => {
         if (route.request().method() === 'PUT') {
           bodyEnviado = JSON.parse(route.request().postData() ?? '[]')
@@ -737,7 +737,7 @@ test.describe('Torneos — flujos profundos', () => {
 
     let bodyEnviado: unknown = null
     await page.route(
-      '**/api/TorneoFase/*/zonas/crear-zonas-masivamente',
+      '**/api/Fase/*/zonas/crear-zonas-masivamente',
       async (route) => {
         if (route.request().method() === 'POST') {
           bodyEnviado = JSON.parse(route.request().postData() ?? '[]')
