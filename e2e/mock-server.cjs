@@ -424,6 +424,7 @@ const ROUTES = [
       happy: TORNEO_1,
       torneo_detalle: TORNEO_CON_FASES,
       torneo_editable: TORNEO_EDITABLE,
+      torneo_editable_sin_fases: { ...TORNEO_EDITABLE, fases: [] },
       torneo_editable_con_nueva_fase: TORNEO_EDITABLE_CON_NUEVA_FASE,
       torneo_zonas_vacio: TORNEO_CON_FASES,
       torneo_zonas_con_datos: TORNEO_CON_FASES,
@@ -456,6 +457,12 @@ const ROUTES = [
     method: 'PUT',
     pattern: /^\/api\/Torneo\/\d+\/fases\/\d+$/,
     scenarios: { happy: null }
+  },
+  // Fases de torneo — eliminar
+  {
+    method: 'DELETE',
+    pattern: /^\/api\/Torneo\/\d+\/fases\/\d+$/,
+    scenarios: { happy: 1, torneo_editable: 1, torneo_editable_sin_fases: 1 }
   },
   // Torneos — actualizar
   {

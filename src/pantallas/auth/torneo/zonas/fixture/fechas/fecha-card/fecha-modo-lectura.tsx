@@ -86,7 +86,7 @@ export function FechaModoLectura({
           {mostrarBotonEliminar && (
             <ModalEliminacion
               titulo='Eliminar fecha'
-              subtitulo={`¿Confirmás que querés eliminar ${etiquetaFecha(fecha)}? Se eliminarán también todas sus jornadas.`}
+              subtitulo={`¿Confirmás que querés eliminar la ${etiquetaFecha(fecha)}? Se eliminarán también todas sus jornadas.`}
               eliminarTexto='Eliminar fecha'
               estaCargando={estaCargandoEliminar}
               eliminarOnClick={onEliminar}

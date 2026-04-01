@@ -119,7 +119,7 @@ test.describe('Torneos — flujos profundos', () => {
     await login(page)
     await page.goto('/torneos/detalle/1/fases/100/zonas')
 
-    await expect(page.getByText('Zonas')).toBeVisible()
+    await expect(page.getByText('Zonas', { exact: true }).first()).toBeVisible()
     await expect(page.getByText('Infantil A')).toBeVisible()
     await expect(page.getByText('Infantil B')).toBeVisible()
     await expect(page.getByRole('button', { name: 'Agregar Zona' })).toBeVisible()
@@ -486,9 +486,15 @@ test.describe('Torneos — flujos profundos', () => {
       .locator('..')
     await botonesContainer.locator('button').last().click()
 
+    await expect(page.getByRole('alertdialog')).toBeVisible()
+
+    // Cambiar el escenario antes de confirmar para que el refetch devuelva el torneo sin fases
+    await setScenario('torneo_editable_sin_fases')
+
     await page.getByRole('alertdialog').getByRole('button', { name: 'Eliminar' }).click()
 
-    await expect(page.getByText('Primera Fase')).not.toBeVisible()
+    await expect(page.getByRole('alertdialog')).not.toBeVisible()
+    await expect(page.getByText('Primera Fase', { exact: true })).not.toBeVisible()
   })
 
   test('eliminar fase no editable: muestra aviso "No se puede eliminar"', async ({
