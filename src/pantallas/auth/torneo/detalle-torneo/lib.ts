@@ -1,4 +1,4 @@
-import { TorneoCategoriaDTO } from '@/api/clients'
+import { TorneoCategoriaDTO, TipoDeFaseEnum } from '@/api/clients'
 import type { OpcionSelector } from '@/design-system/ykn-ui/selector-simple'
 import type { Categoria } from '../crear-torneo/tipos'
 
@@ -15,15 +15,15 @@ export interface FaseEstado {
   sePuedeEditar: boolean
 }
 
-export function formatoIdAOpción(faseFormatoId?: number): string {
-  if (faseFormatoId === 1) return 'todos-contra-todos'
-  if (faseFormatoId === 2) return 'eliminacion-directa'
+export function tipoDeFaseAOpción(tipoDeFase?: TipoDeFaseEnum): string {
+  if (tipoDeFase === TipoDeFaseEnum._1) return 'todos-contra-todos'
+  if (tipoDeFase === TipoDeFaseEnum._2) return 'eliminacion-directa'
   return ''
 }
 
-export function formatoNombreDesdeId(faseFormatoId?: number): string {
-  if (faseFormatoId === 1) return 'Todos contra todos'
-  if (faseFormatoId === 2) return 'Eliminación directa'
+export function tipoDeFaseNombreDesdeEnum(tipoDeFase?: TipoDeFaseEnum): string {
+  if (tipoDeFase === TipoDeFaseEnum._1) return 'Todos contra todos'
+  if (tipoDeFase === TipoDeFaseEnum._2) return 'Eliminación directa'
   return '—'
 }
 

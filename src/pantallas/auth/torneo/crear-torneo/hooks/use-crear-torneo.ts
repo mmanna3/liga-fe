@@ -1,7 +1,8 @@
 import {
   CrearTorneoDTO,
   TorneoCategoriaDTO,
-  TorneoFaseDTO
+  TorneoFaseDTO,
+  TipoDeFaseEnum
 } from '@/api/clients'
 import { api } from '@/api/api'
 import useApiMutation from '@/api/hooks/use-api-mutation'
@@ -105,12 +106,15 @@ export function useCrearTorneo() {
             })
         )
 
-      const faseFormatoId = formatoFase === 'todos-contra-todos' ? 1 : 2
+      const tipoDeFase =
+        formatoFase === 'todos-contra-todos'
+          ? TipoDeFaseEnum._1
+          : TipoDeFaseEnum._2
 
       const primeraFase = new TorneoFaseDTO({
         numero: 1,
         nombre: tituloFase.trim(),
-        faseFormatoId,
+        tipoDeFase,
         estadoFaseId: 100,
         esVisibleEnApp: true
       })

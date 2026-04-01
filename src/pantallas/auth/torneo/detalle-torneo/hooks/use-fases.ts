@@ -1,4 +1,9 @@
-import { TorneoCategoriaDTO, TorneoDTO, TorneoFaseDTO } from '@/api/clients'
+import {
+  TorneoCategoriaDTO,
+  TorneoDTO,
+  TorneoFaseDTO,
+  TipoDeFaseEnum
+} from '@/api/clients'
 import { api } from '@/api/api'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import { rutasNavegacion } from '@/ruteo/rutas'
@@ -8,7 +13,7 @@ import { useNavigate } from 'react-router-dom'
 import {
   categoriasACategoriaDto,
   categoriasDtoACategoria,
-  formatoIdAOpción,
+  tipoDeFaseAOpción,
   type FaseEstado
 } from '../lib'
 import type { Categoria } from '../../crear-torneo/tipos'
@@ -57,7 +62,7 @@ export function useFases({
         id: f.id,
         numero: f.numero ?? 0,
         nombre: f.nombre ?? '',
-        formato: formatoIdAOpción(f.faseFormatoId),
+        formato: tipoDeFaseAOpción(f.tipoDeFase),
         sePuedeEditar: f.sePuedeEditar !== false
       }))
     )
@@ -85,7 +90,7 @@ export function useFases({
         new TorneoFaseDTO({
           numero: maxNumero + 1,
           nombre: 'Nueva fase',
-          faseFormatoId: 1,
+          tipoDeFase: TipoDeFaseEnum._1,
           estadoFaseId: 100,
           esVisibleEnApp: true,
           torneoId
@@ -106,7 +111,10 @@ export function useFases({
           id: f.id,
           numero: f.numero,
           nombre: f.nombre.trim(),
-          faseFormatoId: f.formato === 'todos-contra-todos' ? 1 : 2,
+          tipoDeFase:
+            f.formato === 'todos-contra-todos'
+              ? TipoDeFaseEnum._1
+              : TipoDeFaseEnum._2,
           estadoFaseId: 100,
           esVisibleEnApp: true
         }))
@@ -138,7 +146,7 @@ export function useFases({
         id: f.id,
         numero: f.numero ?? 0,
         nombre: f.nombre ?? '',
-        formato: formatoIdAOpción(f.faseFormatoId),
+        formato: tipoDeFaseAOpción(f.tipoDeFase),
         sePuedeEditar: f.sePuedeEditar !== false
       }))
     )

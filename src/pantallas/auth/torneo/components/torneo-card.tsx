@@ -10,7 +10,7 @@ interface TorneoCardProps {
 
 function FaseItem({ fase }: { fase: TorneoFaseDTO }) {
   const titulo = `${fase.nombre ?? ''}`.trim()
-  const subtitulo = fase.faseFormatoNombre ?? ''
+  const subtitulo = fase.tipoDeFaseNombre ?? ''
 
   return (
     <li className='flex gap-3 rounded-md border border-border bg-muted/30 px-3 py-2'>

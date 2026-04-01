@@ -467,10 +467,12 @@ test.describe('Fixture', () => {
   }) => {
     await setScenario('fixture_sin_fechas')
     await login(page)
+    // Fijar el reloj del navegador en marzo 2026 antes de cargar la página,
+    // para que el date picker monte con esa fecha y no dependa de la fecha actual
+    await page.clock.setFixedTime(new Date('2026-03-15T12:00:00Z'))
     await page.goto(FIXTURE_URL)
 
     // Abrir el Calendario del selector "¿Cuándo es la primera fecha?"
-    // El trigger muestra la fecha actual (ej: "21 de marzo de 2026")
     await page
       .getByText('¿Cuándo es la primera fecha?')
       .locator('xpath=../..//button')

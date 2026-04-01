@@ -258,8 +258,8 @@ const TORNEO_CON_FASES = {
       id: 100,
       numero: 1,
       nombre: 'Primera Fase',
-      faseFormatoId: 1,
-      faseFormatoNombre: 'Todos contra todos',
+      tipoDeFase: 1,
+      tipoDeFaseNombre: 'Todos contra todos',
       sePuedeEditar: false,
       zonas: [],
       estadoFaseId: 100
@@ -277,7 +277,7 @@ const TORNEO_EDITABLE_CON_NUEVA_FASE = {
   ...TORNEO_EDITABLE,
   fases: [
     ...TORNEO_EDITABLE.fases,
-    { id: 101, numero: 2, nombre: 'Nueva fase', faseFormatoId: 1, faseFormatoNombre: 'Todos contra todos', sePuedeEditar: true, zonas: [], estadoFaseId: 100 }
+    { id: 101, numero: 2, nombre: 'Nueva fase', tipoDeFase: 1, tipoDeFaseNombre: 'Todos contra todos', sePuedeEditar: true, zonas: [], estadoFaseId: 100 }
   ]
 }
 
@@ -448,7 +448,7 @@ const ROUTES = [
     pattern: /^\/api\/Torneo\/\d+\/fases$/,
     scenarios: {
       happy: null,
-      torneo_editable_con_nueva_fase: { id: 101, numero: 2, nombre: 'Nueva fase', faseFormatoId: 1, estadoFaseId: 100, esVisibleEnApp: true, sePuedeEditar: true, torneoId: 1 }
+      torneo_editable_con_nueva_fase: { id: 101, numero: 2, nombre: 'Nueva fase', tipoDeFase: 1, estadoFaseId: 100, esVisibleEnApp: true, sePuedeEditar: true, torneoId: 1 }
     }
   },
   // Fases de torneo — actualizar

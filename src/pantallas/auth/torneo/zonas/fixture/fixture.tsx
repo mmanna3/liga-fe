@@ -1,4 +1,5 @@
 import { api } from '@/api/api'
+import { TipoDeFaseEnum } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
 import { useMemo, useState } from 'react'
@@ -8,8 +9,6 @@ import { PanelEliminacionDirecta } from './generacion/panel-eliminacion-directa'
 import { PanelTodosContraTodos } from './generacion/panel-todos-contra-todos'
 import { useListaFixture } from './hooks/use-lista-fixture'
 import { toDateOnly } from '@/logica-compartida/utils'
-
-const FASE_FORMATO_ELIMINACION_DIRECTA = 2
 
 export default function Fixture() {
   const {
@@ -76,7 +75,7 @@ export default function Fixture() {
       equipos={zona.equipos ?? []}
       zonaId={zonaId}
     />
-  ) : fase?.faseFormatoId === FASE_FORMATO_ELIMINACION_DIRECTA ? (
+  ) : fase?.tipoDeFase === TipoDeFaseEnum._2 ? (
     <PanelEliminacionDirecta
       listaOrdenada={listaOrdenada}
       sensors={sensors}

@@ -17,7 +17,7 @@ import ModalEliminacion from '@/design-system/modal-eliminacion'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import Icono from '@/design-system/ykn-ui/icono'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
-import type { TorneoFaseDTO } from '@/api/clients'
+import { TipoDeFaseEnum, type TorneoFaseDTO } from '@/api/clients'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useFaseItem } from './use-fase-item'
@@ -25,7 +25,7 @@ import { DatosFaseLectura } from '../../../crear-torneo/components/datos-fase-le
 import { TituloFase } from '../../../crear-torneo/components/titulo-fase'
 import {
   OPCIONES_FORMATO,
-  formatoNombreDesdeId,
+  tipoDeFaseNombreDesdeEnum,
   type FaseEstado
 } from '../../lib'
 
@@ -65,6 +65,10 @@ export function FaseItem({
 
   const faseId = fase.id ?? 0
   const pathZonas = `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${faseId}/zonas`
+
+  const esEliminacionDirecta =
+    faseOriginal?.tipoDeFase === TipoDeFaseEnum._2 ||
+    fase.formato === 'eliminacion-directa'
 
   const botonZonas = (
     <Tooltip>
@@ -116,7 +120,7 @@ export function FaseItem({
           soloLectura={false}
         />
         <div className='flex gap-2 shrink-0'>
-          {botonZonas}
+          {!esEliminacionDirecta && botonZonas}
           {fase.sePuedeEditar ? (
             <ModalEliminacion
               titulo='Eliminar fase'
@@ -145,8 +149,8 @@ export function FaseItem({
         <DatosFaseLectura
           zonas={faseOriginal?.zonas ?? []}
           formato={
-            faseOriginal?.faseFormatoNombre ??
-            formatoNombreDesdeId(faseOriginal?.faseFormatoId)
+            faseOriginal?.tipoDeFaseNombre ??
+            tipoDeFaseNombreDesdeEnum(faseOriginal?.tipoDeFase)
           }
           torneoId={torneoId}
           faseId={faseId}

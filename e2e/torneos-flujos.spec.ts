@@ -629,7 +629,7 @@ test.describe('Torneos — flujos profundos', () => {
     await login(page)
     await page.goto('/torneos/detalle/1')
 
-    // TORNEO_EDITABLE tiene faseFormatoId: 1 = 'todos-contra-todos'
+    // TORNEO_EDITABLE tiene tipoDeFase: 1 = 'todos-contra-todos'
     await expect(
       page.getByRole('button', { name: 'Todos contra todos' })
     ).toBeVisible()
@@ -652,8 +652,8 @@ test.describe('Torneos — flujos profundos', () => {
 
     await expect(page.getByText('Formato actualizado')).toBeVisible()
     expect(bodyEnviado).toBeTruthy()
-    const body = bodyEnviado as { faseFormatoId: number }
-    expect(body.faseFormatoId).toBe(2)
+    const body = bodyEnviado as { tipoDeFase: number }
+    expect(body.tipoDeFase).toBe(2)
   })
 
   // -------------------------------------------------------------------------

@@ -1,53 +1,49 @@
-import { TorneoCategoriaDTO } from '@/api/clients'
+import { TorneoCategoriaDTO, TipoDeFaseEnum } from '@/api/clients'
 import { describe, expect, it } from 'vitest'
 import {
   categoriasACategoriaDto,
   categoriasDtoACategoria,
-  formatoIdAOpción,
-  formatoNombreDesdeId
+  tipoDeFaseAOpción,
+  tipoDeFaseNombreDesdeEnum
 } from './lib'
 
 // ---------------------------------------------------------------------------
-// formatoIdAOpción
+// tipoDeFaseAOpción
 // ---------------------------------------------------------------------------
 
-describe('formatoIdAOpción', () => {
-  it('1 → todos-contra-todos', () => {
-    expect(formatoIdAOpción(1)).toBe('todos-contra-todos')
+describe('tipoDeFaseAOpción', () => {
+  it('_1 → todos-contra-todos', () => {
+    expect(tipoDeFaseAOpción(TipoDeFaseEnum._1)).toBe('todos-contra-todos')
   })
 
-  it('2 → eliminacion-directa', () => {
-    expect(formatoIdAOpción(2)).toBe('eliminacion-directa')
+  it('_2 → eliminacion-directa', () => {
+    expect(tipoDeFaseAOpción(TipoDeFaseEnum._2)).toBe('eliminacion-directa')
   })
 
   it('undefined → string vacío', () => {
-    expect(formatoIdAOpción(undefined)).toBe('')
-  })
-
-  it('id desconocido → string vacío', () => {
-    expect(formatoIdAOpción(99)).toBe('')
+    expect(tipoDeFaseAOpción(undefined)).toBe('')
   })
 })
 
 // ---------------------------------------------------------------------------
-// formatoNombreDesdeId
+// tipoDeFaseNombreDesdeEnum
 // ---------------------------------------------------------------------------
 
-describe('formatoNombreDesdeId', () => {
-  it('1 → "Todos contra todos"', () => {
-    expect(formatoNombreDesdeId(1)).toBe('Todos contra todos')
+describe('tipoDeFaseNombreDesdeEnum', () => {
+  it('_1 → "Todos contra todos"', () => {
+    expect(tipoDeFaseNombreDesdeEnum(TipoDeFaseEnum._1)).toBe(
+      'Todos contra todos'
+    )
   })
 
-  it('2 → "Eliminación directa"', () => {
-    expect(formatoNombreDesdeId(2)).toBe('Eliminación directa')
+  it('_2 → "Eliminación directa"', () => {
+    expect(tipoDeFaseNombreDesdeEnum(TipoDeFaseEnum._2)).toBe(
+      'Eliminación directa'
+    )
   })
 
   it('undefined → guión', () => {
-    expect(formatoNombreDesdeId(undefined)).toBe('—')
-  })
-
-  it('id desconocido → guión', () => {
-    expect(formatoNombreDesdeId(99)).toBe('—')
+    expect(tipoDeFaseNombreDesdeEnum(undefined)).toBe('—')
   })
 })
 

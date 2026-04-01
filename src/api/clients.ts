@@ -538,8 +538,8 @@ export class Client {
   /**
    * @return OK
    */
-  subirBackupBdAGoogleDrive(): Promise<void> {
-    let url_ = this.baseUrl + '/api/Backup/subir-backup-bd-a-google-drive'
+  validarArchivosLocales(): Promise<void> {
+    let url_ = this.baseUrl + '/api/Backup/validar-archivos-locales'
     url_ = url_.replace(/[?&]$/, '')
 
     let options_: RequestInit = {
@@ -548,11 +548,131 @@ export class Client {
     }
 
     return this.http.fetch(url_, options_).then((_response: Response) => {
-      return this.processSubirBackupBdAGoogleDrive(_response)
+      return this.processValidarArchivosLocales(_response)
     })
   }
 
-  protected processSubirBackupBdAGoogleDrive(
+  protected processValidarArchivosLocales(response: Response): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  rotarBackupsEnDrive(): Promise<void> {
+    let url_ = this.baseUrl + '/api/Backup/rotar-backups-en-drive'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {}
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processRotarBackupsEnDrive(_response)
+    })
+  }
+
+  protected processRotarBackupsEnDrive(response: Response): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  subirBackupBdADrive(): Promise<void> {
+    let url_ = this.baseUrl + '/api/Backup/subir-backup-bd-a-drive'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {}
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processSubirBackupBdADrive(_response)
+    })
+  }
+
+  protected processSubirBackupBdADrive(response: Response): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  subirBackupImagenesADrive(): Promise<void> {
+    let url_ = this.baseUrl + '/api/Backup/subir-backup-imagenes-a-drive'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {}
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processSubirBackupImagenesADrive(_response)
+    })
+  }
+
+  protected processSubirBackupImagenesADrive(
     response: Response
   ): Promise<void> {
     const status = response.status
@@ -580,23 +700,21 @@ export class Client {
   /**
    * @return OK
    */
-  subirBackupImagenesAGoogleDrive(): Promise<void> {
-    let url_ = this.baseUrl + '/api/Backup/subir-backup-imagenes-a-google-drive'
+  limpiarBackupsLocales(): Promise<void> {
+    let url_ = this.baseUrl + '/api/Backup/limpiar-backups-locales'
     url_ = url_.replace(/[?&]$/, '')
 
     let options_: RequestInit = {
-      method: 'GET',
+      method: 'DELETE',
       headers: {}
     }
 
     return this.http.fetch(url_, options_).then((_response: Response) => {
-      return this.processSubirBackupImagenesAGoogleDrive(_response)
+      return this.processLimpiarBackupsLocales(_response)
     })
   }
 
-  protected processSubirBackupImagenesAGoogleDrive(
-    response: Response
-  ): Promise<void> {
+  protected processLimpiarBackupsLocales(response: Response): Promise<void> {
     const status = response.status
     let _headers: any = {}
     if (response.headers && response.headers.forEach) {
@@ -8002,6 +8120,11 @@ export interface IReportePagosDTO {
   cantidadJugadoresPagados?: number
 }
 
+export enum TipoDeFaseEnum {
+  _1 = 1,
+  _2 = 2
+}
+
 export class TorneoAgrupadorDTO implements ITorneoAgrupadorDTO {
   id?: number
   nombre!: string
@@ -8196,8 +8319,8 @@ export class TorneoFaseDTO implements ITorneoFaseDTO {
   nombre!: string
   numero!: number
   torneoId?: number
-  faseFormatoId?: number
-  faseFormatoNombre?: string | undefined
+  tipoDeFase!: TipoDeFaseEnum
+  tipoDeFaseNombre?: string | undefined
   instanciaEliminacionDirectaId?: number | undefined
   instanciaEliminacionDirectaNombre?: string | undefined
   estadoFaseId?: number
@@ -8221,8 +8344,8 @@ export class TorneoFaseDTO implements ITorneoFaseDTO {
       this.nombre = _data['nombre']
       this.numero = _data['numero']
       this.torneoId = _data['torneoId']
-      this.faseFormatoId = _data['faseFormatoId']
-      this.faseFormatoNombre = _data['faseFormatoNombre']
+      this.tipoDeFase = _data['tipoDeFase']
+      this.tipoDeFaseNombre = _data['tipoDeFaseNombre']
       this.instanciaEliminacionDirectaId =
         _data['instanciaEliminacionDirectaId']
       this.instanciaEliminacionDirectaNombre =
@@ -8252,8 +8375,8 @@ export class TorneoFaseDTO implements ITorneoFaseDTO {
     data['nombre'] = this.nombre
     data['numero'] = this.numero
     data['torneoId'] = this.torneoId
-    data['faseFormatoId'] = this.faseFormatoId
-    data['faseFormatoNombre'] = this.faseFormatoNombre
+    data['tipoDeFase'] = this.tipoDeFase
+    data['tipoDeFaseNombre'] = this.tipoDeFaseNombre
     data['instanciaEliminacionDirectaId'] = this.instanciaEliminacionDirectaId
     data['instanciaEliminacionDirectaNombre'] =
       this.instanciaEliminacionDirectaNombre
@@ -8274,8 +8397,8 @@ export interface ITorneoFaseDTO {
   nombre: string
   numero: number
   torneoId?: number
-  faseFormatoId?: number
-  faseFormatoNombre?: string | undefined
+  tipoDeFase: TipoDeFaseEnum
+  tipoDeFaseNombre?: string | undefined
   instanciaEliminacionDirectaId?: number | undefined
   instanciaEliminacionDirectaNombre?: string | undefined
   estadoFaseId?: number
