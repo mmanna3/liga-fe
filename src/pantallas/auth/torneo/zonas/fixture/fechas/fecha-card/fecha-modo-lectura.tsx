@@ -11,6 +11,13 @@ function formatDia(dia: Date | undefined): string {
   return `${dia.getUTCDate()}/${dia.getUTCMonth() + 1}`
 }
 
+/** Título visible: instancia (eliminación directa) o número de fecha (todos contra todos). */
+export function etiquetaFecha(fecha: TorneoFechaDTO): string {
+  const nombre = fecha.instanciaEliminacionDirectaNombre?.trim()
+  if (nombre) return nombre
+  return `Fecha ${fecha.numero}`
+}
+
 function JornadaFilaVista({ j }: { j: JornadaDTO }) {
   let localLabel: string
   let visitanteLabel: string
@@ -60,7 +67,7 @@ export function FechaModoLectura({
     <>
       <div className='flex items-center justify-between mb-3'>
         <div className='flex items-center gap-2'>
-          <h3 className='font-semibold'>Fecha {fecha.numero}</h3>
+          <h3 className='font-semibold'>{etiquetaFecha(fecha)}</h3>
           {diaDisplay && (
             <span className='text-sm text-muted-foreground'>
               — {diaDisplay}
@@ -79,7 +86,7 @@ export function FechaModoLectura({
           {mostrarBotonEliminar && (
             <ModalEliminacion
               titulo='Eliminar fecha'
-              subtitulo={`¿Confirmás que querés eliminar la Fecha ${fecha.numero}? Se eliminarán también todas sus jornadas.`}
+              subtitulo={`¿Confirmás que querés eliminar ${etiquetaFecha(fecha)}? Se eliminarán también todas sus jornadas.`}
               eliminarTexto='Eliminar fecha'
               estaCargando={estaCargandoEliminar}
               eliminarOnClick={onEliminar}

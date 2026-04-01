@@ -74,6 +74,7 @@ export default function Fixture() {
       fechas={fechasExistentes}
       equipos={zona.equipos ?? []}
       zonaId={zonaId}
+      esEliminacionDirecta={fase?.tipoDeFase === TipoDeFaseEnum._2}
     />
   ) : fase?.tipoDeFase === TipoDeFaseEnum._2 ? (
     <PanelEliminacionDirecta
