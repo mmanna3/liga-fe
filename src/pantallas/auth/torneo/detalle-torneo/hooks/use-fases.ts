@@ -74,12 +74,18 @@ export function useFases({
     )
   }
 
+  const eliminarFaseMutation = useApiMutation<number>({
+    fn: async (faseId) => {
+      await api.fasesDELETE(torneoId, faseId)
+    },
+    antesDeMensajeExito: () => refetch(),
+    mensajeDeExito: 'Fase eliminada'
+  })
+
   const eliminarFase = (index: number) => {
-    setFasesEstado((prev) =>
-      prev
-        .filter((_, i) => i !== index)
-        .map((f, i) => ({ ...f, numero: i + 1 }))
-    )
+    const faseId = fasesEstado[index]?.id
+    if (!faseId) return
+    eliminarFaseMutation.mutate(faseId)
   }
 
   const agregarFaseMutation = useApiMutation<void>({
@@ -185,6 +191,7 @@ export function useFases({
     fasesEstado,
     actualizarFase,
     eliminarFase,
+    eliminarFaseMutation,
     agregarFaseMutation,
     guardarMutation,
     irAZonas,
