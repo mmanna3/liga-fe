@@ -1,7 +1,7 @@
 import {
   CrearTorneoDTO,
   TorneoCategoriaDTO,
-  TorneoFaseDTO,
+  FaseDTO,
   TipoDeFaseEnum
 } from '@/api/clients'
 import { api } from '@/api/api'
@@ -111,7 +111,7 @@ export function useCrearTorneo() {
           ? TipoDeFaseEnum._1
           : TipoDeFaseEnum._2
 
-      const primeraFase = new TorneoFaseDTO({
+      const primeraFase = new FaseDTO({
         numero: 1,
         nombre: tituloFase.trim(),
         tipoDeFase,

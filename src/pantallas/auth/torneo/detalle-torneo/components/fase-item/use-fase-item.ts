@@ -1,11 +1,11 @@
 import { api } from '@/api/api'
-import { TorneoFaseDTO, TipoDeFaseEnum } from '@/api/clients'
+import { FaseDTO, TipoDeFaseEnum } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import { useQueryClient } from '@tanstack/react-query'
 
 interface UseFaseItemParams {
   torneoId: number
-  faseOriginal?: TorneoFaseDTO
+  faseOriginal?: FaseDTO
 }
 
 export function useFaseItem({ torneoId, faseOriginal }: UseFaseItemParams) {
@@ -17,7 +17,7 @@ export function useFaseItem({ torneoId, faseOriginal }: UseFaseItemParams) {
       await api.fasesPUT(
         torneoId,
         faseOriginal.id,
-        new TorneoFaseDTO({
+        new FaseDTO({
           ...faseOriginal,
           nombre: nuevoNombre,
           torneoId
@@ -36,7 +36,7 @@ export function useFaseItem({ torneoId, faseOriginal }: UseFaseItemParams) {
       await api.fasesPUT(
         torneoId,
         faseOriginal.id,
-        new TorneoFaseDTO({
+        new FaseDTO({
           ...faseOriginal,
           tipoDeFase:
             nuevoFormato === 'todos-contra-todos'

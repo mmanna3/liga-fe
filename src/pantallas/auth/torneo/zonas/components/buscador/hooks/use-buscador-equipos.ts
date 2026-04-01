@@ -1,5 +1,5 @@
 import { api } from '@/api/api'
-import { EquipoDTO, EquipoParaZonasDTO, ZonaDTO } from '@/api/clients'
+import { EquipoDTO, EquipoParaZonasDTO, ZonaResumenDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -16,7 +16,7 @@ function equipoParaZonasAEquipoDto(e: EquipoParaZonasDTO): EquipoDTO {
     clubId: 0,
     zonas: e.zonas?.map(
       (z) =>
-        new ZonaDTO({
+        new ZonaResumenDTO({
           id: z.id,
           nombre: z.nombre,
           torneo: z.torneo,

@@ -1,8 +1,8 @@
 import {
   EquipoDeLaZonaDTO,
   EquipoDTO,
-  TorneoZonaDTO,
-  ZonaDTO
+  ZonaDTO,
+  ZonaResumenDTO
 } from '@/api/clients'
 
 /** Estado de una zona en la UI (usa EquipoDTO para compatibilidad con el buscador) */
@@ -12,8 +12,8 @@ export interface ZonaEstado {
   equipos: EquipoDTO[]
 }
 
-/** Convierte TorneoZonaDTO del API a ZonaEstado para la UI */
-export function zonaDtoAEstado(dto: TorneoZonaDTO): ZonaEstado {
+/** Convierte ZonaDTO del API a ZonaEstado para la UI */
+export function zonaDtoAEstado(dto: ZonaDTO): ZonaEstado {
   const equipos = (dto.equipos ?? []).map(
     (e) =>
       new EquipoDTO({
@@ -22,7 +22,7 @@ export function zonaDtoAEstado(dto: TorneoZonaDTO): ZonaEstado {
         nombre: e.nombre,
         clubNombre: e.club,
         clubId: 0,
-        zonas: [new ZonaDTO({ id: dto.id, nombre: dto.nombre })]
+        zonas: [new ZonaResumenDTO({ id: dto.id, nombre: dto.nombre })]
       })
   )
   return {
@@ -32,11 +32,8 @@ export function zonaDtoAEstado(dto: TorneoZonaDTO): ZonaEstado {
   }
 }
 
-/** Convierte ZonaEstado de la UI a TorneoZonaDTO para el API */
-export function zonaEstadoADto(
-  zona: ZonaEstado,
-  torneoFaseId: number
-): TorneoZonaDTO {
+/** Convierte ZonaEstado de la UI a ZonaDTO para el API */
+export function zonaEstadoADto(zona: ZonaEstado, faseId: number): ZonaDTO {
   const equipos = zona.equipos.map(
     (e) =>
       new EquipoDeLaZonaDTO({
@@ -46,10 +43,10 @@ export function zonaEstadoADto(
         club: e.clubNombre
       })
   )
-  return new TorneoZonaDTO({
+  return new ZonaDTO({
     id: zona.id,
     nombre: zona.nombre,
-    torneoFaseId,
+    faseId,
     equipos
   })
 }

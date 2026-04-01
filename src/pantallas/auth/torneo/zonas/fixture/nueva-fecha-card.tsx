@@ -1,9 +1,5 @@
 import { api } from '@/api/api'
-import type {
-  EquipoDeLaZonaDTO,
-  JornadaDTO,
-  TorneoFechaDTO
-} from '@/api/clients'
+import type { EquipoDeLaZonaDTO, JornadaDTO, FechaDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { useQueryClient } from '@tanstack/react-query'
@@ -47,7 +43,7 @@ export function NuevaFechaCard({
         dia,
         esVisibleEnApp: false,
         jornadas: jornadas as unknown as JornadaDTO[]
-      } as unknown as TorneoFechaDTO) as unknown as Promise<void>,
+      } as unknown as FechaDTO) as unknown as Promise<void>,
     mensajeDeExito: 'Fecha creada',
     antesDeMensajeExito: () => {
       queryClient.invalidateQueries({ queryKey: ['fechasAll', zonaId] })

@@ -1,7 +1,7 @@
 import {
   TorneoCategoriaDTO,
   TorneoDTO,
-  TorneoFaseDTO,
+  FaseDTO,
   TipoDeFaseEnum
 } from '@/api/clients'
 import { api } from '@/api/api'
@@ -93,7 +93,7 @@ export function useFases({
       const maxNumero = Math.max(0, ...fasesEstado.map((f) => f.numero))
       await api.fasesPOST(
         torneoId,
-        new TorneoFaseDTO({
+        new FaseDTO({
           numero: maxNumero + 1,
           nombre: 'Nueva fase',
           tipoDeFase: TipoDeFaseEnum._1,
@@ -133,7 +133,7 @@ export function useFases({
         categorias: categoriasACategoriaDto(categorias).map(
           (c) => new TorneoCategoriaDTO({ ...c, torneoId })
         ),
-        fases: fasesValidas.map((f) => new TorneoFaseDTO({ ...f, torneoId }))
+        fases: fasesValidas.map((f) => new FaseDTO({ ...f, torneoId }))
       })
       await api.torneoPUT(torneoId, body)
     },

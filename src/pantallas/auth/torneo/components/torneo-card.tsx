@@ -1,4 +1,4 @@
-import type { TorneoDTO, TorneoFaseDTO } from '@/api/clients'
+import type { TorneoDTO, FaseDTO } from '@/api/clients'
 import { Card, CardContent } from '@/design-system/base-ui/card'
 import Icono from '@/design-system/ykn-ui/icono'
 import { rutasNavegacion } from '@/ruteo/rutas'
@@ -8,7 +8,7 @@ interface TorneoCardProps {
   torneo: TorneoDTO
 }
 
-function FaseItem({ fase }: { fase: TorneoFaseDTO }) {
+function FaseItem({ fase }: { fase: FaseDTO }) {
   const titulo = `${fase.nombre ?? ''}`.trim()
   const subtitulo = fase.tipoDeFaseNombre ?? ''
 

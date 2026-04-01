@@ -1,7 +1,7 @@
-import { ZonaDTO } from '@/api/clients'
+import { ZonaResumenDTO } from '@/api/clients'
 
 interface TorneoBadgeProps {
-  zonas?: ZonaDTO[]
+  zonas?: ZonaResumenDTO[]
 }
 
 export default function TorneoBadge({ zonas }: TorneoBadgeProps) {

@@ -17,7 +17,7 @@ import ModalEliminacion from '@/design-system/modal-eliminacion'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import Icono from '@/design-system/ykn-ui/icono'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
-import { TipoDeFaseEnum, type TorneoFaseDTO } from '@/api/clients'
+import { TipoDeFaseEnum, type FaseDTO } from '@/api/clients'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useFaseItem } from './use-fase-item'
@@ -33,7 +33,7 @@ interface FaseItemProps {
   torneoId: number
   fase: FaseEstado
   faseIndex: number
-  faseOriginal?: TorneoFaseDTO
+  faseOriginal?: FaseDTO
   onActualizar: (campo: string, valor: string) => void
   onEliminar: () => void
   /** Si se provee, se llama al hacer clic en el ícono de zonas (guarda antes de navegar). Recibe el index de la fase. */

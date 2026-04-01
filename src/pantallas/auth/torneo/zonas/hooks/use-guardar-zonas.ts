@@ -1,5 +1,5 @@
 import { api } from '@/api/api'
-import { TorneoZonaDTO } from '@/api/clients'
+import { ZonaDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useQueryClient } from '@tanstack/react-query'
@@ -31,7 +31,7 @@ export function useGuardarZonas({
   const faseId = Number(faseIdParam)
   const navegarHacia = useRef<string | null>(null)
 
-  const guardarMutation = useApiMutation<TorneoZonaDTO[]>({
+  const guardarMutation = useApiMutation<ZonaDTO[]>({
     fn: async (body) => {
       if (modo === 'crear') {
         return await api.crearZonasMasivamente(faseId, body)

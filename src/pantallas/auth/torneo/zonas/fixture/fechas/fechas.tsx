@@ -1,9 +1,9 @@
-import type { EquipoDeLaZonaDTO, TorneoFechaDTO } from '@/api/clients'
+import type { EquipoDeLaZonaDTO, FechaDTO } from '@/api/clients'
 import { useState } from 'react'
 import { FechaCard } from './fecha-card'
 import { NuevaFechaCard } from '../nueva-fecha-card'
 
-function ordenarFechas(a: TorneoFechaDTO, b: TorneoFechaDTO): number {
+function ordenarFechas(a: FechaDTO, b: FechaDTO): number {
   const aEd = a.instanciaEliminacionDirectaId != null
   const bEd = b.instanciaEliminacionDirectaId != null
   if (aEd && bEd) {
@@ -21,7 +21,7 @@ export function FechasZona({
   zonaId,
   esEliminacionDirecta = false
 }: {
-  fechas: TorneoFechaDTO[]
+  fechas: FechaDTO[]
   equipos: EquipoDeLaZonaDTO[]
   zonaId: number
   /** Fase de eliminación directa: las fechas se crean por instancia, no con "Agregar fecha". */

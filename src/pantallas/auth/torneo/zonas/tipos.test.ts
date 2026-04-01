@@ -1,9 +1,4 @@
-import {
-  EquipoDeLaZonaDTO,
-  EquipoDTO,
-  ITorneoZonaDTO,
-  TorneoZonaDTO
-} from '@/api/clients'
+import { EquipoDeLaZonaDTO, EquipoDTO, IZonaDTO, ZonaDTO } from '@/api/clients'
 import { describe, expect, it } from 'vitest'
 import {
   validarZonasParaGuardar,
@@ -67,10 +62,10 @@ describe('validarZonasParaGuardar', () => {
 
 describe('zonaDtoAEstado', () => {
   it('preserva id y nombre del DTO', () => {
-    const dto = new TorneoZonaDTO({
+    const dto = new ZonaDTO({
       id: 5,
       nombre: 'Zona Norte',
-      torneoFaseId: 1,
+      faseId: 1,
       equipos: []
     })
     const estado = zonaDtoAEstado(dto)
@@ -79,10 +74,10 @@ describe('zonaDtoAEstado', () => {
   })
 
   it('convierte equipos del DTO a EquipoDTO en el estado', () => {
-    const dto = new TorneoZonaDTO({
+    const dto = new ZonaDTO({
       id: 1,
       nombre: 'Zona A',
-      torneoFaseId: 100,
+      faseId: 100,
       equipos: [
         EquipoDeLaZonaDTO.fromJS({
           id: '7',
@@ -100,10 +95,10 @@ describe('zonaDtoAEstado', () => {
   })
 
   it('maneja lista de equipos vacía', () => {
-    const dto = new TorneoZonaDTO({
+    const dto = new ZonaDTO({
       id: 1,
       nombre: 'Zona A',
-      torneoFaseId: 1,
+      faseId: 1,
       equipos: []
     })
     const estado = zonaDtoAEstado(dto)
@@ -112,11 +107,11 @@ describe('zonaDtoAEstado', () => {
 
   it('usa "Zona" como nombre por defecto si el DTO no tiene nombre', () => {
     // Omitir nombre intencionalmente para probar el valor por defecto
-    const dto = new TorneoZonaDTO({
+    const dto = new ZonaDTO({
       id: 2,
-      torneoFaseId: 1,
+      faseId: 1,
       equipos: []
-    } as unknown as ITorneoZonaDTO)
+    } as unknown as IZonaDTO)
     const estado = zonaDtoAEstado(dto)
     expect(estado.nombre).toBe('Zona')
   })
@@ -132,7 +127,7 @@ describe('zonaEstadoADto', () => {
     const dto = zonaEstadoADto(zona, 100)
     expect(dto.id).toBe(3)
     expect(dto.nombre).toBe('Zona Sur')
-    expect(dto.torneoFaseId).toBe(100)
+    expect(dto.faseId).toBe(100)
   })
 
   it('zona nueva (sin id) no incluye id en el DTO', () => {

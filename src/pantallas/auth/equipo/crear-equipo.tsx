@@ -1,5 +1,5 @@
 import { api } from '@/api/api'
-import { EquipoDTO, ZonaDTO } from '@/api/clients'
+import { EquipoDTO, ZonaResumenDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { Boton } from '@/design-system/ykn-ui/boton'
@@ -64,7 +64,7 @@ export default function CrearEquipo() {
         clubId: Number(clubid),
         zonas:
           torneoId && faseId && zonaId
-            ? [new ZonaDTO({ id: Number(zonaId) })]
+            ? [new ZonaResumenDTO({ id: Number(zonaId) })]
             : undefined
       })
     )

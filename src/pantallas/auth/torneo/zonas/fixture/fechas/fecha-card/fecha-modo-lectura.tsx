@@ -4,7 +4,7 @@ import { Button } from '@/design-system/base-ui/button'
 import Icono from '@/design-system/ykn-ui/icono'
 import ModalEliminacion from '@/design-system/modal-eliminacion'
 import { claseEspecial } from '../jornada-edicion'
-import type { TorneoFechaDTO } from '@/api/clients'
+import type { FechaDTO } from '@/api/clients'
 
 function formatDia(dia: Date | undefined): string {
   if (!dia) return ''
@@ -12,7 +12,7 @@ function formatDia(dia: Date | undefined): string {
 }
 
 /** Título visible: instancia (eliminación directa) o número de fecha (todos contra todos). */
-export function etiquetaFecha(fecha: TorneoFechaDTO): string {
+export function etiquetaFecha(fecha: FechaDTO): string {
   const nombre = fecha.instanciaEliminacionDirectaNombre?.trim()
   if (nombre) return nombre
   return `Fecha ${fecha.numero}`
@@ -47,7 +47,7 @@ function JornadaFilaVista({ j }: { j: JornadaDTO }) {
 }
 
 export interface FechaModoLecturaProps {
-  fecha: TorneoFechaDTO
+  fecha: FechaDTO
   onEditar: () => void
   onEliminar: () => void
   estaCargandoEliminar: boolean
