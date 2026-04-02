@@ -2,13 +2,15 @@ import {
   TorneoCategoriaDTO,
   TorneoDTO,
   FaseDTO,
-  TipoDeFaseEnum
+  TipoDeFaseEnum,
+  ZonaDTO
 } from '@/api/clients'
 import { api } from '@/api/api'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
 import {
   categoriasACategoriaDto,
@@ -54,6 +56,7 @@ export function useFases({
   const torneoFases = torneo?.fases ?? []
 
   const [fasesEstado, setFasesEstado] = useState<FaseEstado[]>([])
+  const [creandoZonasEliminacion, setCreandoZonasEliminacion] = useState(false)
 
   useEffect(() => {
     if (!torneo) return
@@ -159,9 +162,50 @@ export function useFases({
     setEditando(false)
   }
 
+  const asegurarZonasEliminacionDirecta = async (
+    faseId: number,
+    faseApi: FaseDTO | undefined,
+    categoriasOverride?: TorneoCategoriaDTO[]
+  ) => {
+    if (faseApi?.tipoDeFase !== TipoDeFaseEnum._2) return
+
+    const zonasExistentes = await api.zonasAll(faseId)
+    if (zonasExistentes.length > 0) return
+
+    const categorias = categoriasOverride ?? torneo?.categorias ?? []
+    const categoriasConId = categorias.filter(
+      (c): c is typeof c & { id: number } => c.id != null && c.id > 0
+    )
+    if (categoriasConId.length === 0) return
+
+    const body = categoriasConId.map(
+      (c) =>
+        new ZonaDTO({
+          categoriaId: c.id,
+          categoriaNombre: '',
+          nombre: c.nombre ?? '',
+          faseId
+        })
+    )
+
+    setCreandoZonasEliminacion(true)
+    try {
+      await api.crearZonasMasivamente(faseId, body)
+      queryClient.invalidateQueries({ queryKey: ['torneo', id] })
+      queryClient.invalidateQueries({ queryKey: ['zonasAll', faseId] })
+    } catch (e) {
+      console.error(e)
+      toast.error('No se pudieron crear las zonas para la eliminación directa')
+      throw e
+    } finally {
+      setCreandoZonasEliminacion(false)
+    }
+  }
+
   const irAZonas = async (faseIndex: number) => {
     const faseEnEstado = fasesEstado[faseIndex]
     if (!faseEnEstado) return
+    if (creandoZonasEliminacion) return
 
     const faseTieneId = faseEnEstado.id != null && faseEnEstado.id > 0
 
@@ -175,9 +219,25 @@ export function useFases({
         (f: { numero?: number }) => f.numero === faseEnEstado.numero
       )
       if (!faseActualizada?.id) return
+      try {
+        await asegurarZonasEliminacionDirecta(
+          faseActualizada.id,
+          faseActualizada,
+          torneoActualizado?.categorias
+        )
+      } catch {
+        return
+      }
       navigate(
         `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${faseActualizada.id}/zonas`
       )
+      return
+    }
+
+    const faseApi = torneoFases[faseIndex]
+    try {
+      await asegurarZonasEliminacionDirecta(faseEnEstado.id!, faseApi)
+    } catch {
       return
     }
 
@@ -194,6 +254,7 @@ export function useFases({
     eliminarFaseMutation,
     agregarFaseMutation,
     guardarMutation,
+    estaGuardandoZonas: guardarMutation.isPending || creandoZonasEliminacion,
     irAZonas,
     handleCancelarEdicion
   }

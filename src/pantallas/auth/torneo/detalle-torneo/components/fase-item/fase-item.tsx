@@ -69,6 +69,10 @@ export function FaseItem({
   const esEliminacionDirecta =
     faseOriginal?.tipoDeFase === TipoDeFaseEnum._2 ||
     fase.formato === 'eliminacion-directa'
+  const tieneZonas = (faseOriginal?.zonas?.length ?? 0) > 0
+  /** Con zonas, el formato no se edita (en ED el backend a veces sigue marcando la fase como editable). */
+  const formatoYLecturaZonas =
+    !fase.sePuedeEditar || (esEliminacionDirecta && tieneZonas)
 
   const botonZonas = (
     <Tooltip>
@@ -124,7 +128,7 @@ export function FaseItem({
           soloLectura={false}
         />
         <div className='flex gap-2 shrink-0'>
-          {!esEliminacionDirecta && botonZonas}
+          {botonZonas}
           {fase.sePuedeEditar ? (
             <ModalEliminacion
               titulo='Eliminar fase'
@@ -139,17 +143,7 @@ export function FaseItem({
         </div>
       </div>
 
-      {fase.sePuedeEditar ? (
-        <SelectorSimple
-          titulo=''
-          opciones={OPCIONES_FORMATO}
-          valorActual={fase.formato}
-          alElegirOpcion={(v) => {
-            onActualizar('formato', v)
-            cambiarFormatoMutation.mutate(v)
-          }}
-        />
-      ) : (
+      {formatoYLecturaZonas ? (
         <DatosFaseLectura
           zonas={faseOriginal?.zonas ?? []}
           formato={
@@ -158,6 +152,16 @@ export function FaseItem({
           }
           torneoId={torneoId}
           faseId={faseId}
+        />
+      ) : (
+        <SelectorSimple
+          titulo=''
+          opciones={OPCIONES_FORMATO}
+          valorActual={fase.formato}
+          alElegirOpcion={(v) => {
+            onActualizar('formato', v)
+            cambiarFormatoMutation.mutate(v)
+          }}
         />
       )}
 

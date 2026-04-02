@@ -1,5 +1,4 @@
 import { api } from '@/api/api'
-import { TipoDeFaseEnum } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
 import BotonVolver from '@/design-system/ykn-ui/boton-volver'
 import { rutasNavegacion } from '@/ruteo/rutas'
@@ -66,23 +65,6 @@ export default function ZonasDeLaFase() {
         <p className='text-muted-foreground'>
           No se encontró la fase. Puede que el enlace sea inválido o la fase
           haya sido eliminada.
-        </p>
-      </div>
-    )
-  }
-
-  if (fase?.tipoDeFase === TipoDeFaseEnum._2) {
-    return (
-      <div className='max-w-6xl mx-auto px-4'>
-        <div className='mb-4'>
-          <BotonVolver path={pathVolver} />
-        </div>
-        {headerCard}
-        <p className='text-muted-foreground mt-4 max-w-prose'>
-          El armado de zonas por equipos (drag and drop) está disponible solo
-          para fases en formato <strong>todos contra todos</strong>. Las fases
-          de <strong>eliminación directa</strong> usan otro modelo de zonas en
-          el sistema.
         </p>
       </div>
     )

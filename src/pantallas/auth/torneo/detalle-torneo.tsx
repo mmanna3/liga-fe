@@ -57,8 +57,8 @@ export default function DetalleTorneo() {
     actualizarFase,
     eliminarFase,
     agregarFaseMutation,
-    guardarMutation,
     irAZonas,
+    estaGuardandoZonas,
     handleCancelarEdicion
   } = fases
 
@@ -191,7 +191,7 @@ export default function DetalleTorneo() {
                   }
                   onEliminar={() => eliminarFase(index)}
                   onIrAZonas={irAZonas}
-                  estaGuardando={guardarMutation.isPending}
+                  estaGuardando={estaGuardandoZonas}
                   enCard
                 />
               </CardContent>
