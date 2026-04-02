@@ -1,6 +1,6 @@
 import { EquipoDTO } from '@/api/clients'
 import { useCallback, useMemo, useState } from 'react'
-import type { ZonaEstado } from '../tipos'
+import type { ZonaEstado } from '../components/tipos'
 
 export function useZonasEstado(initial: ZonaEstado[]) {
   const [zonasEstado, setZonasEstado] = useState<ZonaEstado[]>(initial)

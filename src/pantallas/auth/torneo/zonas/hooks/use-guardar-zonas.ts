@@ -6,8 +6,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useCallback, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { validarZonasParaGuardar, zonaEstadoADto } from '../tipos'
-import type { ZonaEstado } from '../tipos'
+import { validarZonasParaGuardar, zonaEstadoADto } from '../components/tipos'
+import type { ZonaEstado } from '../components/tipos'
 
 interface UseGuardarZonasParams {
   zonasEstado: ZonaEstado[]

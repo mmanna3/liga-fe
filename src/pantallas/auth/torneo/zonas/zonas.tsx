@@ -5,8 +5,8 @@ import { rutasNavegacion } from '@/ruteo/rutas'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { tipoDeFaseNombreDesdeEnum } from '../detalle-torneo/lib'
-import { GestorZonas } from './gestor-zonas'
-import { ZonaHeader } from './zona-header'
+import { GestorZonas } from './components/gestor-zonas'
+import { ZonaHeader } from './components/zona-header'
 
 export default function ZonasDeLaFase() {
   const { id: torneoIdParam, faseId: faseIdParam } = useParams<{
