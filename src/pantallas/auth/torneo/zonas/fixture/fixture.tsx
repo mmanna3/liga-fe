@@ -1,10 +1,13 @@
 import { api } from '@/api/api'
 import { FechaTodosContraTodosDTO, TipoDeFaseEnum } from '@/api/clients'
+import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
+import type { BotoneraProps } from '@/design-system/ykn-ui/botonera'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
 import { toDateOnly } from '@/logica-compartida/utils'
 import { useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import { FechasEliminacionDirecta } from './fechas-eliminacion-directa/fechas'
 import { FechasTodosContraTodos } from './fechas-todos-contra-todos/fechas'
 import { PanelEliminacionDirecta } from './generacion/eliminacion-directa/panel-eliminacion-directa'
@@ -12,6 +15,7 @@ import { PanelTodosContraTodos } from './generacion/todos-contra-todos/panel-tod
 import { useListaFixture } from './hooks/use-lista-fixture'
 
 export default function Fixture() {
+  const queryClient = useQueryClient()
   const {
     id: torneoIdParam,
     faseId: faseIdParam,
@@ -68,6 +72,42 @@ export default function Fixture() {
     zona?.nombre ?? '—'
   ].join(' · ')
 
+  const muestraLlaveEliminacionCargada =
+    !!zona &&
+    fechasExistentes.length > 0 &&
+    fase?.tipoDeFase === TipoDeFaseEnum._2
+
+  const borrarLlaveMutation = useApiMutation<void>({
+    fn: () => api.borrarFechasEliminaciondirectaMasivamente(zonaId),
+    mensajeDeExito: 'Llave de eliminación borrada',
+    antesDeMensajeExito: () => {
+      queryClient.invalidateQueries({ queryKey: ['fechasAll', zonaId] })
+      queryClient.invalidateQueries({
+        queryKey: ['fechasEliminacionDirecta', zonaId]
+      })
+    }
+  })
+
+  const botonera: BotoneraProps | undefined = muestraLlaveEliminacionCargada
+    ? {
+        iconos: [
+          {
+            alApretar: () => {
+              borrarLlaveMutation.mutate()
+            },
+            tooltip: 'Borrar llave de eliminación',
+            modalEliminacion: {
+              titulo: 'Borrar llave de eliminación',
+              subtitulo:
+                'Se eliminarán fechas y partidos de todas las instancias de esta llave.',
+              eliminarTexto: 'Borrar llave',
+              estaCargando: borrarLlaveMutation.isPending
+            }
+          }
+        ]
+      }
+    : undefined
+
   const contenido = !zona ? (
     <p className='text-muted-foreground py-4'>Cargando zona...</p>
   ) : fechasExistentes.length > 0 && fase?.tipoDeFase === TipoDeFaseEnum._2 ? (
@@ -105,6 +145,7 @@ export default function Fixture() {
       subtitulo={subtitulo}
       iconoTitulo='Fixture'
       contenedorClassName='max-w-6xl'
+      botonera={botonera}
       contenido={contenido}
       contenidoEnCard={false}
     />

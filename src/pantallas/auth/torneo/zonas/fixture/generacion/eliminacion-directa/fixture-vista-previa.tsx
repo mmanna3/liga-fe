@@ -217,7 +217,7 @@ export function FixtureVistaPrevia({
 
   return (
     <div>
-      <Card className=''>
+      <Card className='mb-4'>
         {/* <CardHeader>
           <CardTitle>Crear fixture</CardTitle>
         </CardHeader> */}
