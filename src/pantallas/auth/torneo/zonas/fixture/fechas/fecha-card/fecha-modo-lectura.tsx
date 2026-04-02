@@ -74,6 +74,7 @@ function JornadaFilaVista({
             type='button'
             variant='ghost'
             size='icon'
+            data-testid='btn-carga-resultados-jornada'
             className={cn(
               'h-7 w-7 shrink-0',
               !tieneResultados && 'text-muted-foreground hover:text-foreground',

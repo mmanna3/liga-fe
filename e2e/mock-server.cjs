@@ -217,7 +217,16 @@ const FECHA_ZONA_1 = {
       localId: 1,
       visitanteId: 2,
       local: 'Infantil A',
-      visitante: 'Infantil B'
+      visitante: 'Infantil B',
+      partidos: [
+        {
+          id: 1,
+          categoriaId: 1,
+          categoria: 'Sub 12',
+          resultadoLocal: '',
+          resultadoVisitante: ''
+        }
+      ]
     }
   ]
 }
@@ -603,6 +612,17 @@ const ROUTES = [
     method: 'DELETE',
     pattern: /^\/api\/Zona\/\d+\/fechas\/\d+$/,
     scenarios: { happy: 1, fixture_con_fechas: 1, fixture_con_fechas_con_dia: 1 }
+  },
+
+  // Fechas — cargar resultados de una jornada
+  {
+    method: 'POST',
+    pattern: /^\/api\/Zona\/\d+\/fechas\/cargar-resultados\/\d+$/,
+    scenarios: {
+      happy: null,
+      fixture_con_fechas: null,
+      fixture_con_fechas_con_dia: null
+    }
   }
 ]
 

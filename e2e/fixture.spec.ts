@@ -782,4 +782,85 @@ test.describe('Fixture', () => {
     // La fecha original tenía 1 jornada, ahora debe tener 2
     expect(body.jornadas).toHaveLength(2)
   })
+
+  // -------------------------------------------------------------------------
+  // Carga de resultados (modal)
+  // -------------------------------------------------------------------------
+
+  test('el botón de carga de resultados abre el modal con la tabla de partidos', async ({
+    page
+  }) => {
+    await setScenario('fixture_con_fechas')
+    await login(page)
+    await page.goto(FIXTURE_URL)
+
+    await page.getByTestId('btn-carga-resultados-jornada').click()
+
+    const dialog = page.getByRole('dialog')
+    await expect(
+      dialog.getByRole('heading', { name: 'Cargar resultados' })
+    ).toBeVisible()
+    await expect(
+      dialog.getByText('Fecha 1 - Infantil A vs. Infantil B')
+    ).toBeVisible()
+    await expect(dialog.getByText('Sub 12')).toBeVisible()
+    await expect(
+      dialog.getByRole('textbox', { name: /Resultado local/ })
+    ).toBeVisible()
+    await expect(
+      dialog.getByRole('textbox', { name: /Resultado visitante/ })
+    ).toBeVisible()
+  })
+
+  test('guardar resultados envía POST con los marcadores y muestra toast de éxito', async ({
+    page
+  }) => {
+    await setScenario('fixture_con_fechas')
+    await login(page)
+    await page.goto(FIXTURE_URL)
+
+    let bodyEnviado: unknown = null
+    await page.route(
+      '**/api/Zona/*/fechas/cargar-resultados/*',
+      async (route) => {
+        if (route.request().method() === 'POST') {
+          bodyEnviado = JSON.parse(route.request().postData() ?? '{}')
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: ''
+          })
+        } else {
+          await route.continue()
+        }
+      }
+    )
+
+    await page.getByTestId('btn-carga-resultados-jornada').click()
+
+    const dialog = page.getByRole('dialog')
+    await dialog.getByRole('textbox', { name: /Resultado local/ }).fill('2')
+    await dialog.getByRole('textbox', { name: /Resultado visitante/ }).fill('1')
+    await dialog.getByRole('button', { name: 'Guardar' }).click()
+
+    await expect(page.getByText('Resultados guardados')).toBeVisible()
+
+    expect(bodyEnviado).toBeTruthy()
+    const body = bodyEnviado as {
+      jornadaId: number
+      resultadosVerificados: boolean
+      partidos: Array<{
+        id?: number
+        categoriaId: number
+        resultadoLocal: string
+        resultadoVisitante: string
+      }>
+    }
+    expect(body.jornadaId).toBe(1)
+    expect(body.resultadosVerificados).toBe(false)
+    expect(body.partidos).toHaveLength(1)
+    expect(body.partidos[0].resultadoLocal).toBe('2')
+    expect(body.partidos[0].resultadoVisitante).toBe('1')
+    expect(body.partidos[0].categoriaId).toBe(1)
+  })
 })
