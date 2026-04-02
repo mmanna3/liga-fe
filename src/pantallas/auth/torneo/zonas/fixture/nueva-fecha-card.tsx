@@ -9,7 +9,7 @@ import {
   JornadaFilaEdicion,
   type JornadaBorrador,
   type PendienteReemplazo
-} from './fechas/jornada-edicion'
+} from './fechas-todos-contra-todos/jornada-edicion'
 import { Calendario } from '@/design-system/ykn-ui/calendario'
 import { ModalAgregarJornada } from './modal-agregar-jornada'
 import { ModalReemplazarEquipo } from './modal-reemplazar-equipo'
