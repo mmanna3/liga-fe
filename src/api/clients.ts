@@ -2748,6 +2748,63 @@ export class Client {
   }
 
   /**
+   * @param body (optional)
+   * @return OK
+   */
+  cargarResultados(
+    padreId: number,
+    jornadaId: number,
+    body: CargarResultadosDTO | undefined
+  ): Promise<void> {
+    let url_ =
+      this.baseUrl + '/api/Zona/{padreId}/fechas/cargar-resultados/{jornadaId}'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    if (jornadaId === undefined || jornadaId === null)
+      throw new Error("The parameter 'jornadaId' must be defined.")
+    url_ = url_.replace('{jornadaId}', encodeURIComponent('' + jornadaId))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processCargarResultados(_response)
+    })
+  }
+
+  protected processCargarResultados(response: Response): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
    * @return OK
    */
   fechasAll(padreId: number): Promise<FechaDTO[]> {
@@ -6251,6 +6308,61 @@ export class CambiarPasswordDTO implements ICambiarPasswordDTO {
 export interface ICambiarPasswordDTO {
   usuario: string
   passwordNuevo: string
+}
+
+export class CargarResultadosDTO implements ICargarResultadosDTO {
+  id?: number
+  jornadaId!: number
+  partidos?: PartidoDTO[] | undefined
+  resultadosVerificados!: boolean
+
+  constructor(data?: ICargarResultadosDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.jornadaId = _data['jornadaId']
+      if (Array.isArray(_data['partidos'])) {
+        this.partidos = [] as any
+        for (let item of _data['partidos'])
+          this.partidos!.push(PartidoDTO.fromJS(item))
+      }
+      this.resultadosVerificados = _data['resultadosVerificados']
+    }
+  }
+
+  static fromJS(data: any): CargarResultadosDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new CargarResultadosDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['jornadaId'] = this.jornadaId
+    if (Array.isArray(this.partidos)) {
+      data['partidos'] = []
+      for (let item of this.partidos) data['partidos'].push(item.toJSON())
+    }
+    data['resultadosVerificados'] = this.resultadosVerificados
+    return data
+  }
+}
+
+export interface ICargarResultadosDTO {
+  id?: number
+  jornadaId: number
+  partidos?: PartidoDTO[] | undefined
+  resultadosVerificados: boolean
 }
 
 export class CarnetDigitalDTO implements ICarnetDigitalDTO {

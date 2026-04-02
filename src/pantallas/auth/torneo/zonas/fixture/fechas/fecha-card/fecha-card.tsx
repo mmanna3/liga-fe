@@ -125,6 +125,7 @@ export function FechaCard({
         {!editando ? (
           <FechaModoLectura
             fecha={fecha}
+            zonaId={zonaId}
             onEditar={handleEditar}
             onEliminar={() => eliminarMutation.mutate()}
             estaCargandoEliminar={eliminarMutation.isPending}

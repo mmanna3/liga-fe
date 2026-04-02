@@ -21,10 +21,10 @@ export function etiquetaFecha(fecha: FechaDTO): string {
 
 function JornadaFilaVista({
   j,
-  onPelotaClick
+  onCargarResultadosClick
 }: {
   j: JornadaDTO
-  onPelotaClick: () => void
+  onCargarResultadosClick: (jornada: JornadaDTO) => void
 }) {
   let localLabel: string
   let visitanteLabel: string
@@ -55,7 +55,7 @@ function JornadaFilaVista({
         size='icon'
         className='h-7 w-7 shrink-0 text-muted-foreground hover:text-foreground'
         aria-label='Detalle de jornada'
-        onClick={onPelotaClick}
+        onClick={() => onCargarResultadosClick(j)}
       >
         <Icono nombre='Pelota' className='size-5' />
       </Button>
@@ -65,6 +65,7 @@ function JornadaFilaVista({
 
 export interface FechaModoLecturaProps {
   fecha: FechaDTO
+  zonaId: number
   onEditar: () => void
   onEliminar: () => void
   estaCargandoEliminar: boolean
@@ -73,13 +74,17 @@ export interface FechaModoLecturaProps {
 
 export function FechaModoLectura({
   fecha,
+  zonaId,
   onEditar,
   onEliminar,
   estaCargandoEliminar,
   mostrarBotonEliminar
 }: FechaModoLecturaProps) {
   const diaDisplay = formatDia(fecha.dia)
-  const [modalPelotaAbierto, setModalPelotaAbierto] = useState(false)
+  const [modalCargarResultadosAbierto, setModalCargarResultadosAbierto] =
+    useState(false)
+  const [jornadaParaResultados, setJornadaParaResultados] =
+    useState<JornadaDTO | null>(null)
 
   return (
     <>
@@ -135,14 +140,22 @@ export function FechaModoLectura({
           <JornadaFilaVista
             key={i}
             j={j}
-            onPelotaClick={() => setModalPelotaAbierto(true)}
+            onCargarResultadosClick={(jornada) => {
+              setJornadaParaResultados(jornada)
+              setModalCargarResultadosAbierto(true)
+            }}
           />
         ))}
       </div>
 
       <ModalCargaResultados
-        open={modalPelotaAbierto}
-        onOpenChange={setModalPelotaAbierto}
+        open={modalCargarResultadosAbierto}
+        onOpenChange={(abierto) => {
+          setModalCargarResultadosAbierto(abierto)
+          if (!abierto) setJornadaParaResultados(null)
+        }}
+        jornada={jornadaParaResultados}
+        zonaId={zonaId}
       />
     </>
   )
