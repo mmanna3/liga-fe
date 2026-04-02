@@ -6,8 +6,8 @@ import { toDateOnly } from '@/logica-compartida/utils'
 import { useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { FechasTodosContraTodos } from './fechas-todos-contra-todos/fechas'
-import { PanelEliminacionDirecta } from './generacion/panel-eliminacion-directa'
-import { PanelTodosContraTodos } from './generacion/panel-todos-contra-todos'
+import { PanelEliminacionDirecta } from './generacion/eliminacion-directa/panel-eliminacion-directa'
+import { PanelTodosContraTodos } from './generacion/todos-contra-todos/panel-todos-contra-todos'
 import { useListaFixture } from './hooks/use-lista-fixture'
 
 export default function Fixture() {

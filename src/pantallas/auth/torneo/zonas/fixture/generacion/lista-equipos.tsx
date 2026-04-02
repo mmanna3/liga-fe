@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@/design-system/base-ui/card'
-import { FilaLista, SlotDroppable } from '../fila-lista'
+import { FilaLista, SlotDroppable } from './fila-lista-equipos'
 import { EspecialDraggable, ZonaDerechaDroppable } from '../panel-especiales'
 import type { ItemFixture } from '../tipos'
 

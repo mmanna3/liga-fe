@@ -1,11 +1,11 @@
 import type { FixtureAlgoritmoDTO } from '@/api/clients'
 import { DndContext } from '@dnd-kit/core'
 import { useEffect, useState } from 'react'
-import { ResultadoFixture } from '../resultado-fixture'
-import type { ItemFixture } from '../tipos'
+import { ResultadoFixture } from './fixture-vista-previa'
+import type { ItemFixture } from '../../tipos'
 import { FixtureAlgoritmosDisponiblesParaGenerar } from './algoritmos'
-import { FixtureGeneracionListaEquipos } from './lista-equipos'
-import { FixtureSelectorFecha } from './selector-fecha'
+import { FixtureGeneracionListaEquipos } from '../lista-equipos'
+import { FixtureSelectorFecha } from '../selector-fecha'
 import type { SensorDescriptor } from '@dnd-kit/core'
 
 export function seleccionarAlgoritmoPorCantidad(

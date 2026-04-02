@@ -10,7 +10,7 @@ import { Boton } from '@/design-system/ykn-ui/boton'
 import { useQueryClient } from '@tanstack/react-query'
 import { addWeeks, format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import type { ItemFixture } from './tipos'
+import type { ItemFixture } from '../../tipos'
 
 type JornadaItem = { local: number; visitante: number }
 type FechaConJornadas = { fecha: number; jornadas: JornadaItem[] }

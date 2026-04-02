@@ -8,10 +8,10 @@ import {
 import { DndContext } from '@dnd-kit/core'
 import type { SensorDescriptor } from '@dnd-kit/core'
 import { useState } from 'react'
-import type { ItemFixture } from '../tipos'
-import { FixtureGeneracionListaEquipos } from './lista-equipos'
-import { ResultadoEliminacionDirecta } from './resultado-eliminacion-directa'
-import { FixtureSelectorFecha } from './selector-fecha'
+import type { ItemFixture } from '../../tipos'
+import { FixtureGeneracionListaEquipos } from '../lista-equipos'
+import { FixtureVistaPrevia } from './fixture-vista-previa'
+import { FixtureSelectorFecha } from '../selector-fecha'
 
 const CONTEOS_VALIDOS_ELIMINACION_DIRECTA = [2, 4, 8, 16]
 
@@ -77,10 +77,7 @@ export function PanelEliminacionDirecta({
       </DndContext>
 
       {listaFijada != null && (
-        <ResultadoEliminacionDirecta
-          lista={listaFijada}
-          primeraFecha={primeraFecha}
-        />
+        <FixtureVistaPrevia lista={listaFijada} primeraFecha={primeraFecha} />
       )}
     </div>
   )

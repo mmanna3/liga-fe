@@ -1,6 +1,6 @@
 import type { EquipoDeLaZonaDTO, FechaTodosContraTodosDTO } from '@/api/clients'
 import { useState } from 'react'
-import { NuevaFechaCard } from '../nueva-fecha-card'
+import { NuevaFechaCard } from './nueva-fecha-card'
 import { FechaCard } from './fecha-card'
 
 function ordenarFechas(

@@ -1,8 +1,8 @@
 import { FixtureAlgoritmoDTO } from '@/api/clients'
 import { describe, expect, it } from 'vitest'
-import { esConteoValidoEliminacionDirecta } from './generacion/panel-eliminacion-directa'
-import { buildBracket } from './generacion/resultado-eliminacion-directa'
-import { seleccionarAlgoritmoPorCantidad } from './generacion/panel-todos-contra-todos'
+import { esConteoValidoEliminacionDirecta } from './generacion/eliminacion-directa/panel-eliminacion-directa'
+import { buildBracket } from './generacion/eliminacion-directa/fixture-vista-previa'
+import { seleccionarAlgoritmoPorCantidad } from './generacion/todos-contra-todos/panel-todos-contra-todos'
 
 // ---------------------------------------------------------------------------
 // esConteoValidoEliminacionDirecta

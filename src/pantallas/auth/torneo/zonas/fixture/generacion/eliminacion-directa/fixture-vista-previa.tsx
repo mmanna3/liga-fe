@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/design-system/base-ui/card'
 import { addWeeks, format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import type { ItemFixture } from '../tipos'
+import type { ItemFixture } from '../../tipos'
 
 function nombreParaBracket(item: ItemFixture): string {
   if (item.type === 'equipo') return item.equipo.nombre ?? '—'
@@ -96,7 +96,7 @@ function PartidoCard({
 // tengan el mismo alto total y la card crezca para contener todo el contenido.
 const ALTURA_SLOT_BASE = 96
 
-export function ResultadoEliminacionDirecta({
+export function FixtureVistaPrevia({
   lista,
   primeraFecha
 }: {

@@ -9,11 +9,11 @@ import {
   JornadaFilaEdicion,
   type JornadaBorrador,
   type PendienteReemplazo
-} from './fechas-todos-contra-todos/jornada-edicion'
+} from './jornada-edicion'
 import { Calendario } from '@/design-system/ykn-ui/calendario'
 import { ModalAgregarJornada } from './modal-agregar-jornada'
-import { ModalReemplazarEquipo } from './modal-reemplazar-equipo'
-import type { ItemFixture } from './tipos'
+import { ModalReemplazarEquipo } from '../modal-reemplazar-equipo'
+import type { ItemFixture } from '../tipos'
 
 export function NuevaFechaCard({
   nextNumero,
