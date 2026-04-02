@@ -7651,6 +7651,7 @@ export class JornadaDTO implements IJornadaDTO {
   equipoId?: number | undefined
   equipo?: string | undefined
   localOVisitante?: LocalVisitanteEnum
+  partidos?: PartidoDTO[] | undefined
 
   constructor(data?: IJornadaDTO) {
     if (data) {
@@ -7676,6 +7677,11 @@ export class JornadaDTO implements IJornadaDTO {
       this.equipoId = _data['equipoId']
       this.equipo = _data['equipo']
       this.localOVisitante = _data['localOVisitante']
+      if (Array.isArray(_data['partidos'])) {
+        this.partidos = [] as any
+        for (let item of _data['partidos'])
+          this.partidos!.push(PartidoDTO.fromJS(item))
+      }
     }
   }
 
@@ -7701,6 +7707,10 @@ export class JornadaDTO implements IJornadaDTO {
     data['equipoId'] = this.equipoId
     data['equipo'] = this.equipo
     data['localOVisitante'] = this.localOVisitante
+    if (Array.isArray(this.partidos)) {
+      data['partidos'] = []
+      for (let item of this.partidos) data['partidos'].push(item.toJSON())
+    }
     return data
   }
 }
@@ -7719,6 +7729,7 @@ export interface IJornadaDTO {
   equipoId?: number | undefined
   equipo?: string | undefined
   localOVisitante?: LocalVisitanteEnum
+  partidos?: PartidoDTO[] | undefined
 }
 
 export class JugadorBaseDTO implements IJugadorBaseDTO {
@@ -8151,6 +8162,58 @@ export interface IObtenerNombreUsuarioPorDniDTO {
   hayError?: boolean
   mensajeError?: string | undefined
   nombreUsuario?: string | undefined
+}
+
+export class PartidoDTO implements IPartidoDTO {
+  id?: number
+  categoria?: string | undefined
+  categoriaId!: number
+  resultadoLocal!: string | undefined
+  resultadoVisitante!: string | undefined
+
+  constructor(data?: IPartidoDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.categoria = _data['categoria']
+      this.categoriaId = _data['categoriaId']
+      this.resultadoLocal = _data['resultadoLocal']
+      this.resultadoVisitante = _data['resultadoVisitante']
+    }
+  }
+
+  static fromJS(data: any): PartidoDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new PartidoDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['categoria'] = this.categoria
+    data['categoriaId'] = this.categoriaId
+    data['resultadoLocal'] = this.resultadoLocal
+    data['resultadoVisitante'] = this.resultadoVisitante
+    return data
+  }
+}
+
+export interface IPartidoDTO {
+  id?: number
+  categoria?: string | undefined
+  categoriaId: number
+  resultadoLocal: string | undefined
+  resultadoVisitante: string | undefined
 }
 
 export class RechazarJugadorDTO implements IRechazarJugadorDTO {

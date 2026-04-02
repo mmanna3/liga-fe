@@ -1,3 +1,4 @@
+import { IconoPelota } from '@/design-system/ykn-ui/iconos/pelota'
 import { cn } from '@/logica-compartida/utils'
 import * as LucideIcons from 'lucide-react'
 import * as React from 'react'
@@ -11,6 +12,7 @@ const MAPEO_ICONOS: Record<
   Torneos: LucideIcons.Trophy,
   Clubes: LucideIcons.Building2,
   Equipos: LucideIcons.Shield,
+  Pelota: IconoPelota,
   Jugadores: LucideIcons.Users,
   Delegados: LucideIcons.UserCog,
   Reportes: LucideIcons.BarChart2,
