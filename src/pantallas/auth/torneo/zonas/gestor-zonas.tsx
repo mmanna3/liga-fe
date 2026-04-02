@@ -1,9 +1,9 @@
 import { api } from '@/api/api'
+import { EquipoDTO, TipoDeFaseEnum } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
-import { EquipoDTO } from '@/api/clients'
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { BuscadorDeEquiposParaZona } from './components/buscador/buscador-equipos'
 import { useGuardarZonas } from './hooks/use-guardar-zonas'
@@ -22,11 +22,24 @@ export function GestorZonas({
   headerCard,
   pathVolver
 }: GestorZonasProps) {
-  const { faseId: faseIdParam } = useParams<{
+  const { id: torneoIdParam, faseId: faseIdParam } = useParams<{
     id: string
     faseId: string
   }>()
+  const torneoId = Number(torneoIdParam)
   const faseId = Number(faseIdParam)
+
+  const { data: torneo } = useApiQuery({
+    key: ['torneo', torneoId],
+    fn: () => api.torneoGET(torneoId),
+    activado: Number.isFinite(torneoId)
+  })
+
+  const fase = useMemo(
+    () => torneo?.fases?.find((f) => f.id === faseId),
+    [torneo, faseId]
+  )
+  const nombreZonaEditable = fase?.tipoDeFase !== TipoDeFaseEnum._2
 
   const { data: zonasApi = [], refetch } = useApiQuery({
     key: ['zonasAll', faseId],
@@ -95,6 +108,8 @@ export function GestorZonas({
           onEliminarZona={eliminarZona}
           onAgregarZona={agregarZona}
           onIrAFixture={modo === 'modificar' ? handleIrAFixture : undefined}
+          nombreZonaEditable={nombreZonaEditable}
+          puedeEliminarZona={nombreZonaEditable}
         />
       }
       cardAdicional={

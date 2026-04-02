@@ -12,6 +12,10 @@ interface ContenidoZonasEditableProps {
   onEliminarZona: (index: number) => void
   onAgregarZona: () => void
   onIrAFixture?: (zonaId: number) => void
+  /** En eliminación directa los nombres vienen de la categoría y no se editan. */
+  nombreZonaEditable?: boolean
+  /** En eliminación directa no se pueden borrar zonas (una por categoría). */
+  puedeEliminarZona?: boolean
 }
 
 /** Contenido compartido: grid de zonas editables + buscador. Usado en CrearZonas y ModificarZonas. */
@@ -22,7 +26,9 @@ export function ContenidoZonasEditable({
   onDropEquipo,
   onEliminarZona,
   onAgregarZona,
-  onIrAFixture
+  onIrAFixture,
+  nombreZonaEditable = true,
+  puedeEliminarZona = true
 }: ContenidoZonasEditableProps) {
   return (
     <div className='space-y-6'>
@@ -45,8 +51,11 @@ export function ContenidoZonasEditable({
               onNombreChange={(n) => onActualizarNombre(index, n)}
               onQuitarEquipo={(eqId) => onQuitarEquipo(index, eqId)}
               onDropEquipo={(eq) => onDropEquipo(index, eq)}
-              onEliminar={() => onEliminarZona(index)}
+              onEliminar={
+                puedeEliminarZona ? () => onEliminarZona(index) : undefined
+              }
               editable
+              nombreEditable={nombreZonaEditable}
               onIrAFixture={
                 zona.id != null && onIrAFixture
                   ? () => onIrAFixture(zona.id!)

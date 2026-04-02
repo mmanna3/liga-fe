@@ -25,6 +25,8 @@ interface ZonaProps {
   onDropEquipo: (equipo: EquipoDTO) => void
   onEliminar?: () => void
   editable?: boolean
+  /** Si false, el nombre se muestra solo lectura (p. ej. fase eliminación directa). */
+  nombreEditable?: boolean
   /** Guarda zonas y navega al fixture. Solo disponible cuando la zona ya tiene id. */
   onIrAFixture?: () => void
 }
@@ -36,6 +38,7 @@ export function Zona({
   onDropEquipo,
   onEliminar,
   editable = true,
+  nombreEditable = true,
   onIrAFixture
 }: ZonaProps) {
   const handleDragOver = (e: React.DragEvent) => {
@@ -98,7 +101,7 @@ export function Zona({
         )}
       </div>
       <div className='mb-2'>
-        {editable ? (
+        {editable && nombreEditable ? (
           <TextoEditable
             valor={zona.nombre}
             alCambiar={onNombreChange}
