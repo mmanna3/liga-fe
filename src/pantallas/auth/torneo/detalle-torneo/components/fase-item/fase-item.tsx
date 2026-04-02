@@ -1,4 +1,4 @@
-import { rutasNavegacion } from '@/ruteo/rutas'
+import { TipoDeFaseEnum, type FaseDTO } from '@/api/clients'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -17,10 +17,9 @@ import ModalEliminacion from '@/design-system/modal-eliminacion'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import Icono from '@/design-system/ykn-ui/icono'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
-import { TipoDeFaseEnum, type FaseDTO } from '@/api/clients'
+import { rutasNavegacion } from '@/ruteo/rutas'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useFaseItem } from './use-fase-item'
 import { DatosFaseLectura } from '../../../crear-torneo/components/datos-fase-lectura'
 import { TituloFase } from '../../../crear-torneo/components/titulo-fase'
 import {
@@ -28,6 +27,7 @@ import {
   tipoDeFaseNombreDesdeEnum,
   type FaseEstado
 } from '../../lib'
+import { useFaseItem } from './use-fase-item'
 
 interface FaseItemProps {
   torneoId: number
@@ -76,7 +76,7 @@ export function FaseItem({
         <Boton
           type='button'
           variant='outline'
-          className='h-10 w-10 min-w-10 p-0'
+          className='h-10 w-10 min-w-10 p-0 border-none'
           estaCargando={estaGuardando}
           aria-label='Zonas de la fase'
           onClick={() =>
@@ -100,7 +100,11 @@ export function FaseItem({
     <Boton
       type='button'
       variant='outline'
-      className='h-10 w-10 min-w-10 p-0 border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive'
+      className={
+        fase.sePuedeEditar
+          ? 'h-10 w-10 min-w-10 p-0 border-none text-destructive hover:bg-destructive/10 hover:text-destructive'
+          : 'h-10 w-10 min-w-10 p-0 border-none hover:bg-muted/50 hover:text-muted-foreground'
+      }
       onClick={
         fase.sePuedeEditar ? undefined : () => setMostrarNoSePuedeEliminar(true)
       }
@@ -110,7 +114,7 @@ export function FaseItem({
   )
 
   return (
-    <div className={enCard ? 'space-y-4' : 'space-y-4 pt-6 border-t'}>
+    <div className={enCard ? 'space-y-2' : 'space-y-2 pt-6 border-t'}>
       <div className='flex items-start justify-between gap-2'>
         <TituloFase
           numero={fase.numero}
@@ -137,7 +141,7 @@ export function FaseItem({
 
       {fase.sePuedeEditar ? (
         <SelectorSimple
-          titulo='Formato'
+          titulo=''
           opciones={OPCIONES_FORMATO}
           valorActual={fase.formato}
           alElegirOpcion={(v) => {

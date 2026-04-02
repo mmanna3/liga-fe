@@ -1,5 +1,4 @@
 import { ZonaDeFaseDTO } from '@/api/clients'
-import { Label } from '@/design-system/base-ui/label'
 import {
   Tooltip,
   TooltipContent,
@@ -74,7 +73,12 @@ export function DatosFaseLectura({
   faseId
 }: DatosFaseLecturaProps) {
   return (
-    <div className='space-y-2'>
+    <div className=''>
+      <div>
+        <p className='font-medium text-muted-foreground text-xs'>
+          {formato || '—'}
+        </p>
+      </div>
       {zonas != null && zonas.length > 0 && (
         <div>
           {/* <Label className='text-muted-foreground text-sm'>Zonas</Label> */}
@@ -90,10 +94,6 @@ export function DatosFaseLectura({
           </ul>
         </div>
       )}
-      <div>
-        <Label className='text-muted-foreground text-sm'>Formato</Label>
-        <p className='font-medium'>{formato || '—'}</p>
-      </div>
     </div>
   )
 }

@@ -1,14 +1,14 @@
-import { rutasNavegacion } from '@/ruteo/rutas'
 import { Card, CardContent } from '@/design-system/base-ui/card'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/ykn-ui/input'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
+import { rutasNavegacion } from '@/ruteo/rutas'
 import { Plus } from 'lucide-react'
-import { useDetalleTorneo } from './detalle-torneo/hooks/use-detalle-torneo'
-import { useFases } from './detalle-torneo/hooks/use-fases'
 import { Categorias } from './crear-torneo/components/categorias'
 import { SelectorAgrupador } from './crear-torneo/components/selector-agrupador'
 import { FaseItem } from './detalle-torneo/components/fase-item/fase-item'
+import { useDetalleTorneo } from './detalle-torneo/hooks/use-detalle-torneo'
+import { useFases } from './detalle-torneo/hooks/use-fases'
 
 export default function DetalleTorneo() {
   const detalle = useDetalleTorneo()
@@ -99,7 +99,7 @@ export default function DetalleTorneo() {
       contenido={
         <div className='space-y-4'>
           <Card className='shadow-md'>
-            <CardContent className='pt-6 space-y-4'>
+            <CardContent className='py-2 space-y-4'>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
                 {editando ? (
                   <>
@@ -180,7 +180,7 @@ export default function DetalleTorneo() {
 
           {fasesEstado.map((fase, index) => (
             <Card key={fase.id ?? index} className='shadow-md'>
-              <CardContent className='pt-6'>
+              <CardContent className='py-2'>
                 <FaseItem
                   torneoId={torneoId}
                   fase={fase}
