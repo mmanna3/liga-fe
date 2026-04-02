@@ -5,6 +5,7 @@ import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
 import { toDateOnly } from '@/logica-compartida/utils'
 import { useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { FechasEliminacionDirecta } from './fechas-eliminacion-directa/fechas'
 import { FechasTodosContraTodos } from './fechas-todos-contra-todos/fechas'
 import { PanelEliminacionDirecta } from './generacion/eliminacion-directa/panel-eliminacion-directa'
 import { PanelTodosContraTodos } from './generacion/todos-contra-todos/panel-todos-contra-todos'
@@ -69,6 +70,8 @@ export default function Fixture() {
 
   const contenido = !zona ? (
     <p className='text-muted-foreground py-4'>Cargando zona...</p>
+  ) : fechasExistentes.length > 0 && fase?.tipoDeFase === TipoDeFaseEnum._2 ? (
+    <FechasEliminacionDirecta zonaId={zonaId} />
   ) : fechasExistentes.length > 0 ? (
     <FechasTodosContraTodos
       fechas={fechasExistentes as FechaTodosContraTodosDTO[]}

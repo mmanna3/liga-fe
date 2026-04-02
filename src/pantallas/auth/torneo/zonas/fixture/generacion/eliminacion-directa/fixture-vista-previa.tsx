@@ -23,7 +23,7 @@ export interface InstanciaBracket {
   partidos: PartidoBracket[]
 }
 
-const NOMBRES_INSTANCIA: Record<number, string> = {
+export const NOMBRES_INSTANCIA_BRACKET: Record<number, string> = {
   16: 'Octavos de final',
   8: 'Cuartos de final',
   4: 'Semifinal',
@@ -38,7 +38,7 @@ export function buildBracket(nombres: string[]): InstanciaBracket[] {
   for (let r = 0; r < totalRondas; r++) {
     const equiposEnRonda = n / Math.pow(2, r)
     const cantidadPartidos = equiposEnRonda / 2
-    const nombre = NOMBRES_INSTANCIA[equiposEnRonda] ?? `Ronda ${r + 1}`
+    const nombre = NOMBRES_INSTANCIA_BRACKET[equiposEnRonda] ?? `Ronda ${r + 1}`
 
     if (r === 0) {
       const partidos: PartidoBracket[] = []
@@ -153,13 +153,13 @@ export function buildPayloadEliminacionDirecta(
   ]
 }
 
-function claseEspecial(nombre: string | null): string {
+export function claseEspecialBracket(nombre: string | null): string {
   if (nombre === 'Interzonal') return 'text-blue-700 bg-blue-100 px-1 rounded'
   if (nombre === 'Libre') return 'text-yellow-700 bg-yellow-100 px-1 rounded'
   return ''
 }
 
-function PartidoCard({
+export function PartidoCardBracket({
   local,
   visitante
 }: {
@@ -170,14 +170,14 @@ function PartidoCard({
     <div className='rounded border bg-card text-sm w-full'>
       <div className='px-3 py-2 border-b truncate'>
         {local != null ? (
-          <span className={claseEspecial(local)}>{local}</span>
+          <span className={claseEspecialBracket(local)}>{local}</span>
         ) : (
           <span className='text-muted-foreground italic'>Por definir</span>
         )}
       </div>
       <div className='px-3 py-2 truncate'>
         {visitante != null ? (
-          <span className={claseEspecial(visitante)}>{visitante}</span>
+          <span className={claseEspecialBracket(visitante)}>{visitante}</span>
         ) : (
           <span className='text-muted-foreground italic'>Por definir</span>
         )}
@@ -189,7 +189,7 @@ function PartidoCard({
 // Altura mínima de cada slot de primera ronda (px).
 // Cada ronda siguiente dobla esta altura, garantizando que todas las columnas
 // tengan el mismo alto total y la card crezca para contener todo el contenido.
-const ALTURA_SLOT_BASE = 96
+export const ALTURA_SLOT_BRACKET_BASE = 96
 
 export function FixtureVistaPrevia({
   lista,
@@ -209,6 +209,9 @@ export function FixtureVistaPrevia({
     mensajeDeExito: 'Fechas y jornadas creadas correctamente',
     antesDeMensajeExito: () => {
       queryClient.invalidateQueries({ queryKey: ['fechasAll', zonaId] })
+      queryClient.invalidateQueries({
+        queryKey: ['fechasEliminacionDirecta', zonaId]
+      })
     }
   })
 
@@ -255,7 +258,7 @@ export function FixtureVistaPrevia({
         <CardContent>
           <div className='flex gap-6'>
             {instancias.map((instancia, rIdx) => {
-              const alturaSlot = ALTURA_SLOT_BASE * Math.pow(2, rIdx)
+              const alturaSlot = ALTURA_SLOT_BRACKET_BASE * Math.pow(2, rIdx)
               return (
                 <div key={rIdx} className='flex flex-col flex-1 min-w-[200px]'>
                   {instancia.partidos.map((partido, mIdx) => (
@@ -264,7 +267,7 @@ export function FixtureVistaPrevia({
                       className='flex items-center py-3'
                       style={{ height: alturaSlot }}
                     >
-                      <PartidoCard
+                      <PartidoCardBracket
                         local={partido.local}
                         visitante={partido.visitante}
                       />
