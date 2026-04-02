@@ -1,10 +1,9 @@
-import type { JornadaDTO } from '@/api/clients'
+import type { FechaDTO, JornadaDTO } from '@/api/clients'
 import { LocalVisitanteEnum } from '@/api/clients'
 import { Button } from '@/design-system/base-ui/button'
-import Icono from '@/design-system/ykn-ui/icono'
 import ModalEliminacion from '@/design-system/modal-eliminacion'
+import Icono from '@/design-system/ykn-ui/icono'
 import { claseEspecial } from '../jornada-edicion'
-import type { FechaDTO } from '@/api/clients'
 
 function formatDia(dia: Date | undefined): string {
   if (!dia) return ''
@@ -13,7 +12,7 @@ function formatDia(dia: Date | undefined): string {
 
 /** Título visible: instancia (eliminación directa) o número de fecha (todos contra todos). */
 export function etiquetaFecha(fecha: FechaDTO): string {
-  const nombre = fecha.instanciaEliminacionDirectaNombre?.trim()
+  const nombre = fecha.instanciaNombre?.trim()
   if (nombre) return nombre
   return `Fecha ${fecha.numero}`
 }
@@ -26,7 +25,7 @@ function JornadaFilaVista({ j }: { j: JornadaDTO }) {
     localLabel = j.local ?? '—'
     visitanteLabel = j.visitante ?? '—'
   } else if (j.tipo === 'Libre') {
-    localLabel = j.equipo ?? '—'
+    localLabel = j.equipoLocal ?? '—'
     visitanteLabel = 'Libre'
   } else {
     const esLocal = j.localOVisitante !== LocalVisitanteEnum._2

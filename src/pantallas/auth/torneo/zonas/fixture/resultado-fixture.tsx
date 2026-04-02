@@ -55,7 +55,7 @@ function buildJornada(j: JornadaItem, lista: ItemFixture[]): JornadaDTO {
       ? ({
           tipo: 'Libre',
           resultadosVerificados: false,
-          equipoId: local.equipo.id!
+          equipoLocalId: local.equipo.id!
         } as unknown as JornadaDTO)
       : ({
           tipo: 'Interzonal',
@@ -69,7 +69,7 @@ function buildJornada(j: JornadaItem, lista: ItemFixture[]): JornadaDTO {
       ? ({
           tipo: 'Libre',
           resultadosVerificados: false,
-          equipoId: visitante.equipo.id!
+          equipoLocalId: visitante.equipo.id!
         } as unknown as JornadaDTO)
       : ({
           tipo: 'Interzonal',

@@ -12,11 +12,18 @@ export type JornadaBorrador = {
   resultadosVerificados: boolean
   localId?: number
   visitanteId?: number
+  /** Jornada tipo Libre */
+  equipoLocalId?: number
+  /** Jornada tipo Interzonal */
   equipoId?: number
   localOVisitante?: LocalVisitanteEnum
 }
 
-export type CampoReemplazo = 'localId' | 'visitanteId' | 'equipoId'
+export type CampoReemplazo =
+  | 'localId'
+  | 'visitanteId'
+  | 'equipoLocalId'
+  | 'equipoId'
 
 export type PendienteReemplazo = {
   jornadaIdx: number
@@ -69,9 +76,9 @@ export function JornadaFilaEdicion({
     localCampo = 'localId'
     visitanteCampo = 'visitanteId'
   } else if (j.tipo === 'Libre') {
-    localLabel = nombreEquipo(j.equipoId)
+    localLabel = nombreEquipo(j.equipoLocalId)
     visitanteLabel = 'Libre'
-    localCampo = 'equipoId'
+    localCampo = 'equipoLocalId'
   } else {
     // Interzonal
     const esLocal = j.localOVisitante !== LocalVisitanteEnum._2
@@ -151,7 +158,7 @@ export function buildJornadaBorrador(
       ? {
           tipo: 'Libre',
           resultadosVerificados: false,
-          equipoId: Number(local.equipo.id!)
+          equipoLocalId: Number(local.equipo.id!)
         }
       : {
           tipo: 'Interzonal',
@@ -165,7 +172,7 @@ export function buildJornadaBorrador(
       ? {
           tipo: 'Libre',
           resultadosVerificados: false,
-          equipoId: Number(visitante.equipo.id!)
+          equipoLocalId: Number(visitante.equipo.id!)
         }
       : {
           tipo: 'Interzonal',

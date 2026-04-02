@@ -7285,8 +7285,6 @@ export class FaseDTO implements IFaseDTO {
   torneoId?: number
   tipoDeFase!: TipoDeFaseEnum
   tipoDeFaseNombre?: string | undefined
-  instanciaEliminacionDirectaId?: number | undefined
-  instanciaEliminacionDirectaNombre?: string | undefined
   estadoFaseId?: number
   estadoFaseNombre?: string | undefined
   esVisibleEnApp?: boolean
@@ -7310,10 +7308,6 @@ export class FaseDTO implements IFaseDTO {
       this.torneoId = _data['torneoId']
       this.tipoDeFase = _data['tipoDeFase']
       this.tipoDeFaseNombre = _data['tipoDeFaseNombre']
-      this.instanciaEliminacionDirectaId =
-        _data['instanciaEliminacionDirectaId']
-      this.instanciaEliminacionDirectaNombre =
-        _data['instanciaEliminacionDirectaNombre']
       this.estadoFaseId = _data['estadoFaseId']
       this.estadoFaseNombre = _data['estadoFaseNombre']
       this.esVisibleEnApp = _data['esVisibleEnApp']
@@ -7341,9 +7335,6 @@ export class FaseDTO implements IFaseDTO {
     data['torneoId'] = this.torneoId
     data['tipoDeFase'] = this.tipoDeFase
     data['tipoDeFaseNombre'] = this.tipoDeFaseNombre
-    data['instanciaEliminacionDirectaId'] = this.instanciaEliminacionDirectaId
-    data['instanciaEliminacionDirectaNombre'] =
-      this.instanciaEliminacionDirectaNombre
     data['estadoFaseId'] = this.estadoFaseId
     data['estadoFaseNombre'] = this.estadoFaseNombre
     data['esVisibleEnApp'] = this.esVisibleEnApp
@@ -7363,8 +7354,6 @@ export interface IFaseDTO {
   torneoId?: number
   tipoDeFase: TipoDeFaseEnum
   tipoDeFaseNombre?: string | undefined
-  instanciaEliminacionDirectaId?: number | undefined
-  instanciaEliminacionDirectaNombre?: string | undefined
   estadoFaseId?: number
   estadoFaseNombre?: string | undefined
   esVisibleEnApp?: boolean
@@ -7377,8 +7366,8 @@ export class FechaDTO implements IFechaDTO {
   dia?: Date | undefined
   numero!: number
   zonaId?: number
-  instanciaEliminacionDirectaId?: number | undefined
-  instanciaEliminacionDirectaNombre?: string | undefined
+  instanciaId?: number | undefined
+  instanciaNombre?: string | undefined
   esVisibleEnApp!: boolean
   jornadas?: JornadaDTO[] | undefined
 
@@ -7399,10 +7388,8 @@ export class FechaDTO implements IFechaDTO {
         : <any>undefined
       this.numero = _data['numero']
       this.zonaId = _data['zonaId']
-      this.instanciaEliminacionDirectaId =
-        _data['instanciaEliminacionDirectaId']
-      this.instanciaEliminacionDirectaNombre =
-        _data['instanciaEliminacionDirectaNombre']
+      this.instanciaId = _data['instanciaId']
+      this.instanciaNombre = _data['instanciaNombre']
       this.esVisibleEnApp = _data['esVisibleEnApp']
       if (Array.isArray(_data['jornadas'])) {
         this.jornadas = [] as any
@@ -7425,9 +7412,8 @@ export class FechaDTO implements IFechaDTO {
     data['dia'] = this.dia ? formatDate(this.dia) : <any>undefined
     data['numero'] = this.numero
     data['zonaId'] = this.zonaId
-    data['instanciaEliminacionDirectaId'] = this.instanciaEliminacionDirectaId
-    data['instanciaEliminacionDirectaNombre'] =
-      this.instanciaEliminacionDirectaNombre
+    data['instanciaId'] = this.instanciaId
+    data['instanciaNombre'] = this.instanciaNombre
     data['esVisibleEnApp'] = this.esVisibleEnApp
     if (Array.isArray(this.jornadas)) {
       data['jornadas'] = []
@@ -7442,8 +7428,8 @@ export interface IFechaDTO {
   dia?: Date | undefined
   numero: number
   zonaId?: number
-  instanciaEliminacionDirectaId?: number | undefined
-  instanciaEliminacionDirectaNombre?: string | undefined
+  instanciaId?: number | undefined
+  instanciaNombre?: string | undefined
   esVisibleEnApp: boolean
   jornadas?: JornadaDTO[] | undefined
 }
@@ -7660,6 +7646,8 @@ export class JornadaDTO implements IJornadaDTO {
   visitanteId?: number | undefined
   local?: string | undefined
   visitante?: string | undefined
+  equipoLocalId?: number | undefined
+  equipoLocal?: string | undefined
   equipoId?: number | undefined
   equipo?: string | undefined
   localOVisitante?: LocalVisitanteEnum
@@ -7683,6 +7671,8 @@ export class JornadaDTO implements IJornadaDTO {
       this.visitanteId = _data['visitanteId']
       this.local = _data['local']
       this.visitante = _data['visitante']
+      this.equipoLocalId = _data['equipoLocalId']
+      this.equipoLocal = _data['equipoLocal']
       this.equipoId = _data['equipoId']
       this.equipo = _data['equipo']
       this.localOVisitante = _data['localOVisitante']
@@ -7706,6 +7696,8 @@ export class JornadaDTO implements IJornadaDTO {
     data['visitanteId'] = this.visitanteId
     data['local'] = this.local
     data['visitante'] = this.visitante
+    data['equipoLocalId'] = this.equipoLocalId
+    data['equipoLocal'] = this.equipoLocal
     data['equipoId'] = this.equipoId
     data['equipo'] = this.equipo
     data['localOVisitante'] = this.localOVisitante
@@ -7722,6 +7714,8 @@ export interface IJornadaDTO {
   visitanteId?: number | undefined
   local?: string | undefined
   visitante?: string | undefined
+  equipoLocalId?: number | undefined
+  equipoLocal?: string | undefined
   equipoId?: number | undefined
   equipo?: string | undefined
   localOVisitante?: LocalVisitanteEnum
@@ -8516,6 +8510,8 @@ export class ZonaDTO implements IZonaDTO {
   id?: number
   nombre!: string
   faseId?: number
+  categoriaId?: number | undefined
+  categoriaNombre?: string | undefined
   equipos?: EquipoDeLaZonaDTO[] | undefined
 
   constructor(data?: IZonaDTO) {
@@ -8532,6 +8528,8 @@ export class ZonaDTO implements IZonaDTO {
       this.id = _data['id']
       this.nombre = _data['nombre']
       this.faseId = _data['faseId']
+      this.categoriaId = _data['categoriaId']
+      this.categoriaNombre = _data['categoriaNombre']
       if (Array.isArray(_data['equipos'])) {
         this.equipos = [] as any
         for (let item of _data['equipos'])
@@ -8552,6 +8550,8 @@ export class ZonaDTO implements IZonaDTO {
     data['id'] = this.id
     data['nombre'] = this.nombre
     data['faseId'] = this.faseId
+    data['categoriaId'] = this.categoriaId
+    data['categoriaNombre'] = this.categoriaNombre
     if (Array.isArray(this.equipos)) {
       data['equipos'] = []
       for (let item of this.equipos) data['equipos'].push(item.toJSON())
@@ -8564,6 +8564,8 @@ export interface IZonaDTO {
   id?: number
   nombre: string
   faseId?: number
+  categoriaId?: number | undefined
+  categoriaNombre?: string | undefined
   equipos?: EquipoDeLaZonaDTO[] | undefined
 }
 
@@ -8571,6 +8573,8 @@ export class ZonaDeFaseDTO implements IZonaDeFaseDTO {
   id?: number
   nombre?: string | undefined
   cantidadDeEquipos?: number
+  categoriaId?: number | undefined
+  categoriaNombre?: string | undefined
 
   constructor(data?: IZonaDeFaseDTO) {
     if (data) {
@@ -8586,6 +8590,8 @@ export class ZonaDeFaseDTO implements IZonaDeFaseDTO {
       this.id = _data['id']
       this.nombre = _data['nombre']
       this.cantidadDeEquipos = _data['cantidadDeEquipos']
+      this.categoriaId = _data['categoriaId']
+      this.categoriaNombre = _data['categoriaNombre']
     }
   }
 
@@ -8601,6 +8607,8 @@ export class ZonaDeFaseDTO implements IZonaDeFaseDTO {
     data['id'] = this.id
     data['nombre'] = this.nombre
     data['cantidadDeEquipos'] = this.cantidadDeEquipos
+    data['categoriaId'] = this.categoriaId
+    data['categoriaNombre'] = this.categoriaNombre
     return data
   }
 }
@@ -8609,6 +8617,8 @@ export interface IZonaDeFaseDTO {
   id?: number
   nombre?: string | undefined
   cantidadDeEquipos?: number
+  categoriaId?: number | undefined
+  categoriaNombre?: string | undefined
 }
 
 export class ZonaResumenDTO implements IZonaResumenDTO {
