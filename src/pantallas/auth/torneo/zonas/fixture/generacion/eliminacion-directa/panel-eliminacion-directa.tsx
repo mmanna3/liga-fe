@@ -25,6 +25,7 @@ interface PanelEliminacionDirectaProps {
   handleDragEnd: (event: never) => void
   primeraFecha: Date
   onPrimeraFechaChange: (fecha: Date) => void
+  zonaId: number
 }
 
 export function PanelEliminacionDirecta({
@@ -32,7 +33,8 @@ export function PanelEliminacionDirecta({
   sensors,
   handleDragEnd,
   primeraFecha,
-  onPrimeraFechaChange
+  onPrimeraFechaChange,
+  zonaId
 }: PanelEliminacionDirectaProps) {
   const cantidadEquipos = listaOrdenada.length
   const esValido = esConteoValidoEliminacionDirecta(cantidadEquipos)
@@ -77,7 +79,11 @@ export function PanelEliminacionDirecta({
       </DndContext>
 
       {listaFijada != null && (
-        <FixtureVistaPrevia lista={listaFijada} primeraFecha={primeraFecha} />
+        <FixtureVistaPrevia
+          lista={listaFijada}
+          primeraFecha={primeraFecha}
+          zonaId={zonaId}
+        />
       )}
     </div>
   )

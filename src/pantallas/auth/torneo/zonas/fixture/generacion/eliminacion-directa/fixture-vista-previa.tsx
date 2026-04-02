@@ -1,4 +1,9 @@
+import { api } from '@/api/api'
+import type { FechaEliminacionDirectaDTO, JornadaDTO } from '@/api/clients'
+import useApiMutation from '@/api/hooks/use-api-mutation'
 import { Card, CardContent } from '@/design-system/base-ui/card'
+import { Boton } from '@/design-system/ykn-ui/boton'
+import { useQueryClient } from '@tanstack/react-query'
 import { addWeeks, format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import type { ItemFixture } from '../../tipos'
@@ -58,6 +63,96 @@ export function buildBracket(nombres: string[]): InstanciaBracket[] {
   return instancias
 }
 
+type JornadaItem = { local: number; visitante: number }
+
+function partidoBracketAJornadaItem(
+  p: PartidoBracket,
+  lista: ItemFixture[]
+): JornadaItem {
+  function indice1Based(nombre: string | null): number {
+    if (nombre == null) return 0
+    const i = lista.findIndex((item) => nombreParaBracket(item) === nombre)
+    return i >= 0 ? i + 1 : 0
+  }
+  return {
+    local: indice1Based(p.local),
+    visitante: indice1Based(p.visitante)
+  }
+}
+
+function buildJornada(j: JornadaItem, lista: ItemFixture[]): JornadaDTO {
+  const local = lista[j.local - 1]
+  const visitante = lista[j.visitante - 1]
+
+  if (local?.type === 'equipo' && visitante?.type === 'equipo') {
+    return {
+      tipo: 'Normal',
+      resultadosVerificados: false,
+      localId: local.equipo.id!,
+      visitanteId: visitante.equipo.id!
+    } as unknown as JornadaDTO
+  }
+  if (local?.type === 'equipo' && visitante?.type === 'especial') {
+    return visitante.valor === 'LIBRE'
+      ? ({
+          tipo: 'Libre',
+          resultadosVerificados: false,
+          equipoLocalId: local.equipo.id!
+        } as unknown as JornadaDTO)
+      : ({
+          tipo: 'Interzonal',
+          resultadosVerificados: false,
+          equipoId: local.equipo.id!,
+          localOVisitante: 1
+        } as unknown as JornadaDTO)
+  }
+  if (local?.type === 'especial' && visitante?.type === 'equipo') {
+    return local.valor === 'LIBRE'
+      ? ({
+          tipo: 'Libre',
+          resultadosVerificados: false,
+          equipoLocalId: visitante.equipo.id!
+        } as unknown as JornadaDTO)
+      : ({
+          tipo: 'Interzonal',
+          resultadosVerificados: false,
+          equipoId: visitante.equipo.id!,
+          localOVisitante: 2
+        } as unknown as JornadaDTO)
+  }
+  return {
+    tipo: 'Normal',
+    resultadosVerificados: false
+  } as unknown as JornadaDTO
+}
+
+export function buildPayloadEliminacionDirecta(
+  lista: ItemFixture[],
+  primeraFecha: Date
+): FechaEliminacionDirectaDTO[] {
+  const nombres = lista.map(nombreParaBracket)
+  const instanciasCompletas = buildBracket(nombres)
+  const primeraInstancia = instanciasCompletas[0]
+  const n = lista.length
+
+  if (!primeraInstancia) return []
+
+  const instanciaId = n
+  const jornadas = primeraInstancia.partidos.map((partido) => {
+    const j = partidoBracketAJornadaItem(partido, lista)
+    return buildJornada(j, lista)
+  })
+
+  return [
+    {
+      dia: primeraFecha,
+      esVisibleEnApp: false,
+      instanciaId,
+      jornadas
+    } as FechaEliminacionDirectaDTO
+  ]
+}
+
 function claseEspecial(nombre: string | null): string {
   if (nombre === 'Interzonal') return 'text-blue-700 bg-blue-100 px-1 rounded'
   if (nombre === 'Libre') return 'text-yellow-700 bg-yellow-100 px-1 rounded'
@@ -98,16 +193,48 @@ const ALTURA_SLOT_BASE = 96
 
 export function FixtureVistaPrevia({
   lista,
-  primeraFecha
+  primeraFecha,
+  zonaId
 }: {
   lista: ItemFixture[]
   primeraFecha: Date
+  zonaId: number
 }) {
+  const queryClient = useQueryClient()
   const nombres = lista.map(nombreParaBracket)
   const instancias = buildBracket(nombres)
 
+  const crearMutation = useApiMutation<FechaEliminacionDirectaDTO[]>({
+    fn: (body) => api.crearFechasEliminaciondirectaMasivamente(zonaId, body),
+    mensajeDeExito: 'Fechas y jornadas creadas correctamente',
+    antesDeMensajeExito: () => {
+      queryClient.invalidateQueries({ queryKey: ['fechasAll', zonaId] })
+    }
+  })
+
   return (
     <div>
+      <Card className=''>
+        {/* <CardHeader>
+          <CardTitle>Crear fixture</CardTitle>
+        </CardHeader> */}
+        <CardContent>
+          <Boton
+            onClick={() =>
+              crearMutation.mutate(
+                buildPayloadEliminacionDirecta(lista, primeraFecha)
+              )
+            }
+            estaCargando={crearMutation.isPending}
+          >
+            Crear el fixture con las fechas que aparecen a continuación
+          </Boton>
+          <span className='text-sm text-muted-foreground font-light mt-2 ml-3'>
+            El fixture generado, de ser necesario, podrá modificarse luego.
+          </span>
+        </CardContent>
+      </Card>
+
       {/* Títulos de instancias — fuera de la card */}
       <div className='flex gap-6 mb-2'>
         {instancias.map((instancia, rIdx) => {

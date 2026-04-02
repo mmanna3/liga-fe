@@ -82,6 +82,7 @@ export default function Fixture() {
       handleDragEnd={handleDragEnd as never}
       primeraFecha={primeraFecha}
       onPrimeraFechaChange={setPrimeraFecha}
+      zonaId={zonaId}
     />
   ) : (
     <PanelTodosContraTodos
