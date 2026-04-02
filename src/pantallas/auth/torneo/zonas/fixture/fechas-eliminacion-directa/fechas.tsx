@@ -5,14 +5,10 @@ import {
   LocalVisitanteEnum,
   type JornadaDTO
 } from '@/api/clients'
-import { Card, CardContent } from '@/design-system/base-ui/card'
 import { addWeeks, format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import {
-  ALTURA_SLOT_BRACKET_BASE,
-  NOMBRES_INSTANCIA_BRACKET,
-  PartidoCardBracket
-} from '../generacion/eliminacion-directa/fixture-vista-previa'
+import { NOMBRES_INSTANCIA_BRACKET } from '../generacion/eliminacion-directa/fixture-vista-previa'
+import { Partidos } from './partidos'
 
 const http = new HttpClientWrapper()
 
@@ -171,35 +167,7 @@ export function FechasEliminacionDirecta({ zonaId }: { zonaId: number }) {
         ))}
       </div>
 
-      <Card>
-        <CardContent>
-          <div className='flex gap-6'>
-            {columnas.map((col) => {
-              const alturaSlot =
-                ALTURA_SLOT_BRACKET_BASE * Math.pow(2, col.rIdx)
-              return (
-                <div
-                  key={col.key}
-                  className='flex flex-col flex-1 min-w-[200px]'
-                >
-                  {col.partidos.map((p, mIdx) => (
-                    <div
-                      key={mIdx}
-                      className='flex items-center py-3'
-                      style={{ height: alturaSlot }}
-                    >
-                      <PartidoCardBracket
-                        local={p.local}
-                        visitante={p.visitante}
-                      />
-                    </div>
-                  ))}
-                </div>
-              )
-            })}
-          </div>
-        </CardContent>
-      </Card>
+      <Partidos columnas={columnas} />
     </div>
   )
 }
