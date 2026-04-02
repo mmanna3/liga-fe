@@ -1,9 +1,15 @@
 import { api } from '@/api/api'
-import { CargarResultadosDTO, type JornadaDTO, PartidoDTO } from '@/api/clients'
+import {
+  CargarResultadosDTO,
+  LocalVisitanteEnum,
+  PartidoDTO,
+  type JornadaDTO
+} from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle
@@ -12,6 +18,7 @@ import { Input } from '@/design-system/base-ui/input'
 import { Label } from '@/design-system/base-ui/label'
 import { Switch } from '@/design-system/base-ui/switch'
 import { Boton } from '@/design-system/ykn-ui/boton'
+import Icono from '@/design-system/ykn-ui/icono'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 
@@ -20,13 +27,33 @@ interface ModalCargaResultadosProps {
   onOpenChange: (open: boolean) => void
   jornada: JornadaDTO | null
   zonaId: number
+  /** Número de fecha (Fecha N) para el subtítulo. */
+  numeroFecha: number
+}
+
+function etiquetasLocalVisitanteJornada(j: JornadaDTO): {
+  local: string
+  visitante: string
+} {
+  if (j.tipo === 'Normal') {
+    return { local: j.local ?? '—', visitante: j.visitante ?? '—' }
+  }
+  if (j.tipo === 'Libre') {
+    return { local: j.equipoLocal ?? '—', visitante: 'Libre' }
+  }
+  const esLocal = j.localOVisitante !== LocalVisitanteEnum._2
+  return {
+    local: esLocal ? (j.equipo ?? '—') : 'Interzonal',
+    visitante: esLocal ? 'Interzonal' : (j.equipo ?? '—')
+  }
 }
 
 export function ModalCargaResultados({
   open,
   onOpenChange,
   jornada,
-  zonaId
+  zonaId,
+  numeroFecha
 }: ModalCargaResultadosProps) {
   const queryClient = useQueryClient()
   const partidos = jornada?.partidos ?? []
@@ -105,21 +132,31 @@ export function ModalCargaResultados({
 
   const puedeGuardar = jornada?.id != null
 
+  const etiquetasVs =
+    jornada != null ? etiquetasLocalVisitanteJornada(jornada) : null
+  const subtituloModal = etiquetasVs
+    ? `Fecha ${numeroFecha} - ${etiquetasVs.local} vs. ${etiquetasVs.visitante}`
+    : ''
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='sm:max-w-2xl'>
-        <DialogHeader>
-          <DialogTitle>Cargar resultados</DialogTitle>
-        </DialogHeader>
-
         {jornada && (
           <>
-            <div className='flex items-center justify-between gap-4 border-b border-border/60 pb-3'>
+            <DialogHeader>
+              <DialogTitle className='flex items-center gap-1'>
+                <Icono nombre='Pelota' className='size-6 shrink-0' />
+                Cargar resultados
+              </DialogTitle>
+              <DialogDescription>{subtituloModal}</DialogDescription>
+            </DialogHeader>
+
+            <div className='mb-3 flex items-center gap-2'>
               <Label
                 htmlFor='resultados-verificados'
-                className='text-sm font-medium cursor-pointer'
+                className='text-sm font-medium cursor-pointer shrink-0'
               >
-                Resultados verificados
+                Resultados Verificados
               </Label>
               <Switch
                 id='resultados-verificados'
