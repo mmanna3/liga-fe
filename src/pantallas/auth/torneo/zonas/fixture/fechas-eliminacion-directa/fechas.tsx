@@ -5,9 +5,9 @@ import {
   LocalVisitanteEnum,
   type JornadaDTO
 } from '@/api/clients'
-import { addWeeks, format } from 'date-fns'
-import { es } from 'date-fns/locale'
+import { addWeeks } from 'date-fns'
 import { NOMBRES_INSTANCIA_BRACKET } from '../generacion/eliminacion-directa/fixture-vista-previa'
+import { EncabezadoFechaColumna } from './encabezado-fecha-columna'
 import { Partidos } from './partidos'
 
 const http = new HttpClientWrapper()
@@ -148,7 +148,8 @@ export function FechasEliminacionDirecta({ zonaId }: { zonaId: number }) {
       key: fecha?.id ?? `ronda-${instanciaId}`,
       titulo,
       diaMostrado,
-      partidos
+      partidos,
+      fecha
     }
   })
 
@@ -158,11 +159,11 @@ export function FechasEliminacionDirecta({ zonaId }: { zonaId: number }) {
         {columnas.map((col) => (
           <div key={col.key} className='flex-1 min-w-[200px] text-center'>
             <h4 className='text-sm font-semibold'>{col.titulo}</h4>
-            <p className='text-xs text-muted-foreground'>
-              {col.diaMostrado != null
-                ? format(col.diaMostrado, "EEEE d 'de' MMMM", { locale: es })
-                : '—'}
-            </p>
+            <EncabezadoFechaColumna
+              fecha={col.fecha}
+              diaMostrado={col.diaMostrado}
+              zonaId={zonaId}
+            />
           </div>
         ))}
       </div>
