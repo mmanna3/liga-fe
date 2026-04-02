@@ -2629,12 +2629,13 @@ export class Client {
    * @param body (optional)
    * @return OK
    */
-  crearFechasMasivamente(
+  crearFechasTodoscontratodosMasivamente(
     padreId: number,
-    body: FechaDTO[] | undefined
-  ): Promise<FechaDTO[]> {
+    body: FechaTodosContraTodosDTO[] | undefined
+  ): Promise<FechaTodosContraTodosDTO[]> {
     let url_ =
-      this.baseUrl + '/api/Zona/{padreId}/fechas/crear-fechas-masivamente'
+      this.baseUrl +
+      '/api/Zona/{padreId}/fechas/crear-fechas-todoscontratodos-masivamente'
     if (padreId === undefined || padreId === null)
       throw new Error("The parameter 'padreId' must be defined.")
     url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
@@ -2652,13 +2653,13 @@ export class Client {
     }
 
     return this.http.fetch(url_, options_).then((_response: Response) => {
-      return this.processCrearFechasMasivamente(_response)
+      return this.processCrearFechasTodoscontratodosMasivamente(_response)
     })
   }
 
-  protected processCrearFechasMasivamente(
+  protected processCrearFechasTodoscontratodosMasivamente(
     response: Response
-  ): Promise<FechaDTO[]> {
+  ): Promise<FechaTodosContraTodosDTO[]> {
     const status = response.status
     let _headers: any = {}
     if (response.headers && response.headers.forEach) {
@@ -2673,7 +2674,8 @@ export class Client {
             : JSON.parse(_responseText, this.jsonParseReviver)
         if (Array.isArray(resultData200)) {
           result200 = [] as any
-          for (let item of resultData200) result200!.push(FechaDTO.fromJS(item))
+          for (let item of resultData200)
+            result200!.push(FechaTodosContraTodosDTO.fromJS(item))
         } else {
           result200 = <any>null
         }
@@ -2689,7 +2691,76 @@ export class Client {
         )
       })
     }
-    return Promise.resolve<FechaDTO[]>(null as any)
+    return Promise.resolve<FechaTodosContraTodosDTO[]>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  crearFechasEliminaciondirectaMasivamente(
+    padreId: number,
+    body: FechaEliminacionDirectaDTO[] | undefined
+  ): Promise<FechaEliminacionDirectaDTO[]> {
+    let url_ =
+      this.baseUrl +
+      '/api/Zona/{padreId}/fechas/crear-fechas-eliminaciondirecta-masivamente'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processCrearFechasEliminaciondirectaMasivamente(_response)
+    })
+  }
+
+  protected processCrearFechasEliminaciondirectaMasivamente(
+    response: Response
+  ): Promise<FechaEliminacionDirectaDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(FechaEliminacionDirectaDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<FechaEliminacionDirectaDTO[]>(null as any)
   }
 
   /**
@@ -7476,10 +7547,7 @@ export interface IFaseDTO {
 export class FechaDTO implements IFechaDTO {
   id?: number
   dia?: Date | undefined
-  numero!: number
   zonaId?: number
-  instanciaId?: number | undefined
-  instanciaNombre?: string | undefined
   esVisibleEnApp!: boolean
   jornadas?: JornadaDTO[] | undefined
 
@@ -7498,10 +7566,7 @@ export class FechaDTO implements IFechaDTO {
       this.dia = _data['dia']
         ? new Date(_data['dia'].toString())
         : <any>undefined
-      this.numero = _data['numero']
       this.zonaId = _data['zonaId']
-      this.instanciaId = _data['instanciaId']
-      this.instanciaNombre = _data['instanciaNombre']
       this.esVisibleEnApp = _data['esVisibleEnApp']
       if (Array.isArray(_data['jornadas'])) {
         this.jornadas = [] as any
@@ -7522,10 +7587,7 @@ export class FechaDTO implements IFechaDTO {
     data = typeof data === 'object' ? data : {}
     data['id'] = this.id
     data['dia'] = this.dia ? formatDate(this.dia) : <any>undefined
-    data['numero'] = this.numero
     data['zonaId'] = this.zonaId
-    data['instanciaId'] = this.instanciaId
-    data['instanciaNombre'] = this.instanciaNombre
     data['esVisibleEnApp'] = this.esVisibleEnApp
     if (Array.isArray(this.jornadas)) {
       data['jornadas'] = []
@@ -7538,12 +7600,143 @@ export class FechaDTO implements IFechaDTO {
 export interface IFechaDTO {
   id?: number
   dia?: Date | undefined
-  numero: number
   zonaId?: number
-  instanciaId?: number | undefined
-  instanciaNombre?: string | undefined
   esVisibleEnApp: boolean
   jornadas?: JornadaDTO[] | undefined
+}
+
+export class FechaEliminacionDirectaDTO implements IFechaEliminacionDirectaDTO {
+  id?: number
+  dia?: Date | undefined
+  zonaId?: number
+  esVisibleEnApp!: boolean
+  jornadas?: JornadaDTO[] | undefined
+  instanciaId!: number
+  instanciaNombre?: string | undefined
+
+  constructor(data?: IFechaEliminacionDirectaDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.dia = _data['dia']
+        ? new Date(_data['dia'].toString())
+        : <any>undefined
+      this.zonaId = _data['zonaId']
+      this.esVisibleEnApp = _data['esVisibleEnApp']
+      if (Array.isArray(_data['jornadas'])) {
+        this.jornadas = [] as any
+        for (let item of _data['jornadas'])
+          this.jornadas!.push(JornadaDTO.fromJS(item))
+      }
+      this.instanciaId = _data['instanciaId']
+      this.instanciaNombre = _data['instanciaNombre']
+    }
+  }
+
+  static fromJS(data: any): FechaEliminacionDirectaDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new FechaEliminacionDirectaDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['dia'] = this.dia ? formatDate(this.dia) : <any>undefined
+    data['zonaId'] = this.zonaId
+    data['esVisibleEnApp'] = this.esVisibleEnApp
+    if (Array.isArray(this.jornadas)) {
+      data['jornadas'] = []
+      for (let item of this.jornadas) data['jornadas'].push(item.toJSON())
+    }
+    data['instanciaId'] = this.instanciaId
+    data['instanciaNombre'] = this.instanciaNombre
+    return data
+  }
+}
+
+export interface IFechaEliminacionDirectaDTO {
+  id?: number
+  dia?: Date | undefined
+  zonaId?: number
+  esVisibleEnApp: boolean
+  jornadas?: JornadaDTO[] | undefined
+  instanciaId: number
+  instanciaNombre?: string | undefined
+}
+
+export class FechaTodosContraTodosDTO implements IFechaTodosContraTodosDTO {
+  id?: number
+  dia?: Date | undefined
+  zonaId?: number
+  esVisibleEnApp!: boolean
+  jornadas?: JornadaDTO[] | undefined
+  numero!: number
+
+  constructor(data?: IFechaTodosContraTodosDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.dia = _data['dia']
+        ? new Date(_data['dia'].toString())
+        : <any>undefined
+      this.zonaId = _data['zonaId']
+      this.esVisibleEnApp = _data['esVisibleEnApp']
+      if (Array.isArray(_data['jornadas'])) {
+        this.jornadas = [] as any
+        for (let item of _data['jornadas'])
+          this.jornadas!.push(JornadaDTO.fromJS(item))
+      }
+      this.numero = _data['numero']
+    }
+  }
+
+  static fromJS(data: any): FechaTodosContraTodosDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new FechaTodosContraTodosDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['dia'] = this.dia ? formatDate(this.dia) : <any>undefined
+    data['zonaId'] = this.zonaId
+    data['esVisibleEnApp'] = this.esVisibleEnApp
+    if (Array.isArray(this.jornadas)) {
+      data['jornadas'] = []
+      for (let item of this.jornadas) data['jornadas'].push(item.toJSON())
+    }
+    data['numero'] = this.numero
+    return data
+  }
+}
+
+export interface IFechaTodosContraTodosDTO {
+  id?: number
+  dia?: Date | undefined
+  zonaId?: number
+  esVisibleEnApp: boolean
+  jornadas?: JornadaDTO[] | undefined
+  numero: number
 }
 
 export class FicharDelegadoSoloConDniYClubDTO implements IFicharDelegadoSoloConDniYClubDTO {

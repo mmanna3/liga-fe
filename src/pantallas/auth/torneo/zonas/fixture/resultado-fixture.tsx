@@ -1,8 +1,8 @@
 import { api } from '@/api/api'
 import {
+  FechaTodosContraTodosDTO,
   type FixtureAlgoritmoFechaDTO,
-  type JornadaDTO,
-  type FechaDTO
+  type JornadaDTO
 } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import { Card, CardContent } from '@/design-system/base-ui/card'
@@ -88,7 +88,7 @@ function buildPayload(
   fechas: FixtureAlgoritmoFechaDTO[],
   lista: ItemFixture[],
   primeraFecha: Date
-): FechaDTO[] {
+): FechaTodosContraTodosDTO[] {
   return buildFechasConJornadas(fechas).map((f, index) => {
     const dia = addWeeks(primeraFecha, index)
     return {
@@ -96,7 +96,7 @@ function buildPayload(
       dia,
       esVisibleEnApp: false,
       jornadas: f.jornadas.map((j) => buildJornada(j, lista))
-    } as FechaDTO
+    } as FechaTodosContraTodosDTO
   })
 }
 
@@ -120,8 +120,8 @@ export function ResultadoFixture({
   const queryClient = useQueryClient()
   const fechasConJornadas = buildFechasConJornadas(fechas)
 
-  const crearMutation = useApiMutation<FechaDTO[]>({
-    fn: (body) => api.crearFechasMasivamente(zonaId, body),
+  const crearMutation = useApiMutation<FechaTodosContraTodosDTO[]>({
+    fn: (body) => api.crearFechasTodoscontratodosMasivamente(zonaId, body),
     mensajeDeExito: 'Fechas y jornadas creadas correctamente',
     antesDeMensajeExito: () => {
       queryClient.invalidateQueries({ queryKey: ['fechasAll', zonaId] })

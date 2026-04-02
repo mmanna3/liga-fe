@@ -1,14 +1,14 @@
 import { api } from '@/api/api'
-import { TipoDeFaseEnum } from '@/api/clients'
+import { FechaTodosContraTodosDTO, TipoDeFaseEnum } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
+import { toDateOnly } from '@/logica-compartida/utils'
 import { useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { FechasZona } from './fechas/fechas'
 import { PanelEliminacionDirecta } from './generacion/panel-eliminacion-directa'
 import { PanelTodosContraTodos } from './generacion/panel-todos-contra-todos'
 import { useListaFixture } from './hooks/use-lista-fixture'
-import { toDateOnly } from '@/logica-compartida/utils'
 
 export default function Fixture() {
   const {
@@ -71,7 +71,7 @@ export default function Fixture() {
     <p className='text-muted-foreground py-4'>Cargando zona...</p>
   ) : fechasExistentes.length > 0 ? (
     <FechasZona
-      fechas={fechasExistentes}
+      fechas={fechasExistentes as FechaTodosContraTodosDTO[]}
       equipos={zona.equipos ?? []}
       zonaId={zonaId}
       esEliminacionDirecta={fase?.tipoDeFase === TipoDeFaseEnum._2}

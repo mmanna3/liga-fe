@@ -1,26 +1,31 @@
 import { api } from '@/api/api'
-import type { EquipoDeLaZonaDTO, JornadaDTO, FechaDTO } from '@/api/clients'
+import type {
+  EquipoDeLaZonaDTO,
+  FechaDTO,
+  FechaTodosContraTodosDTO,
+  JornadaDTO
+} from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import { useAuth } from '@/logica-compartida/hooks/use-auth'
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
+import { ModalAgregarJornada } from '../../modal-agregar-jornada'
+import { ModalReemplazarEquipo } from '../../modal-reemplazar-equipo'
+import type { ItemFixture } from '../../tipos'
+import type { JornadaBorrador } from '../jornada-edicion'
 import {
   buildJornadaBorrador,
   type PendienteReemplazo
 } from '../jornada-edicion'
-import { ModalAgregarJornada } from '../../modal-agregar-jornada'
-import { ModalReemplazarEquipo } from '../../modal-reemplazar-equipo'
-import type { ItemFixture } from '../../tipos'
-import { FechaModoLectura } from './fecha-modo-lectura'
 import { FechaModoEdicion } from './fecha-modo-edicion'
-import type { JornadaBorrador } from '../jornada-edicion'
+import { FechaModoLectura } from './fecha-modo-lectura'
 
 export function FechaCard({
   fecha,
   equipos,
   zonaId
 }: {
-  fecha: FechaDTO
+  fecha: FechaTodosContraTodosDTO
   equipos: EquipoDeLaZonaDTO[]
   zonaId: number
 }) {

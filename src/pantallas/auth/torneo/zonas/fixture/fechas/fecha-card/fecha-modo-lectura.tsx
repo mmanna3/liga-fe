@@ -1,4 +1,4 @@
-import type { FechaDTO, JornadaDTO } from '@/api/clients'
+import type { FechaTodosContraTodosDTO, JornadaDTO } from '@/api/clients'
 import { LocalVisitanteEnum } from '@/api/clients'
 import { Button } from '@/design-system/base-ui/button'
 import {
@@ -18,10 +18,7 @@ function formatDia(dia: Date | undefined): string {
   return `${dia.getUTCDate()}/${dia.getUTCMonth() + 1}`
 }
 
-/** Título visible: instancia (eliminación directa) o número de fecha (todos contra todos). */
-export function etiquetaFecha(fecha: FechaDTO): string {
-  const nombre = fecha.instanciaNombre?.trim()
-  if (nombre) return nombre
+export function etiquetaFecha(fecha: FechaTodosContraTodosDTO): string {
   return `Fecha ${fecha.numero}`
 }
 
@@ -100,7 +97,7 @@ function JornadaFilaVista({
 }
 
 export interface FechaModoLecturaProps {
-  fecha: FechaDTO
+  fecha: FechaTodosContraTodosDTO
   zonaId: number
   onEditar: () => void
   onEliminar: () => void

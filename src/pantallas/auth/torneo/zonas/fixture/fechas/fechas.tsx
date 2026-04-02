@@ -1,16 +1,12 @@
-import type { EquipoDeLaZonaDTO, FechaDTO } from '@/api/clients'
+import type { EquipoDeLaZonaDTO, FechaTodosContraTodosDTO } from '@/api/clients'
 import { useState } from 'react'
 import { NuevaFechaCard } from '../nueva-fecha-card'
 import { FechaCard } from './fecha-card'
 
-function ordenarFechas(a: FechaDTO, b: FechaDTO): number {
-  const aEd = a.instanciaId != null
-  const bEd = b.instanciaId != null
-  if (aEd && bEd) {
-    return (
-      (a.instanciaId ?? 0) - (b.instanciaId ?? 0) || (a.id ?? 0) - (b.id ?? 0)
-    )
-  }
+function ordenarFechas(
+  a: FechaTodosContraTodosDTO,
+  b: FechaTodosContraTodosDTO
+): number {
   return a.numero - b.numero
 }
 
@@ -20,7 +16,7 @@ export function FechasZona({
   zonaId,
   esEliminacionDirecta = false
 }: {
-  fechas: FechaDTO[]
+  fechas: FechaTodosContraTodosDTO[]
   equipos: EquipoDeLaZonaDTO[]
   zonaId: number
   /** Fase de eliminación directa: las fechas se crean por instancia, no con "Agregar fecha". */
@@ -52,7 +48,7 @@ export function FechasZona({
       <div className='grid grid-cols-3 gap-4'>
         {fechasOrdenadas.map((f) => (
           <FechaCard
-            key={f.id ?? `${f.numero}-${f.instanciaId ?? 0}`}
+            key={f.id ?? `${f.numero}`}
             fecha={f}
             equipos={equipos}
             zonaId={zonaId}
