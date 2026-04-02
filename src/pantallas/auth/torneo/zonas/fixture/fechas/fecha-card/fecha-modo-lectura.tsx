@@ -1,8 +1,14 @@
 import type { FechaDTO, JornadaDTO } from '@/api/clients'
 import { LocalVisitanteEnum } from '@/api/clients'
 import { Button } from '@/design-system/base-ui/button'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@/design-system/base-ui/tooltip'
 import ModalEliminacion from '@/design-system/modal-eliminacion'
 import Icono from '@/design-system/ykn-ui/icono'
+import { cn } from '@/logica-compartida/utils'
 import { useState } from 'react'
 import { claseEspecial } from '../jornada-edicion'
 import { ModalCargaResultados } from './modal-carga-resultados'
@@ -17,6 +23,12 @@ export function etiquetaFecha(fecha: FechaDTO): string {
   const nombre = fecha.instanciaNombre?.trim()
   if (nombre) return nombre
   return `Fecha ${fecha.numero}`
+}
+
+/** True si el primer partido de la jornada tiene resultado local distinto de vacío. */
+export function jornadaTieneResultadosCargados(j: JornadaDTO): boolean {
+  const rl = j.partidos?.[0]?.resultadoLocal
+  return rl != null && String(rl).trim() !== ''
 }
 
 function JornadaFilaVista({
@@ -41,6 +53,13 @@ function JornadaFilaVista({
     visitanteLabel = esLocal ? 'Interzonal' : (j.equipo ?? '—')
   }
 
+  const tieneResultados = jornadaTieneResultadosCargados(j)
+  const tooltipPelota = !tieneResultados
+    ? 'No hay resultados cargados ✘'
+    : !j.resultadosVerificados
+      ? 'Resultados cargados sin verificar ⚠'
+      : 'Resultados verificados ✔'
+
   return (
     <div className='grid grid-cols-[1fr_1fr_auto] gap-4 text-sm py-1 items-center'>
       <span className={`text-right min-w-0 ${claseEspecial(localLabel)}`}>
@@ -49,16 +68,32 @@ function JornadaFilaVista({
       <span className={`text-left min-w-0 ${claseEspecial(visitanteLabel)}`}>
         {visitanteLabel}
       </span>
-      <Button
-        type='button'
-        variant='ghost'
-        size='icon'
-        className='h-7 w-7 shrink-0 text-muted-foreground hover:text-foreground'
-        aria-label='Detalle de jornada'
-        onClick={() => onCargarResultadosClick(j)}
-      >
-        <Icono nombre='Pelota' className='size-5' />
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            type='button'
+            variant='ghost'
+            size='icon'
+            className={cn(
+              'h-7 w-7 shrink-0',
+              !tieneResultados && 'text-muted-foreground hover:text-foreground',
+              tieneResultados &&
+                !j.resultadosVerificados &&
+                'text-yellow-500 hover:text-yellow-600',
+              tieneResultados &&
+                j.resultadosVerificados &&
+                'text-green-600 hover:text-green-600'
+            )}
+            aria-label={tooltipPelota}
+            onClick={() => onCargarResultadosClick(j)}
+          >
+            <Icono nombre='Pelota' className='size-5' />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side='left'>
+          <p>{tooltipPelota}</p>
+        </TooltipContent>
+      </Tooltip>
     </div>
   )
 }
