@@ -4,7 +4,11 @@ import { Button } from '@/design-system/base-ui/button'
 import ModalEliminacion from '@/design-system/modal-eliminacion'
 import Icono from '@/design-system/ykn-ui/icono'
 import { useState } from 'react'
-import { BotonCargarResultados } from '../../components/boton-cargar-resultados'
+import {
+  BotonCargarResultados,
+  ESTADO_BOTON_CARGAR_RESULTADOS,
+  jornadaTieneResultadosCargados
+} from '../../components/boton-cargar-resultados'
 import { claseEspecial } from '../jornada-edicion'
 import { ModalCargaResultados } from './modal-carga-resultados'
 
@@ -17,7 +21,8 @@ export function etiquetaFecha(fecha: FechaTodosContraTodosDTO): string {
   return `Fecha ${fecha.numero}`
 }
 
-export { jornadaTieneResultadosCargados } from '../../components/boton-cargar-resultados'
+export { jornadaTieneResultadosCargados }
+export type { EstadoBotonCargarResultados } from '../../components/boton-cargar-resultados'
 
 function JornadaFilaVista({
   j,
@@ -41,6 +46,12 @@ function JornadaFilaVista({
     visitanteLabel = esLocal ? 'Interzonal' : (j.equipo ?? '—')
   }
 
+  const estadoBoton = !jornadaTieneResultadosCargados(j)
+    ? ESTADO_BOTON_CARGAR_RESULTADOS[0]
+    : !j.resultadosVerificados
+      ? ESTADO_BOTON_CARGAR_RESULTADOS[1]
+      : ESTADO_BOTON_CARGAR_RESULTADOS[2]
+
   return (
     <div className='grid grid-cols-[1fr_1fr_auto] gap-4 text-sm py-1 items-center'>
       <span className={`text-right min-w-0 ${claseEspecial(localLabel)}`}>
@@ -50,8 +61,8 @@ function JornadaFilaVista({
         {visitanteLabel}
       </span>
       <BotonCargarResultados
-        jornada={j}
-        onCargarResultadosClick={onCargarResultadosClick}
+        estado={estadoBoton}
+        onClick={() => onCargarResultadosClick(j)}
       />
     </div>
   )
