@@ -15,7 +15,7 @@ import {
 } from '../components/boton-cargar-resultados'
 import { NOMBRES_INSTANCIA_BRACKET } from '../generacion/eliminacion-directa/fixture-vista-previa'
 import { EncabezadoFechaColumna } from './encabezado-fecha-columna'
-import { ModalCargaResultadosInstancia } from './modal-carga-resultados-instancia'
+import { ModalCargarResultados } from './modal-cargar-resultados'
 import { Partidos } from './partidos'
 
 const http = new HttpClientWrapper()
@@ -85,6 +85,7 @@ export function FechasEliminacionDirecta({ zonaId }: { zonaId: number }) {
   const [modalResultados, setModalResultados] = useState<{
     tituloInstancia: string
     subtitulo?: string
+    jornadas: JornadaDTO[]
   } | null>(null)
 
   const { data: fechas = [], isPending } = useApiQuery({
@@ -191,7 +192,8 @@ export function FechasEliminacionDirecta({ zonaId }: { zonaId: number }) {
                     onClick={() =>
                       setModalResultados({
                         tituloInstancia: col.titulo,
-                        subtitulo: subtituloFecha
+                        subtitulo: subtituloFecha,
+                        jornadas: col.fecha?.jornadas ?? []
                       })
                     }
                   />
@@ -209,13 +211,15 @@ export function FechasEliminacionDirecta({ zonaId }: { zonaId: number }) {
 
       <Partidos columnas={columnas} />
 
-      <ModalCargaResultadosInstancia
+      <ModalCargarResultados
         open={modalResultados != null}
         onOpenChange={(open) => {
           if (!open) setModalResultados(null)
         }}
         tituloInstancia={modalResultados?.tituloInstancia ?? ''}
         subtitulo={modalResultados?.subtitulo}
+        jornadas={modalResultados?.jornadas ?? []}
+        zonaId={zonaId}
       />
     </div>
   )
