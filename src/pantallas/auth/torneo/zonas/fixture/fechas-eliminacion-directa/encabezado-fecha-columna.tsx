@@ -68,7 +68,7 @@ export function EncabezadoFechaColumna({
             'hover:text-primary disabled:opacity-50'
           )}
         >
-          <span className='min-w-0 truncate group-hover:text-primary'>
+          <span className='ml-6 min-w-0 truncate group-hover:text-primary'>
             {label}
           </span>
           <Icono
