@@ -158,6 +158,8 @@ export function FechasEliminacionDirecta({ zonaId }: { zonaId: number }) {
       visitante: string | null
       resultadoLocal: string | null
       resultadoVisitante: string | null
+      penalesLocal: string | null
+      penalesVisitante: string | null
     }[] = []
     for (let i = 0; i < cantidadPartidos; i++) {
       const j = fecha?.jornadas?.[i]
@@ -165,19 +167,27 @@ export function FechasEliminacionDirecta({ zonaId }: { zonaId: number }) {
       if (j != null) {
         const rl = p0?.resultadoLocal
         const rv = p0?.resultadoVisitante
+        const pl = p0?.penalesLocal
+        const pv = p0?.penalesVisitante
         partidos.push({
           ...partidoDesdeJornada(j),
           resultadoLocal:
             rl != null && String(rl).trim() !== '' ? String(rl) : null,
           resultadoVisitante:
-            rv != null && String(rv).trim() !== '' ? String(rv) : null
+            rv != null && String(rv).trim() !== '' ? String(rv) : null,
+          penalesLocal:
+            pl != null && String(pl).trim() !== '' ? String(pl) : null,
+          penalesVisitante:
+            pv != null && String(pv).trim() !== '' ? String(pv) : null
         })
       } else {
         partidos.push({
           local: null,
           visitante: null,
           resultadoLocal: null,
-          resultadoVisitante: null
+          resultadoVisitante: null,
+          penalesLocal: null,
+          penalesVisitante: null
         })
       }
     }

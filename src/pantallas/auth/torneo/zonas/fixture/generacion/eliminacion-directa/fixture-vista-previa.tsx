@@ -161,20 +161,40 @@ export function PartidoCardBracket({
   local,
   visitante,
   resultadoLocal,
-  resultadoVisitante
+  resultadoVisitante,
+  penalesLocal,
+  penalesVisitante
 }: {
   local: string | null
   visitante: string | null
   /** Si se pasa (incluso `null`), muestra el cuadrado de resultado al final de cada fila. */
   resultadoLocal?: string | null
   resultadoVisitante?: string | null
+  /** Si hay penales, se muestran entre paréntesis a la derecha del resultado. */
+  penalesLocal?: string | null
+  penalesVisitante?: string | null
 }) {
   const mostrarResultados = resultadoLocal !== undefined
 
-  function CeldaResultado({ valor }: { valor: string | null | undefined }) {
+  function CeldaResultado({
+    valor,
+    penales
+  }: {
+    valor: string | null | undefined
+    penales?: string | null
+  }) {
+    const gol =
+      valor != null && String(valor).trim() !== '' ? String(valor) : '—'
+    const pen =
+      penales != null && String(penales).trim() !== ''
+        ? ` (${String(penales).trim()})`
+        : ''
     return (
       <div className='min-w-[2rem] shrink-0 self-stretch flex items-center justify-center border-l border-border pl-2 text-xs tabular-nums font-medium'>
-        {valor != null && String(valor).trim() !== '' ? String(valor) : '—'}
+        <span>{gol}</span>
+        {pen ? (
+          <span className='text-muted-foreground whitespace-nowrap'>{pen}</span>
+        ) : null}
       </div>
     )
   }
@@ -189,7 +209,12 @@ export function PartidoCardBracket({
             <span className='text-muted-foreground italic'>Por definir</span>
           )}
         </div>
-        {mostrarResultados && <CeldaResultado valor={resultadoLocal ?? null} />}
+        {mostrarResultados && (
+          <CeldaResultado
+            valor={resultadoLocal ?? null}
+            penales={penalesLocal}
+          />
+        )}
       </div>
       <div className='px-3 py-2 flex items-center gap-0 min-h-10'>
         <div className='flex-1 min-w-0 truncate'>
@@ -200,7 +225,10 @@ export function PartidoCardBracket({
           )}
         </div>
         {mostrarResultados && (
-          <CeldaResultado valor={resultadoVisitante ?? null} />
+          <CeldaResultado
+            valor={resultadoVisitante ?? null}
+            penales={penalesVisitante}
+          />
         )}
       </div>
     </div>

@@ -12,6 +12,8 @@ export type PartidoColumna = {
     visitante: string | null
     resultadoLocal: string | null
     resultadoVisitante: string | null
+    penalesLocal?: string | null
+    penalesVisitante?: string | null
   }[]
 }
 
@@ -35,6 +37,8 @@ export function Partidos({ columnas }: { columnas: PartidoColumna[] }) {
                       visitante={p.visitante}
                       resultadoLocal={p.resultadoLocal}
                       resultadoVisitante={p.resultadoVisitante}
+                      penalesLocal={p.penalesLocal}
+                      penalesVisitante={p.penalesVisitante}
                     />
                   </div>
                 ))}

@@ -21,8 +21,8 @@ export function etiquetaFecha(fecha: FechaTodosContraTodosDTO): string {
   return `Fecha ${fecha.numero}`
 }
 
-export { jornadaTieneResultadosCargados }
 export type { EstadoBotonCargarResultados } from '../../components/boton-cargar-resultados'
+export { jornadaTieneResultadosCargados }
 
 function JornadaFilaVista({
   j,

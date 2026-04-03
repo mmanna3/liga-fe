@@ -7591,6 +7591,7 @@ export class FechaDTO implements IFechaDTO {
   zonaId?: number
   esVisibleEnApp!: boolean
   jornadas?: JornadaDTO[] | undefined
+  numero?: number | undefined
 
   constructor(data?: IFechaDTO) {
     if (data) {
@@ -7614,6 +7615,7 @@ export class FechaDTO implements IFechaDTO {
         for (let item of _data['jornadas'])
           this.jornadas!.push(JornadaDTO.fromJS(item))
       }
+      this.numero = _data['numero'] ?? _data['Numero']
     }
   }
 
@@ -7634,6 +7636,7 @@ export class FechaDTO implements IFechaDTO {
       data['jornadas'] = []
       for (let item of this.jornadas) data['jornadas'].push(item.toJSON())
     }
+    data['numero'] = this.numero
     return data
   }
 }
@@ -7644,6 +7647,7 @@ export interface IFechaDTO {
   zonaId?: number
   esVisibleEnApp: boolean
   jornadas?: JornadaDTO[] | undefined
+  numero?: number | undefined
 }
 
 export class FechaEliminacionDirectaDTO implements IFechaEliminacionDirectaDTO {
