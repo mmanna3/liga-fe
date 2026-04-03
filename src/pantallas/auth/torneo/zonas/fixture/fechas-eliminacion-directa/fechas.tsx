@@ -1,13 +1,21 @@
-import useApiQuery from '@/api/hooks/use-api-query'
-import { HttpClientWrapper } from '@/api/http-client-wrapper'
 import {
   FechaEliminacionDirectaDTO,
   LocalVisitanteEnum,
   type JornadaDTO
 } from '@/api/clients'
-import { addWeeks } from 'date-fns'
+import useApiQuery from '@/api/hooks/use-api-query'
+import { HttpClientWrapper } from '@/api/http-client-wrapper'
+import { toDateOnly } from '@/logica-compartida/utils'
+import { addWeeks, format } from 'date-fns'
+import { es } from 'date-fns/locale'
+import { useState } from 'react'
+import {
+  BotonCargarResultados,
+  ESTADO_BOTON_CARGAR_RESULTADOS
+} from '../components/boton-cargar-resultados'
 import { NOMBRES_INSTANCIA_BRACKET } from '../generacion/eliminacion-directa/fixture-vista-previa'
 import { EncabezadoFechaColumna } from './encabezado-fecha-columna'
+import { ModalCargaResultadosInstancia } from './modal-carga-resultados-instancia'
 import { Partidos } from './partidos'
 
 const http = new HttpClientWrapper()
@@ -74,6 +82,11 @@ function partidoDesdeJornada(j: JornadaDTO): {
 }
 
 export function FechasEliminacionDirecta({ zonaId }: { zonaId: number }) {
+  const [modalResultados, setModalResultados] = useState<{
+    tituloInstancia: string
+    subtitulo?: string
+  } | null>(null)
+
   const { data: fechas = [], isPending } = useApiQuery({
     key: ['fechasEliminacionDirecta', zonaId],
     fn: () => fetchFechasEliminacionDirecta(zonaId),
@@ -156,19 +169,54 @@ export function FechasEliminacionDirecta({ zonaId }: { zonaId: number }) {
   return (
     <div>
       <div className='flex gap-6 mb-2'>
-        {columnas.map((col) => (
-          <div key={col.key} className='flex-1 min-w-[200px] text-center'>
-            <h4 className='text-sm font-semibold'>{col.titulo}</h4>
-            <EncabezadoFechaColumna
-              fecha={col.fecha}
-              diaMostrado={col.diaMostrado}
-              zonaId={zonaId}
-            />
-          </div>
-        ))}
+        {columnas.map((col) => {
+          const subtituloFecha =
+            col.diaMostrado != null
+              ? format(toDateOnly(col.diaMostrado), "EEEE d 'de' MMMM", {
+                  locale: es
+                })
+              : undefined
+
+          const tieneJornadas = (col.fecha?.jornadas?.length ?? 0) > 0
+
+          return (
+            <div key={col.key} className='flex-1 min-w-[200px] text-center'>
+              <div className='flex w-full min-w-0 items-center justify-center'>
+                <h4 className='text-sm font-semibold min-w-0 truncate'>
+                  {col.titulo}
+                </h4>
+                {tieneJornadas && (
+                  <BotonCargarResultados
+                    estado={ESTADO_BOTON_CARGAR_RESULTADOS[0]}
+                    onClick={() =>
+                      setModalResultados({
+                        tituloInstancia: col.titulo,
+                        subtitulo: subtituloFecha
+                      })
+                    }
+                  />
+                )}
+              </div>
+              <EncabezadoFechaColumna
+                fecha={col.fecha}
+                diaMostrado={col.diaMostrado}
+                zonaId={zonaId}
+              />
+            </div>
+          )
+        })}
       </div>
 
       <Partidos columnas={columnas} />
+
+      <ModalCargaResultadosInstancia
+        open={modalResultados != null}
+        onOpenChange={(open) => {
+          if (!open) setModalResultados(null)
+        }}
+        tituloInstancia={modalResultados?.tituloInstancia ?? ''}
+        subtitulo={modalResultados?.subtitulo}
+      />
     </div>
   )
 }
