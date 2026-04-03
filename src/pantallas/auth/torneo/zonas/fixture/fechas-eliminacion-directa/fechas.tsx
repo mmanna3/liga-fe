@@ -11,7 +11,8 @@ import { es } from 'date-fns/locale'
 import { useState } from 'react'
 import {
   BotonCargarResultados,
-  ESTADO_BOTON_CARGAR_RESULTADOS
+  ESTADO_BOTON_CARGAR_RESULTADOS,
+  jornadaTieneResultadosCargados
 } from '../components/boton-cargar-resultados'
 import { NOMBRES_INSTANCIA_BRACKET } from '../generacion/eliminacion-directa/fixture-vista-previa'
 import { EncabezadoFechaColumna } from './encabezado-fecha-columna'
@@ -63,6 +64,20 @@ function tituloColumna(
     return NOMBRES_INSTANCIA_BRACKET[equiposEnRonda]
   }
   return `Ronda ${rIdx + 1}`
+}
+
+/** Estado visual del botón según el primer partido de la primera jornada de la instancia. */
+function estadoBotonCargarDesdePrimeraJornada(
+  primeraJornada: JornadaDTO | undefined
+): (typeof ESTADO_BOTON_CARGAR_RESULTADOS)[number] {
+  if (!primeraJornada) return ESTADO_BOTON_CARGAR_RESULTADOS[0]
+  if (!jornadaTieneResultadosCargados(primeraJornada)) {
+    return ESTADO_BOTON_CARGAR_RESULTADOS[0]
+  }
+  if (!primeraJornada.resultadosVerificados) {
+    return ESTADO_BOTON_CARGAR_RESULTADOS[1]
+  }
+  return ESTADO_BOTON_CARGAR_RESULTADOS[2]
 }
 
 function partidoDesdeJornada(j: JornadaDTO): {
@@ -179,6 +194,9 @@ export function FechasEliminacionDirecta({ zonaId }: { zonaId: number }) {
               : undefined
 
           const tieneJornadas = (col.fecha?.jornadas?.length ?? 0) > 0
+          const primeraJornada = col.fecha?.jornadas?.[0]
+          const estadoBotonCargar =
+            estadoBotonCargarDesdePrimeraJornada(primeraJornada)
 
           return (
             <div key={col.key} className='flex-1 min-w-[200px] text-center'>
@@ -188,7 +206,7 @@ export function FechasEliminacionDirecta({ zonaId }: { zonaId: number }) {
                 </h4>
                 {tieneJornadas && (
                   <BotonCargarResultados
-                    estado={ESTADO_BOTON_CARGAR_RESULTADOS[0]}
+                    estado={estadoBotonCargar}
                     onClick={() =>
                       setModalResultados({
                         tituloInstancia: col.titulo,

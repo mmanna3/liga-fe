@@ -29,6 +29,8 @@ interface ModalCargaResultadosProps {
   zonaId: number
   /** Número de fecha (Fecha N) para el subtítulo. */
   numeroFecha: number
+  /** Todas las jornadas de la fecha; al guardar se sincroniza `resultadosVerificados` en todas. */
+  jornadasDeLaFecha: JornadaDTO[]
 }
 
 function etiquetasLocalVisitanteJornada(j: JornadaDTO): {
@@ -53,7 +55,8 @@ export function ModalCargaResultados({
   onOpenChange,
   jornada,
   zonaId,
-  numeroFecha
+  numeroFecha,
+  jornadasDeLaFecha
 }: ModalCargaResultadosProps) {
   const queryClient = useQueryClient()
   const partidos = jornada?.partidos ?? []
@@ -87,20 +90,32 @@ export function ModalCargaResultados({
       if (jornada?.id == null) {
         throw new Error('La jornada no tiene id')
       }
-      const partidosDto = partidos.map((p, i) => {
-        const dto = new PartidoDTO()
-        dto.id = p.id
-        dto.categoriaId = p.categoriaId
-        dto.categoria = p.categoria
-        dto.resultadoLocal = valores[i]?.local ?? ''
-        dto.resultadoVisitante = valores[i]?.visitante ?? ''
-        return dto
-      })
-      const body = new CargarResultadosDTO()
-      body.jornadaId = jornada.id
-      body.resultadosVerificados = resultadosVerificados
-      body.partidos = partidosDto
-      await api.cargarResultados(zonaId, jornada.id, body)
+      const lista = jornadasDeLaFecha.length > 0 ? jornadasDeLaFecha : [jornada]
+
+      for (const j of lista) {
+        if (j.id == null) continue
+        const esLaEditada = j.id === jornada.id
+        const partidosFuente = esLaEditada ? partidos : (j.partidos ?? [])
+        const partidosDto = partidosFuente.map((p, i) => {
+          const dto = new PartidoDTO()
+          dto.id = p.id
+          dto.categoriaId = p.categoriaId
+          dto.categoria = p.categoria
+          if (esLaEditada) {
+            dto.resultadoLocal = valores[i]?.local ?? ''
+            dto.resultadoVisitante = valores[i]?.visitante ?? ''
+          } else {
+            dto.resultadoLocal = p.resultadoLocal ?? ''
+            dto.resultadoVisitante = p.resultadoVisitante ?? ''
+          }
+          return dto
+        })
+        const body = new CargarResultadosDTO()
+        body.jornadaId = j.id
+        body.resultadosVerificados = resultadosVerificados
+        body.partidos = partidosDto
+        await api.cargarResultados(zonaId, j.id, body)
+      }
     },
     mensajeDeExito: 'Resultados guardados',
     antesDeMensajeExito: () => {
