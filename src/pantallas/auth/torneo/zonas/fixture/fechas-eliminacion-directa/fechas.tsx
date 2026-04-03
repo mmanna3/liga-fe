@@ -163,12 +163,33 @@ export function FechasEliminacionDirecta({ zonaId }: { zonaId: number }) {
           ? addWeeks(primeraFechaBase, rIdx)
           : undefined
 
-    const partidos: { local: string | null; visitante: string | null }[] = []
+    const partidos: {
+      local: string | null
+      visitante: string | null
+      resultadoLocal: string | null
+      resultadoVisitante: string | null
+    }[] = []
     for (let i = 0; i < cantidadPartidos; i++) {
       const j = fecha?.jornadas?.[i]
-      partidos.push(
-        j != null ? partidoDesdeJornada(j) : { local: null, visitante: null }
-      )
+      const p0 = j?.partidos?.[0]
+      if (j != null) {
+        const rl = p0?.resultadoLocal
+        const rv = p0?.resultadoVisitante
+        partidos.push({
+          ...partidoDesdeJornada(j),
+          resultadoLocal:
+            rl != null && String(rl).trim() !== '' ? String(rl) : null,
+          resultadoVisitante:
+            rv != null && String(rv).trim() !== '' ? String(rv) : null
+        })
+      } else {
+        partidos.push({
+          local: null,
+          visitante: null,
+          resultadoLocal: null,
+          resultadoVisitante: null
+        })
+      }
     }
 
     return {

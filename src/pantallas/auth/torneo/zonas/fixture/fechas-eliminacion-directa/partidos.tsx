@@ -7,7 +7,12 @@ import {
 export type PartidoColumna = {
   key: string | number
   rIdx: number
-  partidos: { local: string | null; visitante: string | null }[]
+  partidos: {
+    local: string | null
+    visitante: string | null
+    resultadoLocal: string | null
+    resultadoVisitante: string | null
+  }[]
 }
 
 export function Partidos({ columnas }: { columnas: PartidoColumna[] }) {
@@ -28,6 +33,8 @@ export function Partidos({ columnas }: { columnas: PartidoColumna[] }) {
                     <PartidoCardBracket
                       local={p.local}
                       visitante={p.visitante}
+                      resultadoLocal={p.resultadoLocal}
+                      resultadoVisitante={p.resultadoVisitante}
                     />
                   </div>
                 ))}

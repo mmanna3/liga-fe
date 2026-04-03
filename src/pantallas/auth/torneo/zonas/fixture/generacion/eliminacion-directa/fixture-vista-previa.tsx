@@ -161,25 +161,48 @@ export function claseEspecialBracket(nombre: string | null): string {
 
 export function PartidoCardBracket({
   local,
-  visitante
+  visitante,
+  resultadoLocal,
+  resultadoVisitante
 }: {
   local: string | null
   visitante: string | null
+  /** Si se pasa (incluso `null`), muestra el cuadrado de resultado al final de cada fila. */
+  resultadoLocal?: string | null
+  resultadoVisitante?: string | null
 }) {
+  const mostrarResultados = resultadoLocal !== undefined
+
+  function CeldaResultado({ valor }: { valor: string | null | undefined }) {
+    return (
+      <div className='min-w-[2rem] shrink-0 self-stretch flex items-center justify-center border-l border-border pl-2 text-xs tabular-nums font-medium'>
+        {valor != null && String(valor).trim() !== '' ? String(valor) : '—'}
+      </div>
+    )
+  }
+
   return (
     <div className='rounded border bg-card text-sm w-full'>
-      <div className='px-3 py-2 border-b truncate'>
-        {local != null ? (
-          <span className={claseEspecialBracket(local)}>{local}</span>
-        ) : (
-          <span className='text-muted-foreground italic'>Por definir</span>
-        )}
+      <div className='px-3 py-2 border-b flex items-center gap-0 min-h-10'>
+        <div className='flex-1 min-w-0 truncate'>
+          {local != null ? (
+            <span className={claseEspecialBracket(local)}>{local}</span>
+          ) : (
+            <span className='text-muted-foreground italic'>Por definir</span>
+          )}
+        </div>
+        {mostrarResultados && <CeldaResultado valor={resultadoLocal ?? null} />}
       </div>
-      <div className='px-3 py-2 truncate'>
-        {visitante != null ? (
-          <span className={claseEspecialBracket(visitante)}>{visitante}</span>
-        ) : (
-          <span className='text-muted-foreground italic'>Por definir</span>
+      <div className='px-3 py-2 flex items-center gap-0 min-h-10'>
+        <div className='flex-1 min-w-0 truncate'>
+          {visitante != null ? (
+            <span className={claseEspecialBracket(visitante)}>{visitante}</span>
+          ) : (
+            <span className='text-muted-foreground italic'>Por definir</span>
+          )}
+        </div>
+        {mostrarResultados && (
+          <CeldaResultado valor={resultadoVisitante ?? null} />
         )}
       </div>
     </div>
