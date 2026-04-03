@@ -162,7 +162,6 @@ export function FechaModoLectura({
         jornada={jornadaParaResultados}
         zonaId={zonaId}
         numeroFecha={fecha.numero}
-        jornadasDeLaFecha={fecha.jornadas ?? []}
       />
     </>
   )

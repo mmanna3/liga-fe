@@ -1,10 +1,5 @@
 import { api } from '@/api/api'
-import {
-  CargarResultadosDTO,
-  LocalVisitanteEnum,
-  PartidoDTO,
-  type JornadaDTO
-} from '@/api/clients'
+import { CargarResultadosDTO, type JornadaDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import {
   Dialog,
@@ -21,6 +16,7 @@ import { Boton } from '@/design-system/ykn-ui/boton'
 import Icono from '@/design-system/ykn-ui/icono'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { buildRequests, etiquetasLocalVisitanteJornada } from './lib'
 
 interface ModalCargaResultadosProps {
   open: boolean
@@ -29,25 +25,6 @@ interface ModalCargaResultadosProps {
   zonaId: number
   /** Número de fecha (Fecha N) para el subtítulo. */
   numeroFecha: number
-  /** Todas las jornadas de la fecha; al guardar se sincroniza `resultadosVerificados` en todas. */
-  jornadasDeLaFecha: JornadaDTO[]
-}
-
-function etiquetasLocalVisitanteJornada(j: JornadaDTO): {
-  local: string
-  visitante: string
-} {
-  if (j.tipo === 'Normal') {
-    return { local: j.local ?? '—', visitante: j.visitante ?? '—' }
-  }
-  if (j.tipo === 'Libre') {
-    return { local: j.equipoLocal ?? '—', visitante: 'Libre' }
-  }
-  const esLocal = j.localOVisitante !== LocalVisitanteEnum._2
-  return {
-    local: esLocal ? (j.equipo ?? '—') : 'Interzonal',
-    visitante: esLocal ? 'Interzonal' : (j.equipo ?? '—')
-  }
 }
 
 export function ModalCargaResultados({
@@ -55,8 +32,7 @@ export function ModalCargaResultados({
   onOpenChange,
   jornada,
   zonaId,
-  numeroFecha,
-  jornadasDeLaFecha
+  numeroFecha
 }: ModalCargaResultadosProps) {
   const queryClient = useQueryClient()
   const partidos = jornada?.partidos ?? []
@@ -90,31 +66,18 @@ export function ModalCargaResultados({
       if (jornada?.id == null) {
         throw new Error('La jornada no tiene id')
       }
-      const lista = jornadasDeLaFecha.length > 0 ? jornadasDeLaFecha : [jornada]
-
-      for (const j of lista) {
-        if (j.id == null) continue
-        const esLaEditada = j.id === jornada.id
-        const partidosFuente = esLaEditada ? partidos : (j.partidos ?? [])
-        const partidosDto = partidosFuente.map((p, i) => {
-          const dto = new PartidoDTO()
-          dto.id = p.id
-          dto.categoriaId = p.categoriaId
-          dto.categoria = p.categoria
-          if (esLaEditada) {
-            dto.resultadoLocal = valores[i]?.local ?? ''
-            dto.resultadoVisitante = valores[i]?.visitante ?? ''
-          } else {
-            dto.resultadoLocal = p.resultadoLocal ?? ''
-            dto.resultadoVisitante = p.resultadoVisitante ?? ''
-          }
-          return dto
-        })
+      const requests = buildRequests(
+        jornada,
+        partidos,
+        valores,
+        resultadosVerificados
+      )
+      for (const r of requests) {
         const body = new CargarResultadosDTO()
-        body.jornadaId = j.id
-        body.resultadosVerificados = resultadosVerificados
-        body.partidos = partidosDto
-        await api.cargarResultados(zonaId, j.id, body)
+        body.jornadaId = r.jornadaId
+        body.resultadosVerificados = r.resultadosVerificados
+        body.partidos = r.partidos
+        await api.cargarResultados(zonaId, r.jornadaId, body)
       }
     },
     mensajeDeExito: 'Resultados guardados',

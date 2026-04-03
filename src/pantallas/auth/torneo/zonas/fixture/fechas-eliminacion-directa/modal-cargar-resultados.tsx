@@ -205,9 +205,7 @@ export function ModalCargarResultados({
     })
   }
 
-  const puedeGuardar =
-    jornadas.length > 0 &&
-    jornadas.every((j) => j.id != null && j.partidos?.[0] != null)
+  const puedeGuardar = jornadas.length > 0
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
