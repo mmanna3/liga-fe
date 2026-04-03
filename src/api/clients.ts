@@ -2700,8 +2700,8 @@ export class Client {
    */
   crearFechasEliminaciondirectaMasivamente(
     padreId: number,
-    body: FechaEliminacionDirectaDTO[] | undefined
-  ): Promise<FechaEliminacionDirectaDTO[]> {
+    body: FechaEliminacionDirectaDTO | undefined
+  ): Promise<FechaEliminacionDirectaDTO> {
     let url_ =
       this.baseUrl +
       '/api/Zona/{padreId}/fechas/crear-fechas-eliminaciondirecta-masivamente'
@@ -2728,7 +2728,7 @@ export class Client {
 
   protected processCrearFechasEliminaciondirectaMasivamente(
     response: Response
-  ): Promise<FechaEliminacionDirectaDTO[]> {
+  ): Promise<FechaEliminacionDirectaDTO> {
     const status = response.status
     let _headers: any = {}
     if (response.headers && response.headers.forEach) {
@@ -2741,13 +2741,7 @@ export class Client {
           _responseText === ''
             ? null
             : JSON.parse(_responseText, this.jsonParseReviver)
-        if (Array.isArray(resultData200)) {
-          result200 = [] as any
-          for (let item of resultData200)
-            result200!.push(FechaEliminacionDirectaDTO.fromJS(item))
-        } else {
-          result200 = <any>null
-        }
+        result200 = FechaEliminacionDirectaDTO.fromJS(resultData200)
         return result200
       })
     } else if (status !== 200 && status !== 204) {
@@ -2760,7 +2754,7 @@ export class Client {
         )
       })
     }
-    return Promise.resolve<FechaEliminacionDirectaDTO[]>(null as any)
+    return Promise.resolve<FechaEliminacionDirectaDTO>(null as any)
   }
 
   /**

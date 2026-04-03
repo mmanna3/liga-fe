@@ -29,6 +29,9 @@ function etiquetasLocalVisitanteJornada(j: JornadaDTO): {
   if (j.tipo === 'Normal') {
     return { local: j.local ?? '—', visitante: j.visitante ?? '—' }
   }
+  if (j.tipo === 'SinEquipos') {
+    return { local: '—', visitante: '—' }
+  }
   if (j.tipo === 'Libre') {
     return { local: j.equipoLocal ?? '—', visitante: 'Libre' }
   }

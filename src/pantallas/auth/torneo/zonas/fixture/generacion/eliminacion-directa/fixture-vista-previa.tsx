@@ -129,13 +129,13 @@ function buildJornada(j: JornadaItem, lista: ItemFixture[]): JornadaDTO {
 export function buildPayloadEliminacionDirecta(
   lista: ItemFixture[],
   primeraFecha: Date
-): FechaEliminacionDirectaDTO[] {
+): FechaEliminacionDirectaDTO | null {
   const nombres = lista.map(nombreParaBracket)
   const instanciasCompletas = buildBracket(nombres)
   const primeraInstancia = instanciasCompletas[0]
   const n = lista.length
 
-  if (!primeraInstancia) return []
+  if (!primeraInstancia) return null
 
   const instanciaId = n
   const jornadas = primeraInstancia.partidos.map((partido) => {
@@ -143,14 +143,12 @@ export function buildPayloadEliminacionDirecta(
     return buildJornada(j, lista)
   })
 
-  return [
-    {
-      dia: primeraFecha,
-      esVisibleEnApp: false,
-      instanciaId,
-      jornadas
-    } as FechaEliminacionDirectaDTO
-  ]
+  return {
+    dia: primeraFecha,
+    esVisibleEnApp: false,
+    instanciaId,
+    jornadas
+  } as FechaEliminacionDirectaDTO
 }
 
 export function claseEspecialBracket(nombre: string | null): string {
@@ -227,7 +225,7 @@ export function FixtureVistaPrevia({
   const nombres = lista.map(nombreParaBracket)
   const instancias = buildBracket(nombres)
 
-  const crearMutation = useApiMutation<FechaEliminacionDirectaDTO[]>({
+  const crearMutation = useApiMutation<FechaEliminacionDirectaDTO>({
     fn: (body) => api.crearFechasEliminaciondirectaMasivamente(zonaId, body),
     mensajeDeExito: 'Fechas y jornadas creadas correctamente',
     antesDeMensajeExito: () => {
@@ -246,11 +244,13 @@ export function FixtureVistaPrevia({
         </CardHeader> */}
         <CardContent>
           <Boton
-            onClick={() =>
-              crearMutation.mutate(
-                buildPayloadEliminacionDirecta(lista, primeraFecha)
+            onClick={() => {
+              const payload = buildPayloadEliminacionDirecta(
+                lista,
+                primeraFecha
               )
-            }
+              if (payload != null) crearMutation.mutate(payload)
+            }}
             estaCargando={crearMutation.isPending}
           >
             Crear el fixture con las fechas que aparecen a continuación

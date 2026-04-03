@@ -6,7 +6,7 @@ import {
 import useApiQuery from '@/api/hooks/use-api-query'
 import { HttpClientWrapper } from '@/api/http-client-wrapper'
 import { toDateOnly } from '@/logica-compartida/utils'
-import { addWeeks, format } from 'date-fns'
+import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { useState } from 'react'
 import {
@@ -87,6 +87,9 @@ function partidoDesdeJornada(j: JornadaDTO): {
   if (j.tipo === 'Normal') {
     return { local: j.local ?? null, visitante: j.visitante ?? null }
   }
+  if (j.tipo === 'SinEquipos') {
+    return { local: null, visitante: null }
+  }
   if (j.tipo === 'Libre') {
     return { local: j.equipoLocal ?? null, visitante: 'Libre' }
   }
@@ -142,26 +145,13 @@ export function FechasEliminacionDirecta({ zonaId }: { zonaId: number }) {
 
   const totalRondas = Math.log2(nEquipos)
 
-  const fechaPrimeraRonda = fechasPorInstanciaId.get(nEquipos)
-  const primeraFechaBase =
-    fechaPrimeraRonda?.dia ??
-    [...fechas]
-      .map((f) => f.dia)
-      .filter((d): d is Date => d != null)
-      .sort((a, b) => a.getTime() - b.getTime())[0]
-
   const columnas = Array.from({ length: totalRondas }, (_, rIdx) => {
     const equiposEnRonda = nEquipos / Math.pow(2, rIdx)
     const instanciaId = equiposEnRonda
     const cantidadPartidos = equiposEnRonda / 2
     const fecha = fechasPorInstanciaId.get(instanciaId)
     const titulo = tituloColumna(equiposEnRonda, fecha, rIdx)
-    const diaMostrado =
-      fecha?.dia != null
-        ? fecha.dia
-        : primeraFechaBase != null
-          ? addWeeks(primeraFechaBase, rIdx)
-          : undefined
+    const diaMostrado = fecha?.dia ?? undefined
 
     const partidos: {
       local: string | null
@@ -214,10 +204,16 @@ export function FechasEliminacionDirecta({ zonaId }: { zonaId: number }) {
                 })
               : undefined
 
-          const tieneJornadas = (col.fecha?.jornadas?.length ?? 0) > 0
-          const primeraJornada = col.fecha?.jornadas?.[0]
-          const estadoBotonCargar =
-            estadoBotonCargarDesdePrimeraJornada(primeraJornada)
+          const jornadasCol = col.fecha?.jornadas ?? []
+          const hayJornadaCargable = jornadasCol.some(
+            (j) => j.tipo !== 'SinEquipos'
+          )
+          const primeraJornadaParaEstado = jornadasCol.find(
+            (j) => j.tipo !== 'SinEquipos'
+          )
+          const estadoBotonCargar = estadoBotonCargarDesdePrimeraJornada(
+            primeraJornadaParaEstado
+          )
 
           return (
             <div key={col.key} className='flex-1 min-w-[200px] text-center'>
@@ -225,14 +221,14 @@ export function FechasEliminacionDirecta({ zonaId }: { zonaId: number }) {
                 <h4 className='text-sm font-semibold min-w-0 truncate'>
                   {col.titulo}
                 </h4>
-                {tieneJornadas && (
+                {hayJornadaCargable && (
                   <BotonCargarResultados
                     estado={estadoBotonCargar}
                     onClick={() =>
                       setModalResultados({
                         tituloInstancia: col.titulo,
                         subtitulo: subtituloFecha,
-                        jornadas: col.fecha?.jornadas ?? []
+                        jornadas: jornadasCol
                       })
                     }
                   />
