@@ -22,6 +22,17 @@ import Icono from '@/design-system/ykn-ui/icono'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 
+/** Ambos resultados son numéricos (no vacíos), finitos y coinciden → se cargan penales. */
+function empateNumericoResultado(local: string, visitante: string): boolean {
+  const aStr = local.trim()
+  const bStr = visitante.trim()
+  if (aStr === '' || bStr === '') return false
+  const a = Number(aStr)
+  const b = Number(bStr)
+  if (!Number.isFinite(a) || !Number.isFinite(b)) return false
+  return a === b
+}
+
 function etiquetasLocalVisitanteJornada(j: JornadaDTO): {
   local: string
   visitante: string
@@ -61,7 +72,12 @@ export function ModalCargarResultados({
   const descripcion = [tituloInstancia, subtitulo].filter(Boolean).join(' · ')
 
   const [valores, setValores] = useState<
-    { local: string; visitante: string }[]
+    {
+      local: string
+      visitante: string
+      penalesLocal: string
+      penalesVisitante: string
+    }[]
   >([])
   const [resultadosVerificados, setResultadosVerificados] = useState(false)
 
@@ -72,10 +88,15 @@ export function ModalCargarResultados({
       return
     }
     setValores(
-      jornadas.map((j) => ({
-        local: j.partidos?.[0]?.resultadoLocal ?? '',
-        visitante: j.partidos?.[0]?.resultadoVisitante ?? ''
-      }))
+      jornadas.map((j) => {
+        const p = j.partidos?.[0]
+        return {
+          local: p?.resultadoLocal ?? '',
+          visitante: p?.resultadoVisitante ?? '',
+          penalesLocal: p?.penalesLocal ?? '',
+          penalesVisitante: p?.penalesVisitante ?? ''
+        }
+      })
     )
     setResultadosVerificados(
       jornadas.length > 0 && jornadas.every((j) => j.resultadosVerificados)
@@ -99,6 +120,11 @@ export function ModalCargarResultados({
         dto.categoria = p.categoria
         dto.resultadoLocal = valores[i]?.local ?? ''
         dto.resultadoVisitante = valores[i]?.visitante ?? ''
+        const row = valores[i]
+        const hayEmpate =
+          row != null && empateNumericoResultado(row.local, row.visitante)
+        dto.penalesLocal = hayEmpate ? (row.penalesLocal ?? '') : ''
+        dto.penalesVisitante = hayEmpate ? (row.penalesVisitante ?? '') : ''
         const body = new CargarResultadosDTO()
         body.jornadaId = j.id
         body.resultadosVerificados = resultadosVerificados
@@ -122,7 +148,18 @@ export function ModalCargarResultados({
       const next = [...prev]
       const row = next[i]
       if (!row) return prev
-      next[i] = { ...row, local }
+      const eraEmpate = empateNumericoResultado(row.local, row.visitante)
+      const seraEmpate = empateNumericoResultado(local, row.visitante)
+      if (eraEmpate && !seraEmpate) {
+        next[i] = {
+          ...row,
+          local,
+          penalesLocal: '',
+          penalesVisitante: ''
+        }
+      } else {
+        next[i] = { ...row, local }
+      }
       return next
     })
   }
@@ -132,7 +169,38 @@ export function ModalCargarResultados({
       const next = [...prev]
       const row = next[i]
       if (!row) return prev
-      next[i] = { ...row, visitante }
+      const eraEmpate = empateNumericoResultado(row.local, row.visitante)
+      const seraEmpate = empateNumericoResultado(row.local, visitante)
+      if (eraEmpate && !seraEmpate) {
+        next[i] = {
+          ...row,
+          visitante,
+          penalesLocal: '',
+          penalesVisitante: ''
+        }
+      } else {
+        next[i] = { ...row, visitante }
+      }
+      return next
+    })
+  }
+
+  function setPenalesLocal(i: number, penalesLocal: string) {
+    setValores((prev) => {
+      const next = [...prev]
+      const row = next[i]
+      if (!row) return prev
+      next[i] = { ...row, penalesLocal }
+      return next
+    })
+  }
+
+  function setPenalesVisitante(i: number, penalesVisitante: string) {
+    setValores((prev) => {
+      const next = [...prev]
+      const row = next[i]
+      if (!row) return prev
+      next[i] = { ...row, penalesVisitante }
       return next
     })
   }
@@ -174,6 +242,9 @@ export function ModalCargarResultados({
           ) : (
             jornadas.map((j, i) => {
               const { local, visitante } = etiquetasLocalVisitanteJornada(j)
+              const rl = valores[i]?.local ?? ''
+              const rv = valores[i]?.visitante ?? ''
+              const mostrarPenales = empateNumericoResultado(rl, rv)
               return (
                 <div
                   key={j.id ?? i}
@@ -182,10 +253,18 @@ export function ModalCargarResultados({
                   <span className='min-w-0 shrink font-medium text-right flex-1 basis-[8rem]'>
                     {local}
                   </span>
+                  {mostrarPenales && (
+                    <Input
+                      aria-label={`Penales local, ${local}`}
+                      className='h-9 w-16 shrink-0 text-center tabular-nums px-1'
+                      value={valores[i]?.penalesLocal ?? ''}
+                      onChange={(e) => setPenalesLocal(i, e.target.value)}
+                    />
+                  )}
                   <Input
                     aria-label={`Resultado local, ${local}`}
                     className='h-9 w-16 shrink-0 text-center tabular-nums px-1'
-                    value={valores[i]?.local ?? ''}
+                    value={rl}
                     onChange={(e) => setLocal(i, e.target.value)}
                   />
                   <span className='text-muted-foreground shrink-0 px-0.5'>
@@ -194,9 +273,17 @@ export function ModalCargarResultados({
                   <Input
                     aria-label={`Resultado visitante, ${visitante}`}
                     className='h-9 w-16 shrink-0 text-center tabular-nums px-1'
-                    value={valores[i]?.visitante ?? ''}
+                    value={rv}
                     onChange={(e) => setVisitante(i, e.target.value)}
                   />
+                  {mostrarPenales && (
+                    <Input
+                      aria-label={`Penales visitante, ${visitante}`}
+                      className='h-9 w-16 shrink-0 text-center tabular-nums px-1'
+                      value={valores[i]?.penalesVisitante ?? ''}
+                      onChange={(e) => setPenalesVisitante(i, e.target.value)}
+                    />
+                  )}
                   <span className='min-w-0 shrink font-medium text-left flex-1 basis-[8rem]'>
                     {visitante}
                   </span>

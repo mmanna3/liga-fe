@@ -8516,6 +8516,8 @@ export class PartidoDTO implements IPartidoDTO {
   categoriaId!: number
   resultadoLocal!: string | undefined
   resultadoVisitante!: string | undefined
+  penalesLocal?: string | undefined
+  penalesVisitante?: string | undefined
 
   constructor(data?: IPartidoDTO) {
     if (data) {
@@ -8533,6 +8535,8 @@ export class PartidoDTO implements IPartidoDTO {
       this.categoriaId = _data['categoriaId']
       this.resultadoLocal = _data['resultadoLocal']
       this.resultadoVisitante = _data['resultadoVisitante']
+      this.penalesLocal = _data['penalesLocal']
+      this.penalesVisitante = _data['penalesVisitante']
     }
   }
 
@@ -8550,6 +8554,8 @@ export class PartidoDTO implements IPartidoDTO {
     data['categoriaId'] = this.categoriaId
     data['resultadoLocal'] = this.resultadoLocal
     data['resultadoVisitante'] = this.resultadoVisitante
+    data['penalesLocal'] = this.penalesLocal
+    data['penalesVisitante'] = this.penalesVisitante
     return data
   }
 }
@@ -8560,6 +8566,8 @@ export interface IPartidoDTO {
   categoriaId: number
   resultadoLocal: string | undefined
   resultadoVisitante: string | undefined
+  penalesLocal?: string | undefined
+  penalesVisitante?: string | undefined
 }
 
 export class RechazarJugadorDTO implements IRechazarJugadorDTO {
