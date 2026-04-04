@@ -1,5 +1,6 @@
 import { api } from '@/api/api'
-import { FechaTodosContraTodosDTO, TipoDeFaseEnum } from '@/api/clients'
+import { fechasListarTodosContraTodos } from '@/api/fechas-zona'
+import { TipoDeFaseEnum } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
 import type { BotoneraProps } from '@/design-system/ykn-ui/botonera'
@@ -44,7 +45,7 @@ export default function Fixture() {
 
   const { data: fechasExistentes = [] } = useApiQuery({
     key: ['fechasAll', zonaId],
-    fn: () => api.fechasAll(zonaId),
+    fn: () => fechasListarTodosContraTodos(zonaId),
     activado: Number.isFinite(zonaId)
   })
 
@@ -114,7 +115,7 @@ export default function Fixture() {
     <FechasEliminacionDirecta zonaId={zonaId} />
   ) : fechasExistentes.length > 0 ? (
     <FechasTodosContraTodos
-      fechas={fechasExistentes as FechaTodosContraTodosDTO[]}
+      fechas={fechasExistentes}
       equipos={zona.equipos ?? []}
       zonaId={zonaId}
     />
