@@ -127,7 +127,7 @@ test.describe('Fixture', () => {
 
     let bodyEnviado: unknown = null
     await page.route(
-      '**/api/Zona/*/fechas/crear-fechas-masivamente',
+      '**/api/Zona/*/fechas/crear-fechas-todoscontratodos-masivamente',
       async (route) => {
         if (route.request().method() === 'POST') {
           bodyEnviado = JSON.parse(route.request().postData() ?? '[]')
