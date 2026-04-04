@@ -24,7 +24,7 @@ export default function EditarAgrupadorTorneo() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [nombre, setNombre] = useState('')
-  const [visibleEnApp, setVisibleEnApp] = useState(false)
+  const [esVisibleEnApp, setVisibleEnApp] = useState(false)
 
   const {
     data: agrupador,
@@ -48,7 +48,7 @@ export default function EditarAgrupadorTorneo() {
   useEffect(() => {
     if (agrupador) {
       setNombre(agrupador.nombre || '')
-      setVisibleEnApp(agrupador.visibleEnApp ?? false)
+      setVisibleEnApp(agrupador.esVisibleEnApp ?? false)
     }
   }, [agrupador])
 
@@ -57,7 +57,7 @@ export default function EditarAgrupadorTorneo() {
     if (!agrupador) return
     if (
       nombre === agrupador.nombre &&
-      visibleEnApp === (agrupador.visibleEnApp ?? false)
+      esVisibleEnApp === (agrupador.esVisibleEnApp ?? false)
     )
       return
 
@@ -65,7 +65,7 @@ export default function EditarAgrupadorTorneo() {
       new TorneoAgrupadorDTO({
         id: agrupador.id,
         nombre,
-        visibleEnApp
+        esVisibleEnApp
       })
     )
     navigate(rutasNavegacion.agrupadoresTorneo)
@@ -96,10 +96,10 @@ export default function EditarAgrupadorTorneo() {
             />
 
             <div className='flex items-center justify-between space-x-2'>
-              <Label htmlFor='visibleEnApp'>Visible en la app</Label>
+              <Label htmlFor='esVisibleEnApp'>Visible en la app</Label>
               <Switch
-                id='visibleEnApp'
-                checked={visibleEnApp}
+                id='esVisibleEnApp'
+                checked={esVisibleEnApp}
                 onCheckedChange={setVisibleEnApp}
               />
             </div>
@@ -137,7 +137,7 @@ export default function EditarAgrupadorTorneo() {
                 estaCargando={mutation.isPending}
                 disabled={
                   nombre === agrupador?.nombre &&
-                  visibleEnApp === (agrupador?.visibleEnApp ?? false)
+                  esVisibleEnApp === (agrupador?.esVisibleEnApp ?? false)
                 }
               >
                 Guardar

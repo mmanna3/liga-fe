@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom'
 export default function CrearAgrupadorTorneo() {
   const navigate = useNavigate()
   const [nombre, setNombre] = useState<string>('')
-  const [visibleEnApp, setVisibleEnApp] = useState<boolean>(true)
+  const [esVisibleEnApp, setVisibleEnApp] = useState<boolean>(true)
 
   const mutation = useApiMutation({
     fn: async (nuevoAgrupador: TorneoAgrupadorDTO) => {
@@ -31,7 +31,7 @@ export default function CrearAgrupadorTorneo() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    mutation.mutate(new TorneoAgrupadorDTO({ nombre, visibleEnApp }))
+    mutation.mutate(new TorneoAgrupadorDTO({ nombre, esVisibleEnApp }))
   }
 
   return (
@@ -51,7 +51,7 @@ export default function CrearAgrupadorTorneo() {
           />
           <div className='flex items-center justify-between space-x-2'>
             <div className='space-y-0.5'>
-              <Label htmlFor='visibleEnApp'>Es visible en la app</Label>
+              <Label htmlFor='esVisibleEnApp'>Es visible en la app</Label>
               <p className='text-sm text-muted-foreground'>
                 Si está activado, el agrupador se mostrará en la app (cuando
                 tenga torneos).
@@ -61,8 +61,8 @@ export default function CrearAgrupadorTorneo() {
               <TooltipTrigger asChild>
                 <span>
                   <Switch
-                    id='visibleEnApp'
-                    checked={visibleEnApp}
+                    id='esVisibleEnApp'
+                    checked={esVisibleEnApp}
                     onCheckedChange={setVisibleEnApp}
                   />
                 </span>

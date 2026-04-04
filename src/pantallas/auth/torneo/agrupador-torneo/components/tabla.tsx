@@ -62,10 +62,10 @@ export default function TablaAgrupadorTorneo({
         cell: ({ row }) => <span>{row.getValue('nombre')}</span>
       },
       {
-        accessorKey: 'visibleEnApp',
+        accessorKey: 'esVisibleEnApp',
         header: 'Visible en app',
         cell: ({ row }) => (
-          <span>{row.original.visibleEnApp ? 'Sí' : 'No'}</span>
+          <span>{row.original.esVisibleEnApp ? 'Sí' : 'No'}</span>
         )
       },
       {

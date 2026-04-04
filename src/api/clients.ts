@@ -6762,6 +6762,7 @@ export class CrearTorneoDTO implements ICrearTorneoDTO {
   id?: number
   nombre!: string
   anio!: number
+  esVisibleEnApp!: boolean
   torneoAgrupadorId?: number
   torneoAgrupadorNombre?: string | undefined
   sePuedeEditar?: boolean
@@ -6783,6 +6784,7 @@ export class CrearTorneoDTO implements ICrearTorneoDTO {
       this.id = _data['id']
       this.nombre = _data['nombre']
       this.anio = _data['anio']
+      this.esVisibleEnApp = _data['esVisibleEnApp']
       this.torneoAgrupadorId = _data['torneoAgrupadorId']
       this.torneoAgrupadorNombre = _data['torneoAgrupadorNombre']
       this.sePuedeEditar = _data['sePuedeEditar']
@@ -6813,6 +6815,7 @@ export class CrearTorneoDTO implements ICrearTorneoDTO {
     data['id'] = this.id
     data['nombre'] = this.nombre
     data['anio'] = this.anio
+    data['esVisibleEnApp'] = this.esVisibleEnApp
     data['torneoAgrupadorId'] = this.torneoAgrupadorId
     data['torneoAgrupadorNombre'] = this.torneoAgrupadorNombre
     data['sePuedeEditar'] = this.sePuedeEditar
@@ -6835,6 +6838,7 @@ export interface ICrearTorneoDTO {
   id?: number
   nombre: string
   anio: number
+  esVisibleEnApp: boolean
   torneoAgrupadorId?: number
   torneoAgrupadorNombre?: string | undefined
   sePuedeEditar?: boolean
@@ -7511,7 +7515,7 @@ export class FaseDTO implements IFaseDTO {
   tipoDeFaseNombre?: string | undefined
   estadoFaseId?: number
   estadoFaseNombre?: string | undefined
-  esVisibleEnApp?: boolean
+  esVisibleEnApp!: boolean
   sePuedeEditar?: boolean
   zonas?: ZonaDeFaseDTO[] | undefined
 
@@ -7580,7 +7584,7 @@ export interface IFaseDTO {
   tipoDeFaseNombre?: string | undefined
   estadoFaseId?: number
   estadoFaseNombre?: string | undefined
-  esVisibleEnApp?: boolean
+  esVisibleEnApp: boolean
   sePuedeEditar?: boolean
   zonas?: ZonaDeFaseDTO[] | undefined
 }
@@ -7591,7 +7595,6 @@ export class FechaDTO implements IFechaDTO {
   zonaId?: number
   esVisibleEnApp!: boolean
   jornadas?: JornadaDTO[] | undefined
-  numero?: number | undefined
 
   constructor(data?: IFechaDTO) {
     if (data) {
@@ -7615,7 +7618,6 @@ export class FechaDTO implements IFechaDTO {
         for (let item of _data['jornadas'])
           this.jornadas!.push(JornadaDTO.fromJS(item))
       }
-      this.numero = _data['numero'] ?? _data['Numero']
     }
   }
 
@@ -7636,7 +7638,6 @@ export class FechaDTO implements IFechaDTO {
       data['jornadas'] = []
       for (let item of this.jornadas) data['jornadas'].push(item.toJSON())
     }
-    data['numero'] = this.numero
     return data
   }
 }
@@ -7647,7 +7648,6 @@ export interface IFechaDTO {
   zonaId?: number
   esVisibleEnApp: boolean
   jornadas?: JornadaDTO[] | undefined
-  numero?: number | undefined
 }
 
 export class FechaEliminacionDirectaDTO implements IFechaEliminacionDirectaDTO {
@@ -8698,7 +8698,7 @@ export enum TipoDeFaseEnum {
 export class TorneoAgrupadorDTO implements ITorneoAgrupadorDTO {
   id?: number
   nombre!: string
-  visibleEnApp?: boolean
+  esVisibleEnApp!: boolean
   cantidadDeTorneos?: number
   torneos?: TorneoDTO[] | undefined
 
@@ -8715,7 +8715,7 @@ export class TorneoAgrupadorDTO implements ITorneoAgrupadorDTO {
     if (_data) {
       this.id = _data['id']
       this.nombre = _data['nombre']
-      this.visibleEnApp = _data['visibleEnApp']
+      this.esVisibleEnApp = _data['esVisibleEnApp']
       this.cantidadDeTorneos = _data['cantidadDeTorneos']
       if (Array.isArray(_data['torneos'])) {
         this.torneos = [] as any
@@ -8736,7 +8736,7 @@ export class TorneoAgrupadorDTO implements ITorneoAgrupadorDTO {
     data = typeof data === 'object' ? data : {}
     data['id'] = this.id
     data['nombre'] = this.nombre
-    data['visibleEnApp'] = this.visibleEnApp
+    data['esVisibleEnApp'] = this.esVisibleEnApp
     data['cantidadDeTorneos'] = this.cantidadDeTorneos
     if (Array.isArray(this.torneos)) {
       data['torneos'] = []
@@ -8749,7 +8749,7 @@ export class TorneoAgrupadorDTO implements ITorneoAgrupadorDTO {
 export interface ITorneoAgrupadorDTO {
   id?: number
   nombre: string
-  visibleEnApp?: boolean
+  esVisibleEnApp: boolean
   cantidadDeTorneos?: number
   torneos?: TorneoDTO[] | undefined
 }
@@ -8810,6 +8810,7 @@ export class TorneoDTO implements ITorneoDTO {
   id?: number
   nombre!: string
   anio!: number
+  esVisibleEnApp!: boolean
   torneoAgrupadorId?: number
   torneoAgrupadorNombre?: string | undefined
   sePuedeEditar?: boolean
@@ -8830,6 +8831,7 @@ export class TorneoDTO implements ITorneoDTO {
       this.id = _data['id']
       this.nombre = _data['nombre']
       this.anio = _data['anio']
+      this.esVisibleEnApp = _data['esVisibleEnApp']
       this.torneoAgrupadorId = _data['torneoAgrupadorId']
       this.torneoAgrupadorNombre = _data['torneoAgrupadorNombre']
       this.sePuedeEditar = _data['sePuedeEditar']
@@ -8857,6 +8859,7 @@ export class TorneoDTO implements ITorneoDTO {
     data['id'] = this.id
     data['nombre'] = this.nombre
     data['anio'] = this.anio
+    data['esVisibleEnApp'] = this.esVisibleEnApp
     data['torneoAgrupadorId'] = this.torneoAgrupadorId
     data['torneoAgrupadorNombre'] = this.torneoAgrupadorNombre
     data['sePuedeEditar'] = this.sePuedeEditar
@@ -8876,6 +8879,7 @@ export interface ITorneoDTO {
   id?: number
   nombre: string
   anio: number
+  esVisibleEnApp: boolean
   torneoAgrupadorId?: number
   torneoAgrupadorNombre?: string | undefined
   sePuedeEditar?: boolean

@@ -67,7 +67,8 @@ export function useDetalleTorneo() {
         categorias: categoriasACategoriaDto(categorias).map(
           (c) => new TorneoCategoriaDTO({ ...c, torneoId })
         ),
-        fases: undefined
+        fases: undefined,
+        esVisibleEnApp: true
       })
       await api.torneoPUT(torneoId, body)
     },

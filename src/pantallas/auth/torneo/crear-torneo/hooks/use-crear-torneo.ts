@@ -125,7 +125,8 @@ export function useCrearTorneo() {
           anio: parseInt(datos.temporada, 10),
           torneoAgrupadorId: datos.agrupadorId,
           categorias: categoriasValidas,
-          primeraFase
+          primeraFase,
+          esVisibleEnApp: true
         })
       )
     },

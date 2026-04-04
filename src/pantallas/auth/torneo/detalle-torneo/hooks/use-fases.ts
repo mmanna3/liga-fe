@@ -136,7 +136,8 @@ export function useFases({
         categorias: categoriasACategoriaDto(categorias).map(
           (c) => new TorneoCategoriaDTO({ ...c, torneoId })
         ),
-        fases: fasesValidas.map((f) => new FaseDTO({ ...f, torneoId }))
+        fases: fasesValidas.map((f) => new FaseDTO({ ...f, torneoId })),
+        esVisibleEnApp: true
       })
       await api.torneoPUT(torneoId, body)
     },
