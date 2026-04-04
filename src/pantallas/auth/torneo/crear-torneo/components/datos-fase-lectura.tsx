@@ -73,7 +73,7 @@ export function DatosFaseLectura({
   faseId
 }: DatosFaseLecturaProps) {
   return (
-    <div className=''>
+    <div className='mt-3'>
       <div>
         <p className='font-medium text-muted-foreground text-xs'>
           {formato || '—'}

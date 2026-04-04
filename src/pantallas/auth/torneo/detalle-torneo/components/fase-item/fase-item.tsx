@@ -80,7 +80,7 @@ export function FaseItem({
         <Boton
           type='button'
           variant='outline'
-          className='h-10 w-10 min-w-10 p-0 border-none'
+          className='h-8 w-8 min-w-8 p-0 border-none shadow-none'
           estaCargando={estaGuardando}
           aria-label='Zonas de la fase'
           onClick={() =>
@@ -106,8 +106,8 @@ export function FaseItem({
       variant='outline'
       className={
         fase.sePuedeEditar
-          ? 'h-10 w-10 min-w-10 p-0 border-none text-destructive hover:bg-destructive/10 hover:text-destructive'
-          : 'h-10 w-10 min-w-10 p-0 border-none hover:bg-muted/50 hover:text-muted-foreground'
+          ? 'h-8 w-8 min-w-8 p-0 border-none shadow-none text-destructive hover:text-destructive'
+          : 'h-8 w-8 min-w-8 p-0 border-none shadow-none'
       }
       onClick={
         fase.sePuedeEditar ? undefined : () => setMostrarNoSePuedeEliminar(true)
@@ -127,7 +127,7 @@ export function FaseItem({
           alConfirmar={(v: string) => cambiarNombreMutation.mutate(v)}
           soloLectura={false}
         />
-        <div className='flex gap-2 shrink-0'>
+        <div className='flex gap-0 shrink-0'>
           {botonZonas}
           {fase.sePuedeEditar ? (
             <ModalEliminacion

@@ -1,4 +1,8 @@
-import { TorneoCategoriaDTO, TorneoDTO } from '@/api/clients'
+import {
+  CambiarVisibilidadTorneoEnAppDTO,
+  TorneoCategoriaDTO,
+  TorneoDTO
+} from '@/api/clients'
 import { api } from '@/api/api'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
@@ -68,7 +72,7 @@ export function useDetalleTorneo() {
           (c) => new TorneoCategoriaDTO({ ...c, torneoId })
         ),
         fases: undefined,
-        esVisibleEnApp: true
+        esVisibleEnApp: torneo.esVisibleEnApp
       })
       await api.torneoPUT(torneoId, body)
     },
@@ -77,6 +81,20 @@ export function useDetalleTorneo() {
       setEditando(false)
     },
     mensajeDeExito: 'Torneo actualizado correctamente'
+  })
+
+  const toggleVisibilidadAppMutation = useApiMutation<void>({
+    fn: async () => {
+      if (!torneo) return
+      await api.torneoCambiarVisibilidadEnApp(
+        torneoId,
+        new CambiarVisibilidadTorneoEnAppDTO({
+          esVisibleEnApp: !torneo.esVisibleEnApp
+        })
+      )
+    },
+    antesDeMensajeExito: () => refetch(),
+    mensajeDeExito: 'Visibilidad en la app actualizada'
   })
 
   return {
@@ -98,6 +116,7 @@ export function useDetalleTorneo() {
     setCategorias,
     handleCancelarEdicion,
     eliminarMutation,
-    guardarDatosBasicosMutation
+    guardarDatosBasicosMutation,
+    toggleVisibilidadAppMutation
   }
 }

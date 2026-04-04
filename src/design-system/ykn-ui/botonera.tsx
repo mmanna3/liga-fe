@@ -41,6 +41,8 @@ export interface IconoBotonera {
     eliminarTexto?: string
     estaCargando?: boolean
   }
+  /** Opcional. Spinner y botón deshabilitado (p. ej. mutación en curso). */
+  estaCargando?: boolean
 }
 
 export interface BotoneraProps {
@@ -64,7 +66,7 @@ function IconoBoton({ item }: { item: IconoBotonera }) {
       variant='outline'
       aria-label={item.tooltip}
       className={cn(
-        'h-10 w-10 min-w-10 p-0',
+        'h-8 w-8 min-w-8 p-0 border-none shadow-none',
         esEliminar &&
           puedeEliminar &&
           'border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive'
@@ -76,7 +78,7 @@ function IconoBoton({ item }: { item: IconoBotonera }) {
             ? undefined
             : item.alApretar
       }
-      estaCargando={item.modalEliminacion?.estaCargando}
+      estaCargando={item.estaCargando ?? item.modalEliminacion?.estaCargando}
     >
       <Icono nombre={iconoNombre} className='h-5 w-5 shrink-0' />
     </Boton>
@@ -152,7 +154,7 @@ export default function Botonera({ iconos, children }: BotoneraProps) {
   return (
     <div className='flex flex-row items-start justify-between gap-4'>
       <div className='flex flex-col gap-2'>{children}</div>
-      <div className='flex gap-2 shrink-0'>
+      <div className='flex gap-0 shrink-0 mt-1'>
         {iconos.map((item, index) => {
           const boton = <IconoBoton key={index} item={item} />
           const esEliminar = !!item.modalEliminacion

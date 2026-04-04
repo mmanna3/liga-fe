@@ -4894,6 +4894,60 @@ export class Client {
   }
 
   /**
+   * @param body (optional)
+   * @return OK
+   */
+  torneoCambiarVisibilidadEnApp(
+    id: number,
+    body: CambiarVisibilidadTorneoEnAppDTO | undefined
+  ): Promise<void> {
+    let url_ = this.baseUrl + '/api/Torneo/{id}/visibilidad-en-app'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processTorneoCambiarVisibilidadEnApp(_response)
+    })
+  }
+
+  protected processTorneoCambiarVisibilidadEnApp(
+    response: Response
+  ): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
    * @return OK
    */
   torneoAll(): Promise<TorneoDTO[]> {
@@ -6420,6 +6474,42 @@ export class CambiarPasswordDTO implements ICambiarPasswordDTO {
 export interface ICambiarPasswordDTO {
   usuario: string
   passwordNuevo: string
+}
+
+export class CambiarVisibilidadTorneoEnAppDTO implements ICambiarVisibilidadTorneoEnAppDTO {
+  esVisibleEnApp?: boolean
+
+  constructor(data?: ICambiarVisibilidadTorneoEnAppDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.esVisibleEnApp = _data['esVisibleEnApp']
+    }
+  }
+
+  static fromJS(data: any): CambiarVisibilidadTorneoEnAppDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new CambiarVisibilidadTorneoEnAppDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['esVisibleEnApp'] = this.esVisibleEnApp
+    return data
+  }
+}
+
+export interface ICambiarVisibilidadTorneoEnAppDTO {
+  esVisibleEnApp?: boolean
 }
 
 export class CargarResultadosDTO implements ICargarResultadosDTO {

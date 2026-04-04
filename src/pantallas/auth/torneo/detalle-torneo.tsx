@@ -30,7 +30,8 @@ export default function DetalleTorneo() {
     categorias,
     setCategorias,
     eliminarMutation,
-    guardarDatosBasicosMutation
+    guardarDatosBasicosMutation,
+    toggleVisibilidadAppMutation
   } = detalle
 
   const fases = useFases({
@@ -77,6 +78,17 @@ export default function DetalleTorneo() {
       contenidoEnCard={false}
       botonera={{
         iconos: [
+          {
+            icono: torneo.esVisibleEnApp
+              ? ('Visible' as const)
+              : ('NoVisible' as const),
+            alApretar: () => toggleVisibilidadAppMutation.mutate(),
+            tooltip: torneo.esVisibleEnApp
+              ? 'El torneo es visible en la app'
+              : 'El torneo no es visible en la app',
+            visibleSoloParaAdmin: true,
+            estaCargando: toggleVisibilidadAppMutation.isPending
+          },
           {
             icono: 'Editar' as const,
             alApretar: () => setEditando(true),
