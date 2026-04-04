@@ -1,10 +1,7 @@
-import {
-  CambiarVisibilidadTorneoEnAppDTO,
-  TorneoCategoriaDTO,
-  TorneoDTO
-} from '@/api/clients'
+import { TorneoCategoriaDTO, TorneoDTO } from '@/api/clients'
 import { api } from '@/api/api'
 import useApiMutation from '@/api/hooks/use-api-mutation'
+import { useToggleVisibilidadTorneoEnApp } from '@/api/hooks/use-visibilidad-en-app'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useEffect, useState } from 'react'
@@ -83,19 +80,11 @@ export function useDetalleTorneo() {
     mensajeDeExito: 'Torneo actualizado correctamente'
   })
 
-  const toggleVisibilidadAppMutation = useApiMutation<void>({
-    fn: async () => {
-      if (!torneo) return
-      await api.torneoCambiarVisibilidadEnApp(
-        torneoId,
-        new CambiarVisibilidadTorneoEnAppDTO({
-          esVisibleEnApp: !torneo.esVisibleEnApp
-        })
-      )
-    },
-    antesDeMensajeExito: () => refetch(),
-    mensajeDeExito: 'Visibilidad en la app actualizada'
-  })
+  const toggleVisibilidadAppMutation = useToggleVisibilidadTorneoEnApp(
+    torneoId,
+    torneo?.esVisibleEnApp,
+    refetch
+  )
 
   return {
     torneo,

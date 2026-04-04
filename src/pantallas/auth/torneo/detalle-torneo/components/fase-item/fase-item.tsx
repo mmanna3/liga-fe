@@ -1,4 +1,5 @@
 import { TipoDeFaseEnum, type FaseDTO } from '@/api/clients'
+import { useToggleVisibilidadFaseEnApp } from '@/api/hooks/use-visibilidad-en-app'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -14,6 +15,7 @@ import {
   TooltipTrigger
 } from '@/design-system/base-ui/tooltip'
 import ModalEliminacion from '@/design-system/modal-eliminacion'
+import { VisibleSoloParaAdmin } from '@/design-system/visible-solo-para-admin'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import Icono from '@/design-system/ykn-ui/icono'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
@@ -62,6 +64,11 @@ export function FaseItem({
     torneoId,
     faseOriginal
   })
+  const toggleVisibilidadFaseMutation = useToggleVisibilidadFaseEnApp(
+    torneoId,
+    faseOriginal?.id,
+    faseOriginal?.esVisibleEnApp
+  )
 
   const faseId = fase.id ?? 0
   const pathZonas = `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${faseId}/zonas`
@@ -73,6 +80,46 @@ export function FaseItem({
   /** Con zonas, el formato no se edita (en ED el backend a veces sigue marcando la fase como editable). */
   const formatoYLecturaZonas =
     !fase.sePuedeEditar || (esEliminacionDirecta && tieneZonas)
+
+  const esVisibleFaseEnApp = faseOriginal?.esVisibleEnApp ?? true
+
+  const botonVisibilidadEnApp =
+    faseOriginal?.id != null ? (
+      <VisibleSoloParaAdmin>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Boton
+              type='button'
+              variant='outline'
+              className='h-8 w-8 min-w-8 p-0 border-none shadow-none'
+              estaCargando={toggleVisibilidadFaseMutation.isPending}
+              aria-label={
+                esVisibleFaseEnApp
+                  ? 'Fase visible en la app'
+                  : 'Fase no visible en la app'
+              }
+              onClick={() => toggleVisibilidadFaseMutation.mutate()}
+            >
+              <Icono
+                nombre={esVisibleFaseEnApp ? 'Visible' : 'NoVisible'}
+                className='h-5 w-5 shrink-0'
+              />
+            </Boton>
+          </TooltipTrigger>
+          <TooltipContent
+            side='bottom'
+            className='max-w-xs px-4 py-3'
+            sideOffset={8}
+          >
+            <p>
+              {esVisibleFaseEnApp
+                ? 'La fase es visible en la app'
+                : 'La fase no es visible en la app'}
+            </p>
+          </TooltipContent>
+        </Tooltip>
+      </VisibleSoloParaAdmin>
+    ) : null
 
   const botonZonas = (
     <Tooltip>
@@ -128,6 +175,7 @@ export function FaseItem({
           soloLectura={false}
         />
         <div className='flex gap-0 shrink-0'>
+          {botonVisibilidadEnApp}
           {botonZonas}
           {fase.sePuedeEditar ? (
             <ModalEliminacion

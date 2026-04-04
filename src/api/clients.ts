@@ -2461,6 +2461,65 @@ export class Client {
   }
 
   /**
+   * @param body (optional)
+   * @return OK
+   */
+  fasesCambiarVisibilidadEnApp(
+    padreId: number,
+    id: number,
+    body: CambiarVisibilidadEnAppDTO | undefined
+  ): Promise<void> {
+    let url_ =
+      this.baseUrl + '/api/Torneo/{padreId}/fases/{id}/visibilidad-en-app'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processFasesCambiarVisibilidadEnApp(_response)
+    })
+  }
+
+  protected processFasesCambiarVisibilidadEnApp(
+    response: Response
+  ): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
    * @return OK
    */
   fasesGET(padreId: number, id: number): Promise<FaseDTO> {
@@ -4899,7 +4958,7 @@ export class Client {
    */
   torneoCambiarVisibilidadEnApp(
     id: number,
-    body: CambiarVisibilidadTorneoEnAppDTO | undefined
+    body: CambiarVisibilidadEnAppDTO | undefined
   ): Promise<void> {
     let url_ = this.baseUrl + '/api/Torneo/{id}/visibilidad-en-app'
     if (id === undefined || id === null)
@@ -6476,10 +6535,10 @@ export interface ICambiarPasswordDTO {
   passwordNuevo: string
 }
 
-export class CambiarVisibilidadTorneoEnAppDTO implements ICambiarVisibilidadTorneoEnAppDTO {
+export class CambiarVisibilidadEnAppDTO implements ICambiarVisibilidadEnAppDTO {
   esVisibleEnApp?: boolean
 
-  constructor(data?: ICambiarVisibilidadTorneoEnAppDTO) {
+  constructor(data?: ICambiarVisibilidadEnAppDTO) {
     if (data) {
       for (var property in data) {
         if (data.hasOwnProperty(property))
@@ -6494,9 +6553,9 @@ export class CambiarVisibilidadTorneoEnAppDTO implements ICambiarVisibilidadTorn
     }
   }
 
-  static fromJS(data: any): CambiarVisibilidadTorneoEnAppDTO {
+  static fromJS(data: any): CambiarVisibilidadEnAppDTO {
     data = typeof data === 'object' ? data : {}
-    let result = new CambiarVisibilidadTorneoEnAppDTO()
+    let result = new CambiarVisibilidadEnAppDTO()
     result.init(data)
     return result
   }
@@ -6508,7 +6567,7 @@ export class CambiarVisibilidadTorneoEnAppDTO implements ICambiarVisibilidadTorn
   }
 }
 
-export interface ICambiarVisibilidadTorneoEnAppDTO {
+export interface ICambiarVisibilidadEnAppDTO {
   esVisibleEnApp?: boolean
 }
 
