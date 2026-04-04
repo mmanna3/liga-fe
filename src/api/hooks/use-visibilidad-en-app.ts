@@ -48,3 +48,28 @@ export function useToggleVisibilidadFaseEnApp(
     mensajeDeExito: MENSAJE
   })
 }
+
+/** Toggle de visibilidad en app de una fecha (PUT dedicado; invalida el listado de fechas de la zona). */
+export function useToggleVisibilidadFechaEnApp(
+  zonaId: number,
+  fechaId: number | undefined,
+  esVisibleEnApp: boolean | undefined
+) {
+  const queryClient = useQueryClient()
+
+  return useApiMutation<void>({
+    fn: async () => {
+      if (fechaId === undefined) return
+      const actual = esVisibleEnApp ?? true
+      await api.fechasCambiarVisibilidadEnApp(
+        zonaId,
+        fechaId,
+        new CambiarVisibilidadEnAppDTO({ esVisibleEnApp: !actual })
+      )
+    },
+    antesDeMensajeExito: () => {
+      queryClient.invalidateQueries({ queryKey: ['fechasAll', zonaId] })
+    },
+    mensajeDeExito: MENSAJE
+  })
+}

@@ -1,7 +1,14 @@
 import type { FechaTodosContraTodosDTO, JornadaDTO } from '@/api/clients'
 import { LocalVisitanteEnum } from '@/api/clients'
+import { useToggleVisibilidadFechaEnApp } from '@/api/hooks/use-visibilidad-en-app'
 import { Button } from '@/design-system/base-ui/button'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@/design-system/base-ui/tooltip'
 import ModalEliminacion from '@/design-system/modal-eliminacion'
+import { VisibleSoloParaAdmin } from '@/design-system/visible-solo-para-admin'
 import Icono from '@/design-system/ykn-ui/icono'
 import { useState } from 'react'
 import {
@@ -86,6 +93,12 @@ export function FechaModoLectura({
   mostrarBotonEliminar
 }: FechaModoLecturaProps) {
   const diaDisplay = formatDia(fecha.dia)
+  const toggleVisibilidadFechaMutation = useToggleVisibilidadFechaEnApp(
+    zonaId,
+    fecha.id,
+    fecha.esVisibleEnApp
+  )
+  const esVisibleFechaEnApp = fecha.esVisibleEnApp ?? true
   const [modalCargarResultadosAbierto, setModalCargarResultadosAbierto] =
     useState(false)
   const [jornadaParaResultados, setJornadaParaResultados] =
@@ -103,6 +116,50 @@ export function FechaModoLectura({
           )}
         </div>
         <div className='flex items-center gap-1'>
+          {fecha.id != null && (
+            <VisibleSoloParaAdmin>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type='button'
+                    variant='ghost'
+                    size='icon'
+                    className='h-7 w-7'
+                    disabled={toggleVisibilidadFechaMutation.isPending}
+                    aria-label={
+                      esVisibleFechaEnApp
+                        ? 'Fecha visible en la app'
+                        : 'Fecha no visible en la app'
+                    }
+                    onClick={() => toggleVisibilidadFechaMutation.mutate()}
+                  >
+                    {toggleVisibilidadFechaMutation.isPending ? (
+                      <Icono
+                        nombre='Cargando'
+                        className='size-3.5 animate-spin text-muted-foreground'
+                      />
+                    ) : (
+                      <Icono
+                        nombre={esVisibleFechaEnApp ? 'Visible' : 'NoVisible'}
+                        className='size-3.5 text-muted-foreground'
+                      />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  side='bottom'
+                  className='max-w-xs px-3 py-2'
+                  sideOffset={8}
+                >
+                  <p>
+                    {esVisibleFechaEnApp
+                      ? 'La fecha es visible en la app'
+                      : 'La fecha no es visible en la app'}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </VisibleSoloParaAdmin>
+          )}
           <Button
             variant='ghost'
             size='icon'
