@@ -236,6 +236,151 @@ const FECHA_ZONA_CON_DIA = {
   dia: '2026-05-15T00:00:00'
 }
 
+const FECHA_ZONA_CON_RESULTADOS = {
+  id: 1,
+  numero: 1,
+  dia: null,
+  zonaId: 1,
+  esVisibleEnApp: false,
+  jornadas: [
+    {
+      id: 1,
+      tipo: 'Normal',
+      resultadosVerificados: false,
+      fechaId: 1,
+      localId: 1,
+      visitanteId: 2,
+      local: 'Infantil A',
+      visitante: 'Infantil B',
+      partidos: [
+        { id: 1, categoriaId: 1, categoria: 'Sub 12', resultadoLocal: '2', resultadoVisitante: '1' }
+      ]
+    }
+  ]
+}
+
+const FECHA_ZONA_RESULTADOS_VERIFICADOS = {
+  id: 1,
+  numero: 1,
+  dia: null,
+  zonaId: 1,
+  esVisibleEnApp: false,
+  jornadas: [
+    {
+      id: 1,
+      tipo: 'Normal',
+      resultadosVerificados: true,
+      fechaId: 1,
+      localId: 1,
+      visitanteId: 2,
+      local: 'Infantil A',
+      visitante: 'Infantil B',
+      partidos: [
+        { id: 1, categoriaId: 1, categoria: 'Sub 12', resultadoLocal: '2', resultadoVisitante: '1' }
+      ]
+    }
+  ]
+}
+
+// Zona con 3 equipos (cantidad inválida para eliminación directa)
+const ZONA_FIXTURE_ELIMINACION_3 = {
+  id: 2,
+  nombre: 'Zona B',
+  equipos: [
+    { id: 1, nombre: 'Infantil A', club: 'Club Defensores del Norte', codigo: 'A001' },
+    { id: 2, nombre: 'Infantil B', club: 'Atlético San Martín', codigo: 'B002' },
+    { id: 3, nombre: 'Infantil C', club: 'Club Norte', codigo: 'C003' }
+  ]
+}
+
+// Zona con 4 equipos (válida para eliminación directa)
+const ZONA_FIXTURE_ELIMINACION = {
+  id: 2,
+  nombre: 'Zona B',
+  equipos: [
+    { id: 1, nombre: 'Infantil A', club: 'Club Defensores del Norte', codigo: 'A001' },
+    { id: 2, nombre: 'Infantil B', club: 'Atlético San Martín', codigo: 'B002' },
+    { id: 3, nombre: 'Infantil C', club: 'Club Norte', codigo: 'C003' },
+    { id: 4, nombre: 'Infantil D', club: 'Club Sur', codigo: 'D004' }
+  ]
+}
+
+const TORNEO_CON_FASE_ELIMINACION = {
+  id: 1,
+  nombre: 'Torneo Apertura 2026',
+  anio: 2026,
+  torneoAgrupadorId: 1,
+  torneoAgrupadorNombre: 'Liga Infantil',
+  sePuedeEditar: false,
+  categorias: [
+    { id: 1, nombre: 'Sub 12', anioDesde: 2014, anioHasta: 2015, torneoId: 1 }
+  ],
+  fases: [
+    {
+      id: 200,
+      numero: 1,
+      nombre: 'Segunda Fase',
+      tipoDeFase: 2,
+      tipoDeFaseNombre: 'Eliminación directa',
+      sePuedeEditar: false,
+      zonas: [],
+      estadoFaseId: 100
+    }
+  ]
+}
+
+// Llave de 4 equipos: Semifinal (instanciaId=4) + Final vacía (instanciaId=2)
+const FECHA_ELIMINACION_SEMIFINAL = {
+  id: 10,
+  instanciaId: 4,
+  instanciaNombre: 'Semifinal',
+  dia: null,
+  zonaId: 2,
+  esVisibleEnApp: false,
+  jornadas: [
+    {
+      id: 10,
+      tipo: 'Normal',
+      resultadosVerificados: false,
+      fechaId: 10,
+      localId: 1,
+      visitanteId: 2,
+      local: 'Infantil A',
+      visitante: 'Infantil B',
+      partidos: [{ id: 10, categoriaId: 1, categoria: 'Sub 12', resultadoLocal: '', resultadoVisitante: '' }]
+    },
+    {
+      id: 11,
+      tipo: 'Normal',
+      resultadosVerificados: false,
+      fechaId: 10,
+      localId: 3,
+      visitanteId: 4,
+      local: 'Infantil C',
+      visitante: 'Infantil D',
+      partidos: [{ id: 11, categoriaId: 1, categoria: 'Sub 12', resultadoLocal: '', resultadoVisitante: '' }]
+    }
+  ]
+}
+
+const FECHA_ELIMINACION_FINAL = {
+  id: 11,
+  instanciaId: 2,
+  instanciaNombre: 'Final',
+  dia: null,
+  zonaId: 2,
+  esVisibleEnApp: false,
+  jornadas: [
+    {
+      id: 12,
+      tipo: 'SinEquipos',
+      resultadosVerificados: false,
+      fechaId: 11,
+      partidos: [{ id: 12, categoriaId: 1, categoria: 'Sub 12', resultadoLocal: '', resultadoVisitante: '' }]
+    }
+  ]
+}
+
 const TORNEO_1 = {
   id: 1,
   nombre: 'Torneo Apertura 2026',
@@ -440,7 +585,12 @@ const ROUTES = [
       fixture_sin_fechas: TORNEO_CON_FASES,
       fixture_algoritmo_sin_configurar: TORNEO_CON_FASES,
       fixture_con_fechas: TORNEO_CON_FASES,
-      fixture_con_fechas_con_dia: TORNEO_CON_FASES
+      fixture_con_fechas_con_dia: TORNEO_CON_FASES,
+      fixture_con_fechas_con_resultados: TORNEO_CON_FASES,
+      fixture_con_fechas_resultados_verificados: TORNEO_CON_FASES,
+      fixture_eliminacion_directa_3_equipos: TORNEO_CON_FASE_ELIMINACION,
+      fixture_eliminacion_directa_sin_fechas: TORNEO_CON_FASE_ELIMINACION,
+      fixture_eliminacion_directa_con_fechas: TORNEO_CON_FASE_ELIMINACION
     }
   },
   // Torneos — crear
@@ -544,7 +694,12 @@ const ROUTES = [
       fixture_sin_fechas: [ZONA_FIXTURE],
       fixture_algoritmo_sin_configurar: [ZONA_FIXTURE],
       fixture_con_fechas: [ZONA_FIXTURE],
-      fixture_con_fechas_con_dia: [ZONA_FIXTURE]
+      fixture_con_fechas_con_dia: [ZONA_FIXTURE],
+      fixture_con_fechas_con_resultados: [ZONA_FIXTURE],
+      fixture_con_fechas_resultados_verificados: [ZONA_FIXTURE],
+      fixture_eliminacion_directa_3_equipos: [ZONA_FIXTURE_ELIMINACION_3],
+      fixture_eliminacion_directa_sin_fechas: [ZONA_FIXTURE_ELIMINACION],
+      fixture_eliminacion_directa_con_fechas: [ZONA_FIXTURE_ELIMINACION]
     }
   },
   // Zonas — crear masivamente
@@ -569,7 +724,12 @@ const ROUTES = [
       fixture_sin_fechas: [ALGORITMO_2_EQUIPOS],
       fixture_algoritmo_sin_configurar: [ALGORITMO_2_EQUIPOS_SIN_FECHAS],
       fixture_con_fechas: [ALGORITMO_2_EQUIPOS],
-      fixture_con_fechas_con_dia: [ALGORITMO_2_EQUIPOS]
+      fixture_con_fechas_con_dia: [ALGORITMO_2_EQUIPOS],
+      fixture_con_fechas_con_resultados: [ALGORITMO_2_EQUIPOS],
+      fixture_con_fechas_resultados_verificados: [ALGORITMO_2_EQUIPOS],
+      fixture_eliminacion_directa_3_equipos: [],
+      fixture_eliminacion_directa_sin_fechas: [],
+      fixture_eliminacion_directa_con_fechas: []
     }
   },
 
@@ -582,7 +742,12 @@ const ROUTES = [
       fixture_sin_fechas: [],
       fixture_algoritmo_sin_configurar: [],
       fixture_con_fechas: [FECHA_ZONA_1],
-      fixture_con_fechas_con_dia: [FECHA_ZONA_CON_DIA]
+      fixture_con_fechas_con_dia: [FECHA_ZONA_CON_DIA],
+      fixture_con_fechas_con_resultados: [FECHA_ZONA_CON_RESULTADOS],
+      fixture_con_fechas_resultados_verificados: [FECHA_ZONA_RESULTADOS_VERIFICADOS],
+      fixture_eliminacion_directa_3_equipos: [],
+      fixture_eliminacion_directa_sin_fechas: [],
+      fixture_eliminacion_directa_con_fechas: [FECHA_ELIMINACION_SEMIFINAL, FECHA_ELIMINACION_FINAL]
     }
   },
 
@@ -621,7 +786,31 @@ const ROUTES = [
     scenarios: {
       happy: null,
       fixture_con_fechas: null,
-      fixture_con_fechas_con_dia: null
+      fixture_con_fechas_con_dia: null,
+      fixture_con_fechas_con_resultados: null,
+      fixture_con_fechas_resultados_verificados: null,
+      fixture_eliminacion_directa_con_fechas: null
+    }
+  },
+
+  // Fechas — crear llave de eliminación directa
+  {
+    method: 'POST',
+    pattern: /^\/api\/Zona\/\d+\/fechas\/crear-fechas-eliminaciondirecta-masivamente$/,
+    scenarios: {
+      happy: null,
+      fixture_eliminacion_directa_sin_fechas: null,
+      fixture_eliminacion_directa_3_equipos: null
+    }
+  },
+
+  // Fechas — borrar llave de eliminación directa
+  {
+    method: 'DELETE',
+    pattern: /^\/api\/Zona\/\d+\/fechas\/borrar-fechas-eliminaciondirecta-masivamente$/,
+    scenarios: {
+      happy: null,
+      fixture_eliminacion_directa_con_fechas: null
     }
   }
 ]

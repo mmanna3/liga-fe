@@ -784,6 +784,129 @@ test.describe('Fixture', () => {
   })
 
   // -------------------------------------------------------------------------
+  // Carga de resultados (modal) — estado del botón y comportamiento
+  // -------------------------------------------------------------------------
+
+  test('el botón muestra "sin resultados" cuando no hay resultados cargados', async ({
+    page
+  }) => {
+    await setScenario('fixture_con_fechas')
+    await login(page)
+    await page.goto(FIXTURE_URL)
+
+    await expect(
+      page.getByRole('button', { name: 'No hay resultados cargados ✘' })
+    ).toBeVisible()
+  })
+
+  test('el botón muestra "no verificados" cuando hay resultados pero no están verificados', async ({
+    page
+  }) => {
+    await setScenario('fixture_con_fechas_con_resultados')
+    await login(page)
+    await page.goto(FIXTURE_URL)
+
+    await expect(
+      page.getByRole('button', { name: 'Resultados cargados sin verificar ⚠' })
+    ).toBeVisible()
+  })
+
+  test('el botón muestra "verificados" cuando los resultados están verificados', async ({
+    page
+  }) => {
+    await setScenario('fixture_con_fechas_resultados_verificados')
+    await login(page)
+    await page.goto(FIXTURE_URL)
+
+    await expect(
+      page.getByRole('button', { name: 'Resultados verificados ✔' })
+    ).toBeVisible()
+  })
+
+  test('el modal pre-llena los inputs cuando la jornada ya tiene resultados cargados', async ({
+    page
+  }) => {
+    await setScenario('fixture_con_fechas_con_resultados')
+    await login(page)
+    await page.goto(FIXTURE_URL)
+
+    await page.getByTestId('btn-carga-resultados-jornada').click()
+
+    const dialog = page.getByRole('dialog')
+    await expect(
+      dialog.getByRole('textbox', { name: /Resultado local/ })
+    ).toHaveValue('2')
+    await expect(
+      dialog.getByRole('textbox', { name: /Resultado visitante/ })
+    ).toHaveValue('1')
+  })
+
+  test('activar "Resultados Verificados" y guardar envía resultadosVerificados: true', async ({
+    page
+  }) => {
+    await setScenario('fixture_con_fechas')
+    await login(page)
+    await page.goto(FIXTURE_URL)
+
+    let bodyEnviado: unknown = null
+    await page.route(
+      '**/api/Zona/*/fechas/cargar-resultados/*',
+      async (route) => {
+        if (route.request().method() === 'POST') {
+          bodyEnviado = JSON.parse(route.request().postData() ?? '{}')
+        }
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: ''
+        })
+      }
+    )
+
+    await page.getByTestId('btn-carga-resultados-jornada').click()
+
+    const dialog = page.getByRole('dialog')
+    await dialog.getByLabel('Resultados Verificados').click()
+    await dialog.getByRole('button', { name: 'Guardar' }).click()
+
+    await expect(page.getByText('Resultados guardados')).toBeVisible()
+    expect(
+      (bodyEnviado as { resultadosVerificados: boolean }).resultadosVerificados
+    ).toBe(true)
+  })
+
+  test('guardar resultados hace exactamente una llamada a la API', async ({
+    page
+  }) => {
+    await setScenario('fixture_con_fechas')
+    await login(page)
+    await page.goto(FIXTURE_URL)
+
+    let llamadas = 0
+    await page.route(
+      '**/api/Zona/*/fechas/cargar-resultados/*',
+      async (route) => {
+        if (route.request().method() === 'POST') llamadas++
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: ''
+        })
+      }
+    )
+
+    await page.getByTestId('btn-carga-resultados-jornada').click()
+
+    const dialog = page.getByRole('dialog')
+    await dialog.getByRole('textbox', { name: /Resultado local/ }).fill('2')
+    await dialog.getByRole('textbox', { name: /Resultado visitante/ }).fill('1')
+    await dialog.getByRole('button', { name: 'Guardar' }).click()
+
+    await expect(page.getByText('Resultados guardados')).toBeVisible()
+    expect(llamadas).toBe(1)
+  })
+
+  // -------------------------------------------------------------------------
   // Carga de resultados (modal)
   // -------------------------------------------------------------------------
 
