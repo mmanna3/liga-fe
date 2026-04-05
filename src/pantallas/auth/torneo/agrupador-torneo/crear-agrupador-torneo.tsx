@@ -31,7 +31,13 @@ export default function CrearAgrupadorTorneo() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    mutation.mutate(new TorneoAgrupadorDTO({ nombre, esVisibleEnApp }))
+    mutation.mutate(
+      new TorneoAgrupadorDTO({
+        nombre,
+        esVisibleEnApp,
+        color: 'Negro'
+      })
+    )
   }
 
   return (

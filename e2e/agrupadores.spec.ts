@@ -21,6 +21,7 @@ test.describe('Agrupadores de torneo', () => {
     await page.goto('/torneos/agrupadores')
 
     await expect(page.getByText('Liga Infantil')).toBeVisible()
+    await expect(page.getByRole('cell', { name: 'Verde' })).toBeVisible()
   })
 
   test('navega a crear agrupador al hacer clic en el botón', async ({ page }) => {
@@ -52,7 +53,12 @@ test.describe('Agrupadores de torneo', () => {
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify({ id: 99, nombre: 'Copa Regional', visibleEnApp: true })
+          body: JSON.stringify({
+            id: 99,
+            nombre: 'Copa Regional',
+            color: 'Negro',
+            esVisibleEnApp: true
+          })
         })
       } else {
         await route.continue()
@@ -64,9 +70,14 @@ test.describe('Agrupadores de torneo', () => {
 
     await page.waitForURL('/torneos/agrupadores')
     expect(bodyEnviado).toBeTruthy()
-    const body = bodyEnviado as { nombre: string; visibleEnApp: boolean }
+    const body = bodyEnviado as {
+      nombre: string
+      esVisibleEnApp: boolean
+      color: string
+    }
     expect(body.nombre).toBe('Copa Regional')
-    expect(body.visibleEnApp).toBe(true)
+    expect(body.esVisibleEnApp).toBe(true)
+    expect(body.color).toBe('Negro')
   })
 
   test('crear agrupador: el switch de visibilidad funciona', async ({ page }) => {
@@ -81,7 +92,12 @@ test.describe('Agrupadores de torneo', () => {
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify({ id: 99, nombre: 'Copa Oculta', visibleEnApp: false })
+          body: JSON.stringify({
+            id: 99,
+            nombre: 'Copa Oculta',
+            color: 'Negro',
+            esVisibleEnApp: false
+          })
         })
       } else {
         await route.continue()
@@ -94,8 +110,8 @@ test.describe('Agrupadores de torneo', () => {
     await page.getByRole('button', { name: 'Guardar' }).click()
 
     await page.waitForURL('/torneos/agrupadores')
-    const body = bodyEnviado as { visibleEnApp: boolean }
-    expect(body.visibleEnApp).toBe(false)
+    const body = bodyEnviado as { esVisibleEnApp: boolean }
+    expect(body.esVisibleEnApp).toBe(false)
   })
 
   // -------------------------------------------------------------------------
@@ -146,8 +162,9 @@ test.describe('Agrupadores de torneo', () => {
     await page.getByRole('button', { name: 'Guardar' }).click()
 
     await expect(page.getByText('Agrupador actualizado correctamente')).toBeVisible()
-    const body = bodyEnviado as { nombre: string }
+    const body = bodyEnviado as { nombre: string; color: string }
     expect(body.nombre).toBe('Liga Infantil Modificada')
+    expect(body.color).toBe('Verde')
   })
 
   test('editar agrupador: el botón Guardar está deshabilitado sin cambios', async ({

@@ -62,6 +62,11 @@ export default function TablaAgrupadorTorneo({
         cell: ({ row }) => <span>{row.getValue('nombre')}</span>
       },
       {
+        accessorKey: 'color',
+        header: 'Color',
+        cell: ({ row }) => <span>{row.original.color?.trim() || '—'}</span>
+      },
+      {
         accessorKey: 'esVisibleEnApp',
         header: 'Visible en app',
         cell: ({ row }) => (

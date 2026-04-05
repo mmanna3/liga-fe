@@ -149,7 +149,13 @@ const DELEGADO_PENDIENTE = {
   ]
 }
 
-const AGRUPADOR_1 = { id: 1, nombre: 'Liga Infantil' }
+const AGRUPADOR_1 = {
+  id: 1,
+  nombre: 'Liga Infantil',
+  color: 'Verde',
+  esVisibleEnApp: true,
+  cantidadDeTorneos: 1
+}
 
 const EQUIPO_PARA_ZONA_1 = {
   id: 1,
@@ -393,7 +399,8 @@ const TORNEO_1 = {
 const AGRUPADOR_DETALLE = {
   id: 1,
   nombre: 'Liga Infantil',
-  visibleEnApp: true,
+  color: 'Verde',
+  esVisibleEnApp: true,
   torneos: [TORNEO_1]
 }
 
@@ -663,8 +670,18 @@ const ROUTES = [
     method: 'POST',
     pattern: '/api/TorneoAgrupador',
     scenarios: {
-      happy: { id: 99, nombre: 'Nuevo Agrupador', visibleEnApp: true },
-      torneo_con_agrupadores: { id: 99, nombre: 'Nuevo Agrupador', visibleEnApp: true }
+      happy: {
+        id: 99,
+        nombre: 'Nuevo Agrupador',
+        color: 'Negro',
+        esVisibleEnApp: true
+      },
+      torneo_con_agrupadores: {
+        id: 99,
+        nombre: 'Nuevo Agrupador',
+        color: 'Negro',
+        esVisibleEnApp: true
+      }
     }
   },
   // Agrupadores de torneo — editar

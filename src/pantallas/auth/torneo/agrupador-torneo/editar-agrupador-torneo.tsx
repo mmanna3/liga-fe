@@ -5,6 +5,13 @@ import useApiQuery from '@/api/hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { Label } from '@/design-system/base-ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/design-system/base-ui/select'
 import { Switch } from '@/design-system/base-ui/switch'
 import CampoLectura from '@/design-system/ykn-ui/campo-lectura'
 import ContenedorBotones from '@/design-system/ykn-ui/contenedor-botones'
@@ -13,6 +20,10 @@ import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import MensajeListaVacia from '@/design-system/ykn-ui/mensaje-lista-vacia'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useEffect, useState } from 'react'
+import {
+  COLORES_AGRUPADOR_TORNEO,
+  colorAgrupadorValidoODefecto
+} from './colores-agrupador-torneo'
 import { useNavigate, useParams } from 'react-router-dom'
 
 /** TorneoAgrupadorDTO con torneos (viene del GET por id) */
@@ -24,6 +35,7 @@ export default function EditarAgrupadorTorneo() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [nombre, setNombre] = useState('')
+  const [color, setColor] = useState<string>(COLORES_AGRUPADOR_TORNEO[0])
   const [esVisibleEnApp, setVisibleEnApp] = useState(false)
 
   const {
@@ -49,15 +61,19 @@ export default function EditarAgrupadorTorneo() {
     if (agrupador) {
       setNombre(agrupador.nombre || '')
       setVisibleEnApp(agrupador.esVisibleEnApp ?? false)
+      setColor(colorAgrupadorValidoODefecto(agrupador.color))
     }
   }, [agrupador])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!agrupador) return
+    const colorInicial = colorAgrupadorValidoODefecto(agrupador.color)
+
     if (
       nombre === agrupador.nombre &&
-      esVisibleEnApp === (agrupador.esVisibleEnApp ?? false)
+      esVisibleEnApp === (agrupador.esVisibleEnApp ?? false) &&
+      color === colorInicial
     )
       return
 
@@ -65,6 +81,7 @@ export default function EditarAgrupadorTorneo() {
       new TorneoAgrupadorDTO({
         id: agrupador.id,
         nombre,
+        color,
         esVisibleEnApp
       })
     )
@@ -104,6 +121,22 @@ export default function EditarAgrupadorTorneo() {
               />
             </div>
 
+            <div className='space-y-2'>
+              <Label htmlFor='color-agrupador'>Color</Label>
+              <Select value={color} onValueChange={setColor}>
+                <SelectTrigger id='color-agrupador'>
+                  <SelectValue placeholder='Elegir color' />
+                </SelectTrigger>
+                <SelectContent>
+                  {COLORES_AGRUPADOR_TORNEO.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             <CampoLectura
               titulo='Torneos'
               valor={
@@ -136,8 +169,10 @@ export default function EditarAgrupadorTorneo() {
                 type='submit'
                 estaCargando={mutation.isPending}
                 disabled={
-                  nombre === agrupador?.nombre &&
-                  esVisibleEnApp === (agrupador?.esVisibleEnApp ?? false)
+                  !agrupador ||
+                  (nombre === agrupador.nombre &&
+                    esVisibleEnApp === (agrupador.esVisibleEnApp ?? false) &&
+                    color === colorAgrupadorValidoODefecto(agrupador.color))
                 }
               >
                 Guardar
