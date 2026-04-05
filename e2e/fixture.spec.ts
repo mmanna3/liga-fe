@@ -282,14 +282,8 @@ test.describe('Fixture', () => {
     await login(page)
     await page.goto(FIXTURE_URL)
 
-    // El encabezado de Fecha 1 tiene el primer botón = editar
-    await page
-      .locator('h3', { hasText: 'Fecha 1' })
-      .locator('..')
-      .locator('..')
-      .locator('button')
-      .first()
-      .click()
+    // El encabezado de Fecha 1 tiene el botón de editar
+    await page.getByRole('button', { name: 'Editar fecha' }).click()
 
     // Aparece el selector de fecha (Calendario)
     await expect(page.getByText('Seleccioná una fecha')).toBeVisible()
@@ -303,13 +297,7 @@ test.describe('Fixture', () => {
     await login(page)
     await page.goto(FIXTURE_URL)
 
-    await page
-      .locator('h3', { hasText: 'Fecha 1' })
-      .locator('..')
-      .locator('..')
-      .locator('button')
-      .first()
-      .click()
+    await page.getByRole('button', { name: 'Editar fecha' }).click()
 
     await expect(page.getByRole('button', { name: 'Guardar' })).toBeVisible()
 
@@ -347,13 +335,7 @@ test.describe('Fixture', () => {
     })
 
     // Abrir modo edición
-    await page
-      .locator('h3', { hasText: 'Fecha 1' })
-      .locator('..')
-      .locator('..')
-      .locator('button')
-      .first()
-      .click()
+    await page.getByRole('button', { name: 'Editar fecha' }).click()
 
     await page.getByRole('button', { name: 'Guardar' }).click()
 
@@ -372,13 +354,13 @@ test.describe('Fixture', () => {
     await login(page)
     await page.goto(FIXTURE_URL)
 
-    // Segundo botón del header = eliminar (visible para admin)
+    // Tercer botón del header = eliminar (visible para admin)
     await page
       .locator('h3', { hasText: 'Fecha 1' })
       .locator('..')
       .locator('..')
       .locator('button')
-      .nth(1)
+      .nth(2)
       .click()
 
     await expect(
@@ -413,7 +395,7 @@ test.describe('Fixture', () => {
       .locator('..')
       .locator('..')
       .locator('button')
-      .nth(1)
+      .nth(2)
       .click()
 
     // Confirmar eliminación
@@ -444,13 +426,7 @@ test.describe('Fixture', () => {
     await login(page)
     await page.goto(FIXTURE_URL)
 
-    await page
-      .locator('h3', { hasText: 'Fecha 1' })
-      .locator('..')
-      .locator('..')
-      .locator('button')
-      .first()
-      .click()
+    await page.getByRole('button', { name: 'Editar fecha' }).click()
 
     // dia = 2026-05-15 → el Calendario debe mostrar la fecha formateada
     await expect(
@@ -550,13 +526,7 @@ test.describe('Fixture', () => {
     await page.goto(FIXTURE_URL)
 
     // Entrar en modo edición de Fecha 1
-    await page
-      .locator('h3', { hasText: 'Fecha 1' })
-      .locator('..')
-      .locator('..')
-      .locator('button')
-      .first()
-      .click()
+    await page.getByRole('button', { name: 'Editar fecha' }).click()
 
     // Clic en "Agregar jornada +" → abre el modal
     await page.getByText('Agregar jornada +').click()
@@ -583,13 +553,7 @@ test.describe('Fixture', () => {
     await page.goto(FIXTURE_URL)
 
     // Entrar en modo edición y abrir el modal
-    await page
-      .locator('h3', { hasText: 'Fecha 1' })
-      .locator('..')
-      .locator('..')
-      .locator('button')
-      .first()
-      .click()
+    await page.getByRole('button', { name: 'Editar fecha' }).click()
     await page.getByText('Agregar jornada +').click()
 
     const dialog = page.getByRole('dialog')
@@ -645,13 +609,7 @@ test.describe('Fixture', () => {
     await page.goto(FIXTURE_URL)
 
     // Entrar en modo edición
-    await page
-      .locator('h3', { hasText: 'Fecha 1' })
-      .locator('..')
-      .locator('..')
-      .locator('button')
-      .first()
-      .click()
+    await page.getByRole('button', { name: 'Editar fecha' }).click()
     await page.getByText('Agregar jornada +').click()
 
     const dialog = page.getByRole('dialog')
@@ -709,13 +667,7 @@ test.describe('Fixture', () => {
     await page.goto(FIXTURE_URL)
 
     // Entrar en modo edición
-    await page
-      .locator('h3', { hasText: 'Fecha 1' })
-      .locator('..')
-      .locator('..')
-      .locator('button')
-      .first()
-      .click()
+    await page.getByRole('button', { name: 'Editar fecha' }).click()
     await page.getByText('Agregar jornada +').click()
 
     const dialog = page.getByRole('dialog')

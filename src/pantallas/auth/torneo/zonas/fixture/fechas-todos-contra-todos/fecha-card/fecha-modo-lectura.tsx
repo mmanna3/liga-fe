@@ -164,6 +164,7 @@ export function FechaModoLectura({
             variant='ghost'
             size='icon'
             className='h-7 w-7'
+            aria-label='Editar fecha'
             onClick={onEditar}
           >
             <Icono

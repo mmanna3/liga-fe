@@ -74,7 +74,7 @@ test.describe('Fixture — Eliminación Directa', () => {
     await page.getByRole('button', { name: 'Generar vista previa' }).click()
 
     await expect(page.getByText('Semifinal')).toBeVisible()
-    await expect(page.getByText('Final')).toBeVisible()
+    await expect(page.getByText('Final', { exact: true })).toBeVisible()
   })
 
   test('la primera ronda del bracket muestra los equipos en el orden correcto', async ({
@@ -86,11 +86,21 @@ test.describe('Fixture — Eliminación Directa', () => {
 
     await page.getByRole('button', { name: 'Generar vista previa' }).click()
 
-    // Semifinal: A vs B, C vs D (orden alfabético inicial)
-    await expect(page.getByText('Infantil A')).toBeVisible()
-    await expect(page.getByText('Infantil B')).toBeVisible()
-    await expect(page.getByText('Infantil C')).toBeVisible()
-    await expect(page.getByText('Infantil D')).toBeVisible()
+    // Esperar que aparezca la vista previa
+    await expect(
+      page.getByRole('button', { name: /Crear el fixture/ })
+    ).toBeVisible()
+
+    // PartidoCardBracket usa 'rounded border bg-card' (shadcn Card usa 'rounded-lg')
+    const partidoCards = page.locator('.rounded.border.bg-card')
+
+    // Partido 1 (Semifinal): Infantil A (local) vs Infantil B (visitante)
+    await expect(partidoCards.nth(0)).toContainText('Infantil A')
+    await expect(partidoCards.nth(0)).toContainText('Infantil B')
+
+    // Partido 2 (Semifinal): Infantil C (local) vs Infantil D (visitante)
+    await expect(partidoCards.nth(1)).toContainText('Infantil C')
+    await expect(partidoCards.nth(1)).toContainText('Infantil D')
   })
 
   test('la Final muestra "Por definir" (equipos aún no determinados)', async ({
@@ -128,12 +138,19 @@ test.describe('Fixture — Eliminación Directa', () => {
     await expect(liItems.nth(0)).toContainText('Infantil B')
     await expect(liItems.nth(1)).toContainText('Infantil A')
 
-    await page.getByRole('button', { name: 'Generar vista previa' }).click()
+    const btnGenerar = page.getByRole('button', { name: 'Generar vista previa' })
+    await btnGenerar.scrollIntoViewIfNeeded()
+    await btnGenerar.click()
 
-    // En el bracket, Infantil B debe aparecer antes que Infantil A
-    const bracketCard = page.locator('.rounded.border.bg-card').first()
-    const textoDelPrimerPartido = await bracketCard.textContent()
-    expect(textoDelPrimerPartido).toContain('Infantil B')
+    // Esperar que el bracket renderice antes de buscar las cards
+    await expect(
+      page.getByRole('button', { name: /Crear el fixture/ })
+    ).toBeVisible()
+
+    // En el bracket, Infantil B debe aparecer en el primer partido (fue arrastrado al lugar 1)
+    await expect(
+      page.locator('.rounded.border.bg-card').first()
+    ).toContainText('Infantil B')
   })
 
   // -------------------------------------------------------------------------
@@ -223,7 +240,7 @@ test.describe('Fixture — Eliminación Directa', () => {
     await page.goto(FIXTURE_URL_ED)
 
     await expect(page.getByText('Semifinal')).toBeVisible()
-    await expect(page.getByText('Final')).toBeVisible()
+    await expect(page.getByText('Final', { exact: true })).toBeVisible()
   })
 
   test('la Semifinal muestra los nombres de los equipos', async ({ page }) => {

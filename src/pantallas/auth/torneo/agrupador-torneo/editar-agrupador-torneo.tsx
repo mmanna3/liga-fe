@@ -123,7 +123,10 @@ export default function EditarAgrupadorTorneo() {
 
             <div className='space-y-2'>
               <Label htmlFor='color-agrupador'>Color</Label>
-              <Select value={color} onValueChange={setColor}>
+              <Select
+                value={color}
+                onValueChange={(val) => val && setColor(val)}
+              >
                 <SelectTrigger id='color-agrupador'>
                   <SelectValue placeholder='Elegir color' />
                 </SelectTrigger>
