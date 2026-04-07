@@ -612,7 +612,7 @@ test.describe('Fixture', () => {
     await page.getByRole('button', { name: 'Editar fecha' }).click()
     await page.getByText('Agregar jornada +').click()
 
-    const dialog = page.getByRole('dialog')
+    const dialog = page.getByRole('dialog', { name: 'Agregar jornada' })
 
     const localSlot = dialog
       .locator('p')
@@ -625,6 +625,11 @@ test.describe('Fixture', () => {
 
     const itemA = dialog.getByText('Infantil A').first()
     const itemB = dialog.getByText('Infantil B').first()
+
+    await localSlot.scrollIntoViewIfNeeded()
+    await visitanteSlot.scrollIntoViewIfNeeded()
+    await itemA.scrollIntoViewIfNeeded()
+    await itemB.scrollIntoViewIfNeeded()
 
     const boxA = (await itemA.boundingBox())!
     const tgtLocal = (await localSlot.boundingBox())!
@@ -650,13 +655,21 @@ test.describe('Fixture', () => {
     )
     await page.mouse.up()
 
+    await expect(dialog.getByRole('button', { name: 'Agregar' })).toBeEnabled()
     await dialog.getByRole('button', { name: 'Agregar' }).click()
 
-    // El modal debe cerrarse
-    await expect(dialog).not.toBeVisible()
+    // Cerrado (Radix puede animar: toBeHidden es más estable que not.toBeVisible)
+    await expect(
+      page.getByRole('dialog', { name: 'Agregar jornada' })
+    ).toBeHidden()
 
-    // Ahora el modo edición sigue activo y "Agregar jornada +" sigue disponible
+    // Modo edición sigue activo
     await expect(page.getByText('Agregar jornada +')).toBeVisible()
+
+    // Borrador: una jornada más (la fecha mock ya tenía A vs B; queda duplicada en el borrador)
+    await expect(
+      page.locator('.bg-card .space-y-1 > div').filter({ hasText: 'Infantil A' })
+    ).toHaveCount(2)
   })
 
   test('completar el modal: guardar la fecha envía PUT con la jornada agregada', async ({
