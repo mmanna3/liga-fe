@@ -1,10 +1,11 @@
 import { Boton } from '@/design-system/ykn-ui/boton'
-import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import { Input } from '@/design-system/ykn-ui/input'
+import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { Categorias } from './crear-torneo/components/categorias'
 import { SelectorAgrupador } from './crear-torneo/components/selector-agrupador'
+import { SwitchVerGoles } from './crear-torneo/components/switch-ver-goles'
 import { TituloFase } from './crear-torneo/components/titulo-fase'
 import { useCrearTorneo } from './crear-torneo/hooks/use-crear-torneo'
 import type { Categoria } from './crear-torneo/tipos'
@@ -43,7 +44,7 @@ export default function CrearTorneo() {
           <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
             <Input
               tipo='text'
-              titulo='Nombre del torneo *'
+              titulo='Nombre del torneo'
               value={datos.nombre}
               onChange={(e) => setValue('nombre', e.target.value)}
               placeholder='Ej: Torneo Anual 2026'
@@ -51,11 +52,17 @@ export default function CrearTorneo() {
             />
             <Input
               tipo='number'
-              titulo='Temporada/Año *'
+              titulo='Temporada/Año'
               value={datos.temporada}
               onChange={(e) => setValue('temporada', e.target.value)}
               placeholder='2026'
               error={errors.temporada?.message}
+            />
+          </div>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
+            <SwitchVerGoles
+              value={datos.seVenLosGolesEnTablaDePosiciones}
+              onChange={(v) => setValue('seVenLosGolesEnTablaDePosiciones', v)}
             />
           </div>
 

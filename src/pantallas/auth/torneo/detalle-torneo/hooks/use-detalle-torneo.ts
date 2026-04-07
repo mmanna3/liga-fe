@@ -28,6 +28,10 @@ export function useDetalleTorneo() {
   const [nombre, setNombre] = useState('')
   const [temporada, setTemporada] = useState('')
   const [agrupadorId, setAgrupadorId] = useState<number | null>(null)
+  const [
+    seVenLosGolesEnTablaDePosiciones,
+    setSeVenLosGolesEnTablaDePosiciones
+  ] = useState(true)
   const [categorias, setCategorias] = useState<Categoria[]>(
     categoriasDtoACategoria([])
   )
@@ -37,6 +41,9 @@ export function useDetalleTorneo() {
     setNombre(torneo.nombre ?? '')
     setTemporada(String(torneo.anio ?? ''))
     setAgrupadorId(torneo.torneoAgrupadorId ?? null)
+    setSeVenLosGolesEnTablaDePosiciones(
+      torneo.seVenLosGolesEnTablaDePosiciones ?? true
+    )
     setCategorias(categoriasDtoACategoria(torneo.categorias ?? []))
   }, [torneo])
 
@@ -45,6 +52,9 @@ export function useDetalleTorneo() {
     setNombre(torneo.nombre ?? '')
     setTemporada(String(torneo.anio ?? ''))
     setAgrupadorId(torneo.torneoAgrupadorId ?? null)
+    setSeVenLosGolesEnTablaDePosiciones(
+      torneo.seVenLosGolesEnTablaDePosiciones ?? true
+    )
     setCategorias(categoriasDtoACategoria(torneo.categorias ?? []))
     setEditando(false)
   }
@@ -69,7 +79,8 @@ export function useDetalleTorneo() {
           (c) => new TorneoCategoriaDTO({ ...c, torneoId })
         ),
         fases: undefined,
-        esVisibleEnApp: torneo.esVisibleEnApp
+        esVisibleEnApp: torneo.esVisibleEnApp,
+        seVenLosGolesEnTablaDePosiciones
       })
       await api.torneoPUT(torneoId, body)
     },
@@ -103,6 +114,8 @@ export function useDetalleTorneo() {
     setAgrupadorId,
     categorias,
     setCategorias,
+    seVenLosGolesEnTablaDePosiciones,
+    setSeVenLosGolesEnTablaDePosiciones,
     handleCancelarEdicion,
     eliminarMutation,
     guardarDatosBasicosMutation,

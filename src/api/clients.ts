@@ -2744,6 +2744,65 @@ export class Client {
   }
 
   /**
+   * @param body (optional)
+   * @return OK
+   */
+  fasesCambiarVisibilidadEnApp(
+    padreId: number,
+    id: number,
+    body: CambiarVisibilidadEnAppDTO | undefined
+  ): Promise<void> {
+    let url_ =
+      this.baseUrl + '/api/Torneo/{padreId}/fases/{id}/visibilidad-en-app'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processFasesCambiarVisibilidadEnApp(_response)
+    })
+  }
+
+  protected processFasesCambiarVisibilidadEnApp(
+    response: Response
+  ): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
    * @return OK
    */
   fasesGET(padreId: number, id: number): Promise<FaseDTO> {
@@ -3177,6 +3236,65 @@ export class Client {
   }
 
   protected processCargarResultados(response: Response): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  fechasCambiarVisibilidadEnApp(
+    padreId: number,
+    id: number,
+    body: CambiarVisibilidadEnAppDTO | undefined
+  ): Promise<void> {
+    let url_ =
+      this.baseUrl + '/api/Zona/{padreId}/fechas/{id}/visibilidad-en-app'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processFechasCambiarVisibilidadEnApp(_response)
+    })
+  }
+
+  protected processFechasCambiarVisibilidadEnApp(
+    response: Response
+  ): Promise<void> {
     const status = response.status
     let _headers: any = {}
     if (response.headers && response.headers.forEach) {
@@ -5177,6 +5295,60 @@ export class Client {
   }
 
   /**
+   * @param body (optional)
+   * @return OK
+   */
+  torneoCambiarVisibilidadEnApp(
+    id: number,
+    body: CambiarVisibilidadEnAppDTO | undefined
+  ): Promise<void> {
+    let url_ = this.baseUrl + '/api/Torneo/{id}/visibilidad-en-app'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processTorneoCambiarVisibilidadEnApp(_response)
+    })
+  }
+
+  protected processTorneoCambiarVisibilidadEnApp(
+    response: Response
+  ): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
    * @return OK
    */
   torneoAll(): Promise<TorneoDTO[]> {
@@ -6705,6 +6877,42 @@ export interface ICambiarPasswordDTO {
   passwordNuevo: string
 }
 
+export class CambiarVisibilidadEnAppDTO implements ICambiarVisibilidadEnAppDTO {
+  esVisibleEnApp?: boolean
+
+  constructor(data?: ICambiarVisibilidadEnAppDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.esVisibleEnApp = _data['esVisibleEnApp']
+    }
+  }
+
+  static fromJS(data: any): CambiarVisibilidadEnAppDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new CambiarVisibilidadEnAppDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['esVisibleEnApp'] = this.esVisibleEnApp
+    return data
+  }
+}
+
+export interface ICambiarVisibilidadEnAppDTO {
+  esVisibleEnApp?: boolean
+}
+
 export class CargarResultadosDTO implements ICargarResultadosDTO {
   id?: number
   jornadaId!: number
@@ -7145,6 +7353,7 @@ export class CrearTorneoDTO implements ICrearTorneoDTO {
   nombre!: string
   anio!: number
   esVisibleEnApp!: boolean
+  seVenLosGolesEnTablaDePosiciones!: boolean
   torneoAgrupadorId?: number
   torneoAgrupadorNombre?: string | undefined
   sePuedeEditar?: boolean
@@ -7167,6 +7376,8 @@ export class CrearTorneoDTO implements ICrearTorneoDTO {
       this.nombre = _data['nombre']
       this.anio = _data['anio']
       this.esVisibleEnApp = _data['esVisibleEnApp']
+      this.seVenLosGolesEnTablaDePosiciones =
+        _data['seVenLosGolesEnTablaDePosiciones']
       this.torneoAgrupadorId = _data['torneoAgrupadorId']
       this.torneoAgrupadorNombre = _data['torneoAgrupadorNombre']
       this.sePuedeEditar = _data['sePuedeEditar']
@@ -7198,6 +7409,8 @@ export class CrearTorneoDTO implements ICrearTorneoDTO {
     data['nombre'] = this.nombre
     data['anio'] = this.anio
     data['esVisibleEnApp'] = this.esVisibleEnApp
+    data['seVenLosGolesEnTablaDePosiciones'] =
+      this.seVenLosGolesEnTablaDePosiciones
     data['torneoAgrupadorId'] = this.torneoAgrupadorId
     data['torneoAgrupadorNombre'] = this.torneoAgrupadorNombre
     data['sePuedeEditar'] = this.sePuedeEditar
@@ -7221,6 +7434,7 @@ export interface ICrearTorneoDTO {
   nombre: string
   anio: number
   esVisibleEnApp: boolean
+  seVenLosGolesEnTablaDePosiciones: boolean
   torneoAgrupadorId?: number
   torneoAgrupadorNombre?: string | undefined
   sePuedeEditar?: boolean
@@ -9898,6 +10112,7 @@ export class TorneoDTO implements ITorneoDTO {
   nombre!: string
   anio!: number
   esVisibleEnApp!: boolean
+  seVenLosGolesEnTablaDePosiciones!: boolean
   torneoAgrupadorId?: number
   torneoAgrupadorNombre?: string | undefined
   sePuedeEditar?: boolean
@@ -9919,6 +10134,8 @@ export class TorneoDTO implements ITorneoDTO {
       this.nombre = _data['nombre']
       this.anio = _data['anio']
       this.esVisibleEnApp = _data['esVisibleEnApp']
+      this.seVenLosGolesEnTablaDePosiciones =
+        _data['seVenLosGolesEnTablaDePosiciones']
       this.torneoAgrupadorId = _data['torneoAgrupadorId']
       this.torneoAgrupadorNombre = _data['torneoAgrupadorNombre']
       this.sePuedeEditar = _data['sePuedeEditar']
@@ -9947,6 +10164,8 @@ export class TorneoDTO implements ITorneoDTO {
     data['nombre'] = this.nombre
     data['anio'] = this.anio
     data['esVisibleEnApp'] = this.esVisibleEnApp
+    data['seVenLosGolesEnTablaDePosiciones'] =
+      this.seVenLosGolesEnTablaDePosiciones
     data['torneoAgrupadorId'] = this.torneoAgrupadorId
     data['torneoAgrupadorNombre'] = this.torneoAgrupadorNombre
     data['sePuedeEditar'] = this.sePuedeEditar
@@ -9967,6 +10186,7 @@ export interface ITorneoDTO {
   nombre: string
   anio: number
   esVisibleEnApp: boolean
+  seVenLosGolesEnTablaDePosiciones: boolean
   torneoAgrupadorId?: number
   torneoAgrupadorNombre?: string | undefined
   sePuedeEditar?: boolean
@@ -10137,7 +10357,7 @@ export class ZonaResumenDTO implements IZonaResumenDTO {
   id?: number | undefined
   nombre?: string | undefined
   torneoId?: number | undefined
-  anio!: number
+  anio?: number | undefined
   torneo?: string | undefined
   agrupador?: string | undefined
   agrupadorId?: number | undefined
@@ -10193,7 +10413,7 @@ export interface IZonaResumenDTO {
   id?: number | undefined
   nombre?: string | undefined
   torneoId?: number | undefined
-  anio: number
+  anio?: number | undefined
   torneo?: string | undefined
   agrupador?: string | undefined
   agrupadorId?: number | undefined

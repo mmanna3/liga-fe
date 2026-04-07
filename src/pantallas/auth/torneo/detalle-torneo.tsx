@@ -6,6 +6,7 @@ import { rutasNavegacion } from '@/ruteo/rutas'
 import { Plus } from 'lucide-react'
 import { Categorias } from './crear-torneo/components/categorias'
 import { SelectorAgrupador } from './crear-torneo/components/selector-agrupador'
+import { SwitchVerGoles } from './crear-torneo/components/switch-ver-goles'
 import { FaseItem } from './detalle-torneo/components/fase-item/fase-item'
 import { useDetalleTorneo } from './detalle-torneo/hooks/use-detalle-torneo'
 import { useFases } from './detalle-torneo/hooks/use-fases'
@@ -29,6 +30,8 @@ export default function DetalleTorneo() {
     setAgrupadorId,
     categorias,
     setCategorias,
+    seVenLosGolesEnTablaDePosiciones,
+    setSeVenLosGolesEnTablaDePosiciones,
     eliminarMutation,
     guardarDatosBasicosMutation,
     toggleVisibilidadAppMutation
@@ -43,12 +46,14 @@ export default function DetalleTorneo() {
       nombre,
       temporada,
       agrupadorId,
-      categorias
+      categorias,
+      seVenLosGolesEnTablaDePosiciones
     }),
     setNombre,
     setTemporada,
     setAgrupadorId,
     setCategorias,
+    setSeVenLosGolesEnTablaDePosiciones,
     setEditando
   })
 
@@ -160,6 +165,22 @@ export default function DetalleTorneo() {
                   </label>
                   <p className='font-medium'>
                     {torneo.torneoAgrupadorNombre ?? '—'}
+                  </p>
+                </div>
+              )}
+
+              {editando ? (
+                <SwitchVerGoles
+                  value={seVenLosGolesEnTablaDePosiciones}
+                  onChange={setSeVenLosGolesEnTablaDePosiciones}
+                />
+              ) : (
+                <div>
+                  <label className='text-sm font-semibold text-muted-foreground block mb-2'>
+                    Ver goles en tablas de posiciones
+                  </label>
+                  <p className='font-medium'>
+                    {seVenLosGolesEnTablaDePosiciones ? 'Sí' : 'No'}
                   </p>
                 </div>
               )}

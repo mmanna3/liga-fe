@@ -23,6 +23,7 @@ const esquema = z
   .object({
     nombre: z.string().min(1, 'El nombre es requerido'),
     temporada: z.string().min(1, 'La temporada es requerida'),
+    seVenLosGolesEnTablaDePosiciones: z.boolean(),
     agrupadorId: z.number().optional(),
     categorias: z
       .array(
@@ -54,6 +55,7 @@ export type DatosFormulario = z.infer<typeof esquema>
 const valoresIniciales: Partial<DatosFormulario> = {
   nombre: '',
   temporada: new Date().getFullYear().toString(),
+  seVenLosGolesEnTablaDePosiciones: true,
   agrupadorId: undefined,
   categorias: []
 }
@@ -126,7 +128,9 @@ export function useCrearTorneo() {
           torneoAgrupadorId: datos.agrupadorId,
           categorias: categoriasValidas,
           primeraFase,
-          esVisibleEnApp: true
+          esVisibleEnApp: true,
+          seVenLosGolesEnTablaDePosiciones:
+            datos.seVenLosGolesEnTablaDePosiciones
         })
       )
     },
@@ -137,6 +141,7 @@ export function useCrearTorneo() {
   const datos = {
     nombre: watch('nombre'),
     temporada: watch('temporada'),
+    seVenLosGolesEnTablaDePosiciones: watch('seVenLosGolesEnTablaDePosiciones'),
     agrupadorId: watch('agrupadorId'),
     categorias: watch('categorias')
   }

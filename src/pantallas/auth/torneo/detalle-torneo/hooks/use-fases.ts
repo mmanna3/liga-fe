@@ -31,11 +31,13 @@ interface UseFasesParams {
     temporada: string
     agrupadorId: number | null
     categorias: Categoria[]
+    seVenLosGolesEnTablaDePosiciones: boolean
   }
   setNombre: (n: string) => void
   setTemporada: (t: string) => void
   setAgrupadorId: (a: number | null) => void
   setCategorias: (c: Categoria[]) => void
+  setSeVenLosGolesEnTablaDePosiciones: (v: boolean) => void
   setEditando: (e: boolean) => void
 }
 
@@ -49,6 +51,7 @@ export function useFases({
   setTemporada,
   setAgrupadorId,
   setCategorias,
+  setSeVenLosGolesEnTablaDePosiciones,
   setEditando
 }: UseFasesParams) {
   const navigate = useNavigate()
@@ -113,7 +116,13 @@ export function useFases({
   const guardarMutation = useApiMutation<void>({
     fn: async () => {
       if (!torneo) return
-      const { nombre, temporada, agrupadorId, categorias } = getDatosBasicos()
+      const {
+        nombre,
+        temporada,
+        agrupadorId,
+        categorias,
+        seVenLosGolesEnTablaDePosiciones
+      } = getDatosBasicos()
       const fasesValidas = fasesEstado
         .filter((f) => f.nombre.trim() && f.formato)
         .map((f) => ({
@@ -137,7 +146,8 @@ export function useFases({
           (c) => new TorneoCategoriaDTO({ ...c, torneoId })
         ),
         fases: fasesValidas.map((f) => new FaseDTO({ ...f, torneoId })),
-        esVisibleEnApp: true
+        esVisibleEnApp: torneo.esVisibleEnApp,
+        seVenLosGolesEnTablaDePosiciones
       })
       await api.torneoPUT(torneoId, body)
     },
@@ -150,6 +160,9 @@ export function useFases({
     setNombre(torneo.nombre ?? '')
     setTemporada(String(torneo.anio ?? ''))
     setAgrupadorId(torneo.torneoAgrupadorId ?? null)
+    setSeVenLosGolesEnTablaDePosiciones(
+      torneo.seVenLosGolesEnTablaDePosiciones ?? true
+    )
     setCategorias(categoriasDtoACategoria(torneo.categorias ?? []))
     setFasesEstado(
       (torneo.fases ?? []).map((f) => ({

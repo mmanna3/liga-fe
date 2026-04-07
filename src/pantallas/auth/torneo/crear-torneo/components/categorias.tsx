@@ -1,7 +1,7 @@
 import { Badge } from '@/design-system/base-ui/badge'
-import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/base-ui/input'
 import { Label } from '@/design-system/base-ui/label'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import { Plus, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 import type { Categoria } from '../tipos'
@@ -21,7 +21,7 @@ export function Categorias({
   valor,
   alCambiar,
   error,
-  titulo = 'Categorías *',
+  titulo = 'Categorías',
   soloLectura = false
 }: CategoriasProps) {
   const [editandoCategoriaId, setEditandoCategoriaId] = useState<string | null>(

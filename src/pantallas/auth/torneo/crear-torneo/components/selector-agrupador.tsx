@@ -1,7 +1,7 @@
 import { api } from '@/api/api'
-import { useQuery } from '@tanstack/react-query'
 import { Label } from '@/design-system/base-ui/label'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
+import { useQuery } from '@tanstack/react-query'
 
 interface SelectorAgrupadorProps {
   valor: number | null
@@ -14,7 +14,7 @@ interface SelectorAgrupadorProps {
 export function SelectorAgrupador({
   valor,
   alCambiar,
-  titulo = 'Agrupador *',
+  titulo = 'Agrupador',
   error,
   deshabilitado = false
 }: SelectorAgrupadorProps) {

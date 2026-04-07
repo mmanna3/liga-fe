@@ -20,8 +20,10 @@ test.describe('Agrupadores de torneo', () => {
     await login(page)
     await page.goto('/torneos/agrupadores')
 
-    await expect(page.getByText('Liga Infantil')).toBeVisible()
-    await expect(page.getByRole('cell', { name: 'Verde' })).toBeVisible()
+    const tabla = page.getByRole('table')
+    await expect(tabla).toBeVisible()
+    await expect(tabla).toContainText('Liga Infantil')
+    await expect(tabla).toContainText('Verde')
   })
 
   test('navega a crear agrupador al hacer clic en el botón', async ({ page }) => {
