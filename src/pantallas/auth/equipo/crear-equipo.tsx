@@ -64,7 +64,12 @@ export default function CrearEquipo() {
         clubId: Number(clubid),
         zonas:
           torneoId && faseId && zonaId
-            ? [new ZonaResumenDTO({ id: Number(zonaId) })]
+            ? [
+                new ZonaResumenDTO({
+                  id: Number(zonaId),
+                  anio: torneoSeleccionado?.anio ?? anioActual()
+                })
+              ]
             : undefined
       })
     )

@@ -19,6 +19,7 @@ function equipoParaZonasAEquipoDto(e: EquipoParaZonasDTO): EquipoDTO {
         new ZonaResumenDTO({
           id: z.id,
           nombre: z.nombre,
+          anio: z.anio ?? new Date().getFullYear(),
           torneo: z.torneo,
           fase: z.fase,
           agrupador: z.agrupador,

@@ -22,7 +22,13 @@ export function zonaDtoAEstado(dto: ZonaDTO): ZonaEstado {
         nombre: e.nombre,
         clubNombre: e.club,
         clubId: 0,
-        zonas: [new ZonaResumenDTO({ id: dto.id, nombre: dto.nombre })]
+        zonas: [
+          new ZonaResumenDTO({
+            id: dto.id,
+            nombre: dto.nombre,
+            anio: new Date().getFullYear()
+          })
+        ]
       })
   )
   return {

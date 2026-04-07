@@ -132,6 +132,8 @@ export default function DetalleEquipo() {
     )
   }
 
+  const anioActual = new Date().getFullYear()
+
   if (isLoading) {
     return (
       <div className='max-w-md mx-auto mt-10'>
@@ -151,10 +153,15 @@ export default function DetalleEquipo() {
         detalleItems={[
           { clave: 'Club', valor: equipo!.clubNombre! },
           {
-            clave: 'Torneos',
+            clave: `Torneos ${anioActual}`,
             valor: equipo!.zonas?.length
               ? [
-                  ...new Set(equipo!.zonas.map((z) => z.torneo).filter(Boolean))
+                  ...new Set(
+                    equipo!.zonas
+                      .filter((z) => z.anio === anioActual)
+                      .map((z) => z.torneo)
+                      .filter(Boolean)
+                  )
                 ].join(', ') || '-'
               : '-'
           },

@@ -320,6 +320,233 @@ export class Client {
   }
 
   /**
+   * @param zonaId (optional)
+   * @return OK
+   */
+  clubes(zonaId: number | undefined): Promise<ClubesDTO[]> {
+    let url_ = this.baseUrl + '/api/carnet-digital/clubes?'
+    if (zonaId === null)
+      throw new Error("The parameter 'zonaId' cannot be null.")
+    else if (zonaId !== undefined)
+      url_ += 'zonaId=' + encodeURIComponent('' + zonaId) + '&'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processClubes(_response)
+    })
+  }
+
+  protected processClubes(response: Response): Promise<ClubesDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(ClubesDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<ClubesDTO[]>(null as any)
+  }
+
+  /**
+   * @param zonaId (optional)
+   * @return OK
+   */
+  fixtureTodosContraTodos(zonaId: number | undefined): Promise<FixtureDTO> {
+    let url_ = this.baseUrl + '/api/carnet-digital/fixture-todos-contra-todos?'
+    if (zonaId === null)
+      throw new Error("The parameter 'zonaId' cannot be null.")
+    else if (zonaId !== undefined)
+      url_ += 'zonaId=' + encodeURIComponent('' + zonaId) + '&'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processFixtureTodosContraTodos(_response)
+    })
+  }
+
+  protected processFixtureTodosContraTodos(
+    response: Response
+  ): Promise<FixtureDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = FixtureDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<FixtureDTO>(null as any)
+  }
+
+  /**
+   * @param zonaId (optional)
+   * @return OK
+   */
+  jornadasTodosContraTodos(zonaId: number | undefined): Promise<JornadasDTO> {
+    let url_ = this.baseUrl + '/api/carnet-digital/jornadas-todos-contra-todos?'
+    if (zonaId === null)
+      throw new Error("The parameter 'zonaId' cannot be null.")
+    else if (zonaId !== undefined)
+      url_ += 'zonaId=' + encodeURIComponent('' + zonaId) + '&'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processJornadasTodosContraTodos(_response)
+    })
+  }
+
+  protected processJornadasTodosContraTodos(
+    response: Response
+  ): Promise<JornadasDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = JornadasDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<JornadasDTO>(null as any)
+  }
+
+  /**
+   * @param zonaId (optional)
+   * @return OK
+   */
+  posicionesTodosContraTodos(
+    zonaId: number | undefined
+  ): Promise<PosicionesDTO> {
+    let url_ =
+      this.baseUrl + '/api/carnet-digital/posiciones-todos-contra-todos?'
+    if (zonaId === null)
+      throw new Error("The parameter 'zonaId' cannot be null.")
+    else if (zonaId !== undefined)
+      url_ += 'zonaId=' + encodeURIComponent('' + zonaId) + '&'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processPosicionesTodosContraTodos(_response)
+    })
+  }
+
+  protected processPosicionesTodosContraTodos(
+    response: Response
+  ): Promise<PosicionesDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = PosicionesDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<PosicionesDTO>(null as any)
+  }
+
+  /**
    * @param body (optional)
    * @return OK
    */
@@ -2517,65 +2744,6 @@ export class Client {
   }
 
   /**
-   * @param body (optional)
-   * @return OK
-   */
-  fasesCambiarVisibilidadEnApp(
-    padreId: number,
-    id: number,
-    body: CambiarVisibilidadEnAppDTO | undefined
-  ): Promise<void> {
-    let url_ =
-      this.baseUrl + '/api/Torneo/{padreId}/fases/{id}/visibilidad-en-app'
-    if (padreId === undefined || padreId === null)
-      throw new Error("The parameter 'padreId' must be defined.")
-    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
-    if (id === undefined || id === null)
-      throw new Error("The parameter 'id' must be defined.")
-    url_ = url_.replace('{id}', encodeURIComponent('' + id))
-    url_ = url_.replace(/[?&]$/, '')
-
-    const content_ = JSON.stringify(body)
-
-    let options_: RequestInit = {
-      body: content_,
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }
-
-    return this.http.fetch(url_, options_).then((_response: Response) => {
-      return this.processFasesCambiarVisibilidadEnApp(_response)
-    })
-  }
-
-  protected processFasesCambiarVisibilidadEnApp(
-    response: Response
-  ): Promise<void> {
-    const status = response.status
-    let _headers: any = {}
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
-    }
-    if (status === 200) {
-      return response.text().then((_responseText) => {
-        return
-      })
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then((_responseText) => {
-        return throwException(
-          'An unexpected server error occurred.',
-          status,
-          _responseText,
-          _headers
-        )
-      })
-    }
-    return Promise.resolve<void>(null as any)
-  }
-
-  /**
    * @return OK
    */
   fasesGET(padreId: number, id: number): Promise<FaseDTO> {
@@ -3009,65 +3177,6 @@ export class Client {
   }
 
   protected processCargarResultados(response: Response): Promise<void> {
-    const status = response.status
-    let _headers: any = {}
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
-    }
-    if (status === 200) {
-      return response.text().then((_responseText) => {
-        return
-      })
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then((_responseText) => {
-        return throwException(
-          'An unexpected server error occurred.',
-          status,
-          _responseText,
-          _headers
-        )
-      })
-    }
-    return Promise.resolve<void>(null as any)
-  }
-
-  /**
-   * @param body (optional)
-   * @return OK
-   */
-  fechasCambiarVisibilidadEnApp(
-    padreId: number,
-    id: number,
-    body: CambiarVisibilidadEnAppDTO | undefined
-  ): Promise<void> {
-    let url_ =
-      this.baseUrl + '/api/Zona/{padreId}/fechas/{id}/visibilidad-en-app'
-    if (padreId === undefined || padreId === null)
-      throw new Error("The parameter 'padreId' must be defined.")
-    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
-    if (id === undefined || id === null)
-      throw new Error("The parameter 'id' must be defined.")
-    url_ = url_.replace('{id}', encodeURIComponent('' + id))
-    url_ = url_.replace(/[?&]$/, '')
-
-    const content_ = JSON.stringify(body)
-
-    let options_: RequestInit = {
-      body: content_,
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }
-
-    return this.http.fetch(url_, options_).then((_response: Response) => {
-      return this.processFechasCambiarVisibilidadEnApp(_response)
-    })
-  }
-
-  protected processFechasCambiarVisibilidadEnApp(
-    response: Response
-  ): Promise<void> {
     const status = response.status
     let _headers: any = {}
     if (response.headers && response.headers.forEach) {
@@ -5068,60 +5177,6 @@ export class Client {
   }
 
   /**
-   * @param body (optional)
-   * @return OK
-   */
-  torneoCambiarVisibilidadEnApp(
-    id: number,
-    body: CambiarVisibilidadEnAppDTO | undefined
-  ): Promise<void> {
-    let url_ = this.baseUrl + '/api/Torneo/{id}/visibilidad-en-app'
-    if (id === undefined || id === null)
-      throw new Error("The parameter 'id' must be defined.")
-    url_ = url_.replace('{id}', encodeURIComponent('' + id))
-    url_ = url_.replace(/[?&]$/, '')
-
-    const content_ = JSON.stringify(body)
-
-    let options_: RequestInit = {
-      body: content_,
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }
-
-    return this.http.fetch(url_, options_).then((_response: Response) => {
-      return this.processTorneoCambiarVisibilidadEnApp(_response)
-    })
-  }
-
-  protected processTorneoCambiarVisibilidadEnApp(
-    response: Response
-  ): Promise<void> {
-    const status = response.status
-    let _headers: any = {}
-    if (response.headers && response.headers.forEach) {
-      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
-    }
-    if (status === 200) {
-      return response.text().then((_responseText) => {
-        return
-      })
-    } else if (status !== 200 && status !== 204) {
-      return response.text().then((_responseText) => {
-        return throwException(
-          'An unexpected server error occurred.',
-          status,
-          _responseText,
-          _headers
-        )
-      })
-    }
-    return Promise.resolve<void>(null as any)
-  }
-
-  /**
    * @return OK
    */
   torneoAll(): Promise<TorneoDTO[]> {
@@ -6650,42 +6705,6 @@ export interface ICambiarPasswordDTO {
   passwordNuevo: string
 }
 
-export class CambiarVisibilidadEnAppDTO implements ICambiarVisibilidadEnAppDTO {
-  esVisibleEnApp?: boolean
-
-  constructor(data?: ICambiarVisibilidadEnAppDTO) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property))
-          (<any>this)[property] = (<any>data)[property]
-      }
-    }
-  }
-
-  init(_data?: any) {
-    if (_data) {
-      this.esVisibleEnApp = _data['esVisibleEnApp']
-    }
-  }
-
-  static fromJS(data: any): CambiarVisibilidadEnAppDTO {
-    data = typeof data === 'object' ? data : {}
-    let result = new CambiarVisibilidadEnAppDTO()
-    result.init(data)
-    return result
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {}
-    data['esVisibleEnApp'] = this.esVisibleEnApp
-    return data
-  }
-}
-
-export interface ICambiarVisibilidadEnAppDTO {
-  esVisibleEnApp?: boolean
-}
-
 export class CargarResultadosDTO implements ICargarResultadosDTO {
   id?: number
   jornadaId!: number
@@ -6897,6 +6916,53 @@ export interface ICarnetDigitalPendienteDTO {
   motivo?: string | undefined
 }
 
+export class CategoriasConPosicionesDTO implements ICategoriasConPosicionesDTO {
+  categoria?: string | undefined
+  renglones?: PosicionDelEquipoDTO[] | undefined
+
+  constructor(data?: ICategoriasConPosicionesDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.categoria = _data['categoria']
+      if (Array.isArray(_data['renglones'])) {
+        this.renglones = [] as any
+        for (let item of _data['renglones'])
+          this.renglones!.push(PosicionDelEquipoDTO.fromJS(item))
+      }
+    }
+  }
+
+  static fromJS(data: any): CategoriasConPosicionesDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new CategoriasConPosicionesDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['categoria'] = this.categoria
+    if (Array.isArray(this.renglones)) {
+      data['renglones'] = []
+      for (let item of this.renglones) data['renglones'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface ICategoriasConPosicionesDTO {
+  categoria?: string | undefined
+  renglones?: PosicionDelEquipoDTO[] | undefined
+}
+
 export class ClubConEquiposDTO implements IClubConEquiposDTO {
   nombre!: string | undefined
   equipos?: EquipoBaseDTO[] | undefined
@@ -7020,6 +7086,58 @@ export interface IClubDTO {
   localidad?: string | undefined
   equipos?: EquipoDTO[] | undefined
   delegados?: DelegadoDTO[] | undefined
+}
+
+export class ClubesDTO implements IClubesDTO {
+  equipo?: string | undefined
+  escudo?: string | undefined
+  localidad?: string | undefined
+  direccion?: string | undefined
+  esTechado?: string | undefined
+
+  constructor(data?: IClubesDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.equipo = _data['equipo']
+      this.escudo = _data['escudo']
+      this.localidad = _data['localidad']
+      this.direccion = _data['direccion']
+      this.esTechado = _data['esTechado']
+    }
+  }
+
+  static fromJS(data: any): ClubesDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new ClubesDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['equipo'] = this.equipo
+    data['escudo'] = this.escudo
+    data['localidad'] = this.localidad
+    data['direccion'] = this.direccion
+    data['esTechado'] = this.esTechado
+    return data
+  }
+}
+
+export interface IClubesDTO {
+  equipo?: string | undefined
+  escudo?: string | undefined
+  localidad?: string | undefined
+  direccion?: string | undefined
+  esTechado?: string | undefined
 }
 
 export class CrearTorneoDTO implements ICrearTorneoDTO {
@@ -8048,6 +8166,57 @@ export interface IFechaTodosContraTodosDTO {
   numero: number
 }
 
+export class FechasParaJornadasDTO implements IFechasParaJornadasDTO {
+  titulo?: string | undefined
+  dia?: string | undefined
+  jornadas?: JornadasPorFechaDTO[] | undefined
+
+  constructor(data?: IFechasParaJornadasDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.titulo = _data['titulo']
+      this.dia = _data['dia']
+      if (Array.isArray(_data['jornadas'])) {
+        this.jornadas = [] as any
+        for (let item of _data['jornadas'])
+          this.jornadas!.push(JornadasPorFechaDTO.fromJS(item))
+      }
+    }
+  }
+
+  static fromJS(data: any): FechasParaJornadasDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new FechasParaJornadasDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['titulo'] = this.titulo
+    data['dia'] = this.dia
+    if (Array.isArray(this.jornadas)) {
+      data['jornadas'] = []
+      for (let item of this.jornadas) data['jornadas'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface IFechasParaJornadasDTO {
+  titulo?: string | undefined
+  dia?: string | undefined
+  jornadas?: JornadasPorFechaDTO[] | undefined
+}
+
 export class FicharDelegadoSoloConDniYClubDTO implements IFicharDelegadoSoloConDniYClubDTO {
   id?: number
   dni!: string
@@ -8251,9 +8420,152 @@ export interface IFixtureAlgoritmoFechaDTO {
   equipoVisitante: number
 }
 
+export class FixtureDTO implements IFixtureDTO {
+  fechas?: FixtureFechaDTO[] | undefined
+
+  constructor(data?: IFixtureDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      if (Array.isArray(_data['fechas'])) {
+        this.fechas = [] as any
+        for (let item of _data['fechas'])
+          this.fechas!.push(FixtureFechaDTO.fromJS(item))
+      }
+    }
+  }
+
+  static fromJS(data: any): FixtureDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new FixtureDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    if (Array.isArray(this.fechas)) {
+      data['fechas'] = []
+      for (let item of this.fechas) data['fechas'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface IFixtureDTO {
+  fechas?: FixtureFechaDTO[] | undefined
+}
+
+export class FixtureFechaDTO implements IFixtureFechaDTO {
+  partidos?: FixturePartidoDTO[] | undefined
+  titulo?: string | undefined
+  dia?: string | undefined
+
+  constructor(data?: IFixtureFechaDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      if (Array.isArray(_data['partidos'])) {
+        this.partidos = [] as any
+        for (let item of _data['partidos'])
+          this.partidos!.push(FixturePartidoDTO.fromJS(item))
+      }
+      this.titulo = _data['titulo']
+      this.dia = _data['dia']
+    }
+  }
+
+  static fromJS(data: any): FixtureFechaDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new FixtureFechaDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    if (Array.isArray(this.partidos)) {
+      data['partidos'] = []
+      for (let item of this.partidos) data['partidos'].push(item.toJSON())
+    }
+    data['titulo'] = this.titulo
+    data['dia'] = this.dia
+    return data
+  }
+}
+
+export interface IFixtureFechaDTO {
+  partidos?: FixturePartidoDTO[] | undefined
+  titulo?: string | undefined
+  dia?: string | undefined
+}
+
+export class FixturePartidoDTO implements IFixturePartidoDTO {
+  localEscudo?: string | undefined
+  visitanteEscudo?: string | undefined
+  local?: string | undefined
+  visitante?: string | undefined
+
+  constructor(data?: IFixturePartidoDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.localEscudo = _data['localEscudo']
+      this.visitanteEscudo = _data['visitanteEscudo']
+      this.local = _data['local']
+      this.visitante = _data['visitante']
+    }
+  }
+
+  static fromJS(data: any): FixturePartidoDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new FixturePartidoDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['localEscudo'] = this.localEscudo
+    data['visitanteEscudo'] = this.visitanteEscudo
+    data['local'] = this.local
+    data['visitante'] = this.visitante
+    return data
+  }
+}
+
+export interface IFixturePartidoDTO {
+  localEscudo?: string | undefined
+  visitanteEscudo?: string | undefined
+  local?: string | undefined
+  visitante?: string | undefined
+}
+
 export class InformacionInicialAgrupadorDTO implements IInformacionInicialAgrupadorDTO {
   id?: number
   nombre?: string | undefined
+  color?: string | undefined
   torneos?: InformacionInicialTorneoDTO[] | undefined
 
   constructor(data?: IInformacionInicialAgrupadorDTO) {
@@ -8269,6 +8581,7 @@ export class InformacionInicialAgrupadorDTO implements IInformacionInicialAgrupa
     if (_data) {
       this.id = _data['id']
       this.nombre = _data['nombre']
+      this.color = _data['color']
       if (Array.isArray(_data['torneos'])) {
         this.torneos = [] as any
         for (let item of _data['torneos'])
@@ -8288,6 +8601,7 @@ export class InformacionInicialAgrupadorDTO implements IInformacionInicialAgrupa
     data = typeof data === 'object' ? data : {}
     data['id'] = this.id
     data['nombre'] = this.nombre
+    data['color'] = this.color
     if (Array.isArray(this.torneos)) {
       data['torneos'] = []
       for (let item of this.torneos) data['torneos'].push(item.toJSON())
@@ -8299,6 +8613,7 @@ export class InformacionInicialAgrupadorDTO implements IInformacionInicialAgrupa
 export interface IInformacionInicialAgrupadorDTO {
   id?: number
   nombre?: string | undefined
+  color?: string | undefined
   torneos?: InformacionInicialTorneoDTO[] | undefined
 }
 
@@ -8537,6 +8852,146 @@ export interface IJornadaDTO {
   equipo?: string | undefined
   localOVisitante?: LocalVisitanteEnum
   partidos?: PartidoDTO[] | undefined
+}
+
+export class JornadaPorEquipoDTO implements IJornadaPorEquipoDTO {
+  escudo?: string | undefined
+  equipo?: string | undefined
+  categorias?: ResultadoCategoriaDTO[] | undefined
+
+  constructor(data?: IJornadaPorEquipoDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.escudo = _data['escudo']
+      this.equipo = _data['equipo']
+      if (Array.isArray(_data['categorias'])) {
+        this.categorias = [] as any
+        for (let item of _data['categorias'])
+          this.categorias!.push(ResultadoCategoriaDTO.fromJS(item))
+      }
+    }
+  }
+
+  static fromJS(data: any): JornadaPorEquipoDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new JornadaPorEquipoDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['escudo'] = this.escudo
+    data['equipo'] = this.equipo
+    if (Array.isArray(this.categorias)) {
+      data['categorias'] = []
+      for (let item of this.categorias) data['categorias'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface IJornadaPorEquipoDTO {
+  escudo?: string | undefined
+  equipo?: string | undefined
+  categorias?: ResultadoCategoriaDTO[] | undefined
+}
+
+export class JornadasDTO implements IJornadasDTO {
+  fechas?: FechasParaJornadasDTO[] | undefined
+
+  constructor(data?: IJornadasDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      if (Array.isArray(_data['fechas'])) {
+        this.fechas = [] as any
+        for (let item of _data['fechas'])
+          this.fechas!.push(FechasParaJornadasDTO.fromJS(item))
+      }
+    }
+  }
+
+  static fromJS(data: any): JornadasDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new JornadasDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    if (Array.isArray(this.fechas)) {
+      data['fechas'] = []
+      for (let item of this.fechas) data['fechas'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface IJornadasDTO {
+  fechas?: FechasParaJornadasDTO[] | undefined
+}
+
+export class JornadasPorFechaDTO implements IJornadasPorFechaDTO {
+  local?: JornadaPorEquipoDTO
+  visitante?: JornadaPorEquipoDTO
+
+  constructor(data?: IJornadasPorFechaDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.local = _data['local']
+        ? JornadaPorEquipoDTO.fromJS(_data['local'])
+        : <any>undefined
+      this.visitante = _data['visitante']
+        ? JornadaPorEquipoDTO.fromJS(_data['visitante'])
+        : <any>undefined
+    }
+  }
+
+  static fromJS(data: any): JornadasPorFechaDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new JornadasPorFechaDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['local'] = this.local ? this.local.toJSON() : <any>undefined
+    data['visitante'] = this.visitante
+      ? this.visitante.toJSON()
+      : <any>undefined
+    return data
+  }
+}
+
+export interface IJornadasPorFechaDTO {
+  local?: JornadaPorEquipoDTO
+  visitante?: JornadaPorEquipoDTO
 }
 
 export class JugadorBaseDTO implements IJugadorBaseDTO {
@@ -9031,6 +9486,137 @@ export interface IPartidoDTO {
   penalesVisitante?: string | undefined
 }
 
+export class PosicionDelEquipoDTO implements IPosicionDelEquipoDTO {
+  posicion?: string | undefined
+  escudo?: string | undefined
+  equipo?: string | undefined
+  partidosJugados?: string | undefined
+  partidosGanados?: string | undefined
+  partidosEmpatados?: string | undefined
+  partidosPerdidos?: string | undefined
+  golesAFavor?: string | undefined
+  golesEnContra?: string | undefined
+  golesDiferencia?: string | undefined
+  puntos?: string | undefined
+  partidosNoPresento?: string | undefined
+  partidosGanoPuntos?: string | undefined
+  partidosPerdioPuntos?: string | undefined
+
+  constructor(data?: IPosicionDelEquipoDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.posicion = _data['posicion']
+      this.escudo = _data['escudo']
+      this.equipo = _data['equipo']
+      this.partidosJugados = _data['partidosJugados']
+      this.partidosGanados = _data['partidosGanados']
+      this.partidosEmpatados = _data['partidosEmpatados']
+      this.partidosPerdidos = _data['partidosPerdidos']
+      this.golesAFavor = _data['golesAFavor']
+      this.golesEnContra = _data['golesEnContra']
+      this.golesDiferencia = _data['golesDiferencia']
+      this.puntos = _data['puntos']
+      this.partidosNoPresento = _data['partidosNoPresento']
+      this.partidosGanoPuntos = _data['partidosGanoPuntos']
+      this.partidosPerdioPuntos = _data['partidosPerdioPuntos']
+    }
+  }
+
+  static fromJS(data: any): PosicionDelEquipoDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new PosicionDelEquipoDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['posicion'] = this.posicion
+    data['escudo'] = this.escudo
+    data['equipo'] = this.equipo
+    data['partidosJugados'] = this.partidosJugados
+    data['partidosGanados'] = this.partidosGanados
+    data['partidosEmpatados'] = this.partidosEmpatados
+    data['partidosPerdidos'] = this.partidosPerdidos
+    data['golesAFavor'] = this.golesAFavor
+    data['golesEnContra'] = this.golesEnContra
+    data['golesDiferencia'] = this.golesDiferencia
+    data['puntos'] = this.puntos
+    data['partidosNoPresento'] = this.partidosNoPresento
+    data['partidosGanoPuntos'] = this.partidosGanoPuntos
+    data['partidosPerdioPuntos'] = this.partidosPerdioPuntos
+    return data
+  }
+}
+
+export interface IPosicionDelEquipoDTO {
+  posicion?: string | undefined
+  escudo?: string | undefined
+  equipo?: string | undefined
+  partidosJugados?: string | undefined
+  partidosGanados?: string | undefined
+  partidosEmpatados?: string | undefined
+  partidosPerdidos?: string | undefined
+  golesAFavor?: string | undefined
+  golesEnContra?: string | undefined
+  golesDiferencia?: string | undefined
+  puntos?: string | undefined
+  partidosNoPresento?: string | undefined
+  partidosGanoPuntos?: string | undefined
+  partidosPerdioPuntos?: string | undefined
+}
+
+export class PosicionesDTO implements IPosicionesDTO {
+  posiciones?: CategoriasConPosicionesDTO[] | undefined
+
+  constructor(data?: IPosicionesDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      if (Array.isArray(_data['posiciones'])) {
+        this.posiciones = [] as any
+        for (let item of _data['posiciones'])
+          this.posiciones!.push(CategoriasConPosicionesDTO.fromJS(item))
+      }
+    }
+  }
+
+  static fromJS(data: any): PosicionesDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new PosicionesDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    if (Array.isArray(this.posiciones)) {
+      data['posiciones'] = []
+      for (let item of this.posiciones) data['posiciones'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface IPosicionesDTO {
+  posiciones?: CategoriasConPosicionesDTO[] | undefined
+}
+
 export class RechazarJugadorDTO implements IRechazarJugadorDTO {
   id?: number
   dni!: string
@@ -9145,6 +9731,46 @@ export interface IReportePagosDTO {
   mes?: number
   anio?: number
   cantidadJugadoresPagados?: number
+}
+
+export class ResultadoCategoriaDTO implements IResultadoCategoriaDTO {
+  categoria?: string | undefined
+  resultado?: string | undefined
+
+  constructor(data?: IResultadoCategoriaDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.categoria = _data['categoria']
+      this.resultado = _data['resultado']
+    }
+  }
+
+  static fromJS(data: any): ResultadoCategoriaDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new ResultadoCategoriaDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['categoria'] = this.categoria
+    data['resultado'] = this.resultado
+    return data
+  }
+}
+
+export interface IResultadoCategoriaDTO {
+  categoria?: string | undefined
+  resultado?: string | undefined
 }
 
 export enum TipoDeFaseEnum {
@@ -9511,6 +10137,7 @@ export class ZonaResumenDTO implements IZonaResumenDTO {
   id?: number | undefined
   nombre?: string | undefined
   torneoId?: number | undefined
+  anio!: number
   torneo?: string | undefined
   agrupador?: string | undefined
   agrupadorId?: number | undefined
@@ -9531,6 +10158,7 @@ export class ZonaResumenDTO implements IZonaResumenDTO {
       this.id = _data['id']
       this.nombre = _data['nombre']
       this.torneoId = _data['torneoId']
+      this.anio = _data['anio']
       this.torneo = _data['torneo']
       this.agrupador = _data['agrupador']
       this.agrupadorId = _data['agrupadorId']
@@ -9551,6 +10179,7 @@ export class ZonaResumenDTO implements IZonaResumenDTO {
     data['id'] = this.id
     data['nombre'] = this.nombre
     data['torneoId'] = this.torneoId
+    data['anio'] = this.anio
     data['torneo'] = this.torneo
     data['agrupador'] = this.agrupador
     data['agrupadorId'] = this.agrupadorId
@@ -9564,6 +10193,7 @@ export interface IZonaResumenDTO {
   id?: number | undefined
   nombre?: string | undefined
   torneoId?: number | undefined
+  anio: number
   torneo?: string | undefined
   agrupador?: string | undefined
   agrupadorId?: number | undefined

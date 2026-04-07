@@ -1,5 +1,8 @@
-import { CambiarVisibilidadEnAppDTO } from '@/api/clients'
-import { api } from '@/api/api'
+import {
+  fechaCambiarVisibilidadEnApp,
+  faseCambiarVisibilidadEnApp,
+  torneoCambiarVisibilidadEnApp
+} from '@/api/visibilidad-en-app-api'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -14,10 +17,7 @@ export function useToggleVisibilidadTorneoEnApp(
   return useApiMutation<void>({
     fn: async () => {
       const actual = esVisibleEnApp ?? true
-      await api.torneoCambiarVisibilidadEnApp(
-        torneoId,
-        new CambiarVisibilidadEnAppDTO({ esVisibleEnApp: !actual })
-      )
+      await torneoCambiarVisibilidadEnApp(torneoId, !actual)
     },
     antesDeMensajeExito: () => refetch(),
     mensajeDeExito: MENSAJE
@@ -36,11 +36,7 @@ export function useToggleVisibilidadFaseEnApp(
     fn: async () => {
       if (faseId === undefined) return
       const actual = esVisibleEnApp ?? true
-      await api.fasesCambiarVisibilidadEnApp(
-        torneoId,
-        faseId,
-        new CambiarVisibilidadEnAppDTO({ esVisibleEnApp: !actual })
-      )
+      await faseCambiarVisibilidadEnApp(torneoId, faseId, !actual)
     },
     antesDeMensajeExito: () => {
       queryClient.invalidateQueries({ queryKey: ['torneo'] })
@@ -61,11 +57,7 @@ export function useToggleVisibilidadFechaEnApp(
     fn: async () => {
       if (fechaId === undefined) return
       const actual = esVisibleEnApp ?? true
-      await api.fechasCambiarVisibilidadEnApp(
-        zonaId,
-        fechaId,
-        new CambiarVisibilidadEnAppDTO({ esVisibleEnApp: !actual })
-      )
+      await fechaCambiarVisibilidadEnApp(zonaId, fechaId, !actual)
     },
     antesDeMensajeExito: () => {
       queryClient.invalidateQueries({ queryKey: ['fechasAll', zonaId] })
