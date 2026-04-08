@@ -1,4 +1,8 @@
-import { TipoDeFaseEnum, type FaseDTO } from '@/api/clients'
+import {
+  TipoDeFaseEnum,
+  type FaseDTO,
+  type TorneoCategoriaDTO
+} from '@/api/clients'
 import { useToggleVisibilidadFaseEnApp } from '@/api/hooks/use-visibilidad-en-app'
 import {
   AlertDialog,
@@ -33,9 +37,11 @@ import { useFaseItem } from './use-fase-item'
 
 interface FaseItemProps {
   torneoId: number
+  nombreTorneo: string
   fase: FaseEstado
   faseIndex: number
   faseOriginal?: FaseDTO
+  categoriasTorneo?: TorneoCategoriaDTO[]
   onActualizar: (campo: string, valor: string) => void
   onEliminar: () => void
   /** Si se provee, se llama al hacer clic en el ícono de zonas (guarda antes de navegar). Recibe el index de la fase. */
@@ -48,9 +54,11 @@ interface FaseItemProps {
 
 export function FaseItem({
   torneoId,
+  nombreTorneo,
   fase,
   faseIndex,
   faseOriginal,
+  categoriasTorneo = [],
   onActualizar,
   onEliminar,
   onIrAZonas,
@@ -200,6 +208,9 @@ export function FaseItem({
           }
           torneoId={torneoId}
           faseId={faseId}
+          nombreTorneo={nombreTorneo}
+          nombreFase={fase.nombre}
+          categorias={categoriasTorneo}
         />
       ) : (
         <SelectorSimple

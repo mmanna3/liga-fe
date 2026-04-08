@@ -216,9 +216,11 @@ export default function DetalleTorneo() {
               <CardContent className='py-2'>
                 <FaseItem
                   torneoId={torneoId}
+                  nombreTorneo={torneo.nombre}
                   fase={fase}
                   faseIndex={index}
                   faseOriginal={torneoFases[index]}
+                  categoriasTorneo={torneo.categorias ?? []}
                   onActualizar={(campo, valor) =>
                     actualizarFase(index, campo, valor)
                   }

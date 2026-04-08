@@ -6800,6 +6800,293 @@ export class Client {
     }
     return Promise.resolve<number>(null as any)
   }
+
+  /**
+   * @return OK
+   */
+  leyendasAll(padreId: number): Promise<LeyendaTablaPosicionesDTO[]> {
+    let url_ = this.baseUrl + '/api/Zona/{padreId}/leyendas'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processLeyendasAll(_response)
+    })
+  }
+
+  protected processLeyendasAll(
+    response: Response
+  ): Promise<LeyendaTablaPosicionesDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(LeyendaTablaPosicionesDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<LeyendaTablaPosicionesDTO[]>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  leyendasPOST(
+    padreId: number,
+    body: LeyendaTablaPosicionesDTO | undefined
+  ): Promise<LeyendaTablaPosicionesDTO> {
+    let url_ = this.baseUrl + '/api/Zona/{padreId}/leyendas'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processLeyendasPOST(_response)
+    })
+  }
+
+  protected processLeyendasPOST(
+    response: Response
+  ): Promise<LeyendaTablaPosicionesDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = LeyendaTablaPosicionesDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<LeyendaTablaPosicionesDTO>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  leyendasGET(padreId: number, id: number): Promise<LeyendaTablaPosicionesDTO> {
+    let url_ = this.baseUrl + '/api/Zona/{padreId}/leyendas/{id}'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processLeyendasGET(_response)
+    })
+  }
+
+  protected processLeyendasGET(
+    response: Response
+  ): Promise<LeyendaTablaPosicionesDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = LeyendaTablaPosicionesDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<LeyendaTablaPosicionesDTO>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  leyendasPUT(
+    padreId: number,
+    id: number,
+    body: LeyendaTablaPosicionesDTO | undefined
+  ): Promise<void> {
+    let url_ = this.baseUrl + '/api/Zona/{padreId}/leyendas/{id}'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processLeyendasPUT(_response)
+    })
+  }
+
+  protected processLeyendasPUT(response: Response): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  leyendasDELETE(padreId: number, id: number): Promise<number> {
+    let url_ = this.baseUrl + '/api/Zona/{padreId}/leyendas/{id}'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'DELETE',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processLeyendasDELETE(_response)
+    })
+  }
+
+  protected processLeyendasDELETE(response: Response): Promise<number> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = resultData200 !== undefined ? resultData200 : <any>null
+
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<number>(null as any)
+  }
 }
 
 export class ActualizarTarjetasJugadorDTO implements IActualizarTarjetasJugadorDTO {
@@ -7196,6 +7483,8 @@ export class CarnetDigitalDTO implements ICarnetDigitalDTO {
   torneo?: string | undefined
   estado?: number
   esDelegado?: boolean
+  tarjetasAmarillas?: number
+  tarjetasRojas?: number
 
   constructor(data?: ICarnetDigitalDTO) {
     if (data) {
@@ -7220,6 +7509,8 @@ export class CarnetDigitalDTO implements ICarnetDigitalDTO {
       this.torneo = _data['torneo']
       this.estado = _data['estado']
       this.esDelegado = _data['esDelegado']
+      this.tarjetasAmarillas = _data['tarjetasAmarillas']
+      this.tarjetasRojas = _data['tarjetasRojas']
     }
   }
 
@@ -7244,6 +7535,8 @@ export class CarnetDigitalDTO implements ICarnetDigitalDTO {
     data['torneo'] = this.torneo
     data['estado'] = this.estado
     data['esDelegado'] = this.esDelegado
+    data['tarjetasAmarillas'] = this.tarjetasAmarillas
+    data['tarjetasRojas'] = this.tarjetasRojas
     return data
   }
 }
@@ -7259,6 +7552,8 @@ export interface ICarnetDigitalDTO {
   torneo?: string | undefined
   estado?: number
   esDelegado?: boolean
+  tarjetasAmarillas?: number
+  tarjetasRojas?: number
 }
 
 export class CarnetDigitalPendienteDTO implements ICarnetDigitalPendienteDTO {
@@ -7272,6 +7567,8 @@ export class CarnetDigitalPendienteDTO implements ICarnetDigitalPendienteDTO {
   torneo?: string | undefined
   estado?: number
   esDelegado?: boolean
+  tarjetasAmarillas?: number
+  tarjetasRojas?: number
   motivo?: string | undefined
 
   constructor(data?: ICarnetDigitalPendienteDTO) {
@@ -7297,6 +7594,8 @@ export class CarnetDigitalPendienteDTO implements ICarnetDigitalPendienteDTO {
       this.torneo = _data['torneo']
       this.estado = _data['estado']
       this.esDelegado = _data['esDelegado']
+      this.tarjetasAmarillas = _data['tarjetasAmarillas']
+      this.tarjetasRojas = _data['tarjetasRojas']
       this.motivo = _data['motivo']
     }
   }
@@ -7322,6 +7621,8 @@ export class CarnetDigitalPendienteDTO implements ICarnetDigitalPendienteDTO {
     data['torneo'] = this.torneo
     data['estado'] = this.estado
     data['esDelegado'] = this.esDelegado
+    data['tarjetasAmarillas'] = this.tarjetasAmarillas
+    data['tarjetasRojas'] = this.tarjetasRojas
     data['motivo'] = this.motivo
     return data
   }
@@ -7338,6 +7639,8 @@ export interface ICarnetDigitalPendienteDTO {
   torneo?: string | undefined
   estado?: number
   esDelegado?: boolean
+  tarjetasAmarillas?: number
+  tarjetasRojas?: number
   motivo?: string | undefined
 }
 
@@ -9839,6 +10142,54 @@ export class JugadoresPorCategoriaDTO implements IJugadoresPorCategoriaDTO {
 export interface IJugadoresPorCategoriaDTO {
   categoria: string | undefined
   jugadores: JugadorDatosPlanillaDTO[] | undefined
+}
+
+export class LeyendaTablaPosicionesDTO implements ILeyendaTablaPosicionesDTO {
+  id?: number
+  leyenda!: string
+  categoriaId?: number | undefined
+  zonaId?: number
+
+  constructor(data?: ILeyendaTablaPosicionesDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.leyenda = _data['leyenda']
+      this.categoriaId = _data['categoriaId']
+      this.zonaId = _data['zonaId']
+    }
+  }
+
+  static fromJS(data: any): LeyendaTablaPosicionesDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new LeyendaTablaPosicionesDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['leyenda'] = this.leyenda
+    data['categoriaId'] = this.categoriaId
+    data['zonaId'] = this.zonaId
+    return data
+  }
+}
+
+export interface ILeyendaTablaPosicionesDTO {
+  id?: number
+  leyenda: string
+  categoriaId?: number | undefined
+  zonaId?: number
 }
 
 export enum LocalVisitanteEnum {
