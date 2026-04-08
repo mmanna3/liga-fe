@@ -17,21 +17,27 @@ import {
   obtenerNombreEstado
 } from '@/logica-compartida/estado-jugador-lib'
 import { EstadoJugador } from '@/logica-compartida/utils'
+import { useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import BotonCambiarEstado from './components/boton-cambiar-estado'
+import ModalActualizarTarjetas, {
+  TarjetasJugadorResumenClickeable
+} from './components/modal-actualizar-tarjetas'
 import ContenedorBotones from '@/design-system/ykn-ui/contenedor-botones'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { rutasNavegacion } from '@/ruteo/rutas'
 
 export default function CambiarEstado() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const { jugadorequipoid, jugadorid } = useParams<{
     jugadorequipoid: string
     jugadorid: string
   }>()
   const [estado, setEstado] = useState<EstadoJugador | null>(null)
   const [motivo, setMotivo] = useState('')
+  const [modalTarjetasAbierto, setModalTarjetasAbierto] = useState(false)
 
   const {
     data: jugador,
@@ -82,6 +88,27 @@ export default function CambiarEstado() {
           <CardTitle className='mt-4 text-3xl font-semibold text-gray-900'>
             {jugador!.nombre} {jugador!.apellido}
           </CardTitle>
+          {equipo && (
+            <>
+              <TarjetasJugadorResumenClickeable
+                amarillas={equipo.tarjetasAmarillas ?? 0}
+                rojas={equipo.tarjetasRojas ?? 0}
+                onClick={() => setModalTarjetasAbierto(true)}
+              />
+              <ModalActualizarTarjetas
+                open={modalTarjetasAbierto}
+                onOpenChange={setModalTarjetasAbierto}
+                jugadorEquipoId={equipo.id!}
+                tarjetasAmarillasInicial={equipo.tarjetasAmarillas ?? 0}
+                tarjetasRojasInicial={equipo.tarjetasRojas ?? 0}
+                onGuardado={() => {
+                  queryClient.invalidateQueries({
+                    queryKey: ['jugador', jugadorid]
+                  })
+                }}
+              />
+            </>
+          )}
         </CardHeader>
 
         <CardContent>

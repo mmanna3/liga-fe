@@ -78,7 +78,9 @@ const JUGADOR_1 = {
       torneo: 'Torneo Apertura 2026',
       estado: 3,
       club: 'Club Defensores del Norte',
-      motivo: null
+      motivo: null,
+      tarjetasAmarillas: 0,
+      tarjetasRojas: 0
     }
   ]
 }
@@ -100,7 +102,9 @@ const JUGADOR_PENDIENTE = {
       torneo: 'Torneo Apertura 2026',
       estado: 1,
       club: 'Club Defensores del Norte',
-      motivo: null
+      motivo: null,
+      tarjetasAmarillas: 0,
+      tarjetasRojas: 0
     }
   ]
 }
@@ -529,6 +533,12 @@ const ROUTES = [
   {
     method: 'POST',
     pattern: '/api/Jugador/rechazar-jugador',
+    scenarios: { happy: 1 }
+  },
+  // Jugadores — actualizar tarjetas (amarillas / rojas)
+  {
+    method: 'POST',
+    pattern: '/api/Jugador/actualizar-tarjetas',
     scenarios: { happy: 1 }
   },
 
