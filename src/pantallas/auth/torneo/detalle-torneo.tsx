@@ -4,14 +4,17 @@ import { Input } from '@/design-system/ykn-ui/input'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { Plus } from 'lucide-react'
+import { Fragment, useState } from 'react'
 import { Categorias } from './crear-torneo/components/categorias'
 import { SelectorAgrupador } from './crear-torneo/components/selector-agrupador'
 import { SwitchVerGoles } from './crear-torneo/components/switch-ver-goles'
 import { FaseItem } from './detalle-torneo/components/fase-item/fase-item'
 import { useDetalleTorneo } from './detalle-torneo/hooks/use-detalle-torneo'
 import { useFases } from './detalle-torneo/hooks/use-fases'
+import ModalActualizarFasesTablaAnual from './detalle-torneo/modal-actualizar-fases-tabla-anual'
 
 export default function DetalleTorneo() {
+  const [modalTablaAnualAbierto, setModalTablaAnualAbierto] = useState(false)
   const detalle = useDetalleTorneo()
   const {
     torneo,
@@ -75,179 +78,235 @@ export default function DetalleTorneo() {
   const puedeEliminar = torneoFases.length === 0
 
   return (
-    <LayoutSegundoNivel
-      titulo={`${torneo.nombre}`}
-      iconoTitulo='Torneos'
-      pathBotonVolver={rutasNavegacion.torneos}
-      maxWidth='2xl'
-      contenidoEnCard={false}
-      botonera={{
-        iconos: [
-          {
-            icono: torneo.esVisibleEnApp
-              ? ('Visible' as const)
-              : ('NoVisible' as const),
-            alApretar: () => toggleVisibilidadAppMutation.mutate(),
-            tooltip: torneo.esVisibleEnApp
-              ? 'El torneo es visible en la app'
-              : 'El torneo no es visible en la app',
-            visibleSoloParaAdmin: true,
-            estaCargando: toggleVisibilidadAppMutation.isPending
-          },
-          {
-            icono: 'Editar' as const,
-            alApretar: () => setEditando(true),
-            tooltip: 'Editar torneo'
-          },
-          {
-            alApretar: () => eliminarMutation.mutate(undefined),
-            tooltip: 'Eliminar',
-            puedeEliminar,
-            textoNoSePuedeEliminar:
-              'Este torneo tiene fases. Para eliminar el torneo, eliminá primero las fases que tiene.',
-            modalEliminacion: {
-              titulo: 'Eliminar torneo',
-              subtitulo: `¿Estás seguro de que querés eliminar el torneo "${torneo.nombre}"? Esta acción no se puede deshacer.`,
-              estaCargando: eliminarMutation.isPending
+    <Fragment>
+      <LayoutSegundoNivel
+        titulo={`${torneo.nombre}`}
+        iconoTitulo='Torneos'
+        pathBotonVolver={rutasNavegacion.torneos}
+        maxWidth='2xl'
+        contenidoEnCard={false}
+        botonera={{
+          iconos: [
+            {
+              icono: torneo.esVisibleEnApp
+                ? ('Visible' as const)
+                : ('NoVisible' as const),
+              alApretar: () => toggleVisibilidadAppMutation.mutate(),
+              tooltip: torneo.esVisibleEnApp
+                ? 'El torneo es visible en la app'
+                : 'El torneo no es visible en la app',
+              visibleSoloParaAdmin: true,
+              estaCargando: toggleVisibilidadAppMutation.isPending
+            },
+            {
+              icono: 'Editar' as const,
+              alApretar: () => setEditando(true),
+              tooltip: 'Editar torneo'
+            },
+            {
+              alApretar: () => eliminarMutation.mutate(undefined),
+              tooltip: 'Eliminar',
+              puedeEliminar,
+              textoNoSePuedeEliminar:
+                'Este torneo tiene fases. Para eliminar el torneo, eliminá primero las fases que tiene.',
+              modalEliminacion: {
+                titulo: 'Eliminar torneo',
+                subtitulo: `¿Estás seguro de que querés eliminar el torneo "${torneo.nombre}"? Esta acción no se puede deshacer.`,
+                estaCargando: eliminarMutation.isPending
+              }
             }
-          }
-        ]
-      }}
-      contenido={
-        <div className='space-y-4'>
-          <Card className='shadow-md'>
-            <CardContent className='py-2 space-y-4'>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
+          ]
+        }}
+        contenido={
+          <div className='space-y-4'>
+            <Card className='shadow-md'>
+              <CardContent className='py-2 space-y-4'>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
+                  {editando ? (
+                    <>
+                      <Input
+                        tipo='text'
+                        titulo='Nombre del torneo *'
+                        value={nombre}
+                        onChange={(e) => setNombre(e.target.value)}
+                        placeholder='Ej: Torneo Anual 2026'
+                      />
+                      <Input
+                        tipo='number'
+                        titulo='Temporada/Año *'
+                        value={temporada}
+                        onChange={(e) => setTemporada(e.target.value)}
+                        placeholder='2026'
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <div>
+                        <label className='text-sm font-semibold text-muted-foreground block mb-2'>
+                          Nombre del torneo
+                        </label>
+                        <p className='font-medium'>{nombre || '—'}</p>
+                      </div>
+                      <div>
+                        <label className='text-sm font-semibold text-muted-foreground block mb-2'>
+                          Temporada/Año
+                        </label>
+                        <p className='font-medium'>{temporada || '—'}</p>
+                      </div>
+                    </>
+                  )}
+                </div>
+
                 {editando ? (
-                  <>
-                    <Input
-                      tipo='text'
-                      titulo='Nombre del torneo *'
-                      value={nombre}
-                      onChange={(e) => setNombre(e.target.value)}
-                      placeholder='Ej: Torneo Anual 2026'
-                    />
-                    <Input
-                      tipo='number'
-                      titulo='Temporada/Año *'
-                      value={temporada}
-                      onChange={(e) => setTemporada(e.target.value)}
-                      placeholder='2026'
-                    />
-                  </>
+                  <SelectorAgrupador
+                    valor={agrupadorId}
+                    alCambiar={setAgrupadorId}
+                  />
                 ) : (
-                  <>
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
                     <div>
                       <label className='text-sm font-semibold text-muted-foreground block mb-2'>
-                        Nombre del torneo
+                        Agrupador
                       </label>
-                      <p className='font-medium'>{nombre || '—'}</p>
+                      <p className='font-medium'>
+                        {torneo.torneoAgrupadorNombre ?? '—'}
+                      </p>
                     </div>
                     <div>
                       <label className='text-sm font-semibold text-muted-foreground block mb-2'>
-                        Temporada/Año
+                        Fases sumadas para Tabla Anual
                       </label>
-                      <p className='font-medium'>{temporada || '—'}</p>
+                      <p className='font-medium'>
+                        {torneo.faseAperturaNombre != null &&
+                        torneo.faseClausuraNombre != null ? (
+                          <>
+                            {torneo.faseAperturaNombre},{' '}
+                            {torneo.faseClausuraNombre}
+                          </>
+                        ) : (
+                          'No hay tabla de posiciones Anual'
+                        )}
+                      </p>
                     </div>
-                  </>
+                  </div>
                 )}
-              </div>
 
-              {editando ? (
-                <SelectorAgrupador
-                  valor={agrupadorId}
-                  alCambiar={setAgrupadorId}
+                {editando ? (
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
+                    <SwitchVerGoles
+                      value={seVenLosGolesEnTablaDePosiciones}
+                      onChange={setSeVenLosGolesEnTablaDePosiciones}
+                    />
+                    <div>
+                      <label className='text-md font-semibold block mb-2'>
+                        Fases sumadas para Tabla Anual
+                      </label>
+                      <p
+                        className='font-medium underline text-green-700 hover:text-green-600 cursor-pointer'
+                        onClick={() => setModalTablaAnualAbierto(true)}
+                      >
+                        {torneo.faseAperturaNombre != null &&
+                        torneo.faseClausuraNombre != null ? (
+                          <>
+                            {torneo.faseAperturaNombre},{' '}
+                            {torneo.faseClausuraNombre}
+                          </>
+                        ) : (
+                          'No hay tabla de posiciones Anual'
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <label className='text-sm font-semibold text-muted-foreground block mb-2'>
+                      Ver goles en tablas de posiciones
+                    </label>
+                    <p className='font-medium'>
+                      {seVenLosGolesEnTablaDePosiciones ? 'Sí' : 'No'}
+                    </p>
+                  </div>
+                )}
+
+                <Categorias
+                  valor={categorias}
+                  alCambiar={setCategorias}
+                  soloLectura={!editando}
                 />
-              ) : (
-                <div>
-                  <label className='text-sm font-semibold text-muted-foreground block mb-2'>
-                    Agrupador
-                  </label>
-                  <p className='font-medium'>
-                    {torneo.torneoAgrupadorNombre ?? '—'}
-                  </p>
-                </div>
-              )}
 
-              {editando ? (
-                <SwitchVerGoles
-                  value={seVenLosGolesEnTablaDePosiciones}
-                  onChange={setSeVenLosGolesEnTablaDePosiciones}
-                />
-              ) : (
-                <div>
-                  <label className='text-sm font-semibold text-muted-foreground block mb-2'>
-                    Ver goles en tablas de posiciones
-                  </label>
-                  <p className='font-medium'>
-                    {seVenLosGolesEnTablaDePosiciones ? 'Sí' : 'No'}
-                  </p>
-                </div>
-              )}
-
-              <Categorias
-                valor={categorias}
-                alCambiar={setCategorias}
-                soloLectura={!editando}
-              />
-
-              {editando && (
-                <div className='flex justify-end gap-2 pt-2 border-t'>
-                  <Boton
-                    variant='outline'
-                    onClick={handleCancelarEdicion}
-                    disabled={guardarDatosBasicosMutation.isPending}
-                  >
-                    Cancelar
-                  </Boton>
-                  <Boton
-                    estaCargando={guardarDatosBasicosMutation.isPending}
-                    onClick={() => guardarDatosBasicosMutation.mutate()}
-                  >
-                    Guardar
-                  </Boton>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {fasesEstado.map((fase, index) => (
-            <Card key={fase.id ?? index} className='shadow-md'>
-              <CardContent className='py-2'>
-                <FaseItem
-                  torneoId={torneoId}
-                  nombreTorneo={torneo.nombre}
-                  fase={fase}
-                  faseIndex={index}
-                  faseOriginal={torneoFases[index]}
-                  categoriasTorneo={torneo.categorias ?? []}
-                  onActualizar={(campo, valor) =>
-                    actualizarFase(index, campo, valor)
-                  }
-                  onEliminar={() => eliminarFase(index)}
-                  onIrAZonas={irAZonas}
-                  estaGuardando={estaGuardandoZonas}
-                  enCard
-                />
+                {editando && (
+                  <div className='flex justify-end gap-2 pt-2 border-t'>
+                    <Boton
+                      variant='outline'
+                      onClick={handleCancelarEdicion}
+                      disabled={guardarDatosBasicosMutation.isPending}
+                    >
+                      Cancelar
+                    </Boton>
+                    <Boton
+                      estaCargando={guardarDatosBasicosMutation.isPending}
+                      onClick={() => guardarDatosBasicosMutation.mutate()}
+                    >
+                      Guardar
+                    </Boton>
+                  </div>
+                )}
               </CardContent>
             </Card>
-          ))}
 
-          {!editando && (
-            <Boton
-              type='button'
-              variant='outline'
-              size='sm'
-              onClick={() => agregarFaseMutation.mutate()}
-              estaCargando={agregarFaseMutation.isPending}
-              className='my-2'
-            >
-              <Plus className='w-3 h-3' />
-              Agregar fase
-            </Boton>
-          )}
-        </div>
-      }
-    />
+            {fasesEstado.map((fase, index) => (
+              <Card key={fase.id ?? index} className='shadow-md'>
+                <CardContent className='py-2'>
+                  <FaseItem
+                    torneoId={torneoId}
+                    nombreTorneo={torneo.nombre}
+                    fase={fase}
+                    faseIndex={index}
+                    faseOriginal={torneoFases[index]}
+                    categoriasTorneo={torneo.categorias ?? []}
+                    onActualizar={(campo, valor) =>
+                      actualizarFase(index, campo, valor)
+                    }
+                    onEliminar={() => eliminarFase(index)}
+                    onIrAZonas={irAZonas}
+                    estaGuardando={estaGuardandoZonas}
+                    enCard
+                  />
+                </CardContent>
+              </Card>
+            ))}
+
+            {!editando && (
+              <Boton
+                type='button'
+                variant='outline'
+                size='sm'
+                onClick={() => agregarFaseMutation.mutate()}
+                estaCargando={agregarFaseMutation.isPending}
+                className='my-2'
+              >
+                <Plus className='w-3 h-3' />
+                Agregar fase
+              </Boton>
+            )}
+          </div>
+        }
+      />
+      <ModalActualizarFasesTablaAnual
+        open={modalTablaAnualAbierto}
+        onOpenChange={setModalTablaAnualAbierto}
+        torneoId={torneoId}
+        nombreTorneo={torneo.nombre}
+        agrupadorNombre={torneo.torneoAgrupadorNombre}
+        fases={torneo.fases ?? []}
+        faseAperturaId={torneo.faseAperturaId}
+        faseAperturaNombre={torneo.faseAperturaNombre}
+        faseClausuraId={torneo.faseClausuraId}
+        faseClausuraNombre={torneo.faseClausuraNombre}
+        alGuardarExito={() => {
+          void refetch()
+        }}
+      />
+    </Fragment>
   )
 }

@@ -5859,6 +5859,60 @@ export class Client {
   }
 
   /**
+   * @param body (optional)
+   * @return OK
+   */
+  torneoEditarFasesParaTablaAnual(
+    id: number,
+    body: EditarFasesParaTablaAnualDTO | undefined
+  ): Promise<void> {
+    let url_ = this.baseUrl + '/api/Torneo/{id}/fases-para-tabla-anual'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processTorneoEditarFasesParaTablaAnual(_response)
+    })
+  }
+
+  protected processTorneoEditarFasesParaTablaAnual(
+    response: Response
+  ): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
    * @return OK
    */
   torneoAll(): Promise<TorneoDTO[]> {
@@ -8216,6 +8270,10 @@ export class CrearTorneoDTO implements ICrearTorneoDTO {
   esVisibleEnApp!: boolean
   seVenLosGolesEnTablaDePosiciones!: boolean
   torneoAgrupadorId?: number
+  faseAperturaId?: number | undefined
+  faseAperturaNombre?: string | undefined
+  faseClausuraId?: number | undefined
+  faseClausuraNombre?: string | undefined
   torneoAgrupadorNombre?: string | undefined
   sePuedeEditar?: boolean
   fases?: FaseDTO[] | undefined
@@ -8240,6 +8298,10 @@ export class CrearTorneoDTO implements ICrearTorneoDTO {
       this.seVenLosGolesEnTablaDePosiciones =
         _data['seVenLosGolesEnTablaDePosiciones']
       this.torneoAgrupadorId = _data['torneoAgrupadorId']
+      this.faseAperturaId = _data['faseAperturaId']
+      this.faseAperturaNombre = _data['faseAperturaNombre']
+      this.faseClausuraId = _data['faseClausuraId']
+      this.faseClausuraNombre = _data['faseClausuraNombre']
       this.torneoAgrupadorNombre = _data['torneoAgrupadorNombre']
       this.sePuedeEditar = _data['sePuedeEditar']
       if (Array.isArray(_data['fases'])) {
@@ -8273,6 +8335,10 @@ export class CrearTorneoDTO implements ICrearTorneoDTO {
     data['seVenLosGolesEnTablaDePosiciones'] =
       this.seVenLosGolesEnTablaDePosiciones
     data['torneoAgrupadorId'] = this.torneoAgrupadorId
+    data['faseAperturaId'] = this.faseAperturaId
+    data['faseAperturaNombre'] = this.faseAperturaNombre
+    data['faseClausuraId'] = this.faseClausuraId
+    data['faseClausuraNombre'] = this.faseClausuraNombre
     data['torneoAgrupadorNombre'] = this.torneoAgrupadorNombre
     data['sePuedeEditar'] = this.sePuedeEditar
     if (Array.isArray(this.fases)) {
@@ -8297,6 +8363,10 @@ export interface ICrearTorneoDTO {
   esVisibleEnApp: boolean
   seVenLosGolesEnTablaDePosiciones: boolean
   torneoAgrupadorId?: number
+  faseAperturaId?: number | undefined
+  faseAperturaNombre?: string | undefined
+  faseClausuraId?: number | undefined
+  faseClausuraNombre?: string | undefined
   torneoAgrupadorNombre?: string | undefined
   sePuedeEditar?: boolean
   fases?: FaseDTO[] | undefined
@@ -8565,6 +8635,46 @@ export interface IDniExpulsadoDeLaLigaDTO {
   id?: number
   explicacion: string
   dni?: number
+}
+
+export class EditarFasesParaTablaAnualDTO implements IEditarFasesParaTablaAnualDTO {
+  faseAperturaId?: number | undefined
+  faseClausuraId?: number | undefined
+
+  constructor(data?: IEditarFasesParaTablaAnualDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.faseAperturaId = _data['faseAperturaId']
+      this.faseClausuraId = _data['faseClausuraId']
+    }
+  }
+
+  static fromJS(data: any): EditarFasesParaTablaAnualDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new EditarFasesParaTablaAnualDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['faseAperturaId'] = this.faseAperturaId
+    data['faseClausuraId'] = this.faseClausuraId
+    return data
+  }
+}
+
+export interface IEditarFasesParaTablaAnualDTO {
+  faseAperturaId?: number | undefined
+  faseClausuraId?: number | undefined
 }
 
 export class EfectuarPaseDTO implements IEfectuarPaseDTO {
@@ -11399,6 +11509,10 @@ export class TorneoDTO implements ITorneoDTO {
   esVisibleEnApp!: boolean
   seVenLosGolesEnTablaDePosiciones!: boolean
   torneoAgrupadorId?: number
+  faseAperturaId?: number | undefined
+  faseAperturaNombre?: string | undefined
+  faseClausuraId?: number | undefined
+  faseClausuraNombre?: string | undefined
   torneoAgrupadorNombre?: string | undefined
   sePuedeEditar?: boolean
   fases?: FaseDTO[] | undefined
@@ -11422,6 +11536,10 @@ export class TorneoDTO implements ITorneoDTO {
       this.seVenLosGolesEnTablaDePosiciones =
         _data['seVenLosGolesEnTablaDePosiciones']
       this.torneoAgrupadorId = _data['torneoAgrupadorId']
+      this.faseAperturaId = _data['faseAperturaId']
+      this.faseAperturaNombre = _data['faseAperturaNombre']
+      this.faseClausuraId = _data['faseClausuraId']
+      this.faseClausuraNombre = _data['faseClausuraNombre']
       this.torneoAgrupadorNombre = _data['torneoAgrupadorNombre']
       this.sePuedeEditar = _data['sePuedeEditar']
       if (Array.isArray(_data['fases'])) {
@@ -11452,6 +11570,10 @@ export class TorneoDTO implements ITorneoDTO {
     data['seVenLosGolesEnTablaDePosiciones'] =
       this.seVenLosGolesEnTablaDePosiciones
     data['torneoAgrupadorId'] = this.torneoAgrupadorId
+    data['faseAperturaId'] = this.faseAperturaId
+    data['faseAperturaNombre'] = this.faseAperturaNombre
+    data['faseClausuraId'] = this.faseClausuraId
+    data['faseClausuraNombre'] = this.faseClausuraNombre
     data['torneoAgrupadorNombre'] = this.torneoAgrupadorNombre
     data['sePuedeEditar'] = this.sePuedeEditar
     if (Array.isArray(this.fases)) {
@@ -11473,6 +11595,10 @@ export interface ITorneoDTO {
   esVisibleEnApp: boolean
   seVenLosGolesEnTablaDePosiciones: boolean
   torneoAgrupadorId?: number
+  faseAperturaId?: number | undefined
+  faseAperturaNombre?: string | undefined
+  faseClausuraId?: number | undefined
+  faseClausuraNombre?: string | undefined
   torneoAgrupadorNombre?: string | undefined
   sePuedeEditar?: boolean
   fases?: FaseDTO[] | undefined
