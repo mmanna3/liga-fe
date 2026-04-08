@@ -2153,6 +2153,343 @@ export class Client {
   }
 
   /**
+   * @param ids (optional)
+   * @return OK
+   */
+  dnisExpulsadosDeLaLigaPorIds(
+    ids: number[] | undefined
+  ): Promise<DniExpulsadoDeLaLigaDTO[]> {
+    let url_ = this.baseUrl + '/api/DniExpulsadoDeLaLiga/por-ids?'
+    if (ids === null) throw new Error("The parameter 'ids' cannot be null.")
+    else if (ids !== undefined)
+      ids &&
+        ids.forEach((item) => {
+          url_ += 'ids=' + encodeURIComponent('' + item) + '&'
+        })
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processDnisExpulsadosDeLaLigaPorIds(_response)
+    })
+  }
+
+  protected processDnisExpulsadosDeLaLigaPorIds(
+    response: Response
+  ): Promise<DniExpulsadoDeLaLigaDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(DniExpulsadoDeLaLigaDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<DniExpulsadoDeLaLigaDTO[]>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  dniExpulsadoDeLaLigaAll(): Promise<DniExpulsadoDeLaLigaDTO[]> {
+    let url_ = this.baseUrl + '/api/DniExpulsadoDeLaLiga'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processDniExpulsadoDeLaLigaAll(_response)
+    })
+  }
+
+  protected processDniExpulsadoDeLaLigaAll(
+    response: Response
+  ): Promise<DniExpulsadoDeLaLigaDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(DniExpulsadoDeLaLigaDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<DniExpulsadoDeLaLigaDTO[]>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  dniExpulsadoDeLaLigaPOST(
+    body: DniExpulsadoDeLaLigaDTO | undefined
+  ): Promise<DniExpulsadoDeLaLigaDTO> {
+    let url_ = this.baseUrl + '/api/DniExpulsadoDeLaLiga'
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processDniExpulsadoDeLaLigaPOST(_response)
+    })
+  }
+
+  protected processDniExpulsadoDeLaLigaPOST(
+    response: Response
+  ): Promise<DniExpulsadoDeLaLigaDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = DniExpulsadoDeLaLigaDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<DniExpulsadoDeLaLigaDTO>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  dniExpulsadoDeLaLigaGET(id: number): Promise<DniExpulsadoDeLaLigaDTO> {
+    let url_ = this.baseUrl + '/api/DniExpulsadoDeLaLiga/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processDniExpulsadoDeLaLigaGET(_response)
+    })
+  }
+
+  protected processDniExpulsadoDeLaLigaGET(
+    response: Response
+  ): Promise<DniExpulsadoDeLaLigaDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = DniExpulsadoDeLaLigaDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<DniExpulsadoDeLaLigaDTO>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  dniExpulsadoDeLaLigaPUT(
+    id: number,
+    body: DniExpulsadoDeLaLigaDTO | undefined
+  ): Promise<void> {
+    let url_ = this.baseUrl + '/api/DniExpulsadoDeLaLiga/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processDniExpulsadoDeLaLigaPUT(_response)
+    })
+  }
+
+  protected processDniExpulsadoDeLaLigaPUT(response: Response): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  dniExpulsadoDeLaLigaDELETE(id: number): Promise<number> {
+    let url_ = this.baseUrl + '/api/DniExpulsadoDeLaLiga/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'DELETE',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processDniExpulsadoDeLaLigaDELETE(_response)
+    })
+  }
+
+  protected processDniExpulsadoDeLaLigaDELETE(
+    response: Response
+  ): Promise<number> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = resultData200 !== undefined ? resultData200 : <any>null
+
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<number>(null as any)
+  }
+
+  /**
    * @return OK
    */
   seed(): Promise<void> {
@@ -8184,6 +8521,50 @@ export class DesvincularJugadorDelEquipoDTO implements IDesvincularJugadorDelEqu
 export interface IDesvincularJugadorDelEquipoDTO {
   jugadorId?: number
   equipoId?: number
+}
+
+export class DniExpulsadoDeLaLigaDTO implements IDniExpulsadoDeLaLigaDTO {
+  id?: number
+  explicacion!: string
+  dni?: number
+
+  constructor(data?: IDniExpulsadoDeLaLigaDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.explicacion = _data['explicacion']
+      this.dni = _data['dni']
+    }
+  }
+
+  static fromJS(data: any): DniExpulsadoDeLaLigaDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new DniExpulsadoDeLaLigaDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['explicacion'] = this.explicacion
+    data['dni'] = this.dni
+    return data
+  }
+}
+
+export interface IDniExpulsadoDeLaLigaDTO {
+  id?: number
+  explicacion: string
+  dni?: number
 }
 
 export class EfectuarPaseDTO implements IEfectuarPaseDTO {
