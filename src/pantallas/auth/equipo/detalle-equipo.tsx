@@ -111,6 +111,11 @@ export default function DetalleEquipo() {
       header: 'Apellido'
     },
     {
+      accessorKey: 'anioNacimiento',
+      header: 'Categoría',
+      cell: ({ row }) => row.original.anioNacimiento ?? '—'
+    },
+    {
       accessorKey: 'estado',
       header: 'Estado',
       cell: ({ row }) => (
@@ -171,7 +176,7 @@ export default function DetalleEquipo() {
           <>
             <Tabla
               columnas={columnas}
-              data={equipo!.jugadores || []}
+              data={(equipo!.jugadores ?? []) as JugadorDelEquipoDTO[]}
               estaCargando={isLoading}
               hayError={isError}
               rowSelection={rowSelection}
