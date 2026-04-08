@@ -61,6 +61,9 @@ export function useToggleVisibilidadFechaEnApp(
     },
     antesDeMensajeExito: () => {
       queryClient.invalidateQueries({ queryKey: ['fechasAll', zonaId] })
+      queryClient.invalidateQueries({
+        queryKey: ['fechasEliminacionDirecta', zonaId]
+      })
     },
     mensajeDeExito: MENSAJE
   })

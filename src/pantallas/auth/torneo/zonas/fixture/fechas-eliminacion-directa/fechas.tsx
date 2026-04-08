@@ -4,7 +4,16 @@ import {
   type JornadaDTO
 } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
+import { useToggleVisibilidadFechaEnApp } from '@/api/hooks/use-visibilidad-en-app'
 import { HttpClientWrapper } from '@/api/http-client-wrapper'
+import { Button } from '@/design-system/base-ui/button'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@/design-system/base-ui/tooltip'
+import { VisibleSoloParaAdmin } from '@/design-system/visible-solo-para-admin'
+import Icono from '@/design-system/ykn-ui/icono'
 import { toDateOnly } from '@/logica-compartida/utils'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -12,7 +21,8 @@ import { useState } from 'react'
 import {
   BotonCargarResultados,
   ESTADO_BOTON_CARGAR_RESULTADOS,
-  jornadaTieneResultadosCargados
+  jornadaTieneResultadosCargados,
+  type EstadoBotonCargarResultados
 } from '../components/boton-cargar-resultados'
 import { NOMBRES_INSTANCIA_BRACKET } from '../generacion/eliminacion-directa/fixture-vista-previa'
 import { EncabezadoFechaColumna } from './encabezado-fecha-columna'
@@ -97,6 +107,87 @@ function partidoDesdeJornada(j: JornadaDTO): {
   return esLocal
     ? { local: j.equipo ?? null, visitante: 'Interzonal' }
     : { local: 'Interzonal', visitante: j.equipo ?? null }
+}
+
+function EncabezadoTituloYAccionesEliminacion({
+  titulo,
+  hayJornadaCargable,
+  estadoBotonCargar,
+  onCargarResultados,
+  zonaId,
+  fecha
+}: {
+  titulo: string
+  hayJornadaCargable: boolean
+  estadoBotonCargar: EstadoBotonCargarResultados
+  onCargarResultados: () => void
+  zonaId: number
+  fecha: FechaEliminacionDirectaDTO | undefined
+}) {
+  const toggleVisibilidadFechaMutation = useToggleVisibilidadFechaEnApp(
+    zonaId,
+    fecha?.id,
+    fecha?.esVisibleEnApp
+  )
+  const esVisibleFechaEnApp = fecha?.esVisibleEnApp ?? true
+
+  return (
+    <div className='flex w-full min-w-0 items-center justify-center gap-2'>
+      <h4 className='text-sm font-semibold min-w-0 truncate'>{titulo}</h4>
+      <div className='flex shrink-0 items-center'>
+        {hayJornadaCargable && (
+          <BotonCargarResultados
+            estado={estadoBotonCargar}
+            onClick={onCargarResultados}
+          />
+        )}
+        {fecha?.id != null && (
+          <VisibleSoloParaAdmin>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  type='button'
+                  variant='ghost'
+                  size='icon'
+                  className='h-7 w-7'
+                  disabled={toggleVisibilidadFechaMutation.isPending}
+                  aria-label={
+                    esVisibleFechaEnApp
+                      ? 'Fecha visible en la app'
+                      : 'Fecha no visible en la app'
+                  }
+                  onClick={() => toggleVisibilidadFechaMutation.mutate()}
+                >
+                  {toggleVisibilidadFechaMutation.isPending ? (
+                    <Icono
+                      nombre='Cargando'
+                      className='size-3.5 animate-spin text-muted-foreground'
+                    />
+                  ) : (
+                    <Icono
+                      nombre={esVisibleFechaEnApp ? 'Visible' : 'NoVisible'}
+                      className='size-3.5 text-muted-foreground'
+                    />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent
+                side='bottom'
+                className='max-w-xs px-3 py-2'
+                sideOffset={8}
+              >
+                <p>
+                  {esVisibleFechaEnApp
+                    ? 'La fecha es visible en la app'
+                    : 'La fecha no es visible en la app'}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </VisibleSoloParaAdmin>
+        )}
+      </div>
+    </div>
+  )
 }
 
 export function FechasEliminacionDirecta({ zonaId }: { zonaId: number }) {
@@ -227,23 +318,20 @@ export function FechasEliminacionDirecta({ zonaId }: { zonaId: number }) {
 
           return (
             <div key={col.key} className='flex-1 min-w-[200px] text-center'>
-              <div className='flex w-full min-w-0 items-center justify-center'>
-                <h4 className='text-sm font-semibold min-w-0 truncate'>
-                  {col.titulo}
-                </h4>
-                {hayJornadaCargable && (
-                  <BotonCargarResultados
-                    estado={estadoBotonCargar}
-                    onClick={() =>
-                      setModalResultados({
-                        tituloInstancia: col.titulo,
-                        subtitulo: subtituloFecha,
-                        jornadas: jornadasCol
-                      })
-                    }
-                  />
-                )}
-              </div>
+              <EncabezadoTituloYAccionesEliminacion
+                titulo={col.titulo}
+                hayJornadaCargable={hayJornadaCargable}
+                estadoBotonCargar={estadoBotonCargar}
+                zonaId={zonaId}
+                fecha={col.fecha}
+                onCargarResultados={() =>
+                  setModalResultados({
+                    tituloInstancia: col.titulo,
+                    subtitulo: subtituloFecha,
+                    jornadas: jornadasCol
+                  })
+                }
+              />
               <EncabezadoFechaColumna
                 fecha={col.fecha}
                 diaMostrado={col.diaMostrado}
