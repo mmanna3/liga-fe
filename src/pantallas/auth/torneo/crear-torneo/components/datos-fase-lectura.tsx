@@ -66,7 +66,7 @@ function ZonaItem({
                 <Boton
                   type='button'
                   variant='outline'
-                  className='h-8 w-8 min-w-8 shrink-0 p-0'
+                  className='h-5 w-5 min-w-5 shrink-0 border-none bg-transparent p-0 shadow-none'
                   aria-label='Leyendas de la zona'
                   onClick={() => setModalLeyendasAbierto(true)}
                 >
@@ -87,7 +87,7 @@ function ZonaItem({
                   <Boton
                     type='button'
                     variant='outline'
-                    className='h-8 w-8 min-w-8 shrink-0 p-0'
+                    className='h-5 w-5 min-w-5 shrink-0 border-none bg-transparent p-0 shadow-none'
                     aria-label='Fixture de la zona'
                     onClick={() => navigate(pathFixture)}
                   >
