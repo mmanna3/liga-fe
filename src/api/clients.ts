@@ -1601,6 +1601,341 @@ export class Client {
    * @param ids (optional)
    * @return OK
    */
+  configuracionesPorIds(
+    ids: number[] | undefined
+  ): Promise<ConfiguracionDTO[]> {
+    let url_ = this.baseUrl + '/api/Configuracion/por-ids?'
+    if (ids === null) throw new Error("The parameter 'ids' cannot be null.")
+    else if (ids !== undefined)
+      ids &&
+        ids.forEach((item) => {
+          url_ += 'ids=' + encodeURIComponent('' + item) + '&'
+        })
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processConfiguracionesPorIds(_response)
+    })
+  }
+
+  protected processConfiguracionesPorIds(
+    response: Response
+  ): Promise<ConfiguracionDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(ConfiguracionDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<ConfiguracionDTO[]>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  configuracionAll(): Promise<ConfiguracionDTO[]> {
+    let url_ = this.baseUrl + '/api/Configuracion'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processConfiguracionAll(_response)
+    })
+  }
+
+  protected processConfiguracionAll(
+    response: Response
+  ): Promise<ConfiguracionDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(ConfiguracionDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<ConfiguracionDTO[]>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  configuracionPOST(
+    body: ConfiguracionDTO | undefined
+  ): Promise<ConfiguracionDTO> {
+    let url_ = this.baseUrl + '/api/Configuracion'
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processConfiguracionPOST(_response)
+    })
+  }
+
+  protected processConfiguracionPOST(
+    response: Response
+  ): Promise<ConfiguracionDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = ConfiguracionDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<ConfiguracionDTO>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  configuracionGET(id: number): Promise<ConfiguracionDTO> {
+    let url_ = this.baseUrl + '/api/Configuracion/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processConfiguracionGET(_response)
+    })
+  }
+
+  protected processConfiguracionGET(
+    response: Response
+  ): Promise<ConfiguracionDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = ConfiguracionDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<ConfiguracionDTO>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  configuracionPUT(
+    id: number,
+    body: ConfiguracionDTO | undefined
+  ): Promise<void> {
+    let url_ = this.baseUrl + '/api/Configuracion/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processConfiguracionPUT(_response)
+    })
+  }
+
+  protected processConfiguracionPUT(response: Response): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  configuracionDELETE(id: number): Promise<number> {
+    let url_ = this.baseUrl + '/api/Configuracion/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'DELETE',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processConfiguracionDELETE(_response)
+    })
+  }
+
+  protected processConfiguracionDELETE(response: Response): Promise<number> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = resultData200 !== undefined ? resultData200 : <any>null
+
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<number>(null as any)
+  }
+
+  /**
+   * @param ids (optional)
+   * @return OK
+   */
   delegadosPorIds(ids: number[] | undefined): Promise<DelegadoDTO[]> {
     let url_ = this.baseUrl + '/api/Delegado/por-ids?'
     if (ids === null) throw new Error("The parameter 'ids' cannot be null.")
@@ -8261,6 +8596,46 @@ export interface IClubesDTO {
   localidad?: string | undefined
   direccion?: string | undefined
   esTechado?: string | undefined
+}
+
+export class ConfiguracionDTO implements IConfiguracionDTO {
+  id?: number
+  fichajeEstaHabilitado?: boolean
+
+  constructor(data?: IConfiguracionDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.fichajeEstaHabilitado = _data['fichajeEstaHabilitado']
+    }
+  }
+
+  static fromJS(data: any): ConfiguracionDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new ConfiguracionDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['fichajeEstaHabilitado'] = this.fichajeEstaHabilitado
+    return data
+  }
+}
+
+export interface IConfiguracionDTO {
+  id?: number
+  fichajeEstaHabilitado?: boolean
 }
 
 export class CrearTorneoDTO implements ICrearTorneoDTO {

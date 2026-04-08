@@ -1,17 +1,48 @@
 import { api } from '@/api/api'
-import { ApiException } from '@/api/clients'
+import { ApiException, ConfiguracionDTO } from '@/api/clients'
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle
 } from '@/design-system/base-ui/card'
+import { Switch } from '@/design-system/base-ui/switch'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
 import Icono from '@/design-system/ykn-ui/icono'
 import { Boton } from '@/design-system/ykn-ui/boton'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 export default function SuperAdmin() {
+  const queryClient = useQueryClient()
+
+  const {
+    data: configuraciones,
+    isPending: configuracionCargando,
+    isError: configuracionError
+  } = useQuery({
+    queryKey: ['configuracion'],
+    queryFn: () => api.configuracionAll()
+  })
+
+  const configuracion = configuraciones?.[0]
+
+  const { mutate: actualizarFichaje, isPending: fichajePending } = useMutation({
+    mutationFn: ({
+      id,
+      fichajeEstaHabilitado
+    }: {
+      id: number
+      fichajeEstaHabilitado: boolean
+    }) =>
+      api.configuracionPUT(
+        id,
+        new ConfiguracionDTO({ id, fichajeEstaHabilitado })
+      ),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['configuracion'] })
+    }
+  })
+
   const {
     mutate: restaurarBd,
     isPending: bdPending,
@@ -45,6 +76,60 @@ export default function SuperAdmin() {
       contenidoEnCard={false}
       contenido={
         <div className='grid grid-cols-2 gap-4 py-6'>
+          <Card className='col-span-2'>
+            <CardHeader>
+              <CardTitle className='flex items-center gap-2'>
+                <Icono nombre='Carnet' className='h-8 w-8' />
+                Habilitar fichaje
+              </CardTitle>
+              <CardDescription>
+                Controla si el flujo público de registro de jugadores (fichaje)
+                está disponible.
+              </CardDescription>
+            </CardHeader>
+            <div className='px-6 pb-6 flex flex-col gap-3'>
+              {configuracionCargando && (
+                <p className='text-sm text-muted-foreground'>Cargando…</p>
+              )}
+              {configuracionError && (
+                <p className='text-sm text-destructive'>
+                  No se pudo cargar la configuración.
+                </p>
+              )}
+              {!configuracionCargando &&
+                !configuracionError &&
+                configuracion?.id == null && (
+                  <p className='text-sm text-muted-foreground'>
+                    No hay registro de configuración.
+                  </p>
+                )}
+              {!configuracionCargando &&
+                !configuracionError &&
+                configuracion?.id != null && (
+                  <div className='flex items-center gap-3'>
+                    <Switch
+                      checked={configuracion.fichajeEstaHabilitado === true}
+                      onCheckedChange={(checked) =>
+                        actualizarFichaje({
+                          id: configuracion.id!,
+                          fichajeEstaHabilitado: checked
+                        })
+                      }
+                      disabled={fichajePending}
+                      textoApagado='Deshabilitado'
+                      textoPrendido='Habilitado'
+                    />
+                    {fichajePending && (
+                      <Icono
+                        nombre='Cargando'
+                        className='h-4 w-4 animate-spin shrink-0'
+                      />
+                    )}
+                  </div>
+                )}
+            </div>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle className='flex items-center gap-2'>
