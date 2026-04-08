@@ -10150,7 +10150,7 @@ export interface IJugadoresPorCategoriaDTO {
 
 export class LeyendaTablaPosicionesDTO implements ILeyendaTablaPosicionesDTO {
   id?: number
-  leyenda!: string
+  leyenda?: string | undefined
   categoriaId?: number | undefined
   zonaId?: number
   equipoId?: number | undefined
@@ -10200,7 +10200,7 @@ export class LeyendaTablaPosicionesDTO implements ILeyendaTablaPosicionesDTO {
 
 export interface ILeyendaTablaPosicionesDTO {
   id?: number
-  leyenda: string
+  leyenda?: string | undefined
   categoriaId?: number | undefined
   zonaId?: number
   equipoId?: number | undefined

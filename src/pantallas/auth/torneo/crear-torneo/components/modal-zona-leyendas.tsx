@@ -185,9 +185,13 @@ export default function ModalZonaLeyendas({
   const puedeGuardarQuitaPuntos =
     !quitarPuntos || (equipoIdSeleccionado !== '' && puntosQuitadosValidos)
 
+  /** Con "Quitar puntos" activo se puede guardar sin texto en la leyenda. */
+  const puedeGuardar =
+    puedeGuardarQuitaPuntos && (quitarPuntos || textoNueva.trim() !== '')
+
   const guardar = () => {
+    if (!puedeGuardar) return
     const leyenda = textoNueva.trim()
-    if (!leyenda || !puedeGuardarQuitaPuntos) return
 
     const base = {
       leyenda,
@@ -350,11 +354,7 @@ export default function ModalZonaLeyendas({
                 type='button'
                 onClick={guardar}
                 estaCargando={guardarMutation.isPending}
-                disabled={
-                  !textoNueva.trim() ||
-                  !puedeGuardarQuitaPuntos ||
-                  guardarMutation.isPending
-                }
+                disabled={!puedeGuardar || guardarMutation.isPending}
               >
                 Guardar
               </Boton>
