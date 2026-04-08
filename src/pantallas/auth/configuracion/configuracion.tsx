@@ -7,10 +7,14 @@ import {
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
 import Icono from '@/design-system/ykn-ui/icono'
 import { rutasNavegacion } from '@/ruteo/rutas'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import ModalDnisExpulsadosDeLaLiga from './modal-dnis-expulsados-de-la-liga'
 
 export default function Configuracion() {
   const navigate = useNavigate()
+  const [modalDnisExpulsadosAbierto, setModalDnisExpulsadosAbierto] =
+    useState(false)
 
   return (
     <FlujoHomeLayout
@@ -19,28 +23,54 @@ export default function Configuracion() {
       ocultarBotonVolver
       contenidoEnCard={false}
       contenido={
-        <div className='grid grid-cols-2 gap-4 py-6'>
-          <Card
-            className='cursor-pointer transition-colors hover:bg-muted/50'
-            role='button'
-            tabIndex={0}
-            onClick={() => navigate(rutasNavegacion.generacionDeFixtures)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') e.currentTarget.click()
-            }}
-          >
-            <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <Icono nombre='Fixture' className='h-8 w-8' />
-                Generación de fixture
-              </CardTitle>
-              <CardDescription>
-                Gestioná algoritmos de generación de fixture para distintas
-                cantidades de equipos.
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        </div>
+        <>
+          <div className='grid grid-cols-2 gap-4 py-6'>
+            <Card
+              className='cursor-pointer transition-colors hover:bg-muted/50'
+              role='button'
+              tabIndex={0}
+              onClick={() => navigate(rutasNavegacion.generacionDeFixtures)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') e.currentTarget.click()
+              }}
+            >
+              <CardHeader>
+                <CardTitle className='flex items-center gap-2'>
+                  <Icono nombre='Fixture' className='h-8 w-8' />
+                  Generación de fixture
+                </CardTitle>
+                <CardDescription>
+                  Gestioná algoritmos de generación de fixture para distintas
+                  cantidades de equipos.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <Card
+              className='cursor-pointer transition-colors hover:bg-muted/50'
+              role='button'
+              tabIndex={0}
+              onClick={() => setModalDnisExpulsadosAbierto(true)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') e.currentTarget.click()
+              }}
+            >
+              <CardHeader>
+                <CardTitle className='flex items-center gap-2'>
+                  <Icono nombre='DNIsExpulsados' className='h-8 w-8' />
+                  DNIs expulsados de la liga
+                </CardTitle>
+                <CardDescription>
+                  Gestioná los DNIs de jugadores y/o delegados que no pueden
+                  volver a ficharse en la liga.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+          <ModalDnisExpulsadosDeLaLiga
+            open={modalDnisExpulsadosAbierto}
+            onOpenChange={setModalDnisExpulsadosAbierto}
+          />
+        </>
       }
     />
   )

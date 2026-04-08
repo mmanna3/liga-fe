@@ -74,7 +74,10 @@ const MAPEO_ICONOS: Record<
 
   // SuperAdmin
   SuperAdmin: LucideIcons.ShieldCheck,
-  BaseDeDatos: LucideIcons.Database
+  BaseDeDatos: LucideIcons.Database,
+
+  // Configuración / listas
+  DNIsExpulsados: LucideIcons.OctagonMinus
 }
 
 export type NombreIcono = keyof typeof MAPEO_ICONOS
