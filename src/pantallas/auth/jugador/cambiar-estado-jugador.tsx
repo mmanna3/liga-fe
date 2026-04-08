@@ -112,10 +112,10 @@ export default function CambiarEstado() {
         </CardHeader>
 
         <CardContent>
-          <div className='flex flex-col gap-1 bg-gray-50 p-5 rounded-lg mb-6'>
-            <DetalleItem clave='DNI' valor={jugador!.dni!} />
+          <div className='flex flex-col gap-3 bg-gray-50 p-5 rounded-lg mb-6'>
+            <DetalleItem icono='Carnet' valor={jugador!.dni!} />
             <DetalleItem
-              clave='Fecha de nacimiento'
+              icono='Calendario'
               valor={jugador!.fechaNacimiento!.toLocaleDateString('es-AR')}
             />
           </div>
