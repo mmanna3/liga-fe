@@ -7646,6 +7646,7 @@ export interface ICarnetDigitalPendienteDTO {
 
 export class CategoriasConPosicionesDTO implements ICategoriasConPosicionesDTO {
   categoria?: string | undefined
+  leyenda?: string | undefined
   renglones?: PosicionDelEquipoDTO[] | undefined
 
   constructor(data?: ICategoriasConPosicionesDTO) {
@@ -7660,6 +7661,7 @@ export class CategoriasConPosicionesDTO implements ICategoriasConPosicionesDTO {
   init(_data?: any) {
     if (_data) {
       this.categoria = _data['categoria']
+      this.leyenda = _data['leyenda']
       if (Array.isArray(_data['renglones'])) {
         this.renglones = [] as any
         for (let item of _data['renglones'])
@@ -7678,6 +7680,7 @@ export class CategoriasConPosicionesDTO implements ICategoriasConPosicionesDTO {
   toJSON(data?: any) {
     data = typeof data === 'object' ? data : {}
     data['categoria'] = this.categoria
+    data['leyenda'] = this.leyenda
     if (Array.isArray(this.renglones)) {
       data['renglones'] = []
       for (let item of this.renglones) data['renglones'].push(item.toJSON())
@@ -7688,6 +7691,7 @@ export class CategoriasConPosicionesDTO implements ICategoriasConPosicionesDTO {
 
 export interface ICategoriasConPosicionesDTO {
   categoria?: string | undefined
+  leyenda?: string | undefined
   renglones?: PosicionDelEquipoDTO[] | undefined
 }
 
@@ -10149,6 +10153,9 @@ export class LeyendaTablaPosicionesDTO implements ILeyendaTablaPosicionesDTO {
   leyenda!: string
   categoriaId?: number | undefined
   zonaId?: number
+  equipoId?: number | undefined
+  equipo?: string | undefined
+  quitaDePuntos?: number
 
   constructor(data?: ILeyendaTablaPosicionesDTO) {
     if (data) {
@@ -10165,6 +10172,9 @@ export class LeyendaTablaPosicionesDTO implements ILeyendaTablaPosicionesDTO {
       this.leyenda = _data['leyenda']
       this.categoriaId = _data['categoriaId']
       this.zonaId = _data['zonaId']
+      this.equipoId = _data['equipoId']
+      this.equipo = _data['equipo']
+      this.quitaDePuntos = _data['quitaDePuntos']
     }
   }
 
@@ -10181,6 +10191,9 @@ export class LeyendaTablaPosicionesDTO implements ILeyendaTablaPosicionesDTO {
     data['leyenda'] = this.leyenda
     data['categoriaId'] = this.categoriaId
     data['zonaId'] = this.zonaId
+    data['equipoId'] = this.equipoId
+    data['equipo'] = this.equipo
+    data['quitaDePuntos'] = this.quitaDePuntos
     return data
   }
 }
@@ -10190,6 +10203,9 @@ export interface ILeyendaTablaPosicionesDTO {
   leyenda: string
   categoriaId?: number | undefined
   zonaId?: number
+  equipoId?: number | undefined
+  equipo?: string | undefined
+  quitaDePuntos?: number
 }
 
 export enum LocalVisitanteEnum {

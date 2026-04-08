@@ -107,6 +107,7 @@ function ZonaItem({
           <ModalZonaLeyendas
             open={modalLeyendasAbierto}
             onOpenChange={setModalLeyendasAbierto}
+            faseId={faseId!}
             zonaId={zona.id!}
             nombreTorneo={nombreTorneo ?? '—'}
             nombreFase={nombreFase ?? '—'}

@@ -1,4 +1,9 @@
 import { api } from '@/api/api'
+import {
+  LeyendaTablaPosicionesDTO,
+  type TorneoCategoriaDTO,
+  type ZonaDTO
+} from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import {
   Dialog,
@@ -7,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/design-system/base-ui/dialog'
+import { Input } from '@/design-system/base-ui/input'
 import { Label } from '@/design-system/base-ui/label'
 import {
   Select,
@@ -15,12 +21,9 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/design-system/base-ui/select'
+import { Switch } from '@/design-system/base-ui/switch'
 import { Textarea } from '@/design-system/base-ui/textarea'
 import { Boton } from '@/design-system/ykn-ui/boton'
-import {
-  LeyendaTablaPosicionesDTO,
-  type TorneoCategoriaDTO
-} from '@/api/clients'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { MessageSquareMore, Trash2 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
@@ -36,6 +39,18 @@ function etiquetaCategoria(
   if (leyenda.categoriaId == null) return 'General'
   const cat = categorias.find((c) => c.id === leyenda.categoriaId)
   return cat?.nombre ?? 'General'
+}
+
+/** General primero, luego por id de categoría creciente; dentro de cada categoría por id de leyenda. */
+function ordenarLeyendasPorCategoria(
+  leyendas: LeyendaTablaPosicionesDTO[]
+): LeyendaTablaPosicionesDTO[] {
+  return [...leyendas].sort((a, b) => {
+    const ordenA = a.categoriaId == null ? -1 : a.categoriaId
+    const ordenB = b.categoriaId == null ? -1 : b.categoriaId
+    if (ordenA !== ordenB) return ordenA - ordenB
+    return (a.id ?? 0) - (b.id ?? 0)
+  })
 }
 
 function agruparPorCategoria(
@@ -63,6 +78,7 @@ function agruparPorCategoria(
 interface ModalZonaLeyendasProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  faseId: number
   zonaId: number
   nombreTorneo: string
   nombreFase: string
@@ -74,6 +90,7 @@ interface ModalZonaLeyendasProps {
 export default function ModalZonaLeyendas({
   open,
   onOpenChange,
+  faseId,
   zonaId,
   nombreTorneo,
   nombreFase,
@@ -86,6 +103,9 @@ export default function ModalZonaLeyendas({
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(
     VALOR_CATEGORIA_GENERAL
   )
+  const [quitarPuntos, setQuitarPuntos] = useState(false)
+  const [equipoIdSeleccionado, setEquipoIdSeleccionado] = useState<string>('')
+  const [puntosQuitadosTexto, setPuntosQuitadosTexto] = useState('')
 
   const {
     data: leyendas = [],
@@ -97,8 +117,24 @@ export default function ModalZonaLeyendas({
     enabled: open && zonaId > 0
   })
 
+  const { data: zonaDetalle } = useQuery({
+    queryKey: ['zona-equipos-leyendas', faseId, zonaId],
+    queryFn: (): Promise<ZonaDTO> => api.zonasGET(faseId, zonaId),
+    enabled: open && faseId > 0 && zonaId > 0
+  })
+
+  const equiposZona = useMemo(() => {
+    const raw = zonaDetalle?.equipos ?? []
+    return [...raw].sort((a, b) =>
+      (a.nombre ?? '').localeCompare(b.nombre ?? '', 'es', {
+        sensitivity: 'base'
+      })
+    )
+  }, [zonaDetalle?.equipos])
+
   const grupos = useMemo(
-    () => agruparPorCategoria(leyendas, categorias),
+    () =>
+      agruparPorCategoria(ordenarLeyendasPorCategoria(leyendas), categorias),
     [leyendas, categorias]
   )
 
@@ -114,6 +150,9 @@ export default function ModalZonaLeyendas({
     antesDeMensajeExito: () => {
       setTextoNueva('')
       setCategoriaSeleccionada(VALOR_CATEGORIA_GENERAL)
+      setQuitarPuntos(false)
+      setEquipoIdSeleccionado('')
+      setPuntosQuitadosTexto('')
       invalidar()
     }
   })
@@ -130,27 +169,53 @@ export default function ModalZonaLeyendas({
     if (!open) {
       setTextoNueva('')
       setCategoriaSeleccionada(VALOR_CATEGORIA_GENERAL)
+      setQuitarPuntos(false)
+      setEquipoIdSeleccionado('')
+      setPuntosQuitadosTexto('')
     }
   }, [open])
 
+  const puntosQuitadosNum =
+    puntosQuitadosTexto.trim() === '' ? NaN : Number(puntosQuitadosTexto.trim())
+  const puntosQuitadosValidos =
+    Number.isFinite(puntosQuitadosNum) &&
+    puntosQuitadosNum > 0 &&
+    Number.isInteger(puntosQuitadosNum)
+
+  const puedeGuardarQuitaPuntos =
+    !quitarPuntos || (equipoIdSeleccionado !== '' && puntosQuitadosValidos)
+
   const guardar = () => {
     const leyenda = textoNueva.trim()
-    if (!leyenda) return
+    if (!leyenda || !puedeGuardarQuitaPuntos) return
+
+    const base = {
+      leyenda,
+      zonaId,
+      categoriaId:
+        categoriaSeleccionada === VALOR_CATEGORIA_GENERAL
+          ? null
+          : Number(categoriaSeleccionada)
+    } as const
+
+    if (!quitarPuntos) {
+      guardarMutation.mutate(LeyendaTablaPosicionesDTO.fromJS({ ...base }))
+      return
+    }
+
+    const equipoId = Number(equipoIdSeleccionado)
     guardarMutation.mutate(
       LeyendaTablaPosicionesDTO.fromJS({
-        leyenda,
-        zonaId,
-        categoriaId:
-          categoriaSeleccionada === VALOR_CATEGORIA_GENERAL
-            ? null
-            : Number(categoriaSeleccionada)
+        ...base,
+        equipoId,
+        quitaDePuntos: puntosQuitadosNum
       })
     )
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='flex max-h-[min(90vh,720px)] flex-col gap-0 overflow-hidden sm:max-w-lg'>
+      <DialogContent className='flex max-h-[min(90vh,720px)] flex-col gap-0 overflow-hidden sm:max-w-xl'>
         <DialogHeader className='shrink-0 space-y-1 pr-8 text-left'>
           <DialogTitle className='flex items-center gap-2 text-left'>
             <MessageSquareMore
@@ -206,23 +271,90 @@ export default function ModalZonaLeyendas({
           </div>
           <div className='space-y-2'>
             <Label htmlFor='nueva-leyenda-zona'>Nueva Leyenda</Label>
-            <Textarea
-              id='nueva-leyenda-zona'
-              placeholder='Nueva Leyenda'
-              maxLength={MAX_LEYENDA}
-              value={textoNueva}
-              onChange={(e) => setTextoNueva(e.target.value)}
-              className='min-h-20 resize-y'
-            />
-            <div className='flex items-center justify-between gap-2'>
-              <span className='text-muted-foreground text-xs'>
+            <div className='relative'>
+              <Textarea
+                id='nueva-leyenda-zona'
+                placeholder='Nueva Leyenda'
+                maxLength={MAX_LEYENDA}
+                value={textoNueva}
+                onChange={(e) => setTextoNueva(e.target.value)}
+                className='min-h-20 resize-y pb-7'
+              />
+              <span
+                className='pointer-events-none absolute right-2 bottom-2 text-[10px] leading-none text-muted-foreground tabular-nums'
+                aria-live='polite'
+              >
                 {textoNueva.length}/{MAX_LEYENDA}
               </span>
+            </div>
+            <div
+              className='flex flex-wrap items-center gap-3 justify-between'
+              aria-label='Opciones de quita de puntos'
+            >
+              <div className='flex shrink-0 items-center gap-2'>
+                <Switch
+                  id='quitar-puntos-leyenda'
+                  checked={quitarPuntos}
+                  onCheckedChange={(v) => {
+                    setQuitarPuntos(v)
+                    if (!v) {
+                      setEquipoIdSeleccionado('')
+                      setPuntosQuitadosTexto('')
+                    }
+                  }}
+                />
+                <Label
+                  htmlFor='quitar-puntos-leyenda'
+                  className='cursor-pointer text-sm font-normal'
+                >
+                  Quitar puntos
+                </Label>
+              </div>
+              <Select
+                value={equipoIdSeleccionado || undefined}
+                onValueChange={setEquipoIdSeleccionado}
+                disabled={!quitarPuntos}
+              >
+                <SelectTrigger
+                  className='min-w-40 flex-1 sm:max-w-56'
+                  aria-label='Equipo al que se quitan puntos'
+                >
+                  <SelectValue placeholder='Equipo' />
+                </SelectTrigger>
+                <SelectContent>
+                  {equiposZona.map((eq) =>
+                    eq.id != null && eq.id !== '' ? (
+                      <SelectItem key={eq.id} value={String(eq.id)}>
+                        {eq.nombre}
+                        {eq.club ? ` (${eq.club})` : ''}
+                      </SelectItem>
+                    ) : null
+                  )}
+                </SelectContent>
+              </Select>
+              <Input
+                type='number'
+                min={1}
+                step={1}
+                inputMode='numeric'
+                placeholder='Puntos quitados'
+                disabled={!quitarPuntos}
+                value={puntosQuitadosTexto}
+                onChange={(e) => setPuntosQuitadosTexto(e.target.value)}
+                className='w-40 shrink-0'
+                aria-label='Cantidad de puntos quitados'
+              />
+            </div>
+            <div className='flex justify-end'>
               <Boton
                 type='button'
                 onClick={guardar}
                 estaCargando={guardarMutation.isPending}
-                disabled={!textoNueva.trim()}
+                disabled={
+                  !textoNueva.trim() ||
+                  !puedeGuardarQuitaPuntos ||
+                  guardarMutation.isPending
+                }
               >
                 Guardar
               </Boton>
@@ -254,9 +386,20 @@ export default function ModalZonaLeyendas({
                         key={item.id ?? `leyenda-${idx}`}
                         className='flex gap-2 rounded-md border border-border bg-muted/20 px-3 py-2'
                       >
-                        <p className='min-w-0 flex-1 whitespace-pre-wrap text-sm'>
-                          {item.leyenda}
-                        </p>
+                        <div className='min-w-0 flex-1'>
+                          <p className='whitespace-pre-wrap text-sm'>
+                            {item.leyenda}
+                          </p>
+                          {item.equipoId != null && (
+                            <p className='text-muted-foreground mt-1 text-xs'>
+                              Se quitaron {item.quitaDePuntos ?? '—'} puntos a{' '}
+                              <span className='font-medium text-foreground'>
+                                {item.equipo ?? '—'}
+                              </span>
+                              .
+                            </p>
+                          )}
+                        </div>
                         <Boton
                           type='button'
                           variant='ghost'
