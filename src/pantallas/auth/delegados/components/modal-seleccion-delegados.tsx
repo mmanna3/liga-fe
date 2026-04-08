@@ -51,12 +51,7 @@ export default function ModalSeleccionDelegados({
         .filter((d) => d.id != null)
         .map((d) => d.id!)
       const delegadosCompletos = await api.delegadosPorIds(ids)
-      await generarCarnetsDelegadosPDF([
-        ...delegadosCompletos,
-        ...delegadosCompletos,
-        ...delegadosCompletos,
-        ...delegadosCompletos
-      ])
+      await generarCarnetsDelegadosPDF([...delegadosCompletos])
       onOpenChange(false)
     } finally {
       setGenerandoPDF(false)

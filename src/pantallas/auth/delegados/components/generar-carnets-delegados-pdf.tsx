@@ -1,4 +1,9 @@
-import { DelegadoDTO } from '@/api/clients'
+import { api } from '@/api/api'
+import { ClubDTO, DelegadoDTO } from '@/api/clients'
+import {
+  colorAgrupadorValidoODefecto,
+  type ColorAgrupadorTorneo
+} from '@/pantallas/auth/torneo/agrupador-torneo/colores-agrupador-torneo'
 import roboto400 from '@fontsource/roboto/files/roboto-latin-400-normal.woff?url'
 import roboto600 from '@fontsource/roboto/files/roboto-latin-600-normal.woff?url'
 import roboto700 from '@fontsource/roboto/files/roboto-latin-700-normal.woff?url'
@@ -32,11 +37,15 @@ Font.register({
 // Evita que las palabras se corten con guiones; si no entran, bajan de renglón completas
 Font.registerHyphenationCallback((word) => [word])
 
-// Colores del diseño original Carnets.cshtml
-const VERDE = '#01582e'
-// const ROJO = '#e81f05'
+// Tonos de acento alineados al VERDE histórico (#01582e): oscuros, similar “peso” visual
+const HEX_ACCENTO_POR_COLOR: Record<ColorAgrupadorTorneo, string> = {
+  Negro: '#111111',
+  Azul: '#0a3a62',
+  Rojo: '#6e1219',
+  Verde: '#01582e'
+}
+
 const GRIS = '#b4b4b4'
-// const NEGRO = '#111111'
 const BLANCO = '#eeeeee'
 
 const CARD_WIDTH = 68
@@ -67,6 +76,32 @@ const expandirDelegadosACarnets = (
     }
   }
   return items
+}
+
+/** Primer torneo = primer equipo en la lista del club; color según agrupador de la primera zona de ese equipo. */
+function hexAccentCarnetDelegado(
+  delegado: DelegadoDTO,
+  clubNombre: string,
+  clubPorId: Map<number, ClubDTO>,
+  colorAgrupadorPorId: Map<number, ColorAgrupadorTorneo>
+): string {
+  if (clubNombre === 'Delegado') return HEX_ACCENTO_POR_COLOR.Negro
+
+  const dc = delegado.delegadoClubs?.find((c) => c.clubNombre === clubNombre)
+  if (dc?.clubId == null) return HEX_ACCENTO_POR_COLOR.Negro
+
+  const nombresEquipos = dc.equiposDelClub
+  if (!nombresEquipos?.length) return HEX_ACCENTO_POR_COLOR.Negro
+
+  const primerNombre = nombresEquipos[0].trim()
+  const club = clubPorId.get(dc.clubId)
+  const equipo = club?.equipos?.find((e) => e.nombre?.trim() === primerNombre)
+  const agrupadorId = equipo?.zonas?.[0]?.agrupadorId
+  if (agrupadorId == null) return HEX_ACCENTO_POR_COLOR.Negro
+
+  const colorCat = colorAgrupadorPorId.get(agrupadorId)
+  if (!colorCat) return HEX_ACCENTO_POR_COLOR.Negro
+  return HEX_ACCENTO_POR_COLOR[colorCat]
 }
 
 const formatFechaNac = (d: DelegadoDTO): string => {
@@ -112,7 +147,6 @@ const styles = StyleSheet.create({
     width: `${CARD_WIDTH}mm`,
     height: `${CARD_HEIGHT}mm`,
     borderWidth: 0.4,
-    borderColor: VERDE,
     borderRadius: 4,
     padding: '5mm',
     fontFamily: 'VarsityTeam',
@@ -145,8 +179,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     top: '52mm',
-    bottom: 0,
-    backgroundColor: VERDE
+    bottom: 0
   },
   watermarkIcono: {
     position: 'absolute' as const,
@@ -169,7 +202,6 @@ const styles = StyleSheet.create({
   titulo: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: VERDE,
     textAlign: 'center',
     fontFamily: 'VarsityTeam',
     maxLines: 3
@@ -191,7 +223,6 @@ const styles = StyleSheet.create({
     marginTop: 2,
     marginBottom: 6,
     borderWidth: 0.3,
-    borderColor: VERDE,
     borderRadius: 10,
     overflow: 'hidden'
   },
@@ -232,10 +263,12 @@ const styles = StyleSheet.create({
 
 function CarnetDelegado({
   delegado,
-  clubNombre
+  clubNombre,
+  accentColor
 }: {
   delegado: DelegadoDTO
   clubNombre: string
+  accentColor: string
 }) {
   const titulo = clubNombre
   const imgSrc = delegado.fotoCarnet
@@ -286,8 +319,10 @@ function CarnetDelegado({
   ]
 
   return (
-    <View style={styles.card}>
-      <View style={styles.rectanguloAbajoLaOla} />
+    <View style={[styles.card, { borderColor: accentColor }]}>
+      <View
+        style={[styles.rectanguloAbajoLaOla, { backgroundColor: accentColor }]}
+      />
       <Image src={ICONO_LIGA} style={styles.watermarkIcono} cache={false} />
       <View style={styles.waveSection}>
         <Svg
@@ -297,17 +332,17 @@ function CarnetDelegado({
         >
           <Path
             d='M 0,30 L 0,10 Q 25,25 50,10 Q 75,0 100,10 L 100,30 Z'
-            fill={VERDE}
+            fill={accentColor}
           />
         </Svg>
       </View>
       <View style={styles.cardTop}>
         <View style={styles.tituloContainer}>
-          <Text style={styles.titulo}>{titulo}</Text>
+          <Text style={[styles.titulo, { color: accentColor }]}>{titulo}</Text>
         </View>
         {/* <Text style={styles.subtitulo}>Liga</Text> */}
         {imgSrc ? (
-          <View style={styles.imgContainer}>
+          <View style={[styles.imgContainer, { borderColor: accentColor }]}>
             <Image
               src={imgSrc}
               style={{ width: `${IMG_SIZE}mm`, height: `${IMG_SIZE}mm` }}
@@ -342,7 +377,11 @@ function CarnetDelegado({
   )
 }
 
-type CarnetItem = { delegado: DelegadoDTO; clubNombre: string }
+type CarnetItem = {
+  delegado: DelegadoDTO
+  clubNombre: string
+  accentColor: string
+}
 
 function CarnetsDocument({ items }: { items: CarnetItem[] }) {
   const CARDS_PER_PAGE = 9
@@ -380,6 +419,7 @@ function CarnetsDocument({ items }: { items: CarnetItem[] }) {
                     key={`${item.delegado.id}-${item.clubNombre}-${idx}`}
                     delegado={item.delegado}
                     clubNombre={item.clubNombre}
+                    accentColor={item.accentColor}
                   />
                 )
               })}
@@ -396,7 +436,47 @@ export const generarCarnetsDelegadosPDF = async (
 ): Promise<void> => {
   if (delegados.length === 0) return
 
-  const items = expandirDelegadosACarnets(delegados)
+  const base = expandirDelegadosACarnets(delegados)
+  const idsClub = [
+    ...new Set(
+      base
+        .map(({ delegado, clubNombre }) => {
+          const dc = delegado.delegadoClubs?.find(
+            (c) => c.clubNombre === clubNombre
+          )
+          return dc?.clubId
+        })
+        .filter((id): id is number => id != null)
+    )
+  ]
+
+  const [agrupadores, clubs] = await Promise.all([
+    api.torneoAgrupadorAll(),
+    idsClub.length > 0
+      ? api.clubsPorIds(idsClub)
+      : Promise.resolve<ClubDTO[]>([])
+  ])
+
+  const colorAgrupadorPorId = new Map<number, ColorAgrupadorTorneo>()
+  for (const a of agrupadores) {
+    if (a.id != null)
+      colorAgrupadorPorId.set(a.id, colorAgrupadorValidoODefecto(a.color))
+  }
+  const clubPorId = new Map<number, ClubDTO>(
+    clubs.filter((c) => c.id != null).map((c) => [c.id!, c])
+  )
+
+  const items: CarnetItem[] = base.map(({ delegado, clubNombre }) => ({
+    delegado,
+    clubNombre,
+    accentColor: hexAccentCarnetDelegado(
+      delegado,
+      clubNombre,
+      clubPorId,
+      colorAgrupadorPorId
+    )
+  }))
+
   const blob = await pdf(<CarnetsDocument items={items} />).toBlob()
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
