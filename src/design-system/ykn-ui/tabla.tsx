@@ -41,6 +41,8 @@ type TablaProps<T> = {
   onRowClick?: (row: Row<T>) => void
   /** Contenido del filtro (ej. botón con Popover) alineado con la búsqueda */
   filtro?: React.ReactNode
+  /** Entre la barra de búsqueda y la tabla */
+  debajoDeBusqueda?: React.ReactNode
 }
 
 export default function Tabla<T>({
@@ -52,7 +54,8 @@ export default function Tabla<T>({
   onRowSelectionChange,
   pageSizeDefault = 10,
   onRowClick,
-  filtro
+  filtro,
+  debajoDeBusqueda
 }: TablaProps<T>) {
   const [globalFilter, setGlobalFilter] = useState('')
   const [sorting, setSorting] = useState<SortingState>([])
@@ -91,6 +94,8 @@ export default function Tabla<T>({
         />
         {filtro}
       </div>
+
+      {debajoDeBusqueda}
 
       {estaCargando ? (
         <p className='text-center text-gray-500'>Cargando datos...</p>

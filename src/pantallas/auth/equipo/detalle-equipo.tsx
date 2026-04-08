@@ -182,6 +182,15 @@ export default function DetalleEquipo() {
               rowSelection={rowSelection}
               onRowSelectionChange={setRowSelection}
               pageSizeDefault={100}
+              debajoDeBusqueda={
+                selectedJugadores.length > 0 ? (
+                  <p className='text-sm text-muted-foreground'>
+                    {selectedJugadores.length === 1
+                      ? '1 jugador seleccionado'
+                      : `${selectedJugadores.length} jugadores seleccionados`}
+                  </p>
+                ) : undefined
+              }
             />
             <VisibleSoloParaAdmin>
               <div className='mt-6 flex gap-2'>
