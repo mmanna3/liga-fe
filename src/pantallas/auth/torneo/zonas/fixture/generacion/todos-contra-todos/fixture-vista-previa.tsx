@@ -84,7 +84,17 @@ function buildJornada(j: JornadaItem, lista: ItemFixture[]): JornadaDTO {
   } as unknown as JornadaDTO
 }
 
-function buildPayload(
+/** Jornada entre dos slots LIBRE/INTERZONAL: no se persiste en el backend. */
+function esJornadaEntreDosEspeciales(
+  j: JornadaItem,
+  lista: ItemFixture[]
+): boolean {
+  const local = lista[j.local - 1]
+  const visitante = lista[j.visitante - 1]
+  return local?.type === 'especial' && visitante?.type === 'especial'
+}
+
+export function buildPayloadTodosContraTodos(
   fechas: FixtureAlgoritmoFechaDTO[],
   lista: ItemFixture[],
   primeraFecha: Date
@@ -95,7 +105,9 @@ function buildPayload(
       numero: f.fecha,
       dia,
       esVisibleEnApp: false,
-      jornadas: f.jornadas.map((j) => buildJornada(j, lista))
+      jornadas: f.jornadas
+        .filter((j) => !esJornadaEntreDosEspeciales(j, lista))
+        .map((j) => buildJornada(j, lista))
     } as FechaTodosContraTodosDTO
   })
 }
@@ -137,7 +149,9 @@ export function ResultadoFixture({
         <CardContent>
           <Boton
             onClick={() =>
-              crearMutation.mutate(buildPayload(fechas, lista, primeraFecha))
+              crearMutation.mutate(
+                buildPayloadTodosContraTodos(fechas, lista, primeraFecha)
+              )
             }
             estaCargando={crearMutation.isPending}
           >

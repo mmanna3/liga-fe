@@ -80,6 +80,17 @@ function partidoBracketAJornadaItem(
   }
 }
 
+/** Partido cuyos dos slots son LIBRE o INTERZONAL: no se persiste en el backend. */
+function esPartidoEntreDosEspeciales(
+  partido: PartidoBracket,
+  lista: ItemFixture[]
+): boolean {
+  const j = partidoBracketAJornadaItem(partido, lista)
+  const local = lista[j.local - 1]
+  const visitante = lista[j.visitante - 1]
+  return local?.type === 'especial' && visitante?.type === 'especial'
+}
+
 function buildJornada(j: JornadaItem, lista: ItemFixture[]): JornadaDTO {
   const local = lista[j.local - 1]
   const visitante = lista[j.visitante - 1]
@@ -138,10 +149,12 @@ export function buildPayloadEliminacionDirecta(
   if (!primeraInstancia) return null
 
   const instanciaId = n
-  const jornadas = primeraInstancia.partidos.map((partido) => {
-    const j = partidoBracketAJornadaItem(partido, lista)
-    return buildJornada(j, lista)
-  })
+  const jornadas = primeraInstancia.partidos
+    .filter((partido) => !esPartidoEntreDosEspeciales(partido, lista))
+    .map((partido) => {
+      const j = partidoBracketAJornadaItem(partido, lista)
+      return buildJornada(j, lista)
+    })
 
   return {
     dia: primeraFecha,
