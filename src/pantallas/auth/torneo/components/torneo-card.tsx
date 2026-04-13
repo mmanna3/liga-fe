@@ -43,7 +43,24 @@ export default function TorneoCard({ torneo }: TorneoCardProps) {
             <Icono nombre='Torneos' className='h-5 w-5 shrink-0 text-primary' />
             {torneo.nombre}
           </h3>
-          <p className='text-muted-foreground my-2 text-sm'>{subtitulo}</p>
+          <div className='my-2 flex items-center gap-2'>
+            <p className='min-w-0 flex-1 text-sm text-muted-foreground'>
+              {subtitulo}
+            </p>
+            <span
+              className='inline-flex shrink-0 text-muted-foreground'
+              title={
+                torneo.esVisibleEnApp
+                  ? 'Visible en la app'
+                  : 'No visible en la app'
+              }
+            >
+              <Icono
+                nombre={torneo.esVisibleEnApp ? 'Visible' : 'NoVisible'}
+                className='h-4 w-4'
+              />
+            </span>
+          </div>
         </div>
         {fases.length > 0 && (
           <ul className='flex flex-col gap-1.5'>

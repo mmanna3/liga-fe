@@ -21,6 +21,10 @@ function obtenerRangoAnios(anioActual: number): number[] {
 const VALOR_TODOS = 'todos'
 const VALOR_SIN_AGRUPADOR = 'sin-agrupador'
 
+const VISIBILIDAD_TODOS = 'todos'
+const VISIBILIDAD_VISIBLES_EN_APP = 'visibles-en-app'
+const VISIBILIDAD_NO_VISIBLES_EN_APP = 'no-visibles-en-app'
+
 interface AgrupadorOpcion {
   id: string
   nombre: string
@@ -49,6 +53,8 @@ export default function Torneo() {
   )
   const [agrupadorSeleccionado, setAgrupadorSeleccionado] =
     useState<string>(VALOR_TODOS)
+  const [visibilidadEnApp, setVisibilidadEnApp] =
+    useState<string>(VISIBILIDAD_TODOS)
 
   const aniosDisponibles = useMemo(
     () => obtenerRangoAnios(anioActual),
@@ -91,10 +97,20 @@ export default function Torneo() {
       ? agrupadorSeleccionado
       : VALOR_TODOS
 
-  const torneosAMostrar =
-    agrupadorEfectivo === VALOR_SIN_AGRUPADOR
-      ? torneosFiltrados.filter((t) => !t.torneoAgrupadorId)
-      : torneosFiltrados
+  const torneosTrasAgrupador = useMemo(() => {
+    if (agrupadorEfectivo === VALOR_SIN_AGRUPADOR) {
+      return torneosFiltrados.filter((t) => !t.torneoAgrupadorId)
+    }
+    return torneosFiltrados
+  }, [torneosFiltrados, agrupadorEfectivo])
+
+  const torneosAMostrar = useMemo(() => {
+    if (visibilidadEnApp === VISIBILIDAD_TODOS) return torneosTrasAgrupador
+    if (visibilidadEnApp === VISIBILIDAD_VISIBLES_EN_APP) {
+      return torneosTrasAgrupador.filter((t) => t.esVisibleEnApp)
+    }
+    return torneosTrasAgrupador.filter((t) => !t.esVisibleEnApp)
+  }, [torneosTrasAgrupador, visibilidadEnApp])
 
   const opcionesAnio = useMemo(
     () =>
@@ -154,6 +170,24 @@ export default function Torneo() {
                   placeholder='Seleccionar agrupador'
                   className='sm:min-w-[200px]'
                 />
+                <ListaDesplegable
+                  titulo='Es visible en app'
+                  opciones={[
+                    { value: VISIBILIDAD_TODOS, label: 'Todos' },
+                    {
+                      value: VISIBILIDAD_VISIBLES_EN_APP,
+                      label: 'Visibles en app'
+                    },
+                    {
+                      value: VISIBILIDAD_NO_VISIBLES_EN_APP,
+                      label: 'No visibles en app'
+                    }
+                  ]}
+                  valor={visibilidadEnApp}
+                  alCambiar={setVisibilidadEnApp}
+                  placeholder='Visibilidad'
+                  className='sm:min-w-[200px]'
+                />
               </div>
             </CardContent>
           </Card>
@@ -164,7 +198,7 @@ export default function Torneo() {
             ) : isError ? (
               <p className='text-destructive'>Error al cargar los torneos</p>
             ) : torneosAMostrar.length === 0 ? (
-              <MensajeListaVacia mensaje='No hay torneos para el año seleccionado' />
+              <MensajeListaVacia mensaje='No hay torneos para los filtros seleccionados' />
             ) : (
               <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
                 {torneosAMostrar.map((torneo) => (
