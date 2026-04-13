@@ -33,6 +33,10 @@ test.describe('Clubes', () => {
     await page.goto('/clubs/crear')
     await expect(page.getByText('Crear Club')).toBeVisible()
     await expect(page.getByLabel('Nombre')).toBeVisible()
+    await expect(page.getByText('Cancha')).toBeVisible()
+    await expect(
+      page.getByRole('button', { name: 'Descubierta', exact: true })
+    ).toBeVisible()
   })
 
   test('crea un club y regresa a la lista', async ({ page }) => {
@@ -47,7 +51,9 @@ test.describe('Clubes', () => {
     await expect(page).toHaveURL('/clubs')
   })
 
-  test('muestra el detalle del club al hacer click en la fila', async ({ page }) => {
+  test('muestra el detalle del club al hacer click en la fila', async ({
+    page
+  }) => {
     await setScenario('clubs_con_datos')
     await login(page)
     await page.goto('/clubs')
@@ -56,6 +62,7 @@ test.describe('Clubes', () => {
 
     await page.waitForURL(/\/clubs\/detalle\/\d+/)
     await expect(page.getByText('Club Defensores del Norte')).toBeVisible()
+    await expect(page.getByText('Descubierta')).toBeVisible()
   })
 
   test('navega a editar club y guarda los cambios', async ({ page }) => {
@@ -64,7 +71,12 @@ test.describe('Clubes', () => {
     await page.goto('/clubs/editar/1')
 
     // Esperar que el formulario cargue con los datos del club
-    await expect(page.getByLabel('Nombre')).toHaveValue('Club Defensores del Norte')
+    await expect(page.getByLabel('Nombre')).toHaveValue(
+      'Club Defensores del Norte'
+    )
+    await expect(
+      page.getByRole('button', { name: 'Descubierta', exact: true })
+    ).toBeVisible()
 
     // Modificar el nombre
     await page.getByLabel('Nombre').fill('Club Defensores Editado')

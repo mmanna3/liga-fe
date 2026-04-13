@@ -610,6 +610,59 @@ export class Client {
    * @param zonaId (optional)
    * @return OK
    */
+  posicionesAnual(zonaId: number | undefined): Promise<PosicionesDTO> {
+    let url_ = this.baseUrl + '/api/carnet-digital/posiciones-anual?'
+    if (zonaId === null)
+      throw new Error("The parameter 'zonaId' cannot be null.")
+    else if (zonaId !== undefined)
+      url_ += 'zonaId=' + encodeURIComponent('' + zonaId) + '&'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processPosicionesAnual(_response)
+    })
+  }
+
+  protected processPosicionesAnual(response: Response): Promise<PosicionesDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = PosicionesDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<PosicionesDTO>(null as any)
+  }
+
+  /**
+   * @param zonaId (optional)
+   * @return OK
+   */
   eliminacionDirecta(
     zonaId: number | undefined
   ): Promise<EliminacionDirectaDTO> {
@@ -1595,6 +1648,55 @@ export class Client {
       })
     }
     return Promise.resolve<number>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  fichajeEstaHabilitado(): Promise<boolean> {
+    let url_ = this.baseUrl + '/api/Configuracion/fichaje-esta-habilitado'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processFichajeEstaHabilitado(_response)
+    })
+  }
+
+  protected processFichajeEstaHabilitado(response: Response): Promise<boolean> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = resultData200 !== undefined ? resultData200 : <any>null
+
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<boolean>(null as any)
   }
 
   /**
@@ -8474,6 +8576,8 @@ export class ClubDTO implements IClubDTO {
   escudo?: string | undefined
   direccion?: string | undefined
   esTechado?: boolean | undefined
+  canchaTipoId?: number
+  canchaTipo?: string | undefined
   localidad?: string | undefined
   equipos?: EquipoDTO[] | undefined
   delegados?: DelegadoDTO[] | undefined
@@ -8494,6 +8598,8 @@ export class ClubDTO implements IClubDTO {
       this.escudo = _data['escudo']
       this.direccion = _data['direccion']
       this.esTechado = _data['esTechado']
+      this.canchaTipoId = _data['canchaTipoId']
+      this.canchaTipo = _data['canchaTipo']
       this.localidad = _data['localidad']
       if (Array.isArray(_data['equipos'])) {
         this.equipos = [] as any
@@ -8522,6 +8628,8 @@ export class ClubDTO implements IClubDTO {
     data['escudo'] = this.escudo
     data['direccion'] = this.direccion
     data['esTechado'] = this.esTechado
+    data['canchaTipoId'] = this.canchaTipoId
+    data['canchaTipo'] = this.canchaTipo
     data['localidad'] = this.localidad
     if (Array.isArray(this.equipos)) {
       data['equipos'] = []
@@ -8541,6 +8649,8 @@ export interface IClubDTO {
   escudo?: string | undefined
   direccion?: string | undefined
   esTechado?: boolean | undefined
+  canchaTipoId?: number
+  canchaTipo?: string | undefined
   localidad?: string | undefined
   equipos?: EquipoDTO[] | undefined
   delegados?: DelegadoDTO[] | undefined

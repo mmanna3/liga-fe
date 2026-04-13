@@ -45,7 +45,8 @@ const CLUB_1 = {
   nombre: 'Club Defensores del Norte',
   direccion: 'Av. Siempreviva 742',
   localidad: 'Capital',
-  esTechado: false,
+  canchaTipoId: 2,
+  canchaTipo: 'Descubierta',
   escudo: null,
   delegados: [],
   equipos: []
@@ -55,7 +56,8 @@ const CLUB_2 = {
   nombre: 'Atlético San Martín',
   direccion: null,
   localidad: 'Villa del Parque',
-  esTechado: true,
+  canchaTipoId: 1,
+  canchaTipo: 'Cubierta',
   escudo: null,
   delegados: [],
   equipos: []

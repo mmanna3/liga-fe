@@ -21,6 +21,7 @@ import MensajeListaVacia from '@/design-system/ykn-ui/mensaje-lista-vacia'
 import TorneoBadge from '@/design-system/ykn-ui/torneo-badge'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useNavigate, useParams } from 'react-router-dom'
+import { tituloCanchaTipoPorId } from './opciones-cancha-tipo'
 
 export default function DetalleClub() {
   const { id } = useParams<{ id: string }>()
@@ -121,24 +122,14 @@ export default function DetalleClub() {
                     .filter(Boolean)
                     .join(', ') || '—'}
                 </p>
-                <p className='flex items-baseline gap-1 pl-1'>
-                  {club!.esTechado ? (
-                    <>
-                      Tiene techo
-                      <Icono
-                        nombre='Verificado'
-                        className='h-3.5 w-3.5 shrink-0 translate-y-[2px] text-primary'
-                      />
-                    </>
-                  ) : (
-                    <>
-                      No tiene techo
-                      <Icono
-                        nombre='Cruz'
-                        className='h-3.5 w-3.5 shrink-0 translate-y-[2px] text-destructive'
-                      />
-                    </>
-                  )}
+                <p className='flex items-center gap-2 pl-1'>
+                  <span className='text-muted-foreground shrink-0'>
+                    Cancha:
+                  </span>
+                  <span>
+                    {club!.canchaTipo?.trim() ||
+                      tituloCanchaTipoPorId(club!.canchaTipoId)}
+                  </span>
                 </p>
               </CardContent>
             </Card>

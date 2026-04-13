@@ -3,16 +3,20 @@ import { CambiarEscudoDTO, ClubDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { Label } from '@/design-system/base-ui/label'
-import { Switch } from '@/design-system/base-ui/switch'
 import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import ContenedorBotones from '@/design-system/ykn-ui/contenedor-botones'
 import Icono from '@/design-system/ykn-ui/icono'
 import { Input } from '@/design-system/ykn-ui/input'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
+import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import {
+  CANCHA_TIPO_ID_POR_DEFECTO,
+  OPCIONES_CANCHA_TIPO
+} from './opciones-cancha-tipo'
 
 function extraerBase64(dataUrl: string): string {
   if (dataUrl.startsWith('data:')) {
@@ -28,7 +32,9 @@ export default function EditarClub() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [nombre, setNombre] = useState('')
   const [direccion, setDireccion] = useState('')
-  const [esTechado, setEsTechado] = useState(false)
+  const [canchaTipoId, setCanchaTipoId] = useState<number>(
+    CANCHA_TIPO_ID_POR_DEFECTO
+  )
   const [localidad, setLocalidad] = useState('')
   const [escudoPreview, setEscudoPreview] = useState<string | null>(null)
   const [escudoBase64, setEscudoBase64] = useState<string | null>(null)
@@ -60,7 +66,7 @@ export default function EditarClub() {
     if (club) {
       setNombre(club.nombre || '')
       setDireccion(club.direccion || '')
-      setEsTechado(club.esTechado ?? false)
+      setCanchaTipoId(club.canchaTipoId ?? CANCHA_TIPO_ID_POR_DEFECTO)
       setLocalidad(club.localidad || '')
       if (club.escudo) {
         const src =
@@ -93,13 +99,14 @@ export default function EditarClub() {
 
     const nombreCambiado = nombre !== club?.nombre
     const direccionCambiada = direccion !== (club?.direccion ?? '')
-    const esTechadoCambiado = esTechado !== (club?.esTechado ?? false)
+    const canchaTipoCambiada =
+      canchaTipoId !== (club?.canchaTipoId ?? CANCHA_TIPO_ID_POR_DEFECTO)
     const localidadCambiada = localidad !== (club?.localidad ?? '')
     const escudoCambiado = escudoBase64 !== null
     const datosCambiados =
       nombreCambiado ||
       direccionCambiada ||
-      esTechadoCambiado ||
+      canchaTipoCambiada ||
       localidadCambiada
 
     if (!datosCambiados && !escudoCambiado) return
@@ -112,7 +119,7 @@ export default function EditarClub() {
             nombre,
             escudo: club?.escudo,
             direccion: direccion || undefined,
-            esTechado,
+            canchaTipoId,
             localidad: localidad || undefined
           })
         )
@@ -135,7 +142,7 @@ export default function EditarClub() {
   const hayCambios =
     nombre !== club?.nombre ||
     direccion !== (club?.direccion ?? '') ||
-    esTechado !== (club?.esTechado ?? false) ||
+    canchaTipoId !== (club?.canchaTipoId ?? CANCHA_TIPO_ID_POR_DEFECTO) ||
     localidad !== (club?.localidad ?? '') ||
     escudoBase64 !== null
 
@@ -148,7 +155,7 @@ export default function EditarClub() {
       <LayoutSegundoNivel
         titulo='Editar Club'
         pathBotonVolver={`${rutasNavegacion.detalleClub}/${id}`}
-        maxWidth='md'
+        maxWidth='2xl'
         contenido={
           <form onSubmit={handleSubmit} className='space-y-6'>
             <Input
@@ -179,16 +186,12 @@ export default function EditarClub() {
               onChange={(e) => setLocalidad(e.target.value)}
             />
 
-            <div className='flex items-center justify-between space-x-2'>
-              <Label htmlFor='esTechado'>¿Es techado?</Label>
-              <Switch
-                id='esTechado'
-                checked={esTechado}
-                onCheckedChange={setEsTechado}
-                textoApagado='No'
-                textoPrendido='Sí'
-              />
-            </div>
+            <SelectorSimple
+              titulo='Cancha'
+              opciones={OPCIONES_CANCHA_TIPO}
+              valorActual={String(canchaTipoId)}
+              alElegirOpcion={(id) => setCanchaTipoId(Number(id))}
+            />
 
             <div className='space-y-2'>
               <Label>Escudo</Label>
