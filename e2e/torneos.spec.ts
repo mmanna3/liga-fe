@@ -14,7 +14,7 @@ test.describe('Torneos', () => {
     await page.goto('/torneos')
 
     await expect(
-      page.getByText('No hay torneos para el año seleccionado')
+      page.getByText('No hay torneos para los filtros seleccionados')
     ).toBeVisible()
   })
 
@@ -30,6 +30,6 @@ test.describe('Torneos', () => {
     await login(page)
     await page.goto('/torneos/crear')
 
-    await expect(page.getByText('Crear Torneo')).toBeVisible()
+    await expect(page.getByText('Crear nuevo torneo')).toBeVisible()
   })
 })
