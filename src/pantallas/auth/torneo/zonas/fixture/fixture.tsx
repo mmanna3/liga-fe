@@ -1,14 +1,14 @@
 import { api } from '@/api/api'
-import { fechasListarTodosContraTodos } from '@/api/fechas-zona'
 import { TipoDeFaseEnum } from '@/api/clients'
+import { fechasListarTodosContraTodos } from '@/api/fechas-zona'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
 import type { BotoneraProps } from '@/design-system/ykn-ui/botonera'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
 import { toDateOnly } from '@/logica-compartida/utils'
+import { useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useQueryClient } from '@tanstack/react-query'
 import { FechasEliminacionDirecta } from './fechas-eliminacion-directa/fechas'
 import { FechasTodosContraTodos } from './fechas-todos-contra-todos/fechas'
 import { PanelEliminacionDirecta } from './generacion/eliminacion-directa/panel-eliminacion-directa'
@@ -78,6 +78,11 @@ export default function Fixture() {
     fechasExistentes.length > 0 &&
     fase?.tipoDeFase === TipoDeFaseEnum._2
 
+  const muestraBorrarFechasTodosContraTodos =
+    !!zona &&
+    fechasExistentes.length > 0 &&
+    fase?.tipoDeFase === TipoDeFaseEnum._1
+
   const borrarLlaveMutation = useApiMutation<void>({
     fn: () => api.borrarFechasEliminaciondirectaMasivamente(zonaId),
     mensajeDeExito: 'Llave de eliminación borrada',
@@ -86,6 +91,14 @@ export default function Fixture() {
       queryClient.invalidateQueries({
         queryKey: ['fechasEliminacionDirecta', zonaId]
       })
+    }
+  })
+
+  const borrarFechasTctMutation = useApiMutation<void>({
+    fn: () => api.borrarFechasTodoscontratodosMasivamente(zonaId),
+    mensajeDeExito: 'Todas las fechas borradas',
+    antesDeMensajeExito: () => {
+      queryClient.invalidateQueries({ queryKey: ['fechasAll', zonaId] })
     }
   })
 
@@ -107,7 +120,25 @@ export default function Fixture() {
           }
         ]
       }
-    : undefined
+    : muestraBorrarFechasTodosContraTodos
+      ? {
+          iconos: [
+            {
+              alApretar: () => {
+                borrarFechasTctMutation.mutate()
+              },
+              tooltip: 'Borrar todas las fechas',
+              modalEliminacion: {
+                titulo: 'Borrar todas las fechas',
+                subtitulo:
+                  'Se eliminarán todas las fechas de esta zona con sus jornadas y partidos.',
+                eliminarTexto: 'Borrar todas las fechas',
+                estaCargando: borrarFechasTctMutation.isPending
+              }
+            }
+          ]
+        }
+      : undefined
 
   const contenido = !zona ? (
     <p className='text-muted-foreground py-4'>Cargando zona...</p>

@@ -4038,6 +4038,53 @@ export class Client {
   }
 
   /**
+   * @return OK
+   */
+  borrarFechasTodoscontratodosMasivamente(padreId: number): Promise<void> {
+    let url_ =
+      this.baseUrl +
+      '/api/Zona/{padreId}/fechas/borrar-fechas-todoscontratodos-masivamente'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'DELETE',
+      headers: {}
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processBorrarFechasTodoscontratodosMasivamente(_response)
+    })
+  }
+
+  protected processBorrarFechasTodoscontratodosMasivamente(
+    response: Response
+  ): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
    * @param body (optional)
    * @return OK
    */
@@ -8662,6 +8709,7 @@ export class ClubesDTO implements IClubesDTO {
   localidad?: string | undefined
   direccion?: string | undefined
   esTechado?: string | undefined
+  tipoCancha?: string | undefined
 
   constructor(data?: IClubesDTO) {
     if (data) {
@@ -8679,6 +8727,7 @@ export class ClubesDTO implements IClubesDTO {
       this.localidad = _data['localidad']
       this.direccion = _data['direccion']
       this.esTechado = _data['esTechado']
+      this.tipoCancha = _data['tipoCancha']
     }
   }
 
@@ -8696,6 +8745,7 @@ export class ClubesDTO implements IClubesDTO {
     data['localidad'] = this.localidad
     data['direccion'] = this.direccion
     data['esTechado'] = this.esTechado
+    data['tipoCancha'] = this.tipoCancha
     return data
   }
 }
@@ -8706,6 +8756,7 @@ export interface IClubesDTO {
   localidad?: string | undefined
   direccion?: string | undefined
   esTechado?: string | undefined
+  tipoCancha?: string | undefined
 }
 
 export class ConfiguracionDTO implements IConfiguracionDTO {
