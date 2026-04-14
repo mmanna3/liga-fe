@@ -10,12 +10,15 @@ import { rutasNavegacion } from '@/ruteo/rutas'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ModalDnisExpulsadosDeLaLiga from './modal-dnis-expulsados-de-la-liga'
+import ModalEscudoPorDefecto from './modal-escudo-por-defecto'
 import ModalHabilitacionFichaje from './modal-habilitacion-fichaje'
 
 export default function Configuracion() {
   const navigate = useNavigate()
   const [modalFichajeAbierto, setModalFichajeAbierto] = useState(false)
   const [modalDnisExpulsadosAbierto, setModalDnisExpulsadosAbierto] =
+    useState(false)
+  const [modalEscudoPorDefectoAbierto, setModalEscudoPorDefectoAbierto] =
     useState(false)
 
   return (
@@ -88,6 +91,26 @@ export default function Configuracion() {
                 </CardDescription>
               </CardHeader>
             </Card>
+            <Card
+              className='cursor-pointer transition-colors hover:bg-muted/50'
+              role='button'
+              tabIndex={0}
+              onClick={() => setModalEscudoPorDefectoAbierto(true)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') e.currentTarget.click()
+              }}
+            >
+              <CardHeader>
+                <CardTitle className='flex items-center gap-2'>
+                  <Icono nombre='Equipos' className='h-8 w-8' />
+                  Cambiar escudo por defecto
+                </CardTitle>
+                <CardDescription>
+                  Elegí el escudo que se visualizará en Libre, Interzonal y
+                  equipos sin escudo.
+                </CardDescription>
+              </CardHeader>
+            </Card>
           </div>
           <ModalHabilitacionFichaje
             open={modalFichajeAbierto}
@@ -96,6 +119,10 @@ export default function Configuracion() {
           <ModalDnisExpulsadosDeLaLiga
             open={modalDnisExpulsadosAbierto}
             onOpenChange={setModalDnisExpulsadosAbierto}
+          />
+          <ModalEscudoPorDefecto
+            open={modalEscudoPorDefectoAbierto}
+            onOpenChange={setModalEscudoPorDefectoAbierto}
           />
         </>
       }

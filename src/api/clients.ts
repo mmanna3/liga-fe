@@ -1651,6 +1651,64 @@ export class Client {
   }
 
   /**
+   * @param body (optional)
+   * @return OK
+   */
+  cambiarEscudoPorDefecto(
+    body: CambiarEscudoPorDefectoDTO | undefined
+  ): Promise<boolean> {
+    let url_ = this.baseUrl + '/api/Configuracion/cambiar-escudo-por-defecto'
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processCambiarEscudoPorDefecto(_response)
+    })
+  }
+
+  protected processCambiarEscudoPorDefecto(
+    response: Response
+  ): Promise<boolean> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = resultData200 !== undefined ? resultData200 : <any>null
+
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<boolean>(null as any)
+  }
+
+  /**
    * @return OK
    */
   fichajeEstaHabilitado(): Promise<boolean> {
@@ -8170,6 +8228,42 @@ export class CambiarEscudoDTO implements ICambiarEscudoDTO {
 
 export interface ICambiarEscudoDTO {
   imagenBase64: string
+}
+
+export class CambiarEscudoPorDefectoDTO implements ICambiarEscudoPorDefectoDTO {
+  escudo!: string
+
+  constructor(data?: ICambiarEscudoPorDefectoDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.escudo = _data['escudo']
+    }
+  }
+
+  static fromJS(data: any): CambiarEscudoPorDefectoDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new CambiarEscudoPorDefectoDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['escudo'] = this.escudo
+    return data
+  }
+}
+
+export interface ICambiarEscudoPorDefectoDTO {
+  escudo: string
 }
 
 export class CambiarEstadoDelJugadorDTO implements ICambiarEstadoDelJugadorDTO {
