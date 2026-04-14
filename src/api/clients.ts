@@ -8761,7 +8761,7 @@ export interface IClubesDTO {
 
 export class ConfiguracionDTO implements IConfiguracionDTO {
   id?: number
-  fichajeEstaHabilitado?: boolean
+  habilitacionFichajeId?: number
 
   constructor(data?: IConfiguracionDTO) {
     if (data) {
@@ -8775,7 +8775,7 @@ export class ConfiguracionDTO implements IConfiguracionDTO {
   init(_data?: any) {
     if (_data) {
       this.id = _data['id']
-      this.fichajeEstaHabilitado = _data['fichajeEstaHabilitado']
+      this.habilitacionFichajeId = _data['habilitacionFichajeId']
     }
   }
 
@@ -8789,14 +8789,14 @@ export class ConfiguracionDTO implements IConfiguracionDTO {
   toJSON(data?: any) {
     data = typeof data === 'object' ? data : {}
     data['id'] = this.id
-    data['fichajeEstaHabilitado'] = this.fichajeEstaHabilitado
+    data['habilitacionFichajeId'] = this.habilitacionFichajeId
     return data
   }
 }
 
 export interface IConfiguracionDTO {
   id?: number
-  fichajeEstaHabilitado?: boolean
+  habilitacionFichajeId?: number
 }
 
 export class CrearTorneoDTO implements ICrearTorneoDTO {
