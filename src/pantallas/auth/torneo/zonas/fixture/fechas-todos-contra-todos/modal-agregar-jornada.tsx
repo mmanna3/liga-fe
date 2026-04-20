@@ -17,8 +17,8 @@ import {
   useSensors
 } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
-import { useState } from 'react'
-import type { ItemFixture } from '../tipos'
+import { useMemo, useState } from 'react'
+import { estilosChipEspecial, labelItem, type ItemFixture } from '../tipos'
 
 type Slots = { local: ItemFixture | null; visitante: ItemFixture | null }
 
@@ -35,19 +35,12 @@ function ItemDraggable({
     useDraggable({ id: dragId, data: { item }, disabled })
 
   const esEspecial = item.type === 'especial'
-  const estiloEspecial =
-    esEspecial && item.valor === 'INTERZONAL'
-      ? 'bg-blue-100 border-blue-300 text-blue-800'
-      : esEspecial
-        ? 'bg-amber-100 border-amber-300 text-amber-800'
-        : 'bg-background border-border'
+  const estiloEspecial = esEspecial
+    ? estilosChipEspecial(item).replace('px-2 py-0.5', 'px-3 py-1.5')
+    : 'bg-background border-border'
 
   const label =
-    item.type === 'equipo'
-      ? (item.equipo.nombre ?? '—')
-      : item.valor === 'INTERZONAL'
-        ? 'Interzonal'
-        : 'Libre'
+    item.type === 'equipo' ? (item.equipo.nombre ?? '—') : labelItem(item)
 
   return (
     <div
@@ -84,17 +77,10 @@ function SlotDroppable({
       ? null
       : item.type === 'equipo'
         ? (item.equipo.nombre ?? '—')
-        : item.valor === 'INTERZONAL'
-          ? 'Interzonal'
-          : 'Libre'
+        : labelItem(item)
 
-  const esEspecial = item?.type === 'especial'
-  const estiloEspecial =
-    esEspecial && item?.valor === 'INTERZONAL'
-      ? 'bg-blue-100 text-blue-800'
-      : esEspecial
-        ? 'bg-amber-100 text-amber-800'
-        : ''
+  const claseChip =
+    item?.type === 'especial' && item != null ? estilosChipEspecial(item) : ''
 
   return (
     <div
@@ -105,9 +91,7 @@ function SlotDroppable({
     >
       <p className='text-xs font-medium text-muted-foreground mb-1'>{label}</p>
       {displayLabel ? (
-        <span
-          className={`text-sm font-medium px-2 py-0.5 rounded ${estiloEspecial}`}
-        >
+        <span className={`text-sm font-medium ${claseChip}`}>
           {displayLabel}
         </span>
       ) : (
@@ -184,10 +168,22 @@ export function ModalAgregarJornada({
     type: 'equipo',
     equipo: e
   }))
-  const especiales: ItemFixture[] = [
-    { type: 'especial', valor: 'LIBRE' },
-    { type: 'especial', valor: 'INTERZONAL' }
-  ]
+
+  const especiales: ItemFixture[] = useMemo(() => {
+    const cantidadEquiposNormales = equipos.length
+    const interzonales: ItemFixture[] = Array.from(
+      { length: cantidadEquiposNormales },
+      (_, i) => ({
+        type: 'especial' as const,
+        valor: 'INTERZONAL' as const,
+        numero: i + 1
+      })
+    )
+    return [
+      { type: 'especial' as const, valor: 'LIBRE' as const },
+      ...interzonales
+    ]
+  }, [equipos.length])
 
   return (
     <Dialog open={abierto} onOpenChange={(o) => !o && handleCerrar()}>
@@ -230,16 +226,24 @@ export function ModalAgregarJornada({
                 })}
               </div>
             </div>
-            <div className='w-28 shrink-0'>
+            <div className='w-40 shrink-0 min-w-0'>
               <p className='text-xs font-medium text-muted-foreground mb-2'>
                 Especiales
               </p>
-              <div className='flex flex-col gap-2'>
-                {especiales.map((item) => (
+              <div className='flex flex-col gap-2 max-h-[min(420px,70vh)] overflow-y-auto pr-1'>
+                {especiales.map((it) => (
                   <ItemDraggable
-                    key={(item as { type: 'especial'; valor: string }).valor}
-                    item={item}
-                    dragId={`especial-${(item as { type: 'especial'; valor: string }).valor}`}
+                    key={
+                      it.type === 'especial' && it.valor === 'INTERZONAL'
+                        ? `interzonal-${it.numero}`
+                        : 'libre'
+                    }
+                    item={it}
+                    dragId={
+                      it.type === 'especial' && it.valor === 'INTERZONAL'
+                        ? `especial-INTERZONAL-${it.numero}`
+                        : 'especial-LIBRE'
+                    }
                   />
                 ))}
               </div>

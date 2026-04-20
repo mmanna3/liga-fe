@@ -36,12 +36,15 @@ export function FixtureGeneracionListaEquipos({
             </h3>
             <ZonaDerechaDroppable>
               <div className='space-y-2'>
-                <EspecialDraggable valor='INTERZONAL' />
+                <EspecialDraggable valor='INTERZONAL' interzonalNumero={1} />
+                <EspecialDraggable valor='INTERZONAL' interzonalNumero={2} />
+                <EspecialDraggable valor='INTERZONAL' interzonalNumero={3} />
+                <EspecialDraggable valor='INTERZONAL' interzonalNumero={4} />
                 <EspecialDraggable valor='LIBRE' />
               </div>
               <p className='text-xs text-muted-foreground pt-2'>
-                Arrastrá Libre o Interzonal a la lista para sumarlos. Arrastrá
-                desde la lista acá para quitarlos.
+                Arrastrá Libre o una variante de Interzonal a la lista para
+                sumarlos. Arrastrá desde la lista acá para quitarlos.
               </p>
             </ZonaDerechaDroppable>
           </div>

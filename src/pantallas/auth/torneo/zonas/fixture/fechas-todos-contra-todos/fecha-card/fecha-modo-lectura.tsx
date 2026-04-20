@@ -16,6 +16,7 @@ import {
   ESTADO_BOTON_CARGAR_RESULTADOS,
   jornadaTieneResultadosCargados
 } from '../../components/boton-cargar-resultados'
+import { etiquetaInterzonal } from '../../tipos'
 import { claseEspecial } from '../jornada-edicion'
 import { ModalCargaResultados } from './modal-carga-resultados'
 
@@ -49,8 +50,9 @@ function JornadaFilaVista({
     visitanteLabel = 'Libre'
   } else {
     const esLocal = j.localOVisitante !== LocalVisitanteEnum._2
-    localLabel = esLocal ? (j.equipo ?? '—') : 'Interzonal'
-    visitanteLabel = esLocal ? 'Interzonal' : (j.equipo ?? '—')
+    const inter = etiquetaInterzonal(j.numero)
+    localLabel = esLocal ? (j.equipo ?? '—') : inter
+    visitanteLabel = esLocal ? inter : (j.equipo ?? '—')
   }
 
   const estadoBoton = !jornadaTieneResultadosCargados(j)

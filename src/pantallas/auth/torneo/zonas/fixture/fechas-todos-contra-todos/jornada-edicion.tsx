@@ -2,6 +2,11 @@ import type { EquipoDeLaZonaDTO } from '@/api/clients'
 import { LocalVisitanteEnum } from '@/api/clients'
 import { Button } from '@/design-system/base-ui/button'
 import Icono from '@/design-system/ykn-ui/icono'
+import {
+  claseVistaPreviaEspecial,
+  etiquetaInterzonal,
+  type ItemFixture
+} from '../tipos'
 
 // ---------------------------------------------------------------------------
 // Tipos del borrador
@@ -17,6 +22,8 @@ export type JornadaBorrador = {
   /** Jornada tipo Interzonal */
   equipoId?: number
   localOVisitante?: LocalVisitanteEnum
+  /** Variante Interzonal (1–4), alineado con el backend */
+  numero?: number
 }
 
 export type CampoReemplazo =
@@ -36,9 +43,7 @@ export type PendienteReemplazo = {
 // ---------------------------------------------------------------------------
 
 export function claseEspecial(label: string) {
-  if (label === 'Interzonal') return 'text-blue-700 bg-blue-100 px-1 rounded'
-  if (label === 'Libre') return 'text-yellow-700 bg-yellow-100 px-1 rounded'
-  return ''
+  return claseVistaPreviaEspecial(label)
 }
 
 // ---------------------------------------------------------------------------
@@ -82,12 +87,13 @@ export function JornadaFilaEdicion({
   } else {
     // Interzonal
     const esLocal = j.localOVisitante !== LocalVisitanteEnum._2
+    const inter = etiquetaInterzonal(j.numero)
     if (esLocal) {
       localLabel = nombreEquipo(j.equipoId)
-      visitanteLabel = 'Interzonal'
+      visitanteLabel = inter
       localCampo = 'equipoId'
     } else {
-      localLabel = 'Interzonal'
+      localLabel = inter
       visitanteLabel = nombreEquipo(j.equipoId)
       visitanteCampo = 'equipoId'
     }
@@ -139,8 +145,6 @@ export function JornadaFilaEdicion({
 // Construcción de JornadaBorrador desde ItemFixture
 // ---------------------------------------------------------------------------
 
-import type { ItemFixture } from '../tipos'
-
 export function buildJornadaBorrador(
   local: ItemFixture,
   visitante: ItemFixture
@@ -164,7 +168,8 @@ export function buildJornadaBorrador(
           tipo: 'Interzonal',
           resultadosVerificados: false,
           equipoId: Number(local.equipo.id!),
-          localOVisitante: LocalVisitanteEnum._1
+          localOVisitante: LocalVisitanteEnum._1,
+          numero: visitante.numero
         }
   }
   if (local.type === 'especial' && visitante.type === 'equipo') {
@@ -178,7 +183,8 @@ export function buildJornadaBorrador(
           tipo: 'Interzonal',
           resultadosVerificados: false,
           equipoId: Number(visitante.equipo.id!),
-          localOVisitante: LocalVisitanteEnum._2
+          localOVisitante: LocalVisitanteEnum._2,
+          numero: local.numero
         }
   }
   return { tipo: 'Normal', resultadosVerificados: false }

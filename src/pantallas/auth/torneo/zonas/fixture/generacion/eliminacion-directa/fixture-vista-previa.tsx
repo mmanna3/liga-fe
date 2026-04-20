@@ -6,11 +6,15 @@ import { Boton } from '@/design-system/ykn-ui/boton'
 import { useQueryClient } from '@tanstack/react-query'
 import { addWeeks, format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import type { ItemFixture } from '../../tipos'
+import {
+  claseVistaPreviaEspecial,
+  labelItem,
+  type ItemFixture
+} from '../../tipos'
 
 function nombreParaBracket(item: ItemFixture): string {
   if (item.type === 'equipo') return item.equipo.nombre ?? '—'
-  return item.valor === 'INTERZONAL' ? 'Interzonal' : 'Libre'
+  return labelItem(item)
 }
 
 export interface PartidoBracket {
@@ -114,7 +118,8 @@ function buildJornada(j: JornadaItem, lista: ItemFixture[]): JornadaDTO {
           tipo: 'Interzonal',
           resultadosVerificados: false,
           equipoId: local.equipo.id!,
-          localOVisitante: 1
+          localOVisitante: 1,
+          numero: visitante.numero
         } as unknown as JornadaDTO)
   }
   if (local?.type === 'especial' && visitante?.type === 'equipo') {
@@ -128,7 +133,8 @@ function buildJornada(j: JornadaItem, lista: ItemFixture[]): JornadaDTO {
           tipo: 'Interzonal',
           resultadosVerificados: false,
           equipoId: visitante.equipo.id!,
-          localOVisitante: 2
+          localOVisitante: 2,
+          numero: local.numero
         } as unknown as JornadaDTO)
   }
   return {
@@ -165,9 +171,8 @@ export function buildPayloadEliminacionDirecta(
 }
 
 export function claseEspecialBracket(nombre: string | null): string {
-  if (nombre === 'Interzonal') return 'text-blue-700 bg-blue-100 px-1 rounded'
-  if (nombre === 'Libre') return 'text-yellow-700 bg-yellow-100 px-1 rounded'
-  return ''
+  if (nombre == null || nombre === '') return ''
+  return claseVistaPreviaEspecial(nombre)
 }
 
 export function PartidoCardBracket({

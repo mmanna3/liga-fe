@@ -1,7 +1,7 @@
 import { useDraggable, useDroppable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
 import type { ItemFixture } from '../tipos'
-import { labelItem } from '../tipos'
+import { estilosChipEspecial, labelItem } from '../tipos'
 
 export function FilaLista({
   item,
@@ -42,13 +42,7 @@ export function FilaLista({
         {index + 1}
       </span>
       <span
-        className={
-          item.type === 'especial'
-            ? item.valor === 'INTERZONAL'
-              ? 'px-2 py-0.5 rounded bg-blue-100 border border-blue-300 text-blue-800 font-medium'
-              : 'px-2 py-0.5 rounded bg-amber-100 border border-amber-300 text-amber-800 font-medium'
-            : ''
-        }
+        className={item.type === 'especial' ? estilosChipEspecial(item) : ''}
       >
         {labelItem(item)}
       </span>

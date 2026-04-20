@@ -53,9 +53,20 @@ export function useListaFixture(equipos: EquipoDeLaZonaDTO[]) {
 
     const activeId = String(active.id)
 
-    if (activeId === 'especial-INTERZONAL' || activeId === 'especial-LIBRE') {
-      const valor = activeId === 'especial-INTERZONAL' ? 'INTERZONAL' : 'LIBRE'
-      const item: ItemFixture = { type: 'especial', valor }
+    const matchInterzonal = /^especial-INTERZONAL-(\d+)$/.exec(activeId)
+    if (activeId === 'especial-LIBRE' || matchInterzonal) {
+      let item: ItemFixture
+      if (activeId === 'especial-LIBRE') {
+        item = { type: 'especial', valor: 'LIBRE' }
+      } else {
+        const n = Number(matchInterzonal![1])
+        if (!Number.isFinite(n) || n < 1) return
+        item = {
+          type: 'especial',
+          valor: 'INTERZONAL',
+          numero: n
+        }
+      }
       setListaOrdenada((prev) => {
         const next = [...prev]
         const insertAt = Math.min(dropIndex, next.length)

@@ -1,4 +1,5 @@
 import { type JornadaDTO, LocalVisitanteEnum, PartidoDTO } from '@/api/clients'
+import { etiquetaInterzonal } from '../../tipos'
 
 export type RequestCargarResultados = {
   jornadaId: number
@@ -33,9 +34,10 @@ export function etiquetasLocalVisitanteJornada(j: JornadaDTO): {
     return { local: j.equipoLocal ?? '—', visitante: 'Libre' }
   }
   const esLocal = j.localOVisitante !== LocalVisitanteEnum._2
+  const inter = etiquetaInterzonal(j.numero)
   return {
-    local: esLocal ? (j.equipo ?? '—') : 'Interzonal',
-    visitante: esLocal ? 'Interzonal' : (j.equipo ?? '—')
+    local: esLocal ? (j.equipo ?? '—') : inter,
+    visitante: esLocal ? inter : (j.equipo ?? '—')
   }
 }
 

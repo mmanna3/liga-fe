@@ -15,7 +15,7 @@ function libre(): ItemFixture {
 }
 
 function interzonal(): ItemFixture {
-  return { type: 'especial', valor: 'INTERZONAL' }
+  return { type: 'especial', valor: 'INTERZONAL', numero: 1 }
 }
 
 describe('buildPayloadEliminacionDirecta', () => {

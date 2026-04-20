@@ -79,7 +79,8 @@ export function FechaCard({
         visitanteId: j.visitanteId,
         equipoLocalId: j.equipoLocalId,
         equipoId: j.equipoId,
-        localOVisitante: j.localOVisitante
+        localOVisitante: j.localOVisitante,
+        numero: j.numero
       }))
     })
     setEditando(true)

@@ -10,7 +10,11 @@ import { Boton } from '@/design-system/ykn-ui/boton'
 import { useQueryClient } from '@tanstack/react-query'
 import { addWeeks, format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import type { ItemFixture } from '../../tipos'
+import {
+  claseVistaPreviaEspecial,
+  labelItem,
+  type ItemFixture
+} from '../../tipos'
 
 type JornadaItem = { local: number; visitante: number }
 type FechaConJornadas = { fecha: number; jornadas: JornadaItem[] }
@@ -33,8 +37,7 @@ function buildFechasConJornadas(
 function resolverNombre(numero: number, lista: ItemFixture[]): string {
   const item = lista[numero - 1]
   if (!item) return `#${numero}`
-  if (item.type === 'especial')
-    return item.valor === 'INTERZONAL' ? 'Interzonal' : 'Libre'
+  if (item.type === 'especial') return labelItem(item)
   return item.equipo.nombre ?? '—'
 }
 
@@ -61,7 +64,8 @@ function buildJornada(j: JornadaItem, lista: ItemFixture[]): JornadaDTO {
           tipo: 'Interzonal',
           resultadosVerificados: false,
           equipoId: local.equipo.id!,
-          localOVisitante: 1
+          localOVisitante: 1,
+          numero: visitante.numero
         } as unknown as JornadaDTO)
   }
   if (local?.type === 'especial' && visitante?.type === 'equipo') {
@@ -75,7 +79,8 @@ function buildJornada(j: JornadaItem, lista: ItemFixture[]): JornadaDTO {
           tipo: 'Interzonal',
           resultadosVerificados: false,
           equipoId: visitante.equipo.id!,
-          localOVisitante: 2
+          localOVisitante: 2,
+          numero: local.numero
         } as unknown as JornadaDTO)
   }
   return {
@@ -112,11 +117,7 @@ export function buildPayloadTodosContraTodos(
   })
 }
 
-const claseEspecial = (nombre: string) => {
-  if (nombre === 'Interzonal') return 'text-blue-700 bg-blue-100 px-1 rounded'
-  if (nombre === 'Libre') return 'text-yellow-700 bg-yellow-100 px-1 rounded'
-  return ''
-}
+const claseEspecial = (nombre: string) => claseVistaPreviaEspecial(nombre)
 
 export function ResultadoFixture({
   fechas,

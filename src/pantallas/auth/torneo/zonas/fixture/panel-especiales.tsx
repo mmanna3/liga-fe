@@ -1,19 +1,40 @@
 import { useDraggable, useDroppable } from '@dnd-kit/core'
+import { clasesInterzonalFondo, labelItem } from './tipos'
 
 export function EspecialDraggable({
-  valor
+  valor,
+  interzonalNumero
 }: {
   valor: 'LIBRE' | 'INTERZONAL'
+  /** Solo aplica a Interzonal; por defecto 1. */
+  interzonalNumero?: number
 }) {
+  const numero = valor === 'INTERZONAL' ? (interzonalNumero ?? 1) : undefined
+  const id =
+    valor === 'LIBRE'
+      ? 'especial-LIBRE'
+      : (`especial-INTERZONAL-${numero}` as const)
+
+  const item =
+    valor === 'LIBRE'
+      ? { type: 'especial' as const, valor: 'LIBRE' as const }
+      : {
+          type: 'especial' as const,
+          valor: 'INTERZONAL' as const,
+          numero: numero!
+        }
+
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
-    id: `especial-${valor}`,
-    data: { item: { type: 'especial' as const, valor } }
+    id,
+    data: { item }
   })
 
   const estilos =
-    valor === 'INTERZONAL'
-      ? 'bg-blue-100 border border-blue-300 text-blue-800'
-      : 'bg-amber-100 border border-amber-300 text-amber-800'
+    valor === 'LIBRE'
+      ? 'bg-amber-100 border border-amber-300 text-amber-800'
+      : clasesInterzonalFondo(numero ?? 1)
+
+  const texto = valor === 'LIBRE' ? 'Libre' : labelItem(item)
 
   return (
     <div
@@ -24,7 +45,7 @@ export function EspecialDraggable({
       {...listeners}
       {...attributes}
     >
-      {valor === 'INTERZONAL' ? 'Interzonal' : 'Libre'}
+      {texto}
     </div>
   )
 }

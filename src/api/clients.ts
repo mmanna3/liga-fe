@@ -6153,6 +6153,46 @@ export class Client {
   }
 
   /**
+   * @return OK
+   */
+  jugadoresSinFoto(): Promise<void> {
+    let url_ = this.baseUrl + '/api/publico/jugadores-sin-foto'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {}
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processJugadoresSinFoto(_response)
+    })
+  }
+
+  protected processJugadoresSinFoto(response: Response): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
    * @param mes (optional)
    * @param anio (optional)
    * @return OK
@@ -10735,6 +10775,7 @@ export class JornadaDTO implements IJornadaDTO {
   visitante?: string | undefined
   equipoLocalId?: number | undefined
   equipoLocal?: string | undefined
+  numero?: number | undefined
   equipoId?: number | undefined
   equipo?: string | undefined
   localOVisitante?: LocalVisitanteEnum
@@ -10761,6 +10802,7 @@ export class JornadaDTO implements IJornadaDTO {
       this.visitante = _data['visitante']
       this.equipoLocalId = _data['equipoLocalId']
       this.equipoLocal = _data['equipoLocal']
+      this.numero = _data['numero']
       this.equipoId = _data['equipoId']
       this.equipo = _data['equipo']
       this.localOVisitante = _data['localOVisitante']
@@ -10791,6 +10833,7 @@ export class JornadaDTO implements IJornadaDTO {
     data['visitante'] = this.visitante
     data['equipoLocalId'] = this.equipoLocalId
     data['equipoLocal'] = this.equipoLocal
+    data['numero'] = this.numero
     data['equipoId'] = this.equipoId
     data['equipo'] = this.equipo
     data['localOVisitante'] = this.localOVisitante
@@ -10813,6 +10856,7 @@ export interface IJornadaDTO {
   visitante?: string | undefined
   equipoLocalId?: number | undefined
   equipoLocal?: string | undefined
+  numero?: number | undefined
   equipoId?: number | undefined
   equipo?: string | undefined
   localOVisitante?: LocalVisitanteEnum
