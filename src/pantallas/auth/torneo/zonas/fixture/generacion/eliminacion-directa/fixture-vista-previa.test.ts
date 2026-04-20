@@ -1,4 +1,4 @@
-import { EquipoDeLaZonaDTO } from '@/api/clients'
+import { EquipoDeLaZonaDTO, LocalVisitanteEnum } from '@/api/clients'
 import type { ItemFixture } from '../../tipos'
 import { describe, expect, it } from 'vitest'
 import { buildPayloadEliminacionDirecta } from './fixture-vista-previa'
@@ -81,5 +81,33 @@ describe('buildPayloadEliminacionDirecta', () => {
         !('localId' in j && (j as { localId?: unknown }).localId != null)
     )
     expect(vacias).toHaveLength(0)
+  })
+
+  it('primera ronda: equipo vs LIBRE envía Libre con equipoId y localOVisitante _1', () => {
+    const lista: ItemFixture[] = [itemEquipo('10', 'Alpha'), libre()]
+    const payload = buildPayloadEliminacionDirecta(lista, fecha)
+    expect(payload).not.toBeNull()
+    const j = payload!.jornadas![0] as {
+      tipo?: string
+      equipoId?: unknown
+      localOVisitante?: unknown
+    }
+    expect(j.tipo).toBe('Libre')
+    expect(j.equipoId).toBe('10')
+    expect(j.localOVisitante).toBe(LocalVisitanteEnum._1)
+  })
+
+  it('primera ronda: LIBRE vs equipo envía Libre con equipoId y localOVisitante _2', () => {
+    const lista: ItemFixture[] = [libre(), itemEquipo('20', 'Beta')]
+    const payload = buildPayloadEliminacionDirecta(lista, fecha)
+    expect(payload).not.toBeNull()
+    const j = payload!.jornadas![0] as {
+      tipo?: string
+      equipoId?: unknown
+      localOVisitante?: unknown
+    }
+    expect(j.tipo).toBe('Libre')
+    expect(j.equipoId).toBe('20')
+    expect(j.localOVisitante).toBe(LocalVisitanteEnum._2)
   })
 })

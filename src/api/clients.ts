@@ -10773,8 +10773,6 @@ export class JornadaDTO implements IJornadaDTO {
   visitanteId?: number | undefined
   local?: string | undefined
   visitante?: string | undefined
-  equipoLocalId?: number | undefined
-  equipoLocal?: string | undefined
   numero?: number | undefined
   equipoId?: number | undefined
   equipo?: string | undefined
@@ -10800,8 +10798,6 @@ export class JornadaDTO implements IJornadaDTO {
       this.visitanteId = _data['visitanteId']
       this.local = _data['local']
       this.visitante = _data['visitante']
-      this.equipoLocalId = _data['equipoLocalId']
-      this.equipoLocal = _data['equipoLocal']
       this.numero = _data['numero']
       this.equipoId = _data['equipoId']
       this.equipo = _data['equipo']
@@ -10831,8 +10827,6 @@ export class JornadaDTO implements IJornadaDTO {
     data['visitanteId'] = this.visitanteId
     data['local'] = this.local
     data['visitante'] = this.visitante
-    data['equipoLocalId'] = this.equipoLocalId
-    data['equipoLocal'] = this.equipoLocal
     data['numero'] = this.numero
     data['equipoId'] = this.equipoId
     data['equipo'] = this.equipo
@@ -10854,8 +10848,6 @@ export interface IJornadaDTO {
   visitanteId?: number | undefined
   local?: string | undefined
   visitante?: string | undefined
-  equipoLocalId?: number | undefined
-  equipoLocal?: string | undefined
   numero?: number | undefined
   equipoId?: number | undefined
   equipo?: string | undefined
@@ -10867,6 +10859,8 @@ export class JornadaPorEquipoDTO implements IJornadaPorEquipoDTO {
   escudo?: string | undefined
   equipo?: string | undefined
   categorias?: ResultadoCategoriaDTO[] | undefined
+  puntosTotales?: number
+  partidosJugados?: number
 
   constructor(data?: IJornadaPorEquipoDTO) {
     if (data) {
@@ -10886,6 +10880,8 @@ export class JornadaPorEquipoDTO implements IJornadaPorEquipoDTO {
         for (let item of _data['categorias'])
           this.categorias!.push(ResultadoCategoriaDTO.fromJS(item))
       }
+      this.puntosTotales = _data['puntosTotales']
+      this.partidosJugados = _data['partidosJugados']
     }
   }
 
@@ -10904,6 +10900,8 @@ export class JornadaPorEquipoDTO implements IJornadaPorEquipoDTO {
       data['categorias'] = []
       for (let item of this.categorias) data['categorias'].push(item.toJSON())
     }
+    data['puntosTotales'] = this.puntosTotales
+    data['partidosJugados'] = this.partidosJugados
     return data
   }
 }
@@ -10912,6 +10910,8 @@ export interface IJornadaPorEquipoDTO {
   escudo?: string | undefined
   equipo?: string | undefined
   categorias?: ResultadoCategoriaDTO[] | undefined
+  puntosTotales?: number
+  partidosJugados?: number
 }
 
 export class JornadasDTO implements IJornadasDTO {

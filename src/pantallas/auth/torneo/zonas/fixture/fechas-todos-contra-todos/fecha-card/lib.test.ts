@@ -203,11 +203,27 @@ describe('etiquetasLocalVisitanteJornada', () => {
     })
   })
 
-  it('tipo Libre: devuelve equipoLocal y "Libre"', () => {
-    const j = makeJornada({ tipo: 'Libre', equipoLocal: 'San Lorenzo' })
+  it('tipo Libre con equipo como local (localOVisitante = 1): equipo es local, Libre es visitante', () => {
+    const j = makeJornada({
+      tipo: 'Libre',
+      equipo: 'San Lorenzo',
+      localOVisitante: LocalVisitanteEnum._1
+    })
     expect(etiquetasLocalVisitanteJornada(j)).toEqual({
       local: 'San Lorenzo',
       visitante: 'Libre'
+    })
+  })
+
+  it('tipo Libre con equipo como visitante (localOVisitante = 2): Libre es local, equipo es visitante', () => {
+    const j = makeJornada({
+      tipo: 'Libre',
+      equipo: 'Racing',
+      localOVisitante: LocalVisitanteEnum._2
+    })
+    expect(etiquetasLocalVisitanteJornada(j)).toEqual({
+      local: 'Libre',
+      visitante: 'Racing'
     })
   })
 

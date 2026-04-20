@@ -1,5 +1,9 @@
 import { api } from '@/api/api'
-import type { FechaEliminacionDirectaDTO, JornadaDTO } from '@/api/clients'
+import {
+  LocalVisitanteEnum,
+  type FechaEliminacionDirectaDTO,
+  type JornadaDTO
+} from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import { Card, CardContent } from '@/design-system/base-ui/card'
 import { Boton } from '@/design-system/ykn-ui/boton'
@@ -112,7 +116,8 @@ function buildJornada(j: JornadaItem, lista: ItemFixture[]): JornadaDTO {
       ? ({
           tipo: 'Libre',
           resultadosVerificados: false,
-          equipoLocalId: local.equipo.id!
+          equipoId: local.equipo.id!,
+          localOVisitante: LocalVisitanteEnum._1
         } as unknown as JornadaDTO)
       : ({
           tipo: 'Interzonal',
@@ -127,7 +132,8 @@ function buildJornada(j: JornadaItem, lista: ItemFixture[]): JornadaDTO {
       ? ({
           tipo: 'Libre',
           resultadosVerificados: false,
-          equipoLocalId: visitante.equipo.id!
+          equipoId: visitante.equipo.id!,
+          localOVisitante: LocalVisitanteEnum._2
         } as unknown as JornadaDTO)
       : ({
           tipo: 'Interzonal',

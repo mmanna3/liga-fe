@@ -17,20 +17,14 @@ export type JornadaBorrador = {
   resultadosVerificados: boolean
   localId?: number
   visitanteId?: number
-  /** Jornada tipo Libre */
-  equipoLocalId?: number
-  /** Jornada tipo Interzonal */
+  /** Jornada tipo Libre e Interzonal: equipo de la zona */
   equipoId?: number
   localOVisitante?: LocalVisitanteEnum
   /** Variante Interzonal (1–4), alineado con el backend */
   numero?: number
 }
 
-export type CampoReemplazo =
-  | 'localId'
-  | 'visitanteId'
-  | 'equipoLocalId'
-  | 'equipoId'
+export type CampoReemplazo = 'localId' | 'visitanteId' | 'equipoId'
 
 export type PendienteReemplazo = {
   jornadaIdx: number
@@ -81,9 +75,16 @@ export function JornadaFilaEdicion({
     localCampo = 'localId'
     visitanteCampo = 'visitanteId'
   } else if (j.tipo === 'Libre') {
-    localLabel = nombreEquipo(j.equipoLocalId)
-    visitanteLabel = 'Libre'
-    localCampo = 'equipoLocalId'
+    const esLocal = j.localOVisitante !== LocalVisitanteEnum._2
+    if (esLocal) {
+      localLabel = nombreEquipo(j.equipoId)
+      visitanteLabel = 'Libre'
+      localCampo = 'equipoId'
+    } else {
+      localLabel = 'Libre'
+      visitanteLabel = nombreEquipo(j.equipoId)
+      visitanteCampo = 'equipoId'
+    }
   } else {
     // Interzonal
     const esLocal = j.localOVisitante !== LocalVisitanteEnum._2
@@ -162,7 +163,8 @@ export function buildJornadaBorrador(
       ? {
           tipo: 'Libre',
           resultadosVerificados: false,
-          equipoLocalId: Number(local.equipo.id!)
+          equipoId: Number(local.equipo.id!),
+          localOVisitante: LocalVisitanteEnum._1
         }
       : {
           tipo: 'Interzonal',
@@ -177,7 +179,8 @@ export function buildJornadaBorrador(
       ? {
           tipo: 'Libre',
           resultadosVerificados: false,
-          equipoLocalId: Number(visitante.equipo.id!)
+          equipoId: Number(visitante.equipo.id!),
+          localOVisitante: LocalVisitanteEnum._2
         }
       : {
           tipo: 'Interzonal',

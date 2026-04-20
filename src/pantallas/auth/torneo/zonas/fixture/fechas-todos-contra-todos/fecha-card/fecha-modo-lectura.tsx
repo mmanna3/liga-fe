@@ -46,8 +46,14 @@ function JornadaFilaVista({
     localLabel = j.local ?? '—'
     visitanteLabel = j.visitante ?? '—'
   } else if (j.tipo === 'Libre') {
-    localLabel = j.equipoLocal ?? '—'
-    visitanteLabel = 'Libre'
+    const esLocal = j.localOVisitante !== LocalVisitanteEnum._2
+    if (esLocal) {
+      localLabel = j.equipo ?? '—'
+      visitanteLabel = 'Libre'
+    } else {
+      localLabel = 'Libre'
+      visitanteLabel = j.equipo ?? '—'
+    }
   } else {
     const esLocal = j.localOVisitante !== LocalVisitanteEnum._2
     const inter = etiquetaInterzonal(j.numero)

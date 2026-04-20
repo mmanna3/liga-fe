@@ -31,7 +31,11 @@ export function etiquetasLocalVisitanteJornada(j: JornadaDTO): {
     return { local: j.local ?? '—', visitante: j.visitante ?? '—' }
   }
   if (j.tipo === 'Libre') {
-    return { local: j.equipoLocal ?? '—', visitante: 'Libre' }
+    const esLocal = j.localOVisitante !== LocalVisitanteEnum._2
+    return {
+      local: esLocal ? (j.equipo ?? '—') : 'Libre',
+      visitante: esLocal ? 'Libre' : (j.equipo ?? '—')
+    }
   }
   const esLocal = j.localOVisitante !== LocalVisitanteEnum._2
   const inter = etiquetaInterzonal(j.numero)

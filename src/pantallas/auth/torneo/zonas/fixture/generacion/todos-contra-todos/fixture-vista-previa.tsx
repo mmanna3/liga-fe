@@ -1,6 +1,7 @@
 import { api } from '@/api/api'
 import {
   FechaTodosContraTodosDTO,
+  LocalVisitanteEnum,
   type FixtureAlgoritmoFechaDTO,
   type JornadaDTO
 } from '@/api/clients'
@@ -58,7 +59,8 @@ function buildJornada(j: JornadaItem, lista: ItemFixture[]): JornadaDTO {
       ? ({
           tipo: 'Libre',
           resultadosVerificados: false,
-          equipoLocalId: local.equipo.id!
+          equipoId: local.equipo.id!,
+          localOVisitante: LocalVisitanteEnum._1
         } as unknown as JornadaDTO)
       : ({
           tipo: 'Interzonal',
@@ -73,7 +75,8 @@ function buildJornada(j: JornadaItem, lista: ItemFixture[]): JornadaDTO {
       ? ({
           tipo: 'Libre',
           resultadosVerificados: false,
-          equipoLocalId: visitante.equipo.id!
+          equipoId: visitante.equipo.id!,
+          localOVisitante: LocalVisitanteEnum._2
         } as unknown as JornadaDTO)
       : ({
           tipo: 'Interzonal',

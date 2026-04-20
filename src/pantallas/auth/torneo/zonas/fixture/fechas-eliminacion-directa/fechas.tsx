@@ -101,7 +101,10 @@ function partidoDesdeJornada(j: JornadaDTO): {
     return { local: null, visitante: null }
   }
   if (j.tipo === 'Libre') {
-    return { local: j.equipoLocal ?? null, visitante: 'Libre' }
+    const esLocal = j.localOVisitante !== LocalVisitanteEnum._2
+    return esLocal
+      ? { local: j.equipo ?? null, visitante: 'Libre' }
+      : { local: 'Libre', visitante: j.equipo ?? null }
   }
   const esLocal = j.localOVisitante !== LocalVisitanteEnum._2
   return esLocal

@@ -44,7 +44,11 @@ function etiquetasLocalVisitanteJornada(j: JornadaDTO): {
     return { local: '—', visitante: '—' }
   }
   if (j.tipo === 'Libre') {
-    return { local: j.equipoLocal ?? '—', visitante: 'Libre' }
+    const esLocal = j.localOVisitante !== LocalVisitanteEnum._2
+    return {
+      local: esLocal ? (j.equipo ?? '—') : 'Libre',
+      visitante: esLocal ? 'Libre' : (j.equipo ?? '—')
+    }
   }
   const esLocal = j.localOVisitante !== LocalVisitanteEnum._2
   return {

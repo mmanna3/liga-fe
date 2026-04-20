@@ -77,7 +77,6 @@ export function FechaCard({
         resultadosVerificados: j.resultadosVerificados,
         localId: j.localId,
         visitanteId: j.visitanteId,
-        equipoLocalId: j.equipoLocalId,
         equipoId: j.equipoId,
         localOVisitante: j.localOVisitante,
         numero: j.numero

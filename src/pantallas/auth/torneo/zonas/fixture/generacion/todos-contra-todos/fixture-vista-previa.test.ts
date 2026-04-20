@@ -1,4 +1,8 @@
-import { EquipoDeLaZonaDTO, FixtureAlgoritmoFechaDTO } from '@/api/clients'
+import {
+  EquipoDeLaZonaDTO,
+  FixtureAlgoritmoFechaDTO,
+  LocalVisitanteEnum
+} from '@/api/clients'
 import type { ItemFixture } from '../../tipos'
 import { describe, expect, it } from 'vitest'
 import { buildPayloadTodosContraTodos } from './fixture-vista-previa'
@@ -92,5 +96,35 @@ describe('buildPayloadTodosContraTodos', () => {
         !('localId' in j && (j as { localId?: unknown }).localId != null)
     )
     expect(vacias).toHaveLength(0)
+  })
+
+  it('jornada LIBRE con equipo como local envía equipoId y localOVisitante _1', () => {
+    const lista: ItemFixture[] = [itemEquipo('10', 'Alpha'), libre()]
+    const fechas = [slot(1, 1, 2)]
+    const payload = buildPayloadTodosContraTodos(fechas, lista, primeraFecha)
+    expect(payload[0].jornadas).toHaveLength(1)
+    const j = payload[0].jornadas![0] as {
+      tipo?: string
+      equipoId?: unknown
+      localOVisitante?: unknown
+    }
+    expect(j.tipo).toBe('Libre')
+    expect(j.equipoId).toBe('10')
+    expect(j.localOVisitante).toBe(LocalVisitanteEnum._1)
+  })
+
+  it('jornada LIBRE con equipo como visitante envía equipoId y localOVisitante _2', () => {
+    const lista: ItemFixture[] = [libre(), itemEquipo('20', 'Beta')]
+    const fechas = [slot(1, 1, 2)]
+    const payload = buildPayloadTodosContraTodos(fechas, lista, primeraFecha)
+    expect(payload[0].jornadas).toHaveLength(1)
+    const j = payload[0].jornadas![0] as {
+      tipo?: string
+      equipoId?: unknown
+      localOVisitante?: unknown
+    }
+    expect(j.tipo).toBe('Libre')
+    expect(j.equipoId).toBe('20')
+    expect(j.localOVisitante).toBe(LocalVisitanteEnum._2)
   })
 })
