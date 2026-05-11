@@ -22,6 +22,7 @@ import TorneoBadge from '@/design-system/ykn-ui/torneo-badge'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useNavigate, useParams } from 'react-router-dom'
 import { tituloCanchaTipoPorId } from './opciones-cancha-tipo'
+import { tituloCanchaSuperficiePorId } from './opciones-superficie-tipo'
 
 export default function DetalleClub() {
   const { id } = useParams<{ id: string }>()
@@ -129,6 +130,14 @@ export default function DetalleClub() {
                   <span>
                     {club!.canchaTipo?.trim() ||
                       tituloCanchaTipoPorId(club!.canchaTipoId)}
+                  </span>
+                </p>
+                <p className='flex items-center gap-2 pl-1'>
+                  <span className='text-muted-foreground shrink-0'>
+                    Superficie:
+                  </span>
+                  <span>
+                    {tituloCanchaSuperficiePorId(club!.canchaSuperficieId)}
                   </span>
                 </p>
               </CardContent>

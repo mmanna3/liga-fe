@@ -8756,9 +8756,10 @@ export class ClubDTO implements IClubDTO {
   nombre!: string
   escudo?: string | undefined
   direccion?: string | undefined
-  esTechado?: boolean | undefined
   canchaTipoId?: number
   canchaTipo?: string | undefined
+  canchaSuperficieId?: number
+  canchaSuperficie?: string | undefined
   localidad?: string | undefined
   equipos?: EquipoDTO[] | undefined
   delegados?: DelegadoDTO[] | undefined
@@ -8778,9 +8779,10 @@ export class ClubDTO implements IClubDTO {
       this.nombre = _data['nombre']
       this.escudo = _data['escudo']
       this.direccion = _data['direccion']
-      this.esTechado = _data['esTechado']
       this.canchaTipoId = _data['canchaTipoId']
       this.canchaTipo = _data['canchaTipo']
+      this.canchaSuperficieId = _data['canchaSuperficieId']
+      this.canchaSuperficie = _data['canchaSuperficie']
       this.localidad = _data['localidad']
       if (Array.isArray(_data['equipos'])) {
         this.equipos = [] as any
@@ -8808,9 +8810,10 @@ export class ClubDTO implements IClubDTO {
     data['nombre'] = this.nombre
     data['escudo'] = this.escudo
     data['direccion'] = this.direccion
-    data['esTechado'] = this.esTechado
     data['canchaTipoId'] = this.canchaTipoId
     data['canchaTipo'] = this.canchaTipo
+    data['canchaSuperficieId'] = this.canchaSuperficieId
+    data['canchaSuperficie'] = this.canchaSuperficie
     data['localidad'] = this.localidad
     if (Array.isArray(this.equipos)) {
       data['equipos'] = []
@@ -8829,9 +8832,10 @@ export interface IClubDTO {
   nombre: string
   escudo?: string | undefined
   direccion?: string | undefined
-  esTechado?: boolean | undefined
   canchaTipoId?: number
   canchaTipo?: string | undefined
+  canchaSuperficieId?: number
+  canchaSuperficie?: string | undefined
   localidad?: string | undefined
   equipos?: EquipoDTO[] | undefined
   delegados?: DelegadoDTO[] | undefined
@@ -8842,8 +8846,8 @@ export class ClubesDTO implements IClubesDTO {
   escudo?: string | undefined
   localidad?: string | undefined
   direccion?: string | undefined
-  esTechado?: string | undefined
   tipoCancha?: string | undefined
+  superficieCancha?: string | undefined
 
   constructor(data?: IClubesDTO) {
     if (data) {
@@ -8860,8 +8864,8 @@ export class ClubesDTO implements IClubesDTO {
       this.escudo = _data['escudo']
       this.localidad = _data['localidad']
       this.direccion = _data['direccion']
-      this.esTechado = _data['esTechado']
       this.tipoCancha = _data['tipoCancha']
+      this.superficieCancha = _data['superficieCancha']
     }
   }
 
@@ -8878,8 +8882,8 @@ export class ClubesDTO implements IClubesDTO {
     data['escudo'] = this.escudo
     data['localidad'] = this.localidad
     data['direccion'] = this.direccion
-    data['esTechado'] = this.esTechado
     data['tipoCancha'] = this.tipoCancha
+    data['superficieCancha'] = this.superficieCancha
     return data
   }
 }
@@ -8889,8 +8893,8 @@ export interface IClubesDTO {
   escudo?: string | undefined
   localidad?: string | undefined
   direccion?: string | undefined
-  esTechado?: string | undefined
   tipoCancha?: string | undefined
+  superficieCancha?: string | undefined
 }
 
 export class ConfiguracionDTO implements IConfiguracionDTO {

@@ -2,7 +2,6 @@ import { api } from '@/api/api'
 import { CambiarEscudoDTO, ClubDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
-import { Label } from '@/design-system/base-ui/label'
 import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import ContenedorBotones from '@/design-system/ykn-ui/contenedor-botones'
@@ -11,12 +10,17 @@ import { Input } from '@/design-system/ykn-ui/input'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
 import { rutasNavegacion } from '@/ruteo/rutas'
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   CANCHA_TIPO_ID_POR_DEFECTO,
   OPCIONES_CANCHA_TIPO
 } from './opciones-cancha-tipo'
+import {
+  CANCHA_SUPERFICIE_ID_POR_DEFECTO,
+  OPCIONES_CANCHA_SUPERFICIE
+} from './opciones-superficie-tipo'
 
 function extraerBase64(dataUrl: string): string {
   if (dataUrl.startsWith('data:')) {
@@ -29,11 +33,15 @@ function extraerBase64(dataUrl: string): string {
 export default function EditarClub() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [nombre, setNombre] = useState('')
   const [direccion, setDireccion] = useState('')
   const [canchaTipoId, setCanchaTipoId] = useState<number>(
     CANCHA_TIPO_ID_POR_DEFECTO
+  )
+  const [canchaSuperficieId, setCanchaSuperficieId] = useState<number>(
+    CANCHA_SUPERFICIE_ID_POR_DEFECTO
   )
   const [localidad, setLocalidad] = useState('')
   const [escudoPreview, setEscudoPreview] = useState<string | null>(null)
@@ -67,6 +75,9 @@ export default function EditarClub() {
       setNombre(club.nombre || '')
       setDireccion(club.direccion || '')
       setCanchaTipoId(club.canchaTipoId ?? CANCHA_TIPO_ID_POR_DEFECTO)
+      setCanchaSuperficieId(
+        club.canchaSuperficieId ?? CANCHA_SUPERFICIE_ID_POR_DEFECTO
+      )
       setLocalidad(club.localidad || '')
       if (club.escudo) {
         const src =
@@ -101,12 +112,16 @@ export default function EditarClub() {
     const direccionCambiada = direccion !== (club?.direccion ?? '')
     const canchaTipoCambiada =
       canchaTipoId !== (club?.canchaTipoId ?? CANCHA_TIPO_ID_POR_DEFECTO)
+    const canchaSuperficieCambiada =
+      canchaSuperficieId !==
+      (club?.canchaSuperficieId ?? CANCHA_SUPERFICIE_ID_POR_DEFECTO)
     const localidadCambiada = localidad !== (club?.localidad ?? '')
     const escudoCambiado = escudoBase64 !== null
     const datosCambiados =
       nombreCambiado ||
       direccionCambiada ||
       canchaTipoCambiada ||
+      canchaSuperficieCambiada ||
       localidadCambiada
 
     if (!datosCambiados && !escudoCambiado) return
@@ -120,6 +135,7 @@ export default function EditarClub() {
             escudo: club?.escudo,
             direccion: direccion || undefined,
             canchaTipoId,
+            canchaSuperficieId,
             localidad: localidad || undefined
           })
         )
@@ -131,6 +147,8 @@ export default function EditarClub() {
         )
       }
 
+      await queryClient.invalidateQueries({ queryKey: ['club', id] })
+      await queryClient.invalidateQueries({ queryKey: ['clubs'] })
       navigate(`${rutasNavegacion.detalleClub}/${id}`)
     } catch {
       // useApiMutation ya muestra el toast de error
@@ -143,6 +161,8 @@ export default function EditarClub() {
     nombre !== club?.nombre ||
     direccion !== (club?.direccion ?? '') ||
     canchaTipoId !== (club?.canchaTipoId ?? CANCHA_TIPO_ID_POR_DEFECTO) ||
+    canchaSuperficieId !==
+      (club?.canchaSuperficieId ?? CANCHA_SUPERFICIE_ID_POR_DEFECTO) ||
     localidad !== (club?.localidad ?? '') ||
     escudoBase64 !== null
 
@@ -158,45 +178,10 @@ export default function EditarClub() {
         maxWidth='2xl'
         contenido={
           <form onSubmit={handleSubmit} className='space-y-6'>
-            <Input
-              titulo='Nombre'
-              id='nombre'
-              type='text'
-              placeholder='Nombre del club'
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-              required
-            />
-
-            <Input
-              titulo='Dirección'
-              id='direccion'
-              type='text'
-              placeholder='Dirección'
-              value={direccion}
-              onChange={(e) => setDireccion(e.target.value)}
-            />
-
-            <Input
-              titulo='Localidad'
-              id='localidad'
-              type='text'
-              placeholder='Localidad'
-              value={localidad}
-              onChange={(e) => setLocalidad(e.target.value)}
-            />
-
-            <SelectorSimple
-              titulo='Cancha'
-              opciones={OPCIONES_CANCHA_TIPO}
-              valorActual={String(canchaTipoId)}
-              alElegirOpcion={(id) => setCanchaTipoId(Number(id))}
-            />
-
-            <div className='space-y-2'>
-              <Label>Escudo</Label>
-              <div className='flex items-center gap-4'>
-                <div className='h-24 w-24 rounded-lg border border-input bg-muted flex items-center justify-center overflow-hidden shrink-0'>
+            {/* Escudo + Nombre */}
+            <div className='flex items-start gap-5'>
+              <div className='shrink-0 pt-6'>
+                <div className='h-24 w-24 rounded-xl border border-input bg-muted flex items-center justify-center overflow-hidden'>
                   {escudoPreview ? (
                     <img
                       src={escudoPreview}
@@ -210,29 +195,30 @@ export default function EditarClub() {
                     />
                   )}
                 </div>
-                <div className='flex flex-col gap-2'>
-                  <input
-                    ref={fileInputRef}
-                    type='file'
-                    accept='image/*'
-                    onChange={handleSelectFile}
-                    className='hidden'
-                  />
+                <input
+                  ref={fileInputRef}
+                  type='file'
+                  accept='image/*'
+                  onChange={handleSelectFile}
+                  className='hidden'
+                />
+                <div className='flex gap-1 mt-2'>
                   <Boton
                     type='button'
                     variant='outline'
                     size='sm'
-                    className='gap-2'
+                    className='gap-1 flex-1 text-xs'
                     onClick={() => fileInputRef.current?.click()}
                   >
-                    <Icono nombre='Subir' className='h-4 w-4' />
-                    Cambiar escudo
+                    <Icono nombre='Subir' className='h-3 w-3' />
+                    Cambiar
                   </Boton>
                   {escudoBase64 && (
                     <Boton
                       type='button'
                       variant='ghost'
                       size='sm'
+                      className='text-xs'
                       onClick={() => {
                         setEscudoBase64(null)
                         if (club?.escudo) {
@@ -252,7 +238,53 @@ export default function EditarClub() {
                   )}
                 </div>
               </div>
+
+              <div className='flex-1'>
+                <Input
+                  titulo='Nombre'
+                  id='nombre'
+                  type='text'
+                  placeholder='Nombre del club'
+                  value={nombre}
+                  onChange={(e) => setNombre(e.target.value)}
+                  required
+                />
+              </div>
             </div>
+
+            {/* Ubicación */}
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+              <Input
+                titulo='Dirección'
+                id='direccion'
+                type='text'
+                placeholder='Dirección'
+                value={direccion}
+                onChange={(e) => setDireccion(e.target.value)}
+              />
+              <Input
+                titulo='Localidad'
+                id='localidad'
+                type='text'
+                placeholder='Localidad'
+                value={localidad}
+                onChange={(e) => setLocalidad(e.target.value)}
+              />
+            </div>
+
+            <SelectorSimple
+              titulo='Cancha'
+              opciones={OPCIONES_CANCHA_TIPO}
+              valorActual={String(canchaTipoId)}
+              alElegirOpcion={(id) => setCanchaTipoId(Number(id))}
+            />
+
+            <SelectorSimple
+              titulo='Superficie'
+              opciones={OPCIONES_CANCHA_SUPERFICIE}
+              valorActual={String(canchaSuperficieId)}
+              alElegirOpcion={(id) => setCanchaSuperficieId(Number(id))}
+            />
 
             <ContenedorBotones>
               <Boton

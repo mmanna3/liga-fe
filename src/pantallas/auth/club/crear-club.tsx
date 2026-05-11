@@ -13,6 +13,10 @@ import {
   CANCHA_TIPO_ID_POR_DEFECTO,
   OPCIONES_CANCHA_TIPO
 } from './opciones-cancha-tipo'
+import {
+  CANCHA_SUPERFICIE_ID_POR_DEFECTO,
+  OPCIONES_CANCHA_SUPERFICIE
+} from './opciones-superficie-tipo'
 
 export default function CrearClub() {
   const navigate = useNavigate()
@@ -20,6 +24,9 @@ export default function CrearClub() {
   const [direccion, setDireccion] = useState<string>('')
   const [canchaTipoId, setCanchaTipoId] = useState<number>(
     CANCHA_TIPO_ID_POR_DEFECTO
+  )
+  const [canchaSuperficieId, setCanchaSuperficieId] = useState<number>(
+    CANCHA_SUPERFICIE_ID_POR_DEFECTO
   )
   const [localidad, setLocalidad] = useState<string>('')
 
@@ -38,6 +45,7 @@ export default function CrearClub() {
         nombre,
         direccion: direccion || undefined,
         canchaTipoId,
+        canchaSuperficieId,
         localidad: localidad || undefined
       })
     )
@@ -46,6 +54,7 @@ export default function CrearClub() {
   return (
     <LayoutSegundoNivel
       titulo='Crear Club'
+      maxWidth='2xl'
       contenido={
         <form onSubmit={handleSubmit} className='space-y-4'>
           <Input
@@ -79,6 +88,12 @@ export default function CrearClub() {
             valorActual={String(canchaTipoId)}
             alElegirOpcion={(id) => setCanchaTipoId(Number(id))}
           />
+          <SelectorSimple
+            titulo='Superficie'
+            opciones={OPCIONES_CANCHA_SUPERFICIE}
+            valorActual={String(canchaSuperficieId)}
+            alElegirOpcion={(id) => setCanchaSuperficieId(Number(id))}
+          />
           <ContenedorBotones>
             <Boton type='submit' estaCargando={mutation.isPending}>
               Guardar
@@ -86,7 +101,6 @@ export default function CrearClub() {
           </ContenedorBotones>
         </form>
       }
-      maxWidth='md'
     />
   )
 }
