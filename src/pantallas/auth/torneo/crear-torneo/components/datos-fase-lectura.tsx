@@ -8,9 +8,19 @@ import { Boton } from '@/design-system/ykn-ui/boton'
 import Icono from '@/design-system/ykn-ui/icono'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { MessageSquareMore } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ModalZonaLeyendas from './modal-zona-leyendas'
+
+/** Orden de listado según `orden` del backend; desempate por id. */
+export function zonasDeFaseOrdenadas(zonas: ZonaDeFaseDTO[]): ZonaDeFaseDTO[] {
+  return [...zonas].sort((a, b) => {
+    const oa = a.orden ?? 0
+    const ob = b.orden ?? 0
+    if (oa !== ob) return oa - ob
+    return (a.id ?? 0) - (b.id ?? 0)
+  })
+}
 
 interface DatosFaseLecturaProps {
   formato: string
@@ -130,6 +140,8 @@ export function DatosFaseLectura({
   nombreFase,
   categorias = []
 }: DatosFaseLecturaProps) {
+  const zonasOrdenadas = useMemo(() => zonasDeFaseOrdenadas(zonas), [zonas])
+
   return (
     <div className='mt-3'>
       <div>
@@ -137,11 +149,11 @@ export function DatosFaseLectura({
           {formato || '—'}
         </p>
       </div>
-      {zonas != null && zonas.length > 0 && (
+      {zonasOrdenadas.length > 0 && (
         <div>
           {/* <Label className='text-muted-foreground text-sm'>Zonas</Label> */}
           <ul className='grid grid-cols-2 gap-1.5 mt-2'>
-            {zonas.map((zona) => (
+            {zonasOrdenadas.map((zona) => (
               <ZonaItem
                 key={zona.id ?? zona.nombre}
                 zona={zona}

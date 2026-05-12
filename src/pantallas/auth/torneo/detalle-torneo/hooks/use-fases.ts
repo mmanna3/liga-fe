@@ -193,12 +193,13 @@ export function useFases({
     if (categoriasConId.length === 0) return
 
     const body = categoriasConId.map(
-      (c) =>
+      (c, i) =>
         new ZonaDTO({
           categoriaId: c.id,
           categoriaNombre: '',
           nombre: c.nombre ?? '',
-          faseId
+          faseId,
+          orden: i + 1
         })
     )
 

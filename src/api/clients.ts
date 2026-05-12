@@ -12331,6 +12331,7 @@ export class ZonaDTO implements IZonaDTO {
   id?: number
   nombre!: string
   faseId?: number
+  orden!: number
   categoriaId?: number | undefined
   categoriaNombre?: string | undefined
   equipos?: EquipoDeLaZonaDTO[] | undefined
@@ -12349,6 +12350,7 @@ export class ZonaDTO implements IZonaDTO {
       this.id = _data['id']
       this.nombre = _data['nombre']
       this.faseId = _data['faseId']
+      this.orden = _data['orden']
       this.categoriaId = _data['categoriaId']
       this.categoriaNombre = _data['categoriaNombre']
       if (Array.isArray(_data['equipos'])) {
@@ -12371,6 +12373,7 @@ export class ZonaDTO implements IZonaDTO {
     data['id'] = this.id
     data['nombre'] = this.nombre
     data['faseId'] = this.faseId
+    data['orden'] = this.orden
     data['categoriaId'] = this.categoriaId
     data['categoriaNombre'] = this.categoriaNombre
     if (Array.isArray(this.equipos)) {
@@ -12385,6 +12388,7 @@ export interface IZonaDTO {
   id?: number
   nombre: string
   faseId?: number
+  orden: number
   categoriaId?: number | undefined
   categoriaNombre?: string | undefined
   equipos?: EquipoDeLaZonaDTO[] | undefined
@@ -12393,6 +12397,7 @@ export interface IZonaDTO {
 export class ZonaDeFaseDTO implements IZonaDeFaseDTO {
   id?: number
   nombre?: string | undefined
+  orden?: number
   cantidadDeEquipos?: number
   categoriaId?: number | undefined
   categoriaNombre?: string | undefined
@@ -12410,6 +12415,7 @@ export class ZonaDeFaseDTO implements IZonaDeFaseDTO {
     if (_data) {
       this.id = _data['id']
       this.nombre = _data['nombre']
+      this.orden = _data['orden']
       this.cantidadDeEquipos = _data['cantidadDeEquipos']
       this.categoriaId = _data['categoriaId']
       this.categoriaNombre = _data['categoriaNombre']
@@ -12427,6 +12433,7 @@ export class ZonaDeFaseDTO implements IZonaDeFaseDTO {
     data = typeof data === 'object' ? data : {}
     data['id'] = this.id
     data['nombre'] = this.nombre
+    data['orden'] = this.orden
     data['cantidadDeEquipos'] = this.cantidadDeEquipos
     data['categoriaId'] = this.categoriaId
     data['categoriaNombre'] = this.categoriaNombre
@@ -12437,6 +12444,7 @@ export class ZonaDeFaseDTO implements IZonaDeFaseDTO {
 export interface IZonaDeFaseDTO {
   id?: number
   nombre?: string | undefined
+  orden?: number
   cantidadDeEquipos?: number
   categoriaId?: number | undefined
   categoriaNombre?: string | undefined

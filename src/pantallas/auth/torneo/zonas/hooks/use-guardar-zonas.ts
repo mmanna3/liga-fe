@@ -64,7 +64,7 @@ export function useGuardarZonas({
         return
       }
       navegarHacia.current = destino ?? null
-      const body = zonasEstado.map((z) => zonaEstadoADto(z, faseId))
+      const body = zonasEstado.map((z, i) => zonaEstadoADto(z, faseId, i + 1))
       guardarMutation.mutate(body)
     },
     [zonasEstado, faseId, guardarMutation]

@@ -41,6 +41,11 @@ export function GestorZonas({
   )
   const nombreZonaEditable = fase?.tipoDeFase !== TipoDeFaseEnum._2
 
+  const zonasInicialesCrear = useMemo(
+    () => [{ nombre: 'Zona A', equipos: [], clientKey: crypto.randomUUID() }],
+    []
+  )
+
   const { data: zonasApi = [], refetch } = useApiQuery({
     key: ['zonasAll', faseId],
     fn: () => api.zonasAll(faseId),
@@ -55,10 +60,9 @@ export function GestorZonas({
     agregarEquipoAZona,
     quitarEquipoDeZona,
     eliminarZona,
-    agregarZona
-  } = useZonasEstado(
-    modo === 'crear' ? [{ nombre: 'Zona A', equipos: [] }] : []
-  )
+    agregarZona,
+    reordenarZonas
+  } = useZonasEstado(modo === 'crear' ? zonasInicialesCrear : [])
 
   // Solo sincronizar desde la API en la carga inicial.
   // Un refetch en background (ej: window focus) NO debe pisar los cambios del usuario.
@@ -69,7 +73,11 @@ export function GestorZonas({
       zonasApi.length > 0 &&
       !yaInicializado.current
     ) {
-      setZonasEstado(zonasApi.map(zonaDtoAEstado))
+      setZonasEstado(
+        [...zonasApi]
+          .sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0))
+          .map(zonaDtoAEstado)
+      )
       yaInicializado.current = true
     }
   }, [zonasApi, setZonasEstado, modo])
@@ -107,6 +115,7 @@ export function GestorZonas({
           onDropEquipo={agregarEquipoAZona}
           onEliminarZona={eliminarZona}
           onAgregarZona={agregarZona}
+          onReordenarZonas={reordenarZonas}
           onIrAFixture={modo === 'modificar' ? handleIrAFixture : undefined}
           nombreZonaEditable={nombreZonaEditable}
           puedeEliminarZona={nombreZonaEditable}

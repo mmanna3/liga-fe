@@ -1,4 +1,5 @@
 import { EquipoDTO } from '@/api/clients'
+import { arrayMove } from '@dnd-kit/sortable'
 import { useCallback, useMemo, useState } from 'react'
 import type { ZonaEstado } from '../components/tipos'
 
@@ -56,11 +57,18 @@ export function useZonasEstado(initial: ZonaEstado[]) {
   }, [])
 
   const agregarZona = useCallback(() => {
-    setZonasEstado((prev) => [...prev, { nombre: 'Nueva Zona', equipos: [] }])
+    setZonasEstado((prev) => [
+      ...prev,
+      { nombre: 'Nueva Zona', equipos: [], clientKey: crypto.randomUUID() }
+    ])
   }, [])
 
   const eliminarZona = useCallback((index: number) => {
     setZonasEstado((prev) => prev.filter((_, i) => i !== index))
+  }, [])
+
+  const reordenarZonas = useCallback((fromIndex: number, toIndex: number) => {
+    setZonasEstado((prev) => arrayMove(prev, fromIndex, toIndex))
   }, [])
 
   const setZonasEstadoDirecto = useCallback((zonas: ZonaEstado[]) => {
@@ -75,6 +83,7 @@ export function useZonasEstado(initial: ZonaEstado[]) {
     agregarEquipoAZona,
     quitarEquipoDeZona,
     agregarZona,
-    eliminarZona
+    eliminarZona,
+    reordenarZonas
   }
 }

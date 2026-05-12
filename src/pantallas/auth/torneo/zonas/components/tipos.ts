@@ -10,6 +10,15 @@ export interface ZonaEstado {
   id?: number
   nombre: string
   equipos: EquipoDTO[]
+  /** Clave estable para DnD cuando la zona aún no tiene id de servidor. */
+  clientKey?: string
+}
+
+/** Id estable para @dnd-kit (misma zona = mismo id aunque cambie el índice). */
+export function idSortableZona(zona: ZonaEstado): string {
+  if (zona.id != null) return `zona-${zona.id}`
+  if (zona.clientKey != null) return zona.clientKey
+  return `zona-legacy-${zona.nombre}-${zona.equipos.length}`
 }
 
 /** Convierte ZonaDTO del API a ZonaEstado para la UI */
@@ -39,7 +48,11 @@ export function zonaDtoAEstado(dto: ZonaDTO): ZonaEstado {
 }
 
 /** Convierte ZonaEstado de la UI a ZonaDTO para el API */
-export function zonaEstadoADto(zona: ZonaEstado, faseId: number): ZonaDTO {
+export function zonaEstadoADto(
+  zona: ZonaEstado,
+  faseId: number,
+  orden: number
+): ZonaDTO {
   const equipos = zona.equipos.map(
     (e) =>
       new EquipoDeLaZonaDTO({
@@ -53,6 +66,7 @@ export function zonaEstadoADto(zona: ZonaEstado, faseId: number): ZonaDTO {
     id: zona.id,
     nombre: zona.nombre,
     faseId,
+    orden,
     equipos
   })
 }

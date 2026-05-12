@@ -1,6 +1,7 @@
 import { EquipoDeLaZonaDTO, EquipoDTO, IZonaDTO, ZonaDTO } from '@/api/clients'
 import { describe, expect, it } from 'vitest'
 import {
+  idSortableZona,
   validarZonasParaGuardar,
   zonaDtoAEstado,
   zonaEstadoADto
@@ -66,6 +67,7 @@ describe('zonaDtoAEstado', () => {
       id: 5,
       nombre: 'Zona Norte',
       faseId: 1,
+      orden: 1,
       equipos: []
     })
     const estado = zonaDtoAEstado(dto)
@@ -78,6 +80,7 @@ describe('zonaDtoAEstado', () => {
       id: 1,
       nombre: 'Zona A',
       faseId: 100,
+      orden: 1,
       equipos: [
         EquipoDeLaZonaDTO.fromJS({
           id: '7',
@@ -99,6 +102,7 @@ describe('zonaDtoAEstado', () => {
       id: 1,
       nombre: 'Zona A',
       faseId: 1,
+      orden: 1,
       equipos: []
     })
     const estado = zonaDtoAEstado(dto)
@@ -110,6 +114,7 @@ describe('zonaDtoAEstado', () => {
     const dto = new ZonaDTO({
       id: 2,
       faseId: 1,
+      orden: 1,
       equipos: []
     } as unknown as IZonaDTO)
     const estado = zonaDtoAEstado(dto)
@@ -124,16 +129,18 @@ describe('zonaDtoAEstado', () => {
 describe('zonaEstadoADto', () => {
   it('zona existente (con id) preserva el id en el DTO', () => {
     const zona = { id: 3, nombre: 'Zona Sur', equipos: [] }
-    const dto = zonaEstadoADto(zona, 100)
+    const dto = zonaEstadoADto(zona, 100, 2)
     expect(dto.id).toBe(3)
     expect(dto.nombre).toBe('Zona Sur')
     expect(dto.faseId).toBe(100)
+    expect(dto.orden).toBe(2)
   })
 
   it('zona nueva (sin id) no incluye id en el DTO', () => {
     const zona = { nombre: 'Nueva Zona', equipos: [] }
-    const dto = zonaEstadoADto(zona, 100)
+    const dto = zonaEstadoADto(zona, 100, 1)
     expect(dto.id).toBeUndefined()
+    expect(dto.orden).toBe(1)
   })
 
   it('convierte equipos EquipoDTO a EquipoDeLaZonaDTO con id como string', () => {
@@ -146,7 +153,7 @@ describe('zonaEstadoADto', () => {
       zonas: []
     })
     const zona = { id: 1, nombre: 'Zona A', equipos: [equipo] }
-    const dto = zonaEstadoADto(zona, 100)
+    const dto = zonaEstadoADto(zona, 100, 1)
     expect(dto.equipos).toHaveLength(1)
     expect(dto.equipos![0].id).toBe('7')
     expect(dto.equipos![0].nombre).toBe('Infantil C')
@@ -156,7 +163,28 @@ describe('zonaEstadoADto', () => {
 
   it('zona con lista de equipos vacía genera DTO con equipos vacíos', () => {
     const zona = { id: 1, nombre: 'Zona A', equipos: [] }
-    const dto = zonaEstadoADto(zona, 100)
+    const dto = zonaEstadoADto(zona, 100, 3)
     expect(dto.equipos).toHaveLength(0)
+    expect(dto.orden).toBe(3)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// idSortableZona
+// ---------------------------------------------------------------------------
+
+describe('idSortableZona', () => {
+  it('usa id de servidor cuando existe', () => {
+    expect(idSortableZona({ id: 42, nombre: 'A', equipos: [] })).toBe('zona-42')
+  })
+
+  it('usa clientKey cuando no hay id', () => {
+    expect(
+      idSortableZona({
+        nombre: 'A',
+        equipos: [],
+        clientKey: 'ck-abc'
+      })
+    ).toBe('ck-abc')
   })
 })
