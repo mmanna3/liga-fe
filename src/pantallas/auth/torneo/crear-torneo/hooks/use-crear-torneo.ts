@@ -31,7 +31,8 @@ const esquema = z
           id: z.string(),
           nombre: z.string(),
           anioDesde: z.string(),
-          anioHasta: z.string()
+          anioHasta: z.string(),
+          orden: z.number()
         })
       )
       .refine(
@@ -99,12 +100,14 @@ export function useCrearTorneo() {
             c.anioDesde.trim() !== '' &&
             c.anioHasta.trim() !== ''
         )
+        .sort((a, b) => a.orden - b.orden || a.id.localeCompare(b.id))
         .map(
-          (c) =>
+          (c, index) =>
             new TorneoCategoriaDTO({
               nombre: c.nombre.trim(),
               anioDesde: parseInt(c.anioDesde, 10),
-              anioHasta: parseInt(c.anioHasta, 10)
+              anioHasta: parseInt(c.anioHasta, 10),
+              orden: index + 1
             })
         )
 

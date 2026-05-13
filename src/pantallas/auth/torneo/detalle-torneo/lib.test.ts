@@ -59,6 +59,7 @@ describe('categoriasDtoACategoria', () => {
         nombre: 'Sub 12',
         anioDesde: 2014,
         anioHasta: 2015,
+        orden: 1,
         torneoId: 1
       })
     ]
@@ -68,6 +69,7 @@ describe('categoriasDtoACategoria', () => {
     expect(result[0].nombre).toBe('Sub 12')
     expect(result[0].anioDesde).toBe('2014')
     expect(result[0].anioHasta).toBe('2015')
+    expect(result[0].orden).toBe(1)
   })
 
   it('maneja array vacío', () => {
@@ -79,7 +81,8 @@ describe('categoriasDtoACategoria', () => {
       new TorneoCategoriaDTO({
         nombre: 'Mayores',
         anioDesde: 1990,
-        anioHasta: 2005
+        anioHasta: 2005,
+        orden: 1
       })
     ]
     const result = categoriasDtoACategoria(dtos)
@@ -92,12 +95,36 @@ describe('categoriasDtoACategoria', () => {
         id: 1,
         nombre: 'Sub 20',
         anioDesde: 2006,
-        anioHasta: 2010
+        anioHasta: 2010,
+        orden: 1
       })
     ]
     const result = categoriasDtoACategoria(dtos)
     expect(result[0].anioDesde).toBe('2006')
     expect(result[0].anioHasta).toBe('2010')
+    expect(result[0].orden).toBe(1)
+  })
+
+  it('ordena por el campo orden del DTO', () => {
+    const dtos = [
+      new TorneoCategoriaDTO({
+        id: 2,
+        nombre: 'Segunda',
+        anioDesde: 2010,
+        anioHasta: 2011,
+        orden: 2
+      }),
+      new TorneoCategoriaDTO({
+        id: 1,
+        nombre: 'Primera',
+        anioDesde: 2008,
+        anioHasta: 2009,
+        orden: 1
+      })
+    ]
+    const result = categoriasDtoACategoria(dtos)
+    expect(result.map((c) => c.nombre)).toEqual(['Primera', 'Segunda'])
+    expect(result.map((c) => c.orden)).toEqual([1, 2])
   })
 })
 
@@ -108,7 +135,13 @@ describe('categoriasDtoACategoria', () => {
 describe('categoriasACategoriaDto', () => {
   it('categoría existente (id < 1B) preserva el id numérico', () => {
     const cats = [
-      { id: '42', nombre: 'Sub 15', anioDesde: '2011', anioHasta: '2012' }
+      {
+        id: '42',
+        nombre: 'Sub 15',
+        anioDesde: '2011',
+        anioHasta: '2012',
+        orden: 1
+      }
     ]
     const result = categoriasACategoriaDto(cats)
     expect(result).toHaveLength(1)
@@ -116,6 +149,7 @@ describe('categoriasACategoriaDto', () => {
     expect(result[0].nombre).toBe('Sub 15')
     expect(result[0].anioDesde).toBe(2011)
     expect(result[0].anioHasta).toBe(2012)
+    expect(result[0].orden).toBe(1)
   })
 
   it('categoría nueva (id ≥ 1B, como Date.now()) no incluye id', () => {
@@ -125,7 +159,8 @@ describe('categoriasACategoriaDto', () => {
         id: '9999999999999',
         nombre: 'Sub 10',
         anioDesde: '2016',
-        anioHasta: '2017'
+        anioHasta: '2017',
+        orden: 1
       }
     ]
     const result = categoriasACategoriaDto(cats)
@@ -135,8 +170,20 @@ describe('categoriasACategoriaDto', () => {
 
   it('filtra categorías con nombre vacío', () => {
     const cats = [
-      { id: '1', nombre: '', anioDesde: '2014', anioHasta: '2015' },
-      { id: '2', nombre: 'Sub 12', anioDesde: '2014', anioHasta: '2015' }
+      {
+        id: '1',
+        nombre: '',
+        anioDesde: '2014',
+        anioHasta: '2015',
+        orden: 1
+      },
+      {
+        id: '2',
+        nombre: 'Sub 12',
+        anioDesde: '2014',
+        anioHasta: '2015',
+        orden: 2
+      }
     ]
     const result = categoriasACategoriaDto(cats)
     expect(result).toHaveLength(1)
@@ -145,8 +192,20 @@ describe('categoriasACategoriaDto', () => {
 
   it('filtra categorías con año vacío', () => {
     const cats = [
-      { id: '1', nombre: 'Sub 12', anioDesde: '', anioHasta: '2015' },
-      { id: '2', nombre: 'Sub 14', anioDesde: '2012', anioHasta: '' }
+      {
+        id: '1',
+        nombre: 'Sub 12',
+        anioDesde: '',
+        anioHasta: '2015',
+        orden: 1
+      },
+      {
+        id: '2',
+        nombre: 'Sub 14',
+        anioDesde: '2012',
+        anioHasta: '',
+        orden: 2
+      }
     ]
     const result = categoriasACategoriaDto(cats)
     expect(result).toHaveLength(0)
@@ -158,9 +217,37 @@ describe('categoriasACategoriaDto', () => {
 
   it('trimea el nombre al convertir', () => {
     const cats = [
-      { id: '1', nombre: '  Sub 18  ', anioDesde: '2008', anioHasta: '2010' }
+      {
+        id: '1',
+        nombre: '  Sub 18  ',
+        anioDesde: '2008',
+        anioHasta: '2010',
+        orden: 1
+      }
     ]
     const result = categoriasACategoriaDto(cats)
     expect(result[0].nombre).toBe('Sub 18')
+  })
+
+  it('ordena por orden y renumera al convertir', () => {
+    const cats = [
+      {
+        id: '2',
+        nombre: 'B',
+        anioDesde: '2010',
+        anioHasta: '2011',
+        orden: 2
+      },
+      {
+        id: '1',
+        nombre: 'A',
+        anioDesde: '2008',
+        anioHasta: '2009',
+        orden: 1
+      }
+    ]
+    const result = categoriasACategoriaDto(cats)
+    expect(result.map((r) => r.nombre)).toEqual(['A', 'B'])
+    expect(result.map((r) => r.orden)).toEqual([1, 2])
   })
 })

@@ -30,11 +30,18 @@ export function tipoDeFaseNombreDesdeEnum(tipoDeFase?: TipoDeFaseEnum): string {
 export function categoriasDtoACategoria(
   dtos: TorneoCategoriaDTO[]
 ): Categoria[] {
-  return (dtos ?? []).map((c) => ({
-    id: String(c.id ?? Date.now() + Math.random()),
+  const ordenados = [...(dtos ?? [])].sort((a, b) => {
+    const ao = a.orden ?? Number.MAX_SAFE_INTEGER
+    const bo = b.orden ?? Number.MAX_SAFE_INTEGER
+    if (ao !== bo) return ao - bo
+    return (a.id ?? 0) - (b.id ?? 0)
+  })
+  return ordenados.map((c, index) => ({
+    id: String(c.id ?? `${Date.now()}-${Math.random()}`),
     nombre: c.nombre ?? '',
     anioDesde: String(c.anioDesde ?? ''),
-    anioHasta: String(c.anioHasta ?? '')
+    anioHasta: String(c.anioHasta ?? ''),
+    orden: index + 1
   }))
 }
 
@@ -48,7 +55,8 @@ export function categoriasACategoriaDto(
         c.anioDesde.trim() !== '' &&
         c.anioHasta.trim() !== ''
     )
-    .map((c) => {
+    .sort((a, b) => a.orden - b.orden || a.id.localeCompare(b.id))
+    .map((c, index) => {
       const idNum = parseInt(c.id, 10)
       const esCategoriaExistente =
         !isNaN(idNum) && idNum > 0 && idNum < 1_000_000_000
@@ -56,7 +64,8 @@ export function categoriasACategoriaDto(
         ...(esCategoriaExistente && { id: idNum }),
         nombre: c.nombre.trim(),
         anioDesde: parseInt(c.anioDesde, 10),
-        anioHasta: parseInt(c.anioHasta, 10)
+        anioHasta: parseInt(c.anioHasta, 10),
+        orden: index + 1
       })
     })
 }

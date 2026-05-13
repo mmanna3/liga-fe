@@ -12133,6 +12133,7 @@ export class TorneoCategoriaDTO implements ITorneoCategoriaDTO {
   nombre!: string
   anioDesde!: number
   anioHasta!: number
+  orden!: number
   torneoId?: number
 
   constructor(data?: ITorneoCategoriaDTO) {
@@ -12150,6 +12151,7 @@ export class TorneoCategoriaDTO implements ITorneoCategoriaDTO {
       this.nombre = _data['nombre']
       this.anioDesde = _data['anioDesde']
       this.anioHasta = _data['anioHasta']
+      this.orden = _data['orden']
       this.torneoId = _data['torneoId']
     }
   }
@@ -12167,6 +12169,7 @@ export class TorneoCategoriaDTO implements ITorneoCategoriaDTO {
     data['nombre'] = this.nombre
     data['anioDesde'] = this.anioDesde
     data['anioHasta'] = this.anioHasta
+    data['orden'] = this.orden
     data['torneoId'] = this.torneoId
     return data
   }
@@ -12177,6 +12180,7 @@ export interface ITorneoCategoriaDTO {
   nombre: string
   anioDesde: number
   anioHasta: number
+  orden: number
   torneoId?: number
 }
 
