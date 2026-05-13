@@ -61,7 +61,7 @@ export default function DetalleJugador() {
       {jugador && (
         <div className='max-w-lg mx-auto px-4'>
           <div className='mb-4'>
-            <BotonVolver />
+            <BotonVolver path={rutasNavegacion.jugadores} />
           </div>
 
           {/* Card1: nombre y foto */}

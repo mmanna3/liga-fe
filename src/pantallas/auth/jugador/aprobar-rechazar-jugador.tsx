@@ -6,11 +6,12 @@ import {
 } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
-import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
 import { Card, CardContent, CardHeader } from '@/design-system/base-ui/card'
 import { Textarea } from '@/design-system/base-ui/textarea'
+import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import BotonVolver from '@/design-system/ykn-ui/boton-volver'
+import { rutasNavegacion } from '@/ruteo/rutas'
 import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -38,7 +39,10 @@ const AprobarRechazarJugador: React.FC = () => {
     fn: async (dto: AprobarJugadorDTO) => {
       await api.aprobarJugador(dto)
     },
-    antesDeMensajeExito: () => navigate(-1),
+    antesDeMensajeExito: () => {
+      if (jugadorid == null) return
+      navigate(`${rutasNavegacion.detalleJugador}/${jugadorid}`)
+    },
     mensajeDeExito: `Jugador aprobado`
   })
 
