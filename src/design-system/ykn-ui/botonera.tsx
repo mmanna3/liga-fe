@@ -152,7 +152,7 @@ function IconoBoton({ item }: { item: IconoBotonera }) {
 
 export default function Botonera({ iconos, children }: BotoneraProps) {
   return (
-    <div className='flex flex-row items-start justify-between gap-4'>
+    <div className='flex flex-row items-start justify-between gap-4 print:hidden'>
       <div className='flex flex-col gap-2'>{children}</div>
       <div className='flex gap-0 shrink-0 mt-1'>
         {iconos.map((item, index) => {

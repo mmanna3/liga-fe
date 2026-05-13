@@ -63,7 +63,7 @@ export default function AuthLayout() {
 
   return (
     <div className='flex min-h-screen w-screen'>
-      <Toaster />
+      <Toaster className='print:hidden' />
       <MenuLateral
         menuItems={menuItems}
         userName={userName}
@@ -74,7 +74,7 @@ export default function AuthLayout() {
       {/* Contenido de la página */}
       <main
         className={cn(
-          'flex-1 w-full min-h-0',
+          'flex-1 w-full min-h-0 print:bg-white print:p-4',
           isHome ? 'flex flex-col p-0' : 'flex justify-center p-6 bg-slate-100'
         )}
       >

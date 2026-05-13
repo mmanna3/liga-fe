@@ -102,7 +102,7 @@ export default function MenuLateral({
     <>
       {/* Desktop */}
       <aside
-        className='admin-sidebar hidden md:flex flex-col w-64 bg-gray-900 text-white p-4'
+        className='admin-sidebar print:hidden hidden md:flex flex-col w-64 bg-gray-900 text-white p-4'
         data-testid='menu-lateral'
       >
         <ContenidoMenu
@@ -114,29 +114,31 @@ export default function MenuLateral({
       </aside>
 
       {/* Mobile */}
-      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-        <SheetTrigger asChild>
-          <Boton
-            variant='ghost'
-            className='md:hidden fixed top-4 left-4 z-50 bg-gray-900 text-white'
+      <div className='print:hidden'>
+        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+          <SheetTrigger asChild>
+            <Boton
+              variant='ghost'
+              className='md:hidden fixed top-4 left-4 z-50 bg-gray-900 text-white'
+            >
+              <Icono nombre='Menú' className='w-6 h-6' />
+            </Boton>
+          </SheetTrigger>
+          <SheetContent
+            side='left'
+            className='admin-sidebar w-64 bg-gray-900 text-white p-4 flex flex-col'
           >
-            <Icono nombre='Menú' className='w-6 h-6' />
-          </Boton>
-        </SheetTrigger>
-        <SheetContent
-          side='left'
-          className='admin-sidebar w-64 bg-gray-900 text-white p-4 flex flex-col'
-        >
-          <ContenidoMenu
-            menuItems={menuItems}
-            userName={userName}
-            userRole={userRole}
-            onLogout={onLogout}
-            onLinkClick={() => setSheetOpen(false)}
-            navClassName='space-y-2'
-          />
-        </SheetContent>
-      </Sheet>
+            <ContenidoMenu
+              menuItems={menuItems}
+              userName={userName}
+              userRole={userRole}
+              onLogout={onLogout}
+              onLinkClick={() => setSheetOpen(false)}
+              navClassName='space-y-2'
+            />
+          </SheetContent>
+        </Sheet>
+      </div>
     </>
   )
 }

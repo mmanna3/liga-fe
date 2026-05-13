@@ -3,7 +3,10 @@ import { TipoDeFaseEnum } from '@/api/clients'
 import { fechasListarTodosContraTodos } from '@/api/fechas-zona'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
-import type { BotoneraProps } from '@/design-system/ykn-ui/botonera'
+import type {
+  BotoneraProps,
+  IconoBotonera
+} from '@/design-system/ykn-ui/botonera'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
 import {
   hashEquiposDeLaZona,
@@ -112,6 +115,8 @@ export default function Fixture() {
     fechasExistentes.length > 0 &&
     fase?.tipoDeFase === TipoDeFaseEnum._1
 
+  const hayFixtureGuardado = !!zona && fechasExistentes.length > 0
+
   const borrarLlaveMutation = useApiMutation<void>({
     fn: () => api.borrarFechasEliminaciondirectaMasivamente(zonaId),
     mensajeDeExito: 'Llave de eliminación borrada',
@@ -131,9 +136,16 @@ export default function Fixture() {
     }
   })
 
+  const iconoImprimirFixture: IconoBotonera = {
+    alApretar: () => window.print(),
+    tooltip: 'Imprimir',
+    icono: 'Imprimir'
+  }
+
   const botonera: BotoneraProps | undefined = muestraLlaveEliminacionCargada
     ? {
         iconos: [
+          iconoImprimirFixture,
           {
             alApretar: () => {
               borrarLlaveMutation.mutate()
@@ -152,6 +164,7 @@ export default function Fixture() {
     : muestraBorrarFechasTodosContraTodos
       ? {
           iconos: [
+            iconoImprimirFixture,
             {
               alApretar: () => {
                 borrarFechasTctMutation.mutate()
@@ -167,7 +180,11 @@ export default function Fixture() {
             }
           ]
         }
-      : undefined
+      : hayFixtureGuardado
+        ? {
+            iconos: [iconoImprimirFixture]
+          }
+        : undefined
 
   const contenido = !zona ? (
     <p className='text-muted-foreground py-4'>Cargando zona...</p>

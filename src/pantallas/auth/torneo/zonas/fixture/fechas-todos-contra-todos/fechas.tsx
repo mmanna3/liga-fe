@@ -28,7 +28,7 @@ export function FechasTodosContraTodos({
 
   return (
     <div>
-      <div className='flex justify-end mb-3'>
+      <div className='flex justify-end mb-3 print:hidden'>
         <button
           className='text-sm text-foreground hover:underline border border-border bg-background rounded-md px-3 py-1.5'
           onClick={() => setAgregando(true)}
@@ -38,7 +38,7 @@ export function FechasTodosContraTodos({
         </button>
       </div>
 
-      <div className='grid grid-cols-3 gap-4'>
+      <div className='grid grid-cols-3 gap-4 print:grid-cols-2'>
         {fechasOrdenadas.map((f) => (
           <FechaCard
             key={f.id ?? `${f.numero}`}

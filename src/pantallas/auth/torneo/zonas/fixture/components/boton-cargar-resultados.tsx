@@ -49,7 +49,7 @@ export function BotonCargarResultados({
           variant='ghost'
           size='icon'
           data-testid='btn-carga-resultados-jornada'
-          className={cn('h-7 w-7 shrink-0', estado.color)}
+          className={cn('h-7 w-7 shrink-0 print:hidden', estado.color)}
           aria-label={estado.tooltip}
           onClick={onClick}
         >

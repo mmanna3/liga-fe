@@ -24,6 +24,7 @@ const MAPEO_ICONOS: Record<
   // Acciones
   Sortear: LucideIcons.Shuffle,
   Descargar: LucideIcons.Download,
+  Imprimir: LucideIcons.Printer,
   Visible: LucideIcons.Eye,
   NoVisible: LucideIcons.EyeOff,
   Editar: LucideIcons.Pencil,

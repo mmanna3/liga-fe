@@ -68,7 +68,7 @@ function JornadaFilaVista({
       : ESTADO_BOTON_CARGAR_RESULTADOS[2]
 
   return (
-    <div className='grid grid-cols-[1fr_1fr_auto] gap-4 text-sm py-1 items-center'>
+    <div className='grid grid-cols-[1fr_1fr_auto] print:grid-cols-2 gap-4 text-sm py-1 items-center'>
       <span className={`text-right min-w-0 ${claseEspecial(localLabel)}`}>
         {localLabel}
       </span>
@@ -123,7 +123,7 @@ export function FechaModoLectura({
             </span>
           )}
         </div>
-        <div className='flex items-center gap-1'>
+        <div className='flex items-center gap-1 print:hidden'>
           {fecha.id != null && (
             <VisibleSoloParaAdmin>
               <Tooltip>
@@ -201,10 +201,10 @@ export function FechaModoLectura({
         </div>
       </div>
 
-      <div className='grid grid-cols-[1fr_1fr_auto] gap-4 text-xs font-medium text-muted-foreground mb-1 items-center'>
+      <div className='grid grid-cols-[1fr_1fr_auto] print:grid-cols-2 gap-4 text-xs font-medium text-muted-foreground mb-1 items-center'>
         <span className='text-right'>LOCAL</span>
         <span className='text-left'>VISITANTE</span>
-        <span className='w-7 shrink-0' aria-hidden />
+        <span className='w-7 shrink-0 print:hidden' aria-hidden />
       </div>
       <div className='space-y-1 [&>div:not(:last-child)]:border-b [&>div:not(:last-child)]:border-muted-foreground/10'>
         {(fecha.jornadas ?? []).map((j, i) => (
