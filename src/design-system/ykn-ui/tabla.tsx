@@ -22,6 +22,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   OnChangeFn,
+  PaginationState,
   Row,
   RowSelectionState,
   SortingState,
@@ -38,6 +39,9 @@ type TablaProps<T> = {
   rowSelection?: RowSelectionState
   onRowSelectionChange?: OnChangeFn<RowSelectionState>
   pageSizeDefault?: number
+  /** Paginación controlada (p. ej. persistida en Zustand). Requiere `onPaginationChange`. */
+  pagination?: PaginationState
+  onPaginationChange?: OnChangeFn<PaginationState>
   onRowClick?: (row: Row<T>) => void
   /** Contenido del filtro (ej. botón con Popover) alineado con la búsqueda */
   filtro?: React.ReactNode
@@ -53,12 +57,29 @@ export default function Tabla<T>({
   rowSelection,
   onRowSelectionChange,
   pageSizeDefault = 10,
+  pagination: paginationExterna,
+  onPaginationChange: onPaginationChangeExterna,
   onRowClick,
   filtro,
   debajoDeBusqueda
 }: TablaProps<T>) {
   const [globalFilter, setGlobalFilter] = useState('')
   const [sorting, setSorting] = useState<SortingState>([])
+  const [paginationInterna, setPaginationInterna] = useState<PaginationState>(
+    () => ({
+      pageIndex: 0,
+      pageSize: pageSizeDefault
+    })
+  )
+
+  const paginacionControlada =
+    paginationExterna != null && onPaginationChangeExterna != null
+  const pagination = paginacionControlada
+    ? paginationExterna
+    : paginationInterna
+  const onPaginationChange = paginacionControlada
+    ? onPaginationChangeExterna
+    : setPaginationInterna
 
   const table = useReactTable({
     data,
@@ -67,6 +88,8 @@ export default function Tabla<T>({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    /** Con paginación externa, no resetear al cambiar `data` (p. ej. refetch de React Query). */
+    autoResetPageIndex: !paginacionControlada,
     initialState: {
       pagination: {
         pageSize: pageSizeDefault
@@ -75,10 +98,12 @@ export default function Tabla<T>({
     state: {
       globalFilter,
       sorting,
-      rowSelection: rowSelection || {}
+      rowSelection: rowSelection || {},
+      pagination
     },
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
+    onPaginationChange,
     onRowSelectionChange,
     enableRowSelection: true
   })

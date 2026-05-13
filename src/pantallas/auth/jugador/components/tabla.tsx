@@ -7,7 +7,7 @@ import useApiQuery from '@/api/hooks/use-api-query'
 import { useAuth } from '@/logica-compartida/hooks/use-auth'
 import { EstadoJugador } from '@/logica-compartida/utils'
 import { rutasNavegacion } from '@/ruteo/rutas'
-import { useUrlFiltroEstados } from '@/hooks/use-url-filtro-estados'
+import { useJugadoresListaUiStore } from '../stores/use-jugadores-lista-ui-store'
 import { ColumnDef } from '@tanstack/react-table'
 import {
   Popover,
@@ -35,7 +35,13 @@ const estadoConfigArray = [
 export default function TablaJugador() {
   const navigate = useNavigate()
   const esAdmin = useAuth((state) => state.esAdmin)
-  const { filtroEstados, toggleFiltro } = useUrlFiltroEstados<EstadoJugador>()
+  const filtroEstados = useJugadoresListaUiStore((s) => s.filtroEstados)
+  const toggleFiltro = useJugadoresListaUiStore((s) => s.toggleFiltro)
+  const pageIndex = useJugadoresListaUiStore((s) => s.pageIndex)
+  const pageSize = useJugadoresListaUiStore((s) => s.pageSize)
+  const actualizarPaginacion = useJugadoresListaUiStore(
+    (s) => s.actualizarPaginacion
+  )
 
   const { data, isLoading, isError } = useApiQuery({
     key: ['jugadores', filtroEstados.toString()],
@@ -177,6 +183,8 @@ export default function TablaJugador() {
       estaCargando={isLoading}
       hayError={isError}
       filtro={filtro}
+      pagination={{ pageIndex, pageSize }}
+      onPaginationChange={actualizarPaginacion}
       onRowClick={(row) =>
         navigate(`${rutasNavegacion.detalleJugador}/${row.original.id}`)
       }
