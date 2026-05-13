@@ -165,16 +165,7 @@ export function ModalCargaResultados({
                 <Icono nombre='Pelota' className='size-6 shrink-0' />
                 Cargar resultados
               </DialogTitle>
-              <DialogDescription>
-                {subtituloModal}
-                {partidos.length > 0 ? (
-                  <span className='mt-1.5 block text-muted-foreground'>
-                    Podés guardar solo algunas categorías (local y visitante
-                    completos), borrar resultados dejando ambos vacíos, o solo
-                    cambiar el estado de resultados verificados.
-                  </span>
-                ) : null}
-              </DialogDescription>
+              <DialogDescription>{subtituloModal}</DialogDescription>
             </DialogHeader>
 
             <div className='mb-3 flex items-center gap-2'>
