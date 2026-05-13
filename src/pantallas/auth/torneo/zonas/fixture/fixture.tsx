@@ -5,9 +5,17 @@ import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
 import type { BotoneraProps } from '@/design-system/ykn-ui/botonera'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
+import {
+  hashEquiposDeLaZona,
+  primeraFechaIsoDesdeDate
+} from '@/pantallas/auth/torneo/zonas/fixture/borrador/fixture-borrador-logica'
+import {
+  obtenerPrimeraFechaDesdeBorrador,
+  useFixtureBorradorStore
+} from '@/pantallas/auth/torneo/zonas/fixture/borrador/use-fixture-borrador-store'
 import { toDateOnly } from '@/logica-compartida/utils'
 import { useQueryClient } from '@tanstack/react-query'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { FechasEliminacionDirecta } from './fechas-eliminacion-directa/fechas'
 import { FechasTodosContraTodos } from './fechas-todos-contra-todos/fechas'
@@ -59,13 +67,34 @@ export default function Fixture() {
     [zonas, zonaId]
   )
 
+  const hashEquiposZona = useMemo(
+    () => hashEquiposDeLaZona(zona?.equipos ?? []),
+    [zona?.equipos]
+  )
+
   const { listaOrdenada, sensors, handleDragEnd } = useListaFixture(
-    zona?.equipos ?? []
+    zona?.equipos ?? [],
+    zonaId
   )
 
   const [primeraFecha, setPrimeraFecha] = useState<Date>(() =>
     toDateOnly(new Date())
   )
+
+  useEffect(() => {
+    if (!zona) return
+    const recuperada = obtenerPrimeraFechaDesdeBorrador(zonaId, hashEquiposZona)
+    if (recuperada != null) setPrimeraFecha(recuperada)
+  }, [zona, zonaId, hashEquiposZona])
+
+  const onPrimeraFechaChange = (fecha: Date) => {
+    const d = toDateOnly(fecha)
+    setPrimeraFecha(d)
+    if (!zona) return
+    useFixtureBorradorStore.getState().patch(zonaId, hashEquiposZona, {
+      primeraFechaIso: primeraFechaIsoDesdeDate(d)
+    })
+  }
 
   const subtitulo = [
     torneo?.nombre ?? '—',
@@ -156,7 +185,8 @@ export default function Fixture() {
       sensors={sensors}
       handleDragEnd={handleDragEnd as never}
       primeraFecha={primeraFecha}
-      onPrimeraFechaChange={setPrimeraFecha}
+      onPrimeraFechaChange={onPrimeraFechaChange}
+      hashEquipos={hashEquiposZona}
       zonaId={zonaId}
     />
   ) : (
@@ -167,7 +197,8 @@ export default function Fixture() {
       handleDragEnd={handleDragEnd as never}
       zonaId={zonaId}
       primeraFecha={primeraFecha}
-      onPrimeraFechaChange={setPrimeraFecha}
+      onPrimeraFechaChange={onPrimeraFechaChange}
+      hashEquipos={hashEquiposZona}
     />
   )
 

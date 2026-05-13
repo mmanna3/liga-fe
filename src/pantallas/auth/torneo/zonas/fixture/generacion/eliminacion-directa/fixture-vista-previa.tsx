@@ -7,6 +7,7 @@ import {
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import { Card, CardContent } from '@/design-system/base-ui/card'
 import { Boton } from '@/design-system/ykn-ui/boton'
+import { useFixtureBorradorStore } from '@/pantallas/auth/torneo/zonas/fixture/borrador/use-fixture-borrador-store'
 import { useQueryClient } from '@tanstack/react-query'
 import { addWeeks, format } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -281,6 +282,7 @@ export function FixtureVistaPrevia({
     fn: (body) => api.crearFechasEliminaciondirectaMasivamente(zonaId, body),
     mensajeDeExito: 'Fechas y jornadas creadas correctamente',
     antesDeMensajeExito: () => {
+      useFixtureBorradorStore.getState().limpiarBorrador(zonaId)
       queryClient.invalidateQueries({ queryKey: ['fechasAll', zonaId] })
       queryClient.invalidateQueries({
         queryKey: ['fechasEliminacionDirecta', zonaId]

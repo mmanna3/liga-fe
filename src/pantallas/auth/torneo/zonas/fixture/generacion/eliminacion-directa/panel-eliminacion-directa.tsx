@@ -5,9 +5,11 @@ import {
   CardHeader,
   CardTitle
 } from '@/design-system/base-ui/card'
+import { reconciliarListaFijadaConBase } from '@/pantallas/auth/torneo/zonas/fixture/borrador/fixture-borrador-logica'
+import { useFixtureBorradorStore } from '@/pantallas/auth/torneo/zonas/fixture/borrador/use-fixture-borrador-store'
 import { DndContext } from '@dnd-kit/core'
 import type { SensorDescriptor } from '@dnd-kit/core'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { ItemFixture } from '../../tipos'
 import { FixtureGeneracionListaEquipos } from '../lista-equipos'
 import { FixtureVistaPrevia } from './fixture-vista-previa'
@@ -26,6 +28,7 @@ interface PanelEliminacionDirectaProps {
   primeraFecha: Date
   onPrimeraFechaChange: (fecha: Date) => void
   zonaId: number
+  hashEquipos: string
 }
 
 export function PanelEliminacionDirecta({
@@ -34,12 +37,29 @@ export function PanelEliminacionDirecta({
   handleDragEnd,
   primeraFecha,
   onPrimeraFechaChange,
-  zonaId
+  zonaId,
+  hashEquipos
 }: PanelEliminacionDirectaProps) {
   const cantidadEquipos = listaOrdenada.length
   const esValido = esConteoValidoEliminacionDirecta(cantidadEquipos)
 
-  const [listaFijada, setListaFijada] = useState<ItemFixture[] | null>(null)
+  const [listaFijada, setListaFijada] = useState<ItemFixture[] | null>(() => {
+    const b = useFixtureBorradorStore.getState().porZona[zonaId]
+    if (b?.hashEquipos !== hashEquipos || !b.listaFijada) return null
+    return reconciliarListaFijadaConBase(b.listaFijada, listaOrdenada)
+  })
+
+  useEffect(() => {
+    setListaFijada((prev) =>
+      prev == null ? null : reconciliarListaFijadaConBase(prev, listaOrdenada)
+    )
+  }, [listaOrdenada])
+
+  useEffect(() => {
+    useFixtureBorradorStore.getState().patch(zonaId, hashEquipos, {
+      listaFijada
+    })
+  }, [zonaId, hashEquipos, listaFijada])
 
   function handleGenerarVistaPreviaClick() {
     setListaFijada(listaOrdenada)

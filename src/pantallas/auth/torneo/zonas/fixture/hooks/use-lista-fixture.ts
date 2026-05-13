@@ -1,26 +1,54 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import type { EquipoDeLaZonaDTO } from '@/api/clients'
+import {
+  hashEquiposDeLaZona,
+  listaInicialDesdeBorradorOEquipos,
+  ordenInicialListaFixture,
+  reconciliarListaOrdenConEquiposActuales
+} from '@/pantallas/auth/torneo/zonas/fixture/borrador/fixture-borrador-logica'
+import { useFixtureBorradorStore } from '@/pantallas/auth/torneo/zonas/fixture/borrador/use-fixture-borrador-store'
 import {
   type DragEndEvent,
   PointerSensor,
   useSensor,
   useSensors
 } from '@dnd-kit/core'
-import type { EquipoDeLaZonaDTO } from '@/api/clients'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ItemFixture } from '../tipos'
 
-export function useListaFixture(equipos: EquipoDeLaZonaDTO[]) {
-  const inicialOrdenado = useMemo(() => {
-    const sorted = [...equipos].sort((a, b) =>
-      (a.nombre ?? '').localeCompare(b.nombre ?? '', 'es')
-    )
-    return sorted.map((equipo) => ({ type: 'equipo' as const, equipo }))
-  }, [equipos])
+export function useListaFixture(equipos: EquipoDeLaZonaDTO[], zonaId: number) {
+  const hashEquipos = useMemo(() => hashEquiposDeLaZona(equipos), [equipos])
 
-  const [listaOrdenada, setListaOrdenada] = useState<ItemFixture[]>([])
+  const [listaOrdenada, setListaOrdenada] = useState<ItemFixture[]>(() => {
+    const borrador = useFixtureBorradorStore.getState().porZona[zonaId]
+    return listaInicialDesdeBorradorOEquipos({
+      equipos,
+      hashEquiposActual: hashEquipos,
+      borrador
+    })
+  })
+
+  const hashEquiposRef = useRef(hashEquipos)
+  useEffect(() => {
+    if (hashEquiposRef.current === hashEquipos) return
+    hashEquiposRef.current = hashEquipos
+    const borrador = useFixtureBorradorStore.getState().porZona[zonaId]
+    if (
+      borrador?.hashEquipos === hashEquipos &&
+      borrador.listaOrdenada.length > 0
+    ) {
+      setListaOrdenada(
+        reconciliarListaOrdenConEquiposActuales(borrador.listaOrdenada, equipos)
+      )
+    } else {
+      setListaOrdenada(ordenInicialListaFixture(equipos))
+    }
+  }, [hashEquipos, zonaId, equipos])
 
   useEffect(() => {
-    setListaOrdenada(inicialOrdenado)
-  }, [inicialOrdenado])
+    useFixtureBorradorStore.getState().patch(zonaId, hashEquipos, {
+      listaOrdenada
+    })
+  }, [zonaId, hashEquipos, listaOrdenada])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
