@@ -26,20 +26,18 @@ test.describe('Aprobación y rechazo de jugadores', () => {
     ).toBeVisible()
   })
 
-  test('aprueba un jugador y regresa a la lista', async ({ page }) => {
+  test('aprueba un jugador y navega al detalle', async ({ page }) => {
     await setScenario('jugador_pendiente')
     await login(page)
-    // Navegar a jugadores primero para generar historial de navegación
     await page.goto('/jugadores')
     await page.goto('/jugadores/aprobar-rechazar/10/1')
 
-    // Esperar que los datos carguen
     await expect(page.getByText('Juan')).toBeVisible()
 
     await page.getByRole('button', { name: 'Aprobar' }).click()
 
-    await page.waitForURL('/jugadores')
-    await expect(page).toHaveURL('/jugadores')
+    await page.waitForURL('/jugadores/detalle/1')
+    await expect(page).toHaveURL('/jugadores/detalle/1')
   })
 
   test('muestra error al intentar rechazar sin motivo', async ({ page }) => {
