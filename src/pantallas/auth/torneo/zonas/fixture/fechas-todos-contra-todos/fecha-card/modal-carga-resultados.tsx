@@ -15,8 +15,13 @@ import { Switch } from '@/design-system/base-ui/switch'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import Icono from '@/design-system/ykn-ui/icono'
 import { useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
-import { buildRequests, etiquetasLocalVisitanteJornada } from './lib'
+import { useEffect, useMemo, useState } from 'react'
+import {
+  buildRequests,
+  etiquetasLocalVisitanteJornada,
+  hayCambiosParaGuardarResultados,
+  hayFilasConResultadoIncompleto
+} from './lib'
 
 interface ModalCargaResultadosProps {
   open: boolean
@@ -66,6 +71,21 @@ export function ModalCargaResultados({
       if (jornada?.id == null) {
         throw new Error('La jornada no tiene id')
       }
+      if (
+        !hayCambiosParaGuardarResultados(
+          jornada,
+          valores,
+          resultadosVerificados
+        )
+      ) {
+        throw new Error('No hay cambios para guardar')
+      }
+      if (hayFilasConResultadoIncompleto(partidos, valores)) {
+        throw new Error(
+          'Completá local y visitante en cada categoría con datos, o dejá ambos vacíos.'
+        )
+      }
+
       const requests = buildRequests(
         jornada,
         partidos,
@@ -108,7 +128,26 @@ export function ModalCargaResultados({
     })
   }
 
-  const puedeGuardar = jornada?.id != null
+  const formSincronizado =
+    partidos.length === 0 || valores.length === partidos.length
+
+  const hayCambios = useMemo(
+    () =>
+      jornada != null &&
+      hayCambiosParaGuardarResultados(jornada, valores, resultadosVerificados),
+    [jornada, valores, resultadosVerificados]
+  )
+
+  const hayFilasIncompletas = useMemo(
+    () => hayFilasConResultadoIncompleto(partidos, valores),
+    [partidos, valores]
+  )
+
+  const puedeGuardar =
+    jornada?.id != null &&
+    formSincronizado &&
+    !hayFilasIncompletas &&
+    hayCambios
 
   const etiquetasVs =
     jornada != null ? etiquetasLocalVisitanteJornada(jornada) : null
@@ -126,7 +165,16 @@ export function ModalCargaResultados({
                 <Icono nombre='Pelota' className='size-6 shrink-0' />
                 Cargar resultados
               </DialogTitle>
-              <DialogDescription>{subtituloModal}</DialogDescription>
+              <DialogDescription>
+                {subtituloModal}
+                {partidos.length > 0 ? (
+                  <span className='mt-1.5 block text-muted-foreground'>
+                    Podés guardar solo algunas categorías (local y visitante
+                    completos), borrar resultados dejando ambos vacíos, o solo
+                    cambiar el estado de resultados verificados.
+                  </span>
+                ) : null}
+              </DialogDescription>
             </DialogHeader>
 
             <div className='mb-3 flex items-center gap-2'>

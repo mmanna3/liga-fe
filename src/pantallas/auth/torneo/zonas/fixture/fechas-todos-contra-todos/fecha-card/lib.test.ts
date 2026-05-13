@@ -2,8 +2,11 @@ import { JornadaDTO, LocalVisitanteEnum, PartidoDTO } from '@/api/clients'
 import { describe, expect, it } from 'vitest'
 import {
   buildPartidosDto,
+  buildPartidosDtoParaCargar,
   buildRequests,
-  etiquetasLocalVisitanteJornada
+  etiquetasLocalVisitanteJornada,
+  hayCambiosParaGuardarResultados,
+  hayFilasConResultadoIncompleto
 } from './lib'
 
 function makePartido(data: {
@@ -79,6 +82,161 @@ describe('buildRequests', () => {
     )
 
     expect(requests[0].resultadosVerificados).toBe(true)
+  })
+
+  it('solo envía partidos con local y visitante completos (guardado parcial)', () => {
+    const jornada = makeJornadaConPartidos(1, [
+      makePartido({ id: 10, categoriaId: 1 }),
+      makePartido({ id: 11, categoriaId: 2 })
+    ])
+    const valores = [
+      { local: '2', visitante: '0' },
+      { local: '', visitante: '' }
+    ]
+
+    const requests = buildRequests(jornada, jornada.partidos!, valores, false)
+
+    expect(requests[0].partidos).toHaveLength(1)
+    expect(requests[0].partidos[0].id).toBe(10)
+    expect(requests[0].partidos[0].resultadoLocal).toBe('2')
+    expect(requests[0].partidos[0].resultadoVisitante).toBe('0')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// buildPartidosDtoParaCargar
+// ---------------------------------------------------------------------------
+
+describe('buildPartidosDtoParaCargar', () => {
+  it('excluye filas incompletas (solo local o solo visitante)', () => {
+    const partidos = [
+      makePartido({ id: 1, categoriaId: 10 }),
+      makePartido({ id: 2, categoriaId: 11 }),
+      makePartido({ id: 3, categoriaId: 12 })
+    ]
+    const valores = [
+      { local: '1', visitante: '' },
+      { local: '', visitante: '2' },
+      { local: '0', visitante: '0' }
+    ]
+
+    const resultado = buildPartidosDtoParaCargar(partidos, valores)
+
+    expect(resultado).toHaveLength(1)
+    expect(resultado[0].id).toBe(3)
+  })
+
+  it('con valores vacío (stale), incluye solo partidos que ya tenían ambos resultados', () => {
+    const partidos = [
+      makePartido({
+        id: 1,
+        categoriaId: 10,
+        resultadoLocal: '1',
+        resultadoVisitante: '0'
+      }),
+      makePartido({
+        id: 2,
+        categoriaId: 11,
+        resultadoLocal: undefined,
+        resultadoVisitante: undefined
+      })
+    ]
+    const valores: { local: string; visitante: string }[] = []
+
+    const resultado = buildPartidosDtoParaCargar(partidos, valores)
+
+    expect(resultado).toHaveLength(1)
+    expect(resultado[0].id).toBe(1)
+  })
+
+  it('incluye limpieza cuando el usuario vacía ambos y antes había resultado', () => {
+    const partidos = [
+      makePartido({
+        id: 1,
+        categoriaId: 10,
+        resultadoLocal: '1',
+        resultadoVisitante: '0'
+      })
+    ]
+    const valores = [{ local: '', visitante: '' }]
+
+    const resultado = buildPartidosDtoParaCargar(partidos, valores)
+
+    expect(resultado).toHaveLength(1)
+    expect(resultado[0].resultadoLocal).toBe('')
+    expect(resultado[0].resultadoVisitante).toBe('')
+  })
+
+  it('no incluye fila vacía si nunca hubo resultado en servidor', () => {
+    const partidos = [makePartido({ id: 1, categoriaId: 10 })]
+    const valores = [{ local: '', visitante: '' }]
+
+    expect(buildPartidosDtoParaCargar(partidos, valores)).toHaveLength(0)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// hayFilasConResultadoIncompleto / hayCambiosParaGuardarResultados
+// ---------------------------------------------------------------------------
+
+describe('hayFilasConResultadoIncompleto', () => {
+  it('detecta fila con solo un campo cargado', () => {
+    const partidos = [makePartido({ id: 1, categoriaId: 10 })]
+    expect(
+      hayFilasConResultadoIncompleto(partidos, [{ local: '1', visitante: '' }])
+    ).toBe(true)
+    expect(
+      hayFilasConResultadoIncompleto(partidos, [{ local: '', visitante: '0' }])
+    ).toBe(true)
+  })
+
+  it('vacío o par completo no incompleto', () => {
+    const partidos = [makePartido({ id: 1, categoriaId: 10 })]
+    expect(
+      hayFilasConResultadoIncompleto(partidos, [{ local: '', visitante: '' }])
+    ).toBe(false)
+    expect(
+      hayFilasConResultadoIncompleto(partidos, [{ local: '1', visitante: '0' }])
+    ).toBe(false)
+  })
+})
+
+describe('hayCambiosParaGuardarResultados', () => {
+  it('true si cambió resultados verificados', () => {
+    const j = makeJornadaConPartidos(1, [
+      makePartido({ id: 10, categoriaId: 1 })
+    ])
+    expect(
+      hayCambiosParaGuardarResultados(j, [{ local: '', visitante: '' }], true)
+    ).toBe(true)
+  })
+
+  it('true si se borran resultados que había en servidor', () => {
+    const j = makeJornadaConPartidos(1, [
+      makePartido({
+        id: 10,
+        categoriaId: 1,
+        resultadoLocal: '1',
+        resultadoVisitante: '0'
+      })
+    ])
+    expect(
+      hayCambiosParaGuardarResultados(j, [{ local: '', visitante: '' }], false)
+    ).toBe(true)
+  })
+
+  it('false si no hay partidos en la jornada (solo flag igual)', () => {
+    const j = makeJornadaConPartidos(2, [])
+    expect(hayCambiosParaGuardarResultados(j, [], false)).toBe(false)
+  })
+
+  it('false si nada cambió respecto al servidor', () => {
+    const j = makeJornadaConPartidos(1, [
+      makePartido({ id: 10, categoriaId: 1 })
+    ])
+    expect(
+      hayCambiosParaGuardarResultados(j, [{ local: '', visitante: '' }], false)
+    ).toBe(false)
   })
 })
 
