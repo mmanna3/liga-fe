@@ -4,14 +4,12 @@ import {
   ReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO
 } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
-import { Boton } from '@/design-system/ykn-ui/boton'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle
 } from '@/design-system/base-ui/card'
-import { ListaDesplegable } from '@/design-system/ykn-ui/lista-desplegable'
 import {
   Table,
   TableBody,
@@ -20,6 +18,8 @@ import {
   TableHeader,
   TableRow
 } from '@/design-system/base-ui/table'
+import { Boton } from '@/design-system/ykn-ui/boton'
+import { ListaDesplegable } from '@/design-system/ykn-ui/lista-desplegable'
 import MensajeListaVacia from '@/design-system/ykn-ui/mensaje-lista-vacia'
 import { Fragment, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -96,9 +96,7 @@ export default function ReporteJugadoresHabilitadosPorTorneoPage() {
   return (
     <div className='space-y-4'>
       <div className='flex items-center justify-between'>
-        <h1 className='text-2xl font-bold'>
-          Jugadores habilitados por agrupador de torneo
-        </h1>
+        <h1 className='text-2xl font-bold'>Jugadores habilitados por torneo</h1>
         <Boton variant='outline' onClick={() => navigate(-1)}>
           Volver
         </Boton>
