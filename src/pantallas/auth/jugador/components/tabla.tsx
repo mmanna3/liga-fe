@@ -8,6 +8,7 @@ import { useAuth } from '@/logica-compartida/hooks/use-auth'
 import { EstadoJugador } from '@/logica-compartida/utils'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useJugadoresListaUiStore } from '../stores/use-jugadores-lista-ui-store'
+import { useTablaListaUi } from '@/logica-compartida/hooks/use-tabla-lista-ui'
 import { ColumnDef } from '@tanstack/react-table'
 import {
   Popover,
@@ -37,11 +38,7 @@ export default function TablaJugador() {
   const esAdmin = useAuth((state) => state.esAdmin)
   const filtroEstados = useJugadoresListaUiStore((s) => s.filtroEstados)
   const toggleFiltro = useJugadoresListaUiStore((s) => s.toggleFiltro)
-  const pageIndex = useJugadoresListaUiStore((s) => s.pageIndex)
-  const pageSize = useJugadoresListaUiStore((s) => s.pageSize)
-  const actualizarPaginacion = useJugadoresListaUiStore(
-    (s) => s.actualizarPaginacion
-  )
+  const tablaListaUi = useTablaListaUi(useJugadoresListaUiStore)
 
   const { data, isLoading, isError } = useApiQuery({
     key: ['jugadores', filtroEstados.toString()],
@@ -183,8 +180,7 @@ export default function TablaJugador() {
       estaCargando={isLoading}
       hayError={isError}
       filtro={filtro}
-      pagination={{ pageIndex, pageSize }}
-      onPaginationChange={actualizarPaginacion}
+      {...tablaListaUi}
       onRowClick={(row) =>
         navigate(`${rutasNavegacion.detalleJugador}/${row.original.id}`)
       }

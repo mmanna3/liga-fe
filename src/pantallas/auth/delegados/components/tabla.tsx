@@ -5,14 +5,15 @@ import useApiQuery from '@/api/hooks/use-api-query'
 import { Badge } from '@/design-system/base-ui/badge'
 import Filtro from './filtro'
 import Tabla from '@/design-system/ykn-ui/tabla'
+import { useTablaListaUi } from '@/logica-compartida/hooks/use-tabla-lista-ui'
 import {
   estadoBadgeClassDelegado,
   EstadoDelegado
 } from '@/logica-compartida/utils'
 import { rutasNavegacion } from '@/ruteo/rutas'
-import { useUrlFiltroEstados } from '@/hooks/use-url-filtro-estados'
+import { useDelegadosListaUiStore } from '../stores/use-delegados-lista-ui-store'
 import { ColumnDef } from '@tanstack/react-table'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const estadoConfigArray = [
   { key: EstadoDelegado.PendienteDeAprobacion, label: 'Pendiente' },
@@ -21,8 +22,9 @@ const estadoConfigArray = [
 
 export default function TablaDelegados() {
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  const { filtroEstados, toggleFiltro } = useUrlFiltroEstados<EstadoDelegado>()
+  const filtroEstados = useDelegadosListaUiStore((s) => s.filtroEstados)
+  const toggleFiltro = useDelegadosListaUiStore((s) => s.toggleFiltro)
+  const tablaListaUi = useTablaListaUi(useDelegadosListaUiStore)
 
   const { data, isLoading, isError } = useApiQuery({
     key: ['delegados', filtroEstados.toString()],
@@ -34,8 +36,6 @@ export default function TablaDelegados() {
       ),
     refetchInterval: 60_000
   })
-
-  const search = searchParams.toString() ? `?${searchParams.toString()}` : ''
 
   const columnas: ColumnDef<DelegadoDTO>[] = [
     {
@@ -137,10 +137,9 @@ export default function TablaDelegados() {
           opciones={estadoConfigArray}
         />
       }
+      {...tablaListaUi}
       onRowClick={(row) =>
-        navigate(
-          `${rutasNavegacion.detalleDelegado}/${row.original.id}${search}`
-        )
+        navigate(`${rutasNavegacion.detalleDelegado}/${row.original.id}`)
       }
     />
   )

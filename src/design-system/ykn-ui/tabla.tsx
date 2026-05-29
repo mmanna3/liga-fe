@@ -42,6 +42,9 @@ type TablaProps<T> = {
   /** Paginación controlada (p. ej. persistida en Zustand). Requiere `onPaginationChange`. */
   pagination?: PaginationState
   onPaginationChange?: OnChangeFn<PaginationState>
+  /** Búsqueda controlada (p. ej. persistida en Zustand). Requiere `onGlobalFilterChange`. */
+  globalFilter?: string
+  onGlobalFilterChange?: OnChangeFn<string>
   onRowClick?: (row: Row<T>) => void
   /** Contenido del filtro (ej. botón con Popover) alineado con la búsqueda */
   filtro?: React.ReactNode
@@ -59,11 +62,13 @@ export default function Tabla<T>({
   pageSizeDefault = 10,
   pagination: paginationExterna,
   onPaginationChange: onPaginationChangeExterna,
+  globalFilter: globalFilterExterno,
+  onGlobalFilterChange: onGlobalFilterChangeExterno,
   onRowClick,
   filtro,
   debajoDeBusqueda
 }: TablaProps<T>) {
-  const [globalFilter, setGlobalFilter] = useState('')
+  const [globalFilterInterno, setGlobalFilterInterno] = useState('')
   const [sorting, setSorting] = useState<SortingState>([])
   const [paginationInterna, setPaginationInterna] = useState<PaginationState>(
     () => ({
@@ -81,6 +86,15 @@ export default function Tabla<T>({
     ? onPaginationChangeExterna
     : setPaginationInterna
 
+  const busquedaControlada =
+    globalFilterExterno != null && onGlobalFilterChangeExterno != null
+  const globalFilter = busquedaControlada
+    ? globalFilterExterno
+    : globalFilterInterno
+  const onGlobalFilterChange = busquedaControlada
+    ? onGlobalFilterChangeExterno
+    : setGlobalFilterInterno
+
   const table = useReactTable({
     data,
     columns: columnas,
@@ -90,6 +104,8 @@ export default function Tabla<T>({
     getFilteredRowModel: getFilteredRowModel(),
     /** Con paginación externa, no resetear al cambiar `data` (p. ej. refetch de React Query). */
     autoResetPageIndex: !paginacionControlada,
+    /** Con búsqueda externa, la página se reinicia desde el store al filtrar. */
+    autoResetAll: !busquedaControlada,
     initialState: {
       pagination: {
         pageSize: pageSizeDefault
@@ -102,7 +118,7 @@ export default function Tabla<T>({
       pagination
     },
     onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
+    onGlobalFilterChange,
     onPaginationChange,
     onRowSelectionChange,
     enableRowSelection: true
@@ -114,7 +130,7 @@ export default function Tabla<T>({
         <Input
           placeholder='Buscar...'
           value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
+          onChange={(e) => onGlobalFilterChange(e.target.value)}
           className='w-64'
         />
         {filtro}

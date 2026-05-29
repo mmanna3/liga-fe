@@ -1,6 +1,8 @@
 import { EquipoDTO, JugadorDelEquipoDTO } from '@/api/clients'
 import Tabla from '@/design-system/ykn-ui/tabla'
+import { useTablaListaUi } from '@/logica-compartida/hooks/use-tabla-lista-ui'
 import { rutasNavegacion } from '@/ruteo/rutas'
+import { useEquiposListaUiStore } from '../stores/use-equipos-lista-ui-store'
 import { ColumnDef } from '@tanstack/react-table'
 import { useNavigate } from 'react-router-dom'
 
@@ -16,6 +18,7 @@ export default function TablaEquipo({
   isError
 }: ITablaEquipo) {
   const navigate = useNavigate()
+  const tablaListaUi = useTablaListaUi(useEquiposListaUiStore)
 
   const columnas: ColumnDef<EquipoDTO>[] = [
     {
@@ -59,6 +62,7 @@ export default function TablaEquipo({
       data={data || []}
       estaCargando={isLoading}
       hayError={isError}
+      {...tablaListaUi}
       onRowClick={(row) =>
         navigate(`${rutasNavegacion.detalleEquipo}/${row.original.id}`)
       }

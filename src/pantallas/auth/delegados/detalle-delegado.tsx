@@ -28,7 +28,7 @@ export default function DetalleDelegado() {
   const navigate = useNavigate()
   const location = useLocation()
   const { id } = useParams<{ id: string }>()
-  const pathDelegados = `${rutasNavegacion.delegados}${location.search}`
+  const pathDelegados = rutasNavegacion.delegados
 
   const {
     data: delegado,
