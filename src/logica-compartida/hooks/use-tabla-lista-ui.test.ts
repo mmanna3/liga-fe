@@ -44,4 +44,23 @@ describe('useTablaListaUi', () => {
     })
     expect(useListaUiStore.getState().pageIndex).toBe(2)
   })
+
+  it('expone onLimpiar que reinicia el store', () => {
+    useListaUiStore.getState().setBusqueda('racing')
+    useListaUiStore.getState().toggleFiltro(3)
+    useListaUiStore
+      .getState()
+      .actualizarPaginacion({ pageIndex: 2, pageSize: 10 })
+
+    const { result } = renderHook(() => useTablaListaUi(useListaUiStore))
+
+    act(() => {
+      result.current.onLimpiar()
+    })
+
+    const s = useListaUiStore.getState()
+    expect(s.busqueda).toBe('')
+    expect(s.filtroEstados).toEqual([])
+    expect(s.pageIndex).toBe(0)
+  })
 })

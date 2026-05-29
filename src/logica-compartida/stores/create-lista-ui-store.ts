@@ -22,6 +22,7 @@ export type ListaUiState<TFiltro extends number = number> = {
   actualizarBusqueda: (updater: Updater<string>) => void
   toggleFiltro: (estado: TFiltro) => void
   actualizarPaginacion: (updater: Updater<ListaUiPaginacion>) => void
+  limpiar: () => void
   resetParaTests: () => void
 }
 
@@ -68,6 +69,12 @@ export function createListaUiStore<TFiltro extends number = number>(
         }
       })
     },
+    limpiar: () =>
+      set({
+        busqueda: '',
+        filtroEstados: [],
+        pageIndex: 0
+      }),
     resetParaTests: () => set(estadoInicial)
   }))
 }

@@ -61,6 +61,23 @@ describe('createListaUiStore', () => {
     expect(useListaUiStore.getState().pageIndex).toBe(3)
   })
 
+  it('limpiar borra búsqueda, filtros y vuelve a la página 1', () => {
+    useListaUiStore.getState().setBusqueda('boca')
+    useListaUiStore.getState().toggleFiltro(1)
+    useListaUiStore.getState().toggleFiltro(2)
+    useListaUiStore
+      .getState()
+      .actualizarPaginacion({ pageIndex: 4, pageSize: 10 })
+
+    useListaUiStore.getState().limpiar()
+
+    const s = useListaUiStore.getState()
+    expect(s.busqueda).toBe('')
+    expect(s.filtroEstados).toEqual([])
+    expect(s.pageIndex).toBe(0)
+    expect(s.pageSize).toBe(10)
+  })
+
   it('resetParaTests vuelve al estado inicial', () => {
     useListaUiStore.getState().setBusqueda('boca')
     useListaUiStore.getState().toggleFiltro(9)

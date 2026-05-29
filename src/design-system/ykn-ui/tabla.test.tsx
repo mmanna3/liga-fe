@@ -66,4 +66,21 @@ describe('Tabla con estado de lista controlado', () => {
     expect(useListaUiStore.getState().busqueda).toBe('Item 21')
     expect(useListaUiStore.getState().pageIndex).toBe(0)
   })
+
+  it('muestra botón limpiar y reinicia búsqueda y página', () => {
+    useListaUiStore.getState().setBusqueda('Item 3')
+    useListaUiStore
+      .getState()
+      .actualizarPaginacion({ pageIndex: 2, pageSize: 10 })
+
+    render(<TablaConEstadoPersistido />)
+
+    fireEvent.click(screen.getByTitle('Limpiar búsqueda y filtros'))
+
+    expect(useListaUiStore.getState().busqueda).toBe('')
+    expect(useListaUiStore.getState().pageIndex).toBe(0)
+    expect(
+      (screen.getByPlaceholderText('Buscar...') as HTMLInputElement).value
+    ).toBe('')
+  })
 })

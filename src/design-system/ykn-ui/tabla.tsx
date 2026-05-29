@@ -48,6 +48,8 @@ type TablaProps<T> = {
   onRowClick?: (row: Row<T>) => void
   /** Contenido del filtro (ej. botón con Popover) alineado con la búsqueda */
   filtro?: React.ReactNode
+  /** Reinicia búsqueda, filtros y página (muestra botón de limpiar a la derecha). */
+  onLimpiar?: () => void
   /** Entre la barra de búsqueda y la tabla */
   debajoDeBusqueda?: React.ReactNode
 }
@@ -66,6 +68,7 @@ export default function Tabla<T>({
   onGlobalFilterChange: onGlobalFilterChangeExterno,
   onRowClick,
   filtro,
+  onLimpiar,
   debajoDeBusqueda
 }: TablaProps<T>) {
   const [globalFilterInterno, setGlobalFilterInterno] = useState('')
@@ -134,6 +137,17 @@ export default function Tabla<T>({
           className='w-64'
         />
         {filtro}
+        {onLimpiar && (
+          <Boton
+            type='button'
+            variant='outline'
+            title='Limpiar búsqueda y filtros'
+            onClick={onLimpiar}
+            className='inline-flex h-9 w-9 shrink-0 items-center justify-center p-0'
+          >
+            <Icono nombre='limpiar' className='h-4 w-4 shrink-0' />
+          </Boton>
+        )}
       </div>
 
       {debajoDeBusqueda}

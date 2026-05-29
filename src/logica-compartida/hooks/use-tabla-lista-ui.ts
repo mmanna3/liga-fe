@@ -15,11 +15,13 @@ export function useTablaListaUi<TFiltro extends number = number>(
   const pageIndex = useStore((s) => s.pageIndex)
   const pageSize = useStore((s) => s.pageSize)
   const actualizarPaginacion = useStore((s) => s.actualizarPaginacion)
+  const limpiar = useStore((s) => s.limpiar)
 
   return {
     globalFilter: busqueda,
     onGlobalFilterChange: actualizarBusqueda as OnChangeFn<string>,
     pagination: { pageIndex, pageSize } satisfies PaginationState,
-    onPaginationChange: actualizarPaginacion
+    onPaginationChange: actualizarPaginacion,
+    onLimpiar: limpiar
   }
 }
