@@ -1,5 +1,8 @@
 import { api } from '@/api/api'
-import { ReporteJugadoresHabilitadosPorTorneoDTO } from '@/api/clients'
+import {
+  ReporteJugadoresHabilitadosFilaDTO,
+  ReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO
+} from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import {
@@ -18,7 +21,7 @@ import {
   TableRow
 } from '@/design-system/base-ui/table'
 import MensajeListaVacia from '@/design-system/ykn-ui/mensaje-lista-vacia'
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const columnasMeses = [
@@ -47,16 +50,28 @@ const anios = () => {
 }
 
 const obtenerValorMes = (
-  item: ReporteJugadoresHabilitadosPorTorneoDTO,
+  item: ReporteJugadoresHabilitadosFilaDTO,
   mes: ClaveMes
 ) => item[mes] ?? 0
+
+const sumarMeses = (filas: ReporteJugadoresHabilitadosFilaDTO[]) =>
+  columnasMeses.reduce(
+    (acc, { key }) => {
+      acc[key] = filas.reduce(
+        (sum, fila) => sum + obtenerValorMes(fila, key),
+        0
+      )
+      return acc
+    },
+    {} as Record<ClaveMes, number>
+  )
 
 export default function ReporteJugadoresHabilitadosPorTorneoPage() {
   const navigate = useNavigate()
   const [anio, setAnio] = useState<string>(new Date().getFullYear() + '')
 
   const { data, isLoading, refetch } = useApiQuery<
-    ReporteJugadoresHabilitadosPorTorneoDTO[]
+    ReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO[]
   >({
     key: ['reporte-jugadores-habilitados-por-torneo', anio],
     fn: async () => {
@@ -66,22 +81,24 @@ export default function ReporteJugadoresHabilitadosPorTorneoPage() {
     }
   })
 
-  const totalesPorMes = columnasMeses.reduce(
-    (acc, { key }) => {
-      acc[key] =
-        data?.reduce((sum, item) => sum + obtenerValorMes(item, key), 0) ?? 0
-      return acc
-    },
-    {} as Record<ClaveMes, number>
+  const todasLasFilas =
+    data?.flatMap((agrupador) => agrupador.torneos ?? []) ?? []
+
+  const totalesPorMes = sumarMeses(todasLasFilas)
+
+  const totalGeneral = todasLasFilas.reduce(
+    (sum, item) => sum + (item.totalEnElAnio ?? 0),
+    0
   )
 
-  const totalGeneral =
-    data?.reduce((sum, item) => sum + (item.totalEnElAnio ?? 0), 0) ?? 0
+  const hayDatos = data && data.length > 0
 
   return (
     <div className='space-y-4'>
       <div className='flex items-center justify-between'>
-        <h1 className='text-2xl font-bold'>Jugadores habilitados por torneo</h1>
+        <h1 className='text-2xl font-bold'>
+          Jugadores habilitados por agrupador de torneo
+        </h1>
         <Boton variant='outline' onClick={() => navigate(-1)}>
           Volver
         </Boton>
@@ -121,11 +138,12 @@ export default function ReporteJugadoresHabilitadosPorTorneoPage() {
         <CardContent>
           {isLoading ? (
             <div className='flex justify-center p-4'>Cargando...</div>
-          ) : data && data.length > 0 ? (
+          ) : hayDatos ? (
             <div className='overflow-x-auto'>
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>Agrupador de torneo</TableHead>
                     <TableHead>Torneo</TableHead>
                     {columnasMeses.map(({ key, label }) => (
                       <TableHead key={key} className='text-right'>
@@ -138,26 +156,53 @@ export default function ReporteJugadoresHabilitadosPorTorneoPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.map(
-                    (
-                      item: ReporteJugadoresHabilitadosPorTorneoDTO,
-                      index: number
-                    ) => (
-                      <TableRow key={index}>
-                        <TableCell>{item.nombreTorneo}</TableCell>
-                        {columnasMeses.map(({ key }) => (
-                          <TableCell key={key} className='text-right'>
-                            {obtenerValorMes(item, key)}
-                          </TableCell>
-                        ))}
-                        <TableCell className='text-right font-medium'>
-                          {item.totalEnElAnio}
-                        </TableCell>
-                      </TableRow>
+                  {data!.map((agrupador, agrupadorIndex) => {
+                    const torneos = agrupador.torneos ?? []
+                    const subtotales = sumarMeses(torneos)
+                    const subtotalAnual = torneos.reduce(
+                      (sum, torneo) => sum + (torneo.totalEnElAnio ?? 0),
+                      0
                     )
-                  )}
+
+                    return (
+                      <Fragment key={agrupadorIndex}>
+                        {torneos.map((torneo, torneoIndex) => (
+                          <TableRow key={`${agrupadorIndex}-${torneoIndex}`}>
+                            {torneoIndex === 0 && (
+                              <TableCell
+                                rowSpan={torneos.length + 1}
+                                className='align-top font-medium bg-slate-50'
+                              >
+                                {agrupador.nombreAgrupador}
+                              </TableCell>
+                            )}
+                            <TableCell>{torneo.nombreTorneo}</TableCell>
+                            {columnasMeses.map(({ key }) => (
+                              <TableCell key={key} className='text-right'>
+                                {obtenerValorMes(torneo, key)}
+                              </TableCell>
+                            ))}
+                            <TableCell className='text-right font-medium'>
+                              {torneo.totalEnElAnio}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        <TableRow className='font-semibold bg-slate-50'>
+                          <TableCell>Subtotal</TableCell>
+                          {columnasMeses.map(({ key }) => (
+                            <TableCell key={key} className='text-right'>
+                              {subtotales[key]}
+                            </TableCell>
+                          ))}
+                          <TableCell className='text-right'>
+                            {subtotalAnual}
+                          </TableCell>
+                        </TableRow>
+                      </Fragment>
+                    )
+                  })}
                   <TableRow className='font-bold'>
-                    <TableCell>Total</TableCell>
+                    <TableCell colSpan={2}>Total</TableCell>
                     {columnasMeses.map(({ key }) => (
                       <TableCell key={key} className='text-right'>
                         {totalesPorMes[key]}

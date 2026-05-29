@@ -6247,6 +6247,105 @@ export class Client {
   }
 
   /**
+   * @return OK
+   */
+  sponsorsWebPublica(): Promise<SponsorWebPublicaPublicoDTO[]> {
+    let url_ = this.baseUrl + '/api/publico/sponsors-web-publica'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processSponsorsWebPublica(_response)
+    })
+  }
+
+  protected processSponsorsWebPublica(
+    response: Response
+  ): Promise<SponsorWebPublicaPublicoDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(SponsorWebPublicaPublicoDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<SponsorWebPublicaPublicoDTO[]>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  sponsorLogo(id: number): Promise<void> {
+    let url_ = this.baseUrl + '/api/publico/sponsor-logo/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {}
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processSponsorLogo(_response)
+    })
+  }
+
+  protected processSponsorLogo(response: Response): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
    * @param mes (optional)
    * @param anio (optional)
    * @return OK
@@ -6319,7 +6418,7 @@ export class Client {
    */
   obtenerReporteJugadoresHabilitadosPorTorneo(
     anio: number | undefined
-  ): Promise<ReporteJugadoresHabilitadosPorTorneoDTO[]> {
+  ): Promise<ReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO[]> {
     let url_ =
       this.baseUrl +
       '/api/Reporte/obtener-reporte-jugadores-habilitados-por-torneo?'
@@ -6342,7 +6441,7 @@ export class Client {
 
   protected processObtenerReporteJugadoresHabilitadosPorTorneo(
     response: Response
-  ): Promise<ReporteJugadoresHabilitadosPorTorneoDTO[]> {
+  ): Promise<ReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO[]> {
     const status = response.status
     let _headers: any = {}
     if (response.headers && response.headers.forEach) {
@@ -6359,7 +6458,7 @@ export class Client {
           result200 = [] as any
           for (let item of resultData200)
             result200!.push(
-              ReporteJugadoresHabilitadosPorTorneoDTO.fromJS(item)
+              ReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO.fromJS(item)
             )
         } else {
           result200 = <any>null
@@ -6376,9 +6475,281 @@ export class Client {
         )
       })
     }
-    return Promise.resolve<ReporteJugadoresHabilitadosPorTorneoDTO[]>(
-      null as any
-    )
+    return Promise.resolve<
+      ReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO[]
+    >(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  sponsorWebPublicaPOST(
+    body: CrearSponsorWebPublicaDTO | undefined
+  ): Promise<SponsorWebPublicaDTO> {
+    let url_ = this.baseUrl + '/api/SponsorWebPublica'
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processSponsorWebPublicaPOST(_response)
+    })
+  }
+
+  protected processSponsorWebPublicaPOST(
+    response: Response
+  ): Promise<SponsorWebPublicaDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = SponsorWebPublicaDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<SponsorWebPublicaDTO>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  sponsorWebPublicaAll(): Promise<SponsorWebPublicaDTO[]> {
+    let url_ = this.baseUrl + '/api/SponsorWebPublica'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processSponsorWebPublicaAll(_response)
+    })
+  }
+
+  protected processSponsorWebPublicaAll(
+    response: Response
+  ): Promise<SponsorWebPublicaDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(SponsorWebPublicaDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<SponsorWebPublicaDTO[]>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  sponsorWebPublicaGET(id: number): Promise<SponsorWebPublicaDTO> {
+    let url_ = this.baseUrl + '/api/SponsorWebPublica/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processSponsorWebPublicaGET(_response)
+    })
+  }
+
+  protected processSponsorWebPublicaGET(
+    response: Response
+  ): Promise<SponsorWebPublicaDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = SponsorWebPublicaDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<SponsorWebPublicaDTO>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  sponsorWebPublicaPUT(
+    id: number,
+    body: SponsorWebPublicaDTO | undefined
+  ): Promise<void> {
+    let url_ = this.baseUrl + '/api/SponsorWebPublica/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processSponsorWebPublicaPUT(_response)
+    })
+  }
+
+  protected processSponsorWebPublicaPUT(response: Response): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  sponsorWebPublicaDELETE(id: number): Promise<number> {
+    let url_ = this.baseUrl + '/api/SponsorWebPublica/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'DELETE',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processSponsorWebPublicaDELETE(_response)
+    })
+  }
+
+  protected processSponsorWebPublicaDELETE(
+    response: Response
+  ): Promise<number> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = resultData200 !== undefined ? resultData200 : <any>null
+
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<number>(null as any)
   }
 
   /**
@@ -9057,6 +9428,58 @@ export class ConfiguracionDTO implements IConfiguracionDTO {
 export interface IConfiguracionDTO {
   id?: number
   habilitacionFichajeId?: number
+}
+
+export class CrearSponsorWebPublicaDTO implements ICrearSponsorWebPublicaDTO {
+  id?: number
+  nombre!: string
+  orden?: number
+  imagen?: string | undefined
+  imagenBase64!: string
+
+  constructor(data?: ICrearSponsorWebPublicaDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.nombre = _data['nombre']
+      this.orden = _data['orden']
+      this.imagen = _data['imagen']
+      this.imagenBase64 = _data['imagenBase64']
+    }
+  }
+
+  static fromJS(data: any): CrearSponsorWebPublicaDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new CrearSponsorWebPublicaDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['nombre'] = this.nombre
+    data['orden'] = this.orden
+    data['imagen'] = this.imagen
+    data['imagenBase64'] = this.imagenBase64
+    return data
+  }
+}
+
+export interface ICrearSponsorWebPublicaDTO {
+  id?: number
+  nombre: string
+  orden?: number
+  imagen?: string | undefined
+  imagenBase64: string
 }
 
 export class CrearTorneoDTO implements ICrearTorneoDTO {
@@ -12138,7 +12561,7 @@ export interface IRechazarJugadorDTO {
   motivo?: string | undefined
 }
 
-export class ReporteJugadoresHabilitadosPorTorneoDTO implements IReporteJugadoresHabilitadosPorTorneoDTO {
+export class ReporteJugadoresHabilitadosFilaDTO implements IReporteJugadoresHabilitadosFilaDTO {
   nombreTorneo?: string | undefined
   enero?: number
   febrero?: number
@@ -12154,7 +12577,7 @@ export class ReporteJugadoresHabilitadosPorTorneoDTO implements IReporteJugadore
   diciembre?: number
   totalEnElAnio?: number
 
-  constructor(data?: IReporteJugadoresHabilitadosPorTorneoDTO) {
+  constructor(data?: IReporteJugadoresHabilitadosFilaDTO) {
     if (data) {
       for (var property in data) {
         if (data.hasOwnProperty(property))
@@ -12182,9 +12605,9 @@ export class ReporteJugadoresHabilitadosPorTorneoDTO implements IReporteJugadore
     }
   }
 
-  static fromJS(data: any): ReporteJugadoresHabilitadosPorTorneoDTO {
+  static fromJS(data: any): ReporteJugadoresHabilitadosFilaDTO {
     data = typeof data === 'object' ? data : {}
-    let result = new ReporteJugadoresHabilitadosPorTorneoDTO()
+    let result = new ReporteJugadoresHabilitadosFilaDTO()
     result.init(data)
     return result
   }
@@ -12209,7 +12632,7 @@ export class ReporteJugadoresHabilitadosPorTorneoDTO implements IReporteJugadore
   }
 }
 
-export interface IReporteJugadoresHabilitadosPorTorneoDTO {
+export interface IReporteJugadoresHabilitadosFilaDTO {
   nombreTorneo?: string | undefined
   enero?: number
   febrero?: number
@@ -12224,6 +12647,53 @@ export interface IReporteJugadoresHabilitadosPorTorneoDTO {
   noviembre?: number
   diciembre?: number
   totalEnElAnio?: number
+}
+
+export class ReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO implements IReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO {
+  nombreAgrupador?: string | undefined
+  torneos?: ReporteJugadoresHabilitadosFilaDTO[] | undefined
+
+  constructor(data?: IReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.nombreAgrupador = _data['nombreAgrupador']
+      if (Array.isArray(_data['torneos'])) {
+        this.torneos = [] as any
+        for (let item of _data['torneos'])
+          this.torneos!.push(ReporteJugadoresHabilitadosFilaDTO.fromJS(item))
+      }
+    }
+  }
+
+  static fromJS(data: any): ReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new ReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['nombreAgrupador'] = this.nombreAgrupador
+    if (Array.isArray(this.torneos)) {
+      data['torneos'] = []
+      for (let item of this.torneos) data['torneos'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface IReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO {
+  nombreAgrupador?: string | undefined
+  torneos?: ReporteJugadoresHabilitadosFilaDTO[] | undefined
 }
 
 export class ReportePagosDTO implements IReportePagosDTO {
@@ -12312,6 +12782,98 @@ export class ResultadoCategoriaDTO implements IResultadoCategoriaDTO {
 export interface IResultadoCategoriaDTO {
   categoria?: string | undefined
   resultado?: string | undefined
+}
+
+export class SponsorWebPublicaDTO implements ISponsorWebPublicaDTO {
+  id?: number
+  nombre!: string
+  orden?: number
+  imagen?: string | undefined
+
+  constructor(data?: ISponsorWebPublicaDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.nombre = _data['nombre']
+      this.orden = _data['orden']
+      this.imagen = _data['imagen']
+    }
+  }
+
+  static fromJS(data: any): SponsorWebPublicaDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new SponsorWebPublicaDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['nombre'] = this.nombre
+    data['orden'] = this.orden
+    data['imagen'] = this.imagen
+    return data
+  }
+}
+
+export interface ISponsorWebPublicaDTO {
+  id?: number
+  nombre: string
+  orden?: number
+  imagen?: string | undefined
+}
+
+export class SponsorWebPublicaPublicoDTO implements ISponsorWebPublicaPublicoDTO {
+  id?: number
+  nombre?: string | undefined
+  logoUrl?: string | undefined
+
+  constructor(data?: ISponsorWebPublicaPublicoDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.nombre = _data['nombre']
+      this.logoUrl = _data['logoUrl']
+    }
+  }
+
+  static fromJS(data: any): SponsorWebPublicaPublicoDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new SponsorWebPublicaPublicoDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['nombre'] = this.nombre
+    data['logoUrl'] = this.logoUrl
+    return data
+  }
+}
+
+export interface ISponsorWebPublicaPublicoDTO {
+  id?: number
+  nombre?: string | undefined
+  logoUrl?: string | undefined
 }
 
 export enum TipoDeFaseEnum {

@@ -44,10 +44,11 @@ export default function ReportesPage() {
           <CardHeader className='bg-slate-50'>
             <CardTitle className='flex items-center gap-2'>
               <Icono nombre='Reportes' className='h-5 w-5' />
-              Jugadores habilitados por torneo
+              Jugadores habilitados por agrupador de torneo
             </CardTitle>
             <CardDescription>
-              Ver la cantidad de jugadores habilitados por torneo y mes del año
+              Ver jugadores habilitados por agrupador de torneo, con torneos
+              desglosados y totales mensuales del año
             </CardDescription>
           </CardHeader>
           <CardContent className='p-6'>
