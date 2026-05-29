@@ -6193,6 +6193,60 @@ export class Client {
   }
 
   /**
+   * @return OK
+   */
+  escudosClubes(): Promise<EscudoClubDTO[]> {
+    let url_ = this.baseUrl + '/api/publico/escudos-clubes'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processEscudosClubes(_response)
+    })
+  }
+
+  protected processEscudosClubes(response: Response): Promise<EscudoClubDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(EscudoClubDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<EscudoClubDTO[]>(null as any)
+  }
+
+  /**
    * @param mes (optional)
    * @param anio (optional)
    * @return OK
@@ -6257,6 +6311,74 @@ export class Client {
       })
     }
     return Promise.resolve<ReportePagosDTO[]>(null as any)
+  }
+
+  /**
+   * @param anio (optional)
+   * @return OK
+   */
+  obtenerReporteJugadoresHabilitadosPorTorneo(
+    anio: number | undefined
+  ): Promise<ReporteJugadoresHabilitadosPorTorneoDTO[]> {
+    let url_ =
+      this.baseUrl +
+      '/api/Reporte/obtener-reporte-jugadores-habilitados-por-torneo?'
+    if (anio === null) throw new Error("The parameter 'anio' cannot be null.")
+    else if (anio !== undefined)
+      url_ += 'anio=' + encodeURIComponent('' + anio) + '&'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processObtenerReporteJugadoresHabilitadosPorTorneo(_response)
+    })
+  }
+
+  protected processObtenerReporteJugadoresHabilitadosPorTorneo(
+    response: Response
+  ): Promise<ReporteJugadoresHabilitadosPorTorneoDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(
+              ReporteJugadoresHabilitadosPorTorneoDTO.fromJS(item)
+            )
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<ReporteJugadoresHabilitadosPorTorneoDTO[]>(
+      null as any
+    )
   }
 
   /**
@@ -9787,6 +9909,50 @@ export interface IEquiposDelDelegadoDTO {
   clubsConEquipos?: ClubConEquiposDTO[] | undefined
 }
 
+export class EscudoClubDTO implements IEscudoClubDTO {
+  clubId?: number
+  nombre?: string | undefined
+  escudo?: string | undefined
+
+  constructor(data?: IEscudoClubDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.clubId = _data['clubId']
+      this.nombre = _data['nombre']
+      this.escudo = _data['escudo']
+    }
+  }
+
+  static fromJS(data: any): EscudoClubDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new EscudoClubDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['clubId'] = this.clubId
+    data['nombre'] = this.nombre
+    data['escudo'] = this.escudo
+    return data
+  }
+}
+
+export interface IEscudoClubDTO {
+  clubId?: number
+  nombre?: string | undefined
+  escudo?: string | undefined
+}
+
 export class EstadoDelegadoDTO implements IEstadoDelegadoDTO {
   id?: number
   estado!: string
@@ -11970,6 +12136,94 @@ export interface IRechazarJugadorDTO {
   jugadorId?: number
   jugadorEquipoId?: number
   motivo?: string | undefined
+}
+
+export class ReporteJugadoresHabilitadosPorTorneoDTO implements IReporteJugadoresHabilitadosPorTorneoDTO {
+  nombreTorneo?: string | undefined
+  enero?: number
+  febrero?: number
+  marzo?: number
+  abril?: number
+  mayo?: number
+  junio?: number
+  julio?: number
+  agosto?: number
+  septiembre?: number
+  octubre?: number
+  noviembre?: number
+  diciembre?: number
+  totalEnElAnio?: number
+
+  constructor(data?: IReporteJugadoresHabilitadosPorTorneoDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.nombreTorneo = _data['nombreTorneo']
+      this.enero = _data['enero']
+      this.febrero = _data['febrero']
+      this.marzo = _data['marzo']
+      this.abril = _data['abril']
+      this.mayo = _data['mayo']
+      this.junio = _data['junio']
+      this.julio = _data['julio']
+      this.agosto = _data['agosto']
+      this.septiembre = _data['septiembre']
+      this.octubre = _data['octubre']
+      this.noviembre = _data['noviembre']
+      this.diciembre = _data['diciembre']
+      this.totalEnElAnio = _data['totalEnElAnio']
+    }
+  }
+
+  static fromJS(data: any): ReporteJugadoresHabilitadosPorTorneoDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new ReporteJugadoresHabilitadosPorTorneoDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['nombreTorneo'] = this.nombreTorneo
+    data['enero'] = this.enero
+    data['febrero'] = this.febrero
+    data['marzo'] = this.marzo
+    data['abril'] = this.abril
+    data['mayo'] = this.mayo
+    data['junio'] = this.junio
+    data['julio'] = this.julio
+    data['agosto'] = this.agosto
+    data['septiembre'] = this.septiembre
+    data['octubre'] = this.octubre
+    data['noviembre'] = this.noviembre
+    data['diciembre'] = this.diciembre
+    data['totalEnElAnio'] = this.totalEnElAnio
+    return data
+  }
+}
+
+export interface IReporteJugadoresHabilitadosPorTorneoDTO {
+  nombreTorneo?: string | undefined
+  enero?: number
+  febrero?: number
+  marzo?: number
+  abril?: number
+  mayo?: number
+  junio?: number
+  julio?: number
+  agosto?: number
+  septiembre?: number
+  octubre?: number
+  noviembre?: number
+  diciembre?: number
+  totalEnElAnio?: number
 }
 
 export class ReportePagosDTO implements IReportePagosDTO {

@@ -19,6 +19,7 @@ import Jugador from '@/pantallas/auth/jugador/jugador'
 import SuspenderActivar from '@/pantallas/auth/jugador/suspender-activar'
 import ReportesPage from '@/pantallas/auth/reportes'
 import ReportePagosPage from '@/pantallas/auth/reportes/pagos'
+import ReporteJugadoresHabilitadosPorTorneoPage from '@/pantallas/auth/reportes/jugadores-habilitados-por-torneo'
 import AgrupadorTorneo from '@/pantallas/auth/torneo/agrupador-torneo/agrupador-torneo'
 import CrearAgrupadorTorneo from '@/pantallas/auth/torneo/agrupador-torneo/crear-agrupador-torneo'
 import EditarAgrupadorTorneo from '@/pantallas/auth/torneo/agrupador-torneo/editar-agrupador-torneo'
@@ -106,6 +107,10 @@ export const mapaRutasComponentes = [
       },
       { path: rutas.reportes, element: <ReportesPage /> },
       { path: rutas.reportePagos, element: <ReportePagosPage /> },
+      {
+        path: rutas.reporteJugadoresHabilitadosPorTorneo,
+        element: <ReporteJugadoresHabilitadosPorTorneoPage />
+      },
       { path: rutas.configuracion, element: <Configuracion /> },
       { path: rutas.generacionDeFixtures, element: <GeneracionDeFixtures /> },
       {

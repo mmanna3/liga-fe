@@ -40,6 +40,27 @@ export default function ReportesPage() {
             </Boton>
           </CardContent>
         </Card>
+        <Card className='overflow-hidden'>
+          <CardHeader className='bg-slate-50'>
+            <CardTitle className='flex items-center gap-2'>
+              <Icono nombre='Reportes' className='h-5 w-5' />
+              Jugadores habilitados por torneo
+            </CardTitle>
+            <CardDescription>
+              Ver la cantidad de jugadores habilitados por torneo y mes del año
+            </CardDescription>
+          </CardHeader>
+          <CardContent className='p-6'>
+            <Boton
+              onClick={() =>
+                navigate(rutasNavegacion.reporteJugadoresHabilitadosPorTorneo)
+              }
+              className='w-full'
+            >
+              Ver Reporte
+            </Boton>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )
