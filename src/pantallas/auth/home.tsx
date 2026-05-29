@@ -1,7 +1,7 @@
 export default function Home() {
   return (
-    <div className='flex flex-1 items-center justify-center'>
-      <div className='flex flex-col items-center gap-6 rounded-2xl border border-slate-200/80 bg-white px-10 py-12 shadow-lg sm:px-16 sm:py-14'>
+    <div className='flex flex-1 min-h-0 w-full justify-center'>
+      <div className='flex h-full w-full max-w-2xl flex-col items-center justify-center gap-8 rounded-2xl border border-slate-200/80 bg-white px-12 py-12 shadow-lg sm:px-20'>
         <img
           src='/ligas/edefi/icono.png'
           alt='Encuentro Deportivo de Fútbol Infantil'

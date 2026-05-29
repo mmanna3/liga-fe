@@ -68,8 +68,8 @@ export default function AuthLayout() {
       />
 
       {/* Contenido de la página */}
-      <main className='flex flex-1 w-full min-h-0 justify-center p-6 bg-slate-100 print:bg-white print:p-4'>
-        <div className='w-full flex-1'>
+      <main className='flex flex-1 flex-col w-full min-h-0 p-6 bg-slate-100 print:bg-white print:p-4'>
+        <div className='flex w-full flex-1 flex-col min-h-0'>
           <Outlet />
         </div>
       </main>
