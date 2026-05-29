@@ -78,7 +78,8 @@ const MAPEO_ICONOS: Record<
   BaseDeDatos: LucideIcons.Database,
 
   // Configuración / listas
-  DNIsExpulsados: LucideIcons.OctagonMinus
+  DNIsExpulsados: LucideIcons.OctagonMinus,
+  SponsorsWeb: LucideIcons.Handshake
 }
 
 export type NombreIcono = keyof typeof MAPEO_ICONOS

@@ -2,6 +2,7 @@ import Configuracion from '@/pantallas/auth/configuracion/configuracion'
 import SuperAdmin from '@/pantallas/auth/super-admin/super-admin'
 import FechasGeneracionFixture from '@/pantallas/auth/configuracion/generacion-de-fixtures/fechas-generacion-fixture'
 import GeneracionDeFixtures from '@/pantallas/auth/configuracion/generacion-de-fixtures/generacion-de-fixtures'
+import SponsorsWebPublica from '@/pantallas/auth/configuracion/sponsors-web-publica/sponsors-web-publica'
 import DetalleClub from '@/pantallas/auth/club/detalle-club'
 import AprobarRechazarDelegado from '@/pantallas/auth/delegados/aprobar-rechazar-delegado'
 import Delegados from '@/pantallas/auth/delegados/delegados'
@@ -113,6 +114,7 @@ export const mapaRutasComponentes = [
       },
       { path: rutas.configuracion, element: <Configuracion /> },
       { path: rutas.generacionDeFixtures, element: <GeneracionDeFixtures /> },
+      { path: rutas.sponsorsWebPublica, element: <SponsorsWebPublica /> },
       {
         path: `${rutas.fechasGeneracionFixture}/:id`,
         element: <FechasGeneracionFixture />

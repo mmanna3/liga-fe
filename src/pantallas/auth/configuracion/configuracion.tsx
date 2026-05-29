@@ -95,6 +95,26 @@ export default function Configuracion() {
               className='cursor-pointer transition-colors hover:bg-muted/50'
               role='button'
               tabIndex={0}
+              onClick={() => navigate(rutasNavegacion.sponsorsWebPublica)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') e.currentTarget.click()
+              }}
+            >
+              <CardHeader>
+                <CardTitle className='flex items-center gap-2'>
+                  <Icono nombre='SponsorsWeb' className='h-8 w-8' />
+                  Sponsors web pública
+                </CardTitle>
+                <CardDescription>
+                  Gestioná los logos que se muestran en el carrusel de sponsors
+                  del sitio público de la liga.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <Card
+              className='cursor-pointer transition-colors hover:bg-muted/50'
+              role='button'
+              tabIndex={0}
               onClick={() => setModalEscudoPorDefectoAbierto(true)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') e.currentTarget.click()

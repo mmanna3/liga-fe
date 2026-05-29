@@ -31,6 +31,7 @@ export const rutas = {
   configuracion: 'configuracion',
   generacionDeFixtures: 'configuracion/generacion-de-fixtures',
   fechasGeneracionFixture: 'configuracion/generacion-de-fixtures/fechas',
+  sponsorsWebPublica: 'configuracion/sponsors-web-publica',
   superAdmin: 'super-admin'
 }
 
