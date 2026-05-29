@@ -17,20 +17,15 @@ import { useRef, useState } from 'react'
 
 const QUERY_KEY = ['sponsorWebPublica'] as const
 
-function extraerBase64(dataUrl: string): string {
-  if (dataUrl.startsWith('data:')) {
-    const base64Index = dataUrl.indexOf(',')
-    return base64Index >= 0 ? dataUrl.slice(base64Index + 1) : dataUrl
-  }
-  return dataUrl
-}
+const FORMATOS_ACEPTADOS =
+  '.svg,.png,.jpg,.jpeg,image/svg+xml,image/png,image/jpeg'
 
 export default function SponsorsWebPublica() {
   const queryClient = useQueryClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [nombre, setNombre] = useState('')
   const [previewDataUrl, setPreviewDataUrl] = useState<string | null>(null)
-  const [imagenBase64, setImagenBase64] = useState<string | null>(null)
+  const [imagenDataUrl, setImagenDataUrl] = useState<string | null>(null)
 
   const { data: sponsors = [], isPending } = useApiQuery({
     key: [...QUERY_KEY],
@@ -48,7 +43,7 @@ export default function SponsorsWebPublica() {
       invalidarLista()
       setNombre('')
       setPreviewDataUrl(null)
-      setImagenBase64(null)
+      setImagenDataUrl(null)
     }
   })
 
@@ -66,21 +61,23 @@ export default function SponsorsWebPublica() {
     reader.addEventListener('load', () => {
       const result = reader.result as string
       setPreviewDataUrl(result)
-      setImagenBase64(extraerBase64(result))
+      setImagenDataUrl(result)
     })
     reader.readAsDataURL(file)
     e.target.value = ''
   }
 
   const puedeGuardar =
-    nombre.trim().length > 0 && imagenBase64 != null && !crearMutation.isPending
+    nombre.trim().length > 0 &&
+    imagenDataUrl != null &&
+    !crearMutation.isPending
 
   const handleGuardar = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!puedeGuardar || !imagenBase64) return
+    if (!puedeGuardar || !imagenDataUrl) return
     crearMutation.mutate({
       nombre: nombre.trim(),
-      imagenBase64
+      imagenBase64: imagenDataUrl
     })
   }
 
@@ -99,8 +96,8 @@ export default function SponsorsWebPublica() {
             <div>
               <h2 className='text-lg font-semibold'>Cargar sponsor</h2>
               <p className='text-sm text-muted-foreground'>
-                Los logos se muestran en el carrusel de la web pública de la
-                liga.
+                Los logos se muestran en el carrusel de la web pública. Para
+                fondo transparente, subí PNG o SVG.
               </p>
             </div>
 
@@ -118,7 +115,7 @@ export default function SponsorsWebPublica() {
             <div className='grid gap-2'>
               <Label>Logo</Label>
               <div className='flex flex-col gap-4 sm:flex-row sm:items-start'>
-                <div className='flex h-32 w-48 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-input bg-muted'>
+                <div className='flex h-32 w-48 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-input bg-[linear-gradient(45deg,#e5e7eb_25%,transparent_25%,transparent_75%,#e5e7eb_75%,#e5e7eb),linear-gradient(45deg,#e5e7eb_25%,transparent_25%,transparent_75%,#e5e7eb_75%,#e5e7eb)] bg-size-[12px_12px] bg-position-[0_0,6px_6px]'>
                   {previewDataUrl ? (
                     <img
                       src={previewDataUrl}
@@ -135,7 +132,7 @@ export default function SponsorsWebPublica() {
                   <input
                     ref={fileInputRef}
                     type='file'
-                    accept='image/*'
+                    accept={FORMATOS_ACEPTADOS}
                     onChange={handleSelectFile}
                     className='hidden'
                   />
@@ -149,7 +146,7 @@ export default function SponsorsWebPublica() {
                     <Icono nombre='Subir' className='h-4 w-4' />
                     Elegir imagen
                   </Boton>
-                  {previewDataUrl && (
+                  {imagenDataUrl && (
                     <Boton
                       type='button'
                       variant='ghost'
@@ -157,7 +154,7 @@ export default function SponsorsWebPublica() {
                       className='w-fit'
                       onClick={() => {
                         setPreviewDataUrl(null)
-                        setImagenBase64(null)
+                        setImagenDataUrl(null)
                       }}
                     >
                       Quitar imagen
@@ -205,7 +202,7 @@ export default function SponsorsWebPublica() {
                     key={sponsor.id}
                     className='flex flex-col gap-3 rounded-lg border bg-card p-4'
                   >
-                    <div className='flex h-24 items-center justify-center rounded-md bg-muted/50 p-3'>
+                    <div className='flex h-24 items-center justify-center rounded-md bg-[linear-gradient(45deg,#e5e7eb_25%,transparent_25%,transparent_75%,#e5e7eb_75%,#e5e7eb),linear-gradient(45deg,#e5e7eb_25%,transparent_25%,transparent_75%,#e5e7eb_75%,#e5e7eb)] bg-size-[10px_10px] bg-position-[0_0,5px_5px] p-3'>
                       {sponsor.imagen ? (
                         <img
                           src={sponsor.imagen}

@@ -1,8 +1,7 @@
 import { Toaster } from '@/design-system/base-ui/sonner'
 import { useAuth } from '@/logica-compartida/hooks/use-auth'
-import { cn } from '@/logica-compartida/utils'
 import { rutasNavegacion } from '@/ruteo/rutas'
-import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 import MenuLateral from './menu-lateral'
 
 const baseMenuItems = [
@@ -53,9 +52,6 @@ export default function AuthLayout() {
     ...(esAdmin() ? adminMenuItems : []),
     ...(esSuperAdmin ? superAdminMenuItems : [])
   ]
-  const { pathname } = useLocation()
-  const isHome = pathname === '/' || pathname === ''
-
   const handleLogout = () => {
     logout()
     navigate('/login')
@@ -72,18 +68,8 @@ export default function AuthLayout() {
       />
 
       {/* Contenido de la página */}
-      <main
-        className={cn(
-          'flex-1 w-full min-h-0 print:bg-white print:p-4',
-          isHome ? 'flex flex-col p-0' : 'flex justify-center p-6 bg-slate-100'
-        )}
-      >
-        <div
-          className={cn(
-            'w-full',
-            isHome ? 'flex-1 min-h-0 flex flex-col' : 'flex-1'
-          )}
-        >
+      <main className='flex flex-1 w-full min-h-0 justify-center p-6 bg-slate-100 print:bg-white print:p-4'>
+        <div className='w-full flex-1'>
           <Outlet />
         </div>
       </main>
