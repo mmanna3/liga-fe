@@ -1,4 +1,3 @@
-import { Boton } from '@/design-system/ykn-ui/boton'
 import {
   Card,
   CardContent,
@@ -6,8 +5,9 @@ import {
   CardHeader,
   CardTitle
 } from '@/design-system/base-ui/card'
-import { rutasNavegacion } from '@/ruteo/rutas'
+import { Boton } from '@/design-system/ykn-ui/boton'
 import Icono from '@/design-system/ykn-ui/icono'
+import { rutasNavegacion } from '@/ruteo/rutas'
 
 import { useNavigate } from 'react-router-dom'
 
@@ -22,7 +22,7 @@ export default function ReportesPage() {
       </h1>
       <div className='grid gap-4 md:grid-cols-2'>
         <Card className='overflow-hidden'>
-          <CardHeader className='bg-slate-50'>
+          <CardHeader>
             <CardTitle className='flex items-center gap-2'>
               <Icono nombre='Reportes' className='h-5 w-5' />
               Reporte de Pagos
@@ -41,14 +41,14 @@ export default function ReportesPage() {
           </CardContent>
         </Card>
         <Card className='overflow-hidden'>
-          <CardHeader className='bg-slate-50'>
+          <CardHeader>
             <CardTitle className='flex items-center gap-2'>
               <Icono nombre='Reportes' className='h-5 w-5' />
-              Jugadores habilitados por agrupador de torneo
+              Jugadores habilitados por torneo
             </CardTitle>
             <CardDescription>
-              Ver jugadores habilitados por agrupador de torneo, con torneos
-              desglosados y totales mensuales del año
+              Ver jugadores habilitados por agrupador, con torneos desglosados y
+              totales mensuales del año
             </CardDescription>
           </CardHeader>
           <CardContent className='p-6'>
