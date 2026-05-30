@@ -260,6 +260,7 @@ export default function EditarClub() {
               opciones={OPCIONES_CANCHA_TIPO}
               valorActual={String(canchaTipoId)}
               alElegirOpcion={(id) => setCanchaTipoId(Number(id))}
+              columnasPorRenglon={3}
             />
 
             <ContenedorBotones>

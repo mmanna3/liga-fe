@@ -79,6 +79,7 @@ export default function CrearClub() {
             opciones={OPCIONES_CANCHA_TIPO}
             valorActual={String(canchaTipoId)}
             alElegirOpcion={(id) => setCanchaTipoId(Number(id))}
+            columnasPorRenglon={3}
           />
           <ContenedorBotones>
             <Boton type='submit' estaCargando={mutation.isPending}>
