@@ -9251,8 +9251,6 @@ export class ClubDTO implements IClubDTO {
   direccion?: string | undefined
   canchaTipoId?: number
   canchaTipo?: string | undefined
-  canchaSuperficieId?: number
-  canchaSuperficie?: string | undefined
   localidad?: string | undefined
   equipos?: EquipoDTO[] | undefined
   delegados?: DelegadoDTO[] | undefined
@@ -9274,8 +9272,6 @@ export class ClubDTO implements IClubDTO {
       this.direccion = _data['direccion']
       this.canchaTipoId = _data['canchaTipoId']
       this.canchaTipo = _data['canchaTipo']
-      this.canchaSuperficieId = _data['canchaSuperficieId']
-      this.canchaSuperficie = _data['canchaSuperficie']
       this.localidad = _data['localidad']
       if (Array.isArray(_data['equipos'])) {
         this.equipos = [] as any
@@ -9305,8 +9301,6 @@ export class ClubDTO implements IClubDTO {
     data['direccion'] = this.direccion
     data['canchaTipoId'] = this.canchaTipoId
     data['canchaTipo'] = this.canchaTipo
-    data['canchaSuperficieId'] = this.canchaSuperficieId
-    data['canchaSuperficie'] = this.canchaSuperficie
     data['localidad'] = this.localidad
     if (Array.isArray(this.equipos)) {
       data['equipos'] = []
@@ -9327,8 +9321,6 @@ export interface IClubDTO {
   direccion?: string | undefined
   canchaTipoId?: number
   canchaTipo?: string | undefined
-  canchaSuperficieId?: number
-  canchaSuperficie?: string | undefined
   localidad?: string | undefined
   equipos?: EquipoDTO[] | undefined
   delegados?: DelegadoDTO[] | undefined
@@ -9340,7 +9332,6 @@ export class ClubesDTO implements IClubesDTO {
   localidad?: string | undefined
   direccion?: string | undefined
   tipoCancha?: string | undefined
-  superficieCancha?: string | undefined
 
   constructor(data?: IClubesDTO) {
     if (data) {
@@ -9358,7 +9349,6 @@ export class ClubesDTO implements IClubesDTO {
       this.localidad = _data['localidad']
       this.direccion = _data['direccion']
       this.tipoCancha = _data['tipoCancha']
-      this.superficieCancha = _data['superficieCancha']
     }
   }
 
@@ -9376,7 +9366,6 @@ export class ClubesDTO implements IClubesDTO {
     data['localidad'] = this.localidad
     data['direccion'] = this.direccion
     data['tipoCancha'] = this.tipoCancha
-    data['superficieCancha'] = this.superficieCancha
     return data
   }
 }
@@ -9387,7 +9376,6 @@ export interface IClubesDTO {
   localidad?: string | undefined
   direccion?: string | undefined
   tipoCancha?: string | undefined
-  superficieCancha?: string | undefined
 }
 
 export class ConfiguracionDTO implements IConfiguracionDTO {

@@ -17,10 +17,6 @@ import {
   CANCHA_TIPO_ID_POR_DEFECTO,
   OPCIONES_CANCHA_TIPO
 } from './opciones-cancha-tipo'
-import {
-  CANCHA_SUPERFICIE_ID_POR_DEFECTO,
-  OPCIONES_CANCHA_SUPERFICIE
-} from './opciones-superficie-tipo'
 
 function extraerBase64(dataUrl: string): string {
   if (dataUrl.startsWith('data:')) {
@@ -39,9 +35,6 @@ export default function EditarClub() {
   const [direccion, setDireccion] = useState('')
   const [canchaTipoId, setCanchaTipoId] = useState<number>(
     CANCHA_TIPO_ID_POR_DEFECTO
-  )
-  const [canchaSuperficieId, setCanchaSuperficieId] = useState<number>(
-    CANCHA_SUPERFICIE_ID_POR_DEFECTO
   )
   const [localidad, setLocalidad] = useState('')
   const [escudoPreview, setEscudoPreview] = useState<string | null>(null)
@@ -75,9 +68,6 @@ export default function EditarClub() {
       setNombre(club.nombre || '')
       setDireccion(club.direccion || '')
       setCanchaTipoId(club.canchaTipoId ?? CANCHA_TIPO_ID_POR_DEFECTO)
-      setCanchaSuperficieId(
-        club.canchaSuperficieId ?? CANCHA_SUPERFICIE_ID_POR_DEFECTO
-      )
       setLocalidad(club.localidad || '')
       if (club.escudo) {
         const src =
@@ -112,16 +102,12 @@ export default function EditarClub() {
     const direccionCambiada = direccion !== (club?.direccion ?? '')
     const canchaTipoCambiada =
       canchaTipoId !== (club?.canchaTipoId ?? CANCHA_TIPO_ID_POR_DEFECTO)
-    const canchaSuperficieCambiada =
-      canchaSuperficieId !==
-      (club?.canchaSuperficieId ?? CANCHA_SUPERFICIE_ID_POR_DEFECTO)
     const localidadCambiada = localidad !== (club?.localidad ?? '')
     const escudoCambiado = escudoBase64 !== null
     const datosCambiados =
       nombreCambiado ||
       direccionCambiada ||
       canchaTipoCambiada ||
-      canchaSuperficieCambiada ||
       localidadCambiada
 
     if (!datosCambiados && !escudoCambiado) return
@@ -135,7 +121,6 @@ export default function EditarClub() {
             escudo: club?.escudo,
             direccion: direccion || undefined,
             canchaTipoId,
-            canchaSuperficieId,
             localidad: localidad || undefined
           })
         )
@@ -161,8 +146,6 @@ export default function EditarClub() {
     nombre !== club?.nombre ||
     direccion !== (club?.direccion ?? '') ||
     canchaTipoId !== (club?.canchaTipoId ?? CANCHA_TIPO_ID_POR_DEFECTO) ||
-    canchaSuperficieId !==
-      (club?.canchaSuperficieId ?? CANCHA_SUPERFICIE_ID_POR_DEFECTO) ||
     localidad !== (club?.localidad ?? '') ||
     escudoBase64 !== null
 
@@ -277,13 +260,6 @@ export default function EditarClub() {
               opciones={OPCIONES_CANCHA_TIPO}
               valorActual={String(canchaTipoId)}
               alElegirOpcion={(id) => setCanchaTipoId(Number(id))}
-            />
-
-            <SelectorSimple
-              titulo='Superficie'
-              opciones={OPCIONES_CANCHA_SUPERFICIE}
-              valorActual={String(canchaSuperficieId)}
-              alElegirOpcion={(id) => setCanchaSuperficieId(Number(id))}
             />
 
             <ContenedorBotones>

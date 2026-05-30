@@ -6,7 +6,6 @@ import { useClubesListaUiStore } from '../stores/use-clubes-lista-ui-store'
 import { ColumnDef } from '@tanstack/react-table'
 import { useNavigate } from 'react-router-dom'
 import { tituloCanchaTipoPorId } from '../opciones-cancha-tipo'
-import { tituloCanchaSuperficiePorId } from '../opciones-superficie-tipo'
 
 interface ITablaClub {
   data: ClubDTO[]
@@ -36,15 +35,6 @@ export default function TablaClub({ data, isLoading, isError }: ITablaClub) {
         <span>
           {row.original.canchaTipo?.trim() ||
             tituloCanchaTipoPorId(row.original.canchaTipoId)}
-        </span>
-      )
-    },
-    {
-      accessorKey: 'canchaSuperficie',
-      header: 'Superficie',
-      cell: ({ row }) => (
-        <span>
-          {tituloCanchaSuperficiePorId(row.original.canchaSuperficieId)}
         </span>
       )
     }

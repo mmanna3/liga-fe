@@ -7,9 +7,16 @@ import {
 } from './opciones-cancha-tipo'
 
 describe('OPCIONES_CANCHA_TIPO', () => {
-  it('tiene 4 opciones alineadas con el backend (1–4)', () => {
-    expect(OPCIONES_CANCHA_TIPO).toHaveLength(4)
-    expect(OPCIONES_CANCHA_TIPO.map((o) => o.id)).toEqual(['1', '2', '3', '4'])
+  it('tiene 6 opciones alineadas con el backend (1–6)', () => {
+    expect(OPCIONES_CANCHA_TIPO).toHaveLength(6)
+    expect(OPCIONES_CANCHA_TIPO.map((o) => o.id)).toEqual([
+      '1',
+      '2',
+      '3',
+      '4',
+      '5',
+      '6'
+    ])
   })
 })
 
@@ -23,6 +30,12 @@ describe('tituloCanchaTipoPorId', () => {
       'Semidescubierta'
     )
     expect(tituloCanchaTipoPorId(CANCHA_TIPO_ID.Consultar)).toBe('Consultar')
+    expect(tituloCanchaTipoPorId(CANCHA_TIPO_ID.PastoSintetico)).toBe(
+      'Pasto Sintético'
+    )
+    expect(tituloCanchaTipoPorId(CANCHA_TIPO_ID.PastoNatural)).toBe(
+      'Pasto Natural'
+    )
   })
 
   it('usa el id por defecto cuando el id es undefined', () => {
