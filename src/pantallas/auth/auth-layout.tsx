@@ -17,6 +17,11 @@ const baseMenuItems = [
     name: 'Delegados',
     path: rutasNavegacion.delegados,
     icono: 'Delegados' as const
+  },
+  {
+    name: 'Árbitros',
+    path: rutasNavegacion.arbitros,
+    icono: 'Arbitros' as const
   }
 ]
 

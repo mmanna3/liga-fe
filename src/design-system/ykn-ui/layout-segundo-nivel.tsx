@@ -70,6 +70,7 @@ export default function LayoutSegundoNivel({
     <CardHeader
       className={cn(
         'px-2!',
+        'min-w-lg',
         headerClassName ??
           (botonera ? 'flex flex-row items-start justify-between' : undefined)
       )}

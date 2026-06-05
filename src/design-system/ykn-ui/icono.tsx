@@ -1,4 +1,5 @@
 import { IconoPelota } from '@/design-system/ykn-ui/iconos/pelota'
+import { IconoTarjetaArbitro } from '@/design-system/ykn-ui/iconos/tarjeta-arbitro'
 import { cn } from '@/logica-compartida/utils'
 import * as LucideIcons from 'lucide-react'
 import * as React from 'react'
@@ -15,6 +16,7 @@ const MAPEO_ICONOS: Record<
   Pelota: IconoPelota,
   Jugadores: LucideIcons.Users,
   Delegados: LucideIcons.UserCog,
+  Arbitros: IconoTarjetaArbitro,
   Reportes: LucideIcons.BarChart2,
   Configuracion: LucideIcons.Settings,
   Usuario: LucideIcons.User,

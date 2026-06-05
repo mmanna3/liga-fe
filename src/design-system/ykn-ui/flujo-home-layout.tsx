@@ -46,7 +46,7 @@ export default function FlujoHomeLayout({
 }: FlujoHomeLayoutProps) {
   return (
     <div
-      className={`${contenedorClassName ?? 'max-w-4xl'} mx-auto px-4 ${ocultarBotonVolver ? 'pt-13' : '-pt-1'}`}
+      className={`${contenedorClassName ?? 'max-w-4xl'} min-w-3xl mx-auto px-4 ${ocultarBotonVolver ? 'pt-13' : '-pt-1'}`}
     >
       <Cabecera
         titulo={titulo}

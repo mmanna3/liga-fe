@@ -717,6 +717,326 @@ export class Client {
   }
 
   /**
+   * @param ids (optional)
+   * @return OK
+   */
+  arbitrosPorIds(ids: number[] | undefined): Promise<ArbitroDTO[]> {
+    let url_ = this.baseUrl + '/api/Arbitro/por-ids?'
+    if (ids === null) throw new Error("The parameter 'ids' cannot be null.")
+    else if (ids !== undefined)
+      ids &&
+        ids.forEach((item) => {
+          url_ += 'ids=' + encodeURIComponent('' + item) + '&'
+        })
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processArbitrosPorIds(_response)
+    })
+  }
+
+  protected processArbitrosPorIds(response: Response): Promise<ArbitroDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(ArbitroDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<ArbitroDTO[]>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  arbitroAll(): Promise<ArbitroDTO[]> {
+    let url_ = this.baseUrl + '/api/Arbitro'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processArbitroAll(_response)
+    })
+  }
+
+  protected processArbitroAll(response: Response): Promise<ArbitroDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(ArbitroDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<ArbitroDTO[]>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  arbitroPOST(body: ArbitroDTO | undefined): Promise<ArbitroDTO> {
+    let url_ = this.baseUrl + '/api/Arbitro'
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processArbitroPOST(_response)
+    })
+  }
+
+  protected processArbitroPOST(response: Response): Promise<ArbitroDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = ArbitroDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<ArbitroDTO>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  arbitroGET(id: number): Promise<ArbitroDTO> {
+    let url_ = this.baseUrl + '/api/Arbitro/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processArbitroGET(_response)
+    })
+  }
+
+  protected processArbitroGET(response: Response): Promise<ArbitroDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = ArbitroDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<ArbitroDTO>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  arbitroPUT(id: number, body: ArbitroDTO | undefined): Promise<void> {
+    let url_ = this.baseUrl + '/api/Arbitro/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processArbitroPUT(_response)
+    })
+  }
+
+  protected processArbitroPUT(response: Response): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  arbitroDELETE(id: number): Promise<number> {
+    let url_ = this.baseUrl + '/api/Arbitro/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'DELETE',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processArbitroDELETE(_response)
+    })
+  }
+
+  protected processArbitroDELETE(response: Response): Promise<number> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = resultData200 !== undefined ? resultData200 : <any>null
+
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<number>(null as any)
+  }
+
+  /**
    * @param body (optional)
    * @return OK
    */
@@ -8727,6 +9047,58 @@ export interface IAprobarJugadorDTO {
   jugadorEquipoId?: number
 }
 
+export class ArbitroDTO implements IArbitroDTO {
+  id?: number
+  dni!: string
+  nombre!: string
+  apellido!: string
+  telefonoCelular?: string | undefined
+
+  constructor(data?: IArbitroDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.dni = _data['dni']
+      this.nombre = _data['nombre']
+      this.apellido = _data['apellido']
+      this.telefonoCelular = _data['telefonoCelular']
+    }
+  }
+
+  static fromJS(data: any): ArbitroDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new ArbitroDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['dni'] = this.dni
+    data['nombre'] = this.nombre
+    data['apellido'] = this.apellido
+    data['telefonoCelular'] = this.telefonoCelular
+    return data
+  }
+}
+
+export interface IArbitroDTO {
+  id?: number
+  dni: string
+  nombre: string
+  apellido: string
+  telefonoCelular?: string | undefined
+}
+
 export class CambiarEscudoDTO implements ICambiarEscudoDTO {
   imagenBase64!: string
 
@@ -8983,6 +9355,7 @@ export class CarnetDigitalDTO implements ICarnetDigitalDTO {
   fotoCarnet?: string | undefined
   equipo?: string | undefined
   torneo?: string | undefined
+  color?: string | undefined
   estado?: number
   esDelegado?: boolean
   tarjetasAmarillas?: number
@@ -9009,6 +9382,7 @@ export class CarnetDigitalDTO implements ICarnetDigitalDTO {
       this.fotoCarnet = _data['fotoCarnet']
       this.equipo = _data['equipo']
       this.torneo = _data['torneo']
+      this.color = _data['color']
       this.estado = _data['estado']
       this.esDelegado = _data['esDelegado']
       this.tarjetasAmarillas = _data['tarjetasAmarillas']
@@ -9035,6 +9409,7 @@ export class CarnetDigitalDTO implements ICarnetDigitalDTO {
     data['fotoCarnet'] = this.fotoCarnet
     data['equipo'] = this.equipo
     data['torneo'] = this.torneo
+    data['color'] = this.color
     data['estado'] = this.estado
     data['esDelegado'] = this.esDelegado
     data['tarjetasAmarillas'] = this.tarjetasAmarillas
@@ -9052,6 +9427,7 @@ export interface ICarnetDigitalDTO {
   fotoCarnet?: string | undefined
   equipo?: string | undefined
   torneo?: string | undefined
+  color?: string | undefined
   estado?: number
   esDelegado?: boolean
   tarjetasAmarillas?: number
@@ -9067,6 +9443,7 @@ export class CarnetDigitalPendienteDTO implements ICarnetDigitalPendienteDTO {
   fotoCarnet?: string | undefined
   equipo?: string | undefined
   torneo?: string | undefined
+  color?: string | undefined
   estado?: number
   esDelegado?: boolean
   tarjetasAmarillas?: number
@@ -9094,6 +9471,7 @@ export class CarnetDigitalPendienteDTO implements ICarnetDigitalPendienteDTO {
       this.fotoCarnet = _data['fotoCarnet']
       this.equipo = _data['equipo']
       this.torneo = _data['torneo']
+      this.color = _data['color']
       this.estado = _data['estado']
       this.esDelegado = _data['esDelegado']
       this.tarjetasAmarillas = _data['tarjetasAmarillas']
@@ -9121,6 +9499,7 @@ export class CarnetDigitalPendienteDTO implements ICarnetDigitalPendienteDTO {
     data['fotoCarnet'] = this.fotoCarnet
     data['equipo'] = this.equipo
     data['torneo'] = this.torneo
+    data['color'] = this.color
     data['estado'] = this.estado
     data['esDelegado'] = this.esDelegado
     data['tarjetasAmarillas'] = this.tarjetasAmarillas
@@ -9139,6 +9518,7 @@ export interface ICarnetDigitalPendienteDTO {
   fotoCarnet?: string | undefined
   equipo?: string | undefined
   torneo?: string | undefined
+  color?: string | undefined
   estado?: number
   esDelegado?: boolean
   tarjetasAmarillas?: number
@@ -11257,6 +11637,7 @@ export interface IInformacionInicialTorneoDTO {
 export class InformacionInicialZonaDTO implements IInformacionInicialZonaDTO {
   id?: number
   nombre?: string | undefined
+  orden?: number
 
   constructor(data?: IInformacionInicialZonaDTO) {
     if (data) {
@@ -11271,6 +11652,7 @@ export class InformacionInicialZonaDTO implements IInformacionInicialZonaDTO {
     if (_data) {
       this.id = _data['id']
       this.nombre = _data['nombre']
+      this.orden = _data['orden']
     }
   }
 
@@ -11285,6 +11667,7 @@ export class InformacionInicialZonaDTO implements IInformacionInicialZonaDTO {
     data = typeof data === 'object' ? data : {}
     data['id'] = this.id
     data['nombre'] = this.nombre
+    data['orden'] = this.orden
     return data
   }
 }
@@ -11292,6 +11675,7 @@ export class InformacionInicialZonaDTO implements IInformacionInicialZonaDTO {
 export interface IInformacionInicialZonaDTO {
   id?: number
   nombre?: string | undefined
+  orden?: number
 }
 
 export class InstanciasDTO implements IInstanciasDTO {
@@ -12550,6 +12934,7 @@ export interface IRechazarJugadorDTO {
 }
 
 export class ReporteJugadoresHabilitadosFilaDTO implements IReporteJugadoresHabilitadosFilaDTO {
+  torneoId?: number
   nombreTorneo?: string | undefined
   enero?: number
   febrero?: number
@@ -12576,6 +12961,7 @@ export class ReporteJugadoresHabilitadosFilaDTO implements IReporteJugadoresHabi
 
   init(_data?: any) {
     if (_data) {
+      this.torneoId = _data['torneoId']
       this.nombreTorneo = _data['nombreTorneo']
       this.enero = _data['enero']
       this.febrero = _data['febrero']
@@ -12602,6 +12988,7 @@ export class ReporteJugadoresHabilitadosFilaDTO implements IReporteJugadoresHabi
 
   toJSON(data?: any) {
     data = typeof data === 'object' ? data : {}
+    data['torneoId'] = this.torneoId
     data['nombreTorneo'] = this.nombreTorneo
     data['enero'] = this.enero
     data['febrero'] = this.febrero
@@ -12621,6 +13008,7 @@ export class ReporteJugadoresHabilitadosFilaDTO implements IReporteJugadoresHabi
 }
 
 export interface IReporteJugadoresHabilitadosFilaDTO {
+  torneoId?: number
   nombreTorneo?: string | undefined
   enero?: number
   febrero?: number

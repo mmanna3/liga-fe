@@ -5,6 +5,8 @@ import GeneracionDeFixtures from '@/pantallas/auth/configuracion/generacion-de-f
 import SponsorsWebPublica from '@/pantallas/auth/configuracion/sponsors-web-publica/sponsors-web-publica'
 import DetalleClub from '@/pantallas/auth/club/detalle-club'
 import AprobarRechazarDelegado from '@/pantallas/auth/delegados/aprobar-rechazar-delegado'
+import Arbitros from '@/pantallas/auth/arbitros/arbitros'
+import CrearArbitro from '@/pantallas/auth/arbitros/crear-arbitro'
 import Delegados from '@/pantallas/auth/delegados/delegados'
 import DetalleDelegado from '@/pantallas/auth/delegados/detalle-delegado'
 import EliminarDelegado from '@/pantallas/auth/delegados/eliminar-delegado'
@@ -121,6 +123,8 @@ export const mapaRutasComponentes = [
       },
       { path: rutas.superAdmin, element: <SuperAdmin /> },
       { path: rutas.delegados, element: <Delegados /> },
+      { path: rutas.arbitros, element: <Arbitros /> },
+      { path: rutas.crearArbitro, element: <CrearArbitro /> },
       { path: `${rutas.detalleDelegado}/:id`, element: <DetalleDelegado /> },
       {
         path: `${rutas.aprobarRechazarDelegado}/:id/:delegadoClubId`,

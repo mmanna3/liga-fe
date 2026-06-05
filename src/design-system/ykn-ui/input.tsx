@@ -2,11 +2,13 @@ import * as React from 'react'
 import { cn } from '@/logica-compartida/utils'
 import { Input as BaseInput } from '@/design-system/base-ui/input'
 import { Label } from '@/design-system/base-ui/label'
+import Icono, { type NombreIcono } from '@/design-system/ykn-ui/icono'
 
 interface InputProps extends React.ComponentProps<typeof BaseInput> {
   error?: string
   titulo?: string
   tipo?: React.ComponentProps<typeof BaseInput>['type']
+  icono?: NombreIcono
 }
 
 const claseSinFlechasNumber =
@@ -17,6 +19,7 @@ function Input({
   error,
   titulo,
   tipo,
+  icono,
   id,
   type,
   ...props
@@ -29,18 +32,27 @@ function Input({
           {titulo}
         </Label>
       )}
-      <BaseInput
-        id={id}
-        type={typeEfectivo}
-        className={cn(
-          'h-11',
-          error && 'border-destructive',
-          typeEfectivo === 'number' && claseSinFlechasNumber,
-          className
+      <div className='relative'>
+        {icono && (
+          <Icono
+            nombre={icono}
+            className='pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground'
+          />
         )}
-        aria-invalid={!!error}
-        {...props}
-      />
+        <BaseInput
+          id={id}
+          type={typeEfectivo}
+          className={cn(
+            'h-11',
+            icono && 'pl-10',
+            error && 'border-destructive',
+            typeEfectivo === 'number' && claseSinFlechasNumber,
+            className
+          )}
+          aria-invalid={!!error}
+          {...props}
+        />
+      </div>
       {error && <p className='text-sm text-destructive mt-1'>{error}</p>}
     </div>
   )
