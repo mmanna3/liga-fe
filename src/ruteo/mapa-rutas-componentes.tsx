@@ -7,6 +7,7 @@ import DetalleClub from '@/pantallas/auth/club/detalle-club'
 import AprobarRechazarDelegado from '@/pantallas/auth/delegados/aprobar-rechazar-delegado'
 import Arbitros from '@/pantallas/auth/arbitros/arbitros'
 import CrearArbitro from '@/pantallas/auth/arbitros/crear-arbitro'
+import EditarArbitro from '@/pantallas/auth/arbitros/editar-arbitro'
 import Delegados from '@/pantallas/auth/delegados/delegados'
 import DetalleDelegado from '@/pantallas/auth/delegados/detalle-delegado'
 import EliminarDelegado from '@/pantallas/auth/delegados/eliminar-delegado'
@@ -125,6 +126,7 @@ export const mapaRutasComponentes = [
       { path: rutas.delegados, element: <Delegados /> },
       { path: rutas.arbitros, element: <Arbitros /> },
       { path: rutas.crearArbitro, element: <CrearArbitro /> },
+      { path: `${rutas.editarArbitro}/:id`, element: <EditarArbitro /> },
       { path: `${rutas.detalleDelegado}/:id`, element: <DetalleDelegado /> },
       {
         path: `${rutas.aprobarRechazarDelegado}/:id/:delegadoClubId`,

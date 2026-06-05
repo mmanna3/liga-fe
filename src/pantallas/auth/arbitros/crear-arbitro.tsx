@@ -1,16 +1,19 @@
 import { api } from '@/api/api'
 import { ArbitroDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
-import { Label } from '@/design-system/base-ui/label'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import ContenedorBotones from '@/design-system/ykn-ui/contenedor-botones'
-import Icono from '@/design-system/ykn-ui/icono'
 import { Input } from '@/design-system/ykn-ui/input'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
-import { cn } from '@/logica-compartida/utils'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import InputTelefonoCelular from './components/input-telefono-celular'
+import {
+  filtrarDigitosTelefonoCelular,
+  formatearTelefonoCelularParaBackend,
+  validarDigitosTelefonoCelular
+} from './utilidades-telefono-celular'
 
 export default function CrearArbitro() {
   const navigate = useNavigate()
@@ -31,8 +34,10 @@ export default function CrearArbitro() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    if (telefonoCelular.length > 0 && telefonoCelular.length !== 8) {
-      setErrorTelefono('Ingresá exactamente 8 números')
+    const errorValidacionTelefono =
+      validarDigitosTelefonoCelular(telefonoCelular)
+    if (errorValidacionTelefono) {
+      setErrorTelefono(errorValidacionTelefono)
       return
     }
 
@@ -42,14 +47,13 @@ export default function CrearArbitro() {
         dni,
         nombre,
         apellido,
-        telefonoCelular:
-          telefonoCelular.length === 8 ? `+54911${telefonoCelular}` : undefined
+        telefonoCelular: formatearTelefonoCelularParaBackend(telefonoCelular)
       })
     )
   }
 
   const handleTelefonoChange = (valor: string) => {
-    const soloDigitos = valor.replace(/\D/g, '').slice(0, 8)
+    const soloDigitos = filtrarDigitosTelefonoCelular(valor)
     setTelefonoCelular(soloDigitos)
     if (
       errorTelefono &&
@@ -96,44 +100,11 @@ export default function CrearArbitro() {
             onChange={(e) => setApellido(e.target.value)}
             required
           />
-          <div>
-            <Label
-              htmlFor='telefonoCelular'
-              className='block mb-2 text-md font-semibold'
-            >
-              Teléfono celular
-            </Label>
-            <div
-              className={cn(
-                'flex h-11 w-full min-w-0 overflow-hidden rounded-md border bg-transparent shadow-xs transition-[color,box-shadow] focus-within:border-ring focus-within:ring-ring/50 focus-within:ring-[3px]',
-                errorTelefono
-                  ? 'border-destructive aria-invalid:ring-destructive/20'
-                  : 'border-input'
-              )}
-            >
-              <span className='flex items-center pl-3 pr-2 text-muted-foreground'>
-                <Icono nombre='Teléfono' className='h-4 w-4 shrink-0' />
-              </span>
-              <span className='flex items-center border-r border-input bg-muted px-3 text-sm font-medium text-foreground select-none'>
-                +54 9 11
-              </span>
-              <input
-                id='telefonoCelular'
-                type='text'
-                inputMode='numeric'
-                autoComplete='tel-national'
-                placeholder='12345678'
-                value={telefonoCelular}
-                onChange={(e) => handleTelefonoChange(e.target.value)}
-                maxLength={8}
-                aria-invalid={!!errorTelefono}
-                className='h-full min-w-0 flex-1 border-0 bg-transparent pl-2 pr-3 py-1 text-base outline-none md:text-sm placeholder:text-muted-foreground'
-              />
-            </div>
-            {errorTelefono && (
-              <p className='text-sm text-destructive mt-1'>{errorTelefono}</p>
-            )}
-          </div>
+          <InputTelefonoCelular
+            valor={telefonoCelular}
+            error={errorTelefono}
+            onChange={handleTelefonoChange}
+          />
           <ContenedorBotones>
             <Boton type='submit' estaCargando={mutation.isPending}>
               Guardar

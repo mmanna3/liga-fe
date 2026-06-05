@@ -30,6 +30,7 @@ export const rutas = {
   aprobarRechazarDelegado: 'delegados/aprobar-rechazar',
   arbitros: 'arbitros',
   crearArbitro: 'arbitros/crear',
+  editarArbitro: 'arbitros/editar',
   configuracion: 'configuracion',
   generacionDeFixtures: 'configuracion/generacion-de-fixtures',
   fechasGeneracionFixture: 'configuracion/generacion-de-fixtures/fechas',

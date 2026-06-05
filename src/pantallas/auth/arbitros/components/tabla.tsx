@@ -1,8 +1,10 @@
 import { ArbitroDTO } from '@/api/clients'
 import Tabla from '@/design-system/ykn-ui/tabla'
 import { useTablaListaUi } from '@/logica-compartida/hooks/use-tabla-lista-ui'
+import { rutasNavegacion } from '@/ruteo/rutas'
 import { useArbitrosListaUiStore } from '../stores/use-arbitros-lista-ui-store'
 import { ColumnDef } from '@tanstack/react-table'
+import { useNavigate } from 'react-router-dom'
 
 interface ITablaArbitros {
   data: ArbitroDTO[]
@@ -15,6 +17,7 @@ export default function TablaArbitros({
   isLoading,
   isError
 }: ITablaArbitros) {
+  const navigate = useNavigate()
   const tablaListaUi = useTablaListaUi(useArbitrosListaUiStore)
 
   const columnas: ColumnDef<ArbitroDTO>[] = [
@@ -49,6 +52,9 @@ export default function TablaArbitros({
       estaCargando={isLoading}
       hayError={isError}
       {...tablaListaUi}
+      onRowClick={(row) =>
+        navigate(`${rutasNavegacion.editarArbitro}/${row.original.id}`)
+      }
     />
   )
 }
