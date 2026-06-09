@@ -9,19 +9,37 @@ import { api } from '@/api/api'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
 import {
   categoriasACategoriaDto,
   categoriasDtoACategoria,
-  tipoDeFaseAOpción,
   type FaseEstado
-} from '../lib'
-import type { Categoria } from '../../crear-torneo/tipos'
+} from '../../../lib'
+import type { Categoria } from '../../../../crear-torneo/tipos'
 import type { TorneoDTO as TorneoDTOType } from '@/api/clients'
+import type { ElementoEstructuraTorneo } from '../lib/tipos'
+import {
+  actualizarFaseEnElementos,
+  actualizarNombreGrupo,
+  contarFases,
+  crearGrupoVacio,
+  eliminarFaseDeElementos,
+  eliminarGrupoDevolviendoFases,
+  idDragFaseEnGrupo,
+  idDragGrupoDrop,
+  moverFaseTopLevelAGrupo,
+  parseFaseIdDesdeTopLevelDragId,
+  parseGrupoIdLocalDesdeDropId,
+  parseGrupoIdLocalDesdeFaseGrupoId,
+  PREFIJO_DRAG_FASE_GRUPO,
+  reordenarFasesEnGrupo,
+  renumerarElementosTopLevel,
+  torneoFasesAElementos
+} from '../lib/estructura-utils'
 
-interface UseFasesParams {
+interface UseEstructuraFasesParams {
   torneo: TorneoDTOType | null | undefined
   torneoId: number
   id: string | undefined
@@ -41,7 +59,7 @@ interface UseFasesParams {
   setEditando: (e: boolean) => void
 }
 
-export function useFases({
+export function useEstructuraFases({
   torneo,
   torneoId,
   id,
@@ -53,31 +71,48 @@ export function useFases({
   setCategorias,
   setSeVenLosGolesEnTablaDePosiciones,
   setEditando
-}: UseFasesParams) {
+}: UseEstructuraFasesParams) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const torneoFases = torneo?.fases ?? []
 
-  const [fasesEstado, setFasesEstado] = useState<FaseEstado[]>([])
+  const [elementos, setElementos] = useState<ElementoEstructuraTorneo[]>([])
   const [creandoZonasEliminacion, setCreandoZonasEliminacion] = useState(false)
 
+  // Grupos y asignación fase↔grupo son estado local hasta que exista el backend.
   useEffect(() => {
     if (!torneo) return
-    setFasesEstado(
-      (torneo.fases ?? []).map((f) => ({
-        id: f.id,
-        numero: f.numero ?? 0,
-        nombre: f.nombre ?? '',
-        formato: tipoDeFaseAOpción(f.tipoDeFase),
-        sePuedeEditar: f.sePuedeEditar !== false
-      }))
-    )
+    setElementos(torneoFasesAElementos(torneo.fases ?? []))
   }, [torneo])
 
-  const actualizarFase = (index: number, campo: string, valor: string) => {
-    setFasesEstado((prev) =>
-      prev.map((f, i) => (i === index ? { ...f, [campo]: valor } : f))
+  const actualizarFaseTopLevel = (
+    index: number,
+    campo: string,
+    valor: string
+  ) => {
+    setElementos((prev) =>
+      actualizarFaseEnElementos(prev, { nivel: 'top', index }, campo, valor)
     )
+  }
+
+  const actualizarFaseEnGrupo = (
+    grupoIndex: number,
+    faseIndex: number,
+    campo: string,
+    valor: string
+  ) => {
+    setElementos((prev) =>
+      actualizarFaseEnElementos(
+        prev,
+        { nivel: 'grupo', grupoIndex, faseIndex },
+        campo,
+        valor
+      )
+    )
+  }
+
+  const actualizarGrupo = (grupoIndex: number, nombre: string) => {
+    setElementos((prev) => actualizarNombreGrupo(prev, grupoIndex, nombre))
   }
 
   const eliminarFaseMutation = useApiMutation<number>({
@@ -88,15 +123,44 @@ export function useFases({
     mensajeDeExito: 'Fase eliminada'
   })
 
-  const eliminarFase = (index: number) => {
-    const faseId = fasesEstado[index]?.id
+  const eliminarFaseTopLevel = (index: number) => {
+    const el = elementos[index]
+    if (el?.tipo !== 'fase') return
+    const faseId = el.fase.id
     if (!faseId) return
-    eliminarFaseMutation.mutate(faseId)
+    eliminarFaseMutation.mutate(faseId, {
+      onSuccess: () => {
+        setElementos((prev) =>
+          eliminarFaseDeElementos(prev, { nivel: 'top', index })
+        )
+      }
+    })
+  }
+
+  const eliminarFaseDeGrupo = (grupoIndex: number, faseIndex: number) => {
+    const el = elementos[grupoIndex]
+    if (el?.tipo !== 'grupo') return
+    const faseId = el.grupo.fases[faseIndex]?.id
+    if (!faseId) return
+    eliminarFaseMutation.mutate(faseId, {
+      onSuccess: () => {
+        setElementos((prev) =>
+          eliminarFaseDeElementos(prev, {
+            nivel: 'grupo',
+            grupoIndex,
+            faseIndex
+          })
+        )
+      }
+    })
   }
 
   const agregarFaseMutation = useApiMutation<void>({
     fn: async () => {
-      const maxNumero = Math.max(0, ...fasesEstado.map((f) => f.numero))
+      const maxNumero = Math.max(
+        0,
+        ...(torneo?.fases ?? []).map((f) => f.numero ?? 0)
+      )
       await api.fasesPOST(
         torneoId,
         new FaseDTO({
@@ -113,6 +177,71 @@ export function useFases({
     mensajeDeExito: 'Fase creada'
   })
 
+  const agregarGrupoDeFases = () => {
+    setElementos((prev) =>
+      renumerarElementosTopLevel([
+        ...prev,
+        { tipo: 'grupo', grupo: crearGrupoVacio() }
+      ])
+    )
+  }
+
+  const eliminarGrupo = (grupoIndex: number) => {
+    const el = elementos[grupoIndex]
+    if (el?.tipo !== 'grupo') return
+    setElementos((prev) =>
+      eliminarGrupoDevolviendoFases(prev, el.grupo.idLocal)
+    )
+  }
+
+  const handleDragEnd = useCallback(
+    (activeId: string, overId: string | null) => {
+      if (!overId || activeId === overId) return
+
+      const faseTopId = parseFaseIdDesdeTopLevelDragId(activeId)
+      if (faseTopId != null) {
+        const grupoIdLocal =
+          parseGrupoIdLocalDesdeDropId(overId) ??
+          parseGrupoIdLocalDesdeFaseGrupoId(overId)
+        if (grupoIdLocal) {
+          setElementos((prev) =>
+            moverFaseTopLevelAGrupo(prev, faseTopId, grupoIdLocal)
+          )
+        }
+        return
+      }
+
+      if (activeId.startsWith(PREFIJO_DRAG_FASE_GRUPO)) {
+        const grupoIdLocal = parseGrupoIdLocalDesdeFaseGrupoId(activeId)
+        if (!grupoIdLocal) return
+
+        const overGrupoId =
+          parseGrupoIdLocalDesdeFaseGrupoId(overId) ??
+          parseGrupoIdLocalDesdeDropId(overId)
+        if (overGrupoId !== grupoIdLocal) return
+
+        setElementos((prev) => {
+          const grupoEl = prev.find(
+            (el) => el.tipo === 'grupo' && el.grupo.idLocal === grupoIdLocal
+          )
+          if (grupoEl?.tipo !== 'grupo') return prev
+
+          const ids = grupoEl.grupo.fases.map((f, i) =>
+            idDragFaseEnGrupo(grupoIdLocal, f, i)
+          )
+          const oldIndex = ids.indexOf(activeId)
+          let newIndex = ids.indexOf(overId)
+          if (newIndex < 0 && overId === idDragGrupoDrop(grupoIdLocal)) {
+            newIndex = ids.length - 1
+          }
+          if (oldIndex < 0 || newIndex < 0 || oldIndex === newIndex) return prev
+          return reordenarFasesEnGrupo(prev, grupoIdLocal, oldIndex, newIndex)
+        })
+      }
+    },
+    []
+  )
+
   const guardarMutation = useApiMutation<void>({
     fn: async () => {
       if (!torneo) return
@@ -123,7 +252,17 @@ export function useFases({
         categorias,
         seVenLosGolesEnTablaDePosiciones
       } = getDatosBasicos()
-      const fasesValidas = fasesEstado
+
+      const todasLasFases: FaseEstado[] = []
+      for (const el of elementos) {
+        if (el.tipo === 'fase') {
+          todasLasFases.push(el.fase)
+        } else {
+          todasLasFases.push(...el.grupo.fases)
+        }
+      }
+
+      const fasesValidas = todasLasFases
         .filter((f) => f.nombre.trim() && f.formato)
         .map((f) => ({
           id: f.id,
@@ -164,15 +303,7 @@ export function useFases({
       torneo.seVenLosGolesEnTablaDePosiciones ?? true
     )
     setCategorias(categoriasDtoACategoria(torneo.categorias ?? []))
-    setFasesEstado(
-      (torneo.fases ?? []).map((f) => ({
-        id: f.id,
-        numero: f.numero ?? 0,
-        nombre: f.nombre ?? '',
-        formato: tipoDeFaseAOpción(f.tipoDeFase),
-        sePuedeEditar: f.sePuedeEditar !== false
-      }))
-    )
+    setElementos(torneoFasesAElementos(torneo.fases ?? []))
     setEditando(false)
   }
 
@@ -217,10 +348,24 @@ export function useFases({
     }
   }
 
-  const irAZonas = async (faseIndex: number) => {
-    const faseEnEstado = fasesEstado[faseIndex]
-    if (!faseEnEstado) return
+  const irAZonas = async (faseId: number) => {
     if (creandoZonasEliminacion) return
+
+    let faseEnEstado: FaseEstado | undefined
+    for (const el of elementos) {
+      if (el.tipo === 'fase' && el.fase.id === faseId) {
+        faseEnEstado = el.fase
+        break
+      }
+      if (el.tipo === 'grupo') {
+        const f = el.grupo.fases.find((x) => x.id === faseId)
+        if (f) {
+          faseEnEstado = f
+          break
+        }
+      }
+    }
+    if (!faseEnEstado) return
 
     const faseTieneId = faseEnEstado.id != null && faseEnEstado.id > 0
 
@@ -231,7 +376,7 @@ export function useFases({
         queryFn: () => api.torneoGET(torneoId)
       })
       const faseActualizada = torneoActualizado?.fases?.find(
-        (f: { numero?: number }) => f.numero === faseEnEstado.numero
+        (f: { numero?: number }) => f.numero === faseEnEstado!.numero
       )
       if (!faseActualizada?.id) return
       try {
@@ -249,28 +394,35 @@ export function useFases({
       return
     }
 
-    const faseApi = torneoFases[faseIndex]
+    const faseApi = torneoFases.find((f) => f.id === faseId)
     try {
-      await asegurarZonasEliminacionDirecta(faseEnEstado.id!, faseApi)
+      await asegurarZonasEliminacionDirecta(faseId, faseApi)
     } catch {
       return
     }
 
     navigate(
-      `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${faseEnEstado.id}/zonas`
+      `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${faseId}/zonas`
     )
   }
 
   return {
     torneoFases,
-    fasesEstado,
-    actualizarFase,
-    eliminarFase,
-    eliminarFaseMutation,
+    elementos,
+    contarFases: () => contarFases(elementos),
+    actualizarFaseTopLevel,
+    actualizarFaseEnGrupo,
+    actualizarGrupo,
+    eliminarFaseTopLevel,
+    eliminarFaseDeGrupo,
+    eliminarGrupo,
     agregarFaseMutation,
+    agregarGrupoDeFases,
+    eliminarFaseMutation,
     guardarMutation,
     estaGuardandoZonas: guardarMutation.isPending || creandoZonasEliminacion,
     irAZonas,
-    handleCancelarEdicion
+    handleCancelarEdicion,
+    handleDragEnd
   }
 }

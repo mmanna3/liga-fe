@@ -1,0 +1,122 @@
+import type { FaseDTO, TorneoDTO } from '@/api/clients'
+import {
+  DndContext,
+  type DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors
+} from '@dnd-kit/core'
+import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
+import { BotoneraFases } from './botonera-fases'
+import { FaseEnLista } from './fase-en-lista'
+import { GrupoDeFasesItem } from './grupo-de-fases-item'
+import type { useEstructuraFases } from './hooks/use-estructura-fases'
+
+type EstructuraFasesApi = ReturnType<typeof useEstructuraFases>
+
+interface GestionFasesTorneoProps {
+  torneo: TorneoDTO
+  torneoId: number
+  editando: boolean
+  estructura: EstructuraFasesApi
+}
+
+export function GestionFasesTorneo({
+  torneo,
+  torneoId,
+  editando,
+  estructura
+}: GestionFasesTorneoProps) {
+  const {
+    torneoFases,
+    elementos,
+    actualizarFaseTopLevel,
+    actualizarFaseEnGrupo,
+    actualizarGrupo,
+    eliminarFaseTopLevel,
+    eliminarFaseDeGrupo,
+    eliminarGrupo,
+    agregarFaseMutation,
+    agregarGrupoDeFases,
+    estaGuardandoZonas,
+    irAZonas,
+    handleDragEnd
+  } = estructura
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates
+    })
+  )
+
+  const onDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over) return
+    handleDragEnd(String(active.id), String(over.id))
+  }
+
+  return (
+    <>
+      <DndContext sensors={sensors} onDragEnd={onDragEnd}>
+        <div className='space-y-4'>
+          {elementos.map((el, index) => {
+            if (el.tipo === 'fase') {
+              return (
+                <FaseEnLista
+                  key={el.fase.id ?? `fase-top-${index}`}
+                  fase={el.fase}
+                  faseIndex={index}
+                  faseOriginal={torneoFases.find(
+                    (f: FaseDTO) => f.id === el.fase.id
+                  )}
+                  torneoId={torneoId}
+                  nombreTorneo={torneo.nombre}
+                  categoriasTorneo={torneo.categorias ?? []}
+                  onActualizar={(campo, valor) =>
+                    actualizarFaseTopLevel(index, campo, valor)
+                  }
+                  onEliminar={() => eliminarFaseTopLevel(index)}
+                  onIrAZonas={irAZonas}
+                  estaGuardando={estaGuardandoZonas}
+                />
+              )
+            }
+
+            return (
+              <GrupoDeFasesItem
+                key={el.grupo.idLocal}
+                grupo={el.grupo}
+                torneoId={torneoId}
+                nombreTorneo={torneo.nombre}
+                torneoFases={torneoFases}
+                categoriasTorneo={torneo.categorias ?? []}
+                onActualizarNombre={(nombre) => actualizarGrupo(index, nombre)}
+                onActualizarFase={(faseIndex, campo, valor) =>
+                  actualizarFaseEnGrupo(index, faseIndex, campo, valor)
+                }
+                onEliminarFase={(faseIndex) =>
+                  eliminarFaseDeGrupo(index, faseIndex)
+                }
+                onEliminarGrupo={() => eliminarGrupo(index)}
+                onIrAZonas={irAZonas}
+                estaGuardando={estaGuardandoZonas}
+              />
+            )
+          })}
+        </div>
+      </DndContext>
+
+      {!editando && (
+        <BotoneraFases
+          onAgregarFase={() => agregarFaseMutation.mutate()}
+          onAgregarGrupoDeFases={agregarGrupoDeFases}
+          estaCargandoFase={agregarFaseMutation.isPending}
+        />
+      )}
+    </>
+  )
+}
+
+export { useEstructuraFases } from './hooks/use-estructura-fases'

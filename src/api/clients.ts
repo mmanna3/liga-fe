@@ -8189,6 +8189,370 @@ export class Client {
   }
 
   /**
+   * @return OK
+   */
+  usuarioAll(): Promise<UsuarioAdminDTO[]> {
+    let url_ = this.baseUrl + '/api/Usuario'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processUsuarioAll(_response)
+    })
+  }
+
+  protected processUsuarioAll(response: Response): Promise<UsuarioAdminDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(UsuarioAdminDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<UsuarioAdminDTO[]>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  usuarioPOST(body: UsuarioAdminDTO | undefined): Promise<UsuarioAdminDTO> {
+    let url_ = this.baseUrl + '/api/Usuario'
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processUsuarioPOST(_response)
+    })
+  }
+
+  protected processUsuarioPOST(response: Response): Promise<UsuarioAdminDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = UsuarioAdminDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<UsuarioAdminDTO>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  usuarioGET(id: number): Promise<UsuarioAdminDTO> {
+    let url_ = this.baseUrl + '/api/Usuario/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processUsuarioGET(_response)
+    })
+  }
+
+  protected processUsuarioGET(response: Response): Promise<UsuarioAdminDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = UsuarioAdminDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<UsuarioAdminDTO>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  usuarioPUT(id: number, body: UsuarioAdminDTO | undefined): Promise<void> {
+    let url_ = this.baseUrl + '/api/Usuario/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processUsuarioPUT(_response)
+    })
+  }
+
+  protected processUsuarioPUT(response: Response): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  usuarioDELETE(id: number): Promise<number> {
+    let url_ = this.baseUrl + '/api/Usuario/{id}'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'DELETE',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processUsuarioDELETE(_response)
+    })
+  }
+
+  protected processUsuarioDELETE(response: Response): Promise<number> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = resultData200 !== undefined ? resultData200 : <any>null
+
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<number>(null as any)
+  }
+
+  /**
+   * @param id (optional)
+   * @return OK
+   */
+  blanquearClave2(id: number | undefined): Promise<boolean> {
+    let url_ = this.baseUrl + '/api/Usuario/blanquear-clave?'
+    if (id === null) throw new Error("The parameter 'id' cannot be null.")
+    else if (id !== undefined) url_ += 'id=' + encodeURIComponent('' + id) + '&'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'POST',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processBlanquearClave2(_response)
+    })
+  }
+
+  protected processBlanquearClave2(response: Response): Promise<boolean> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = resultData200 !== undefined ? resultData200 : <any>null
+
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<boolean>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  rolesAsignables(): Promise<RolDTO[]> {
+    let url_ = this.baseUrl + '/api/Usuario/roles-asignables'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processRolesAsignables(_response)
+    })
+  }
+
+  protected processRolesAsignables(response: Response): Promise<RolDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200) result200!.push(RolDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<RolDTO[]>(null as any)
+  }
+
+  /**
    * @param body (optional)
    * @return OK
    */
@@ -13164,6 +13528,46 @@ export interface IResultadoCategoriaDTO {
   resultado?: string | undefined
 }
 
+export class RolDTO implements IRolDTO {
+  id?: number
+  nombre?: string | undefined
+
+  constructor(data?: IRolDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.nombre = _data['nombre']
+    }
+  }
+
+  static fromJS(data: any): RolDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new RolDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['nombre'] = this.nombre
+    return data
+  }
+}
+
+export interface IRolDTO {
+  id?: number
+  nombre?: string | undefined
+}
+
 export class SponsorWebPublicaDTO implements ISponsorWebPublicaDTO {
   id?: number
   nombre!: string
@@ -13481,6 +13885,58 @@ export interface ITorneoDTO {
   sePuedeEditar?: boolean
   fases?: FaseDTO[] | undefined
   categorias?: TorneoCategoriaDTO[] | undefined
+}
+
+export class UsuarioAdminDTO implements IUsuarioAdminDTO {
+  id?: number
+  nombreUsuario!: string
+  rolId!: number
+  rolNombre?: string | undefined
+  blanqueoPendiente?: boolean
+
+  constructor(data?: IUsuarioAdminDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.nombreUsuario = _data['nombreUsuario']
+      this.rolId = _data['rolId']
+      this.rolNombre = _data['rolNombre']
+      this.blanqueoPendiente = _data['blanqueoPendiente']
+    }
+  }
+
+  static fromJS(data: any): UsuarioAdminDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new UsuarioAdminDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['nombreUsuario'] = this.nombreUsuario
+    data['rolId'] = this.rolId
+    data['rolNombre'] = this.rolNombre
+    data['blanqueoPendiente'] = this.blanqueoPendiente
+    return data
+  }
+}
+
+export interface IUsuarioAdminDTO {
+  id?: number
+  nombreUsuario: string
+  rolId: number
+  rolNombre?: string | undefined
+  blanqueoPendiente?: boolean
 }
 
 export class UsuarioDTO implements IUsuarioDTO {

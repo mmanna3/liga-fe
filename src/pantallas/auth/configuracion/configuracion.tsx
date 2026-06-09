@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom'
 import ModalDnisExpulsadosDeLaLiga from './modal-dnis-expulsados-de-la-liga'
 import ModalEscudoPorDefecto from './modal-escudo-por-defecto'
 import ModalHabilitacionFichaje from './modal-habilitacion-fichaje'
+import { VisibleSoloParaAdmin } from '@/design-system/visible-solo-para-admin'
 
 export default function Configuracion() {
   const navigate = useNavigate()
@@ -111,6 +112,29 @@ export default function Configuracion() {
                 </CardDescription>
               </CardHeader>
             </Card>
+            <VisibleSoloParaAdmin>
+              <Card
+                className='cursor-pointer transition-colors hover:bg-muted/50'
+                role='button'
+                tabIndex={0}
+                onClick={() => navigate(rutasNavegacion.usuarios)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ')
+                    e.currentTarget.click()
+                }}
+              >
+                <CardHeader>
+                  <CardTitle className='flex items-center gap-2'>
+                    <Icono nombre='Usuario' className='h-8 w-8' />
+                    Usuarios
+                  </CardTitle>
+                  <CardDescription>
+                    Creá usuarios del panel, asigná roles, blanqueá claves y
+                    eliminá cuentas.
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </VisibleSoloParaAdmin>
             <Card
               className='cursor-pointer transition-colors hover:bg-muted/50'
               role='button'

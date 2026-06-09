@@ -35,6 +35,11 @@ export const rutas = {
   generacionDeFixtures: 'configuracion/generacion-de-fixtures',
   fechasGeneracionFixture: 'configuracion/generacion-de-fixtures/fechas',
   sponsorsWebPublica: 'configuracion/sponsors-web-publica',
+  usuarios: 'configuracion/usuarios',
+  crearUsuario: 'configuracion/usuarios/crear',
+  detalleUsuario: 'configuracion/usuarios/detalle',
+  editarUsuario: 'configuracion/usuarios/editar',
+  cambiarPassword: 'cambiar-password',
   superAdmin: 'super-admin'
 }
 

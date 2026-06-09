@@ -3,14 +3,15 @@ import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/ykn-ui/input'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import { rutasNavegacion } from '@/ruteo/rutas'
-import { Plus } from 'lucide-react'
 import { Fragment, useState } from 'react'
 import { Categorias } from './crear-torneo/components/categorias'
 import { SelectorAgrupador } from './crear-torneo/components/selector-agrupador'
 import { SwitchVerGoles } from './crear-torneo/components/switch-ver-goles'
-import { FaseItem } from './detalle-torneo/components/fase-item/fase-item'
+import {
+  GestionFasesTorneo,
+  useEstructuraFases
+} from './detalle-torneo/components/gestion-fases-torneo/gestion-fases-torneo'
 import { useDetalleTorneo } from './detalle-torneo/hooks/use-detalle-torneo'
-import { useFases } from './detalle-torneo/hooks/use-fases'
 import ModalActualizarFasesTablaAnual from './detalle-torneo/modal-actualizar-fases-tabla-anual'
 
 export default function DetalleTorneo() {
@@ -40,7 +41,7 @@ export default function DetalleTorneo() {
     toggleVisibilidadAppMutation
   } = detalle
 
-  const fases = useFases({
+  const estructuraFases = useEstructuraFases({
     torneo,
     torneoId,
     id,
@@ -60,22 +61,13 @@ export default function DetalleTorneo() {
     setEditando
   })
 
-  const {
-    torneoFases,
-    fasesEstado,
-    actualizarFase,
-    eliminarFase,
-    agregarFaseMutation,
-    irAZonas,
-    estaGuardandoZonas,
-    handleCancelarEdicion
-  } = fases
+  const { handleCancelarEdicion, contarFases } = estructuraFases
 
   if (isLoading) return <div>Cargando...</div>
   if (isError) return <div>Error al cargar el torneo</div>
   if (!torneo) return <div>No se encontró el torneo</div>
 
-  const puedeEliminar = torneoFases.length === 0
+  const puedeEliminar = contarFases() === 0
 
   return (
     <Fragment>
@@ -254,41 +246,12 @@ export default function DetalleTorneo() {
               </CardContent>
             </Card>
 
-            {fasesEstado.map((fase, index) => (
-              <Card key={fase.id ?? index} className='shadow-md'>
-                <CardContent className='py-2'>
-                  <FaseItem
-                    torneoId={torneoId}
-                    nombreTorneo={torneo.nombre}
-                    fase={fase}
-                    faseIndex={index}
-                    faseOriginal={torneoFases[index]}
-                    categoriasTorneo={torneo.categorias ?? []}
-                    onActualizar={(campo, valor) =>
-                      actualizarFase(index, campo, valor)
-                    }
-                    onEliminar={() => eliminarFase(index)}
-                    onIrAZonas={irAZonas}
-                    estaGuardando={estaGuardandoZonas}
-                    enCard
-                  />
-                </CardContent>
-              </Card>
-            ))}
-
-            {!editando && (
-              <Boton
-                type='button'
-                variant='outline'
-                size='sm'
-                onClick={() => agregarFaseMutation.mutate()}
-                estaCargando={agregarFaseMutation.isPending}
-                className='my-2'
-              >
-                <Plus className='w-3 h-3' />
-                Agregar fase
-              </Boton>
-            )}
+            <GestionFasesTorneo
+              torneo={torneo}
+              torneoId={torneoId}
+              editando={editando}
+              estructura={estructuraFases}
+            />
           </div>
         }
       />

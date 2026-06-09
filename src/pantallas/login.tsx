@@ -7,8 +7,11 @@ import {
 import { Input } from '@/design-system/base-ui/input'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { useAuth } from '@/logica-compartida/hooks/use-auth'
+import { rutasNavegacion } from '@/ruteo/rutas'
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+
+const MENSAJE_CAMBIO_OBLIGATORIO = 'El usuario debe cambiar la contraseña'
 
 export default function Login() {
   const [usuario, setUsuario] = useState('')
@@ -27,11 +30,16 @@ export default function Login() {
     setIsLoading(true)
 
     try {
-      const success = await login(usuario, password)
-      if (success) {
+      const resultado = await login(usuario, password)
+      if (resultado.exito) {
         navigate(from, { replace: true })
+      } else if (resultado.error === MENSAJE_CAMBIO_OBLIGATORIO) {
+        navigate(rutasNavegacion.cambiarPassword, {
+          replace: true,
+          state: { usuario }
+        })
       } else {
-        setError('Usuario o contraseña incorrectos')
+        setError(resultado.error || 'Usuario o contraseña incorrectos')
       }
     } catch {
       setError('Error al intentar iniciar sesión')

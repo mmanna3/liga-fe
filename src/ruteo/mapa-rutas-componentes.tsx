@@ -3,6 +3,10 @@ import SuperAdmin from '@/pantallas/auth/super-admin/super-admin'
 import FechasGeneracionFixture from '@/pantallas/auth/configuracion/generacion-de-fixtures/fechas-generacion-fixture'
 import GeneracionDeFixtures from '@/pantallas/auth/configuracion/generacion-de-fixtures/generacion-de-fixtures'
 import SponsorsWebPublica from '@/pantallas/auth/configuracion/sponsors-web-publica/sponsors-web-publica'
+import Usuarios from '@/pantallas/auth/configuracion/usuarios/usuarios'
+import CrearUsuario from '@/pantallas/auth/configuracion/usuarios/crear-usuario'
+import DetalleUsuario from '@/pantallas/auth/configuracion/usuarios/detalle-usuario'
+import EditarUsuario from '@/pantallas/auth/configuracion/usuarios/editar-usuario'
 import DetalleClub from '@/pantallas/auth/club/detalle-club'
 import AprobarRechazarDelegado from '@/pantallas/auth/delegados/aprobar-rechazar-delegado'
 import Arbitros from '@/pantallas/auth/arbitros/arbitros'
@@ -34,6 +38,7 @@ import ZonasDeLaFase from '@/pantallas/auth/torneo/zonas/zonas'
 import Torneo from '@/pantallas/auth/torneo/torneo'
 import ErrorPage from '@/pantallas/error'
 import Login from '@/pantallas/login'
+import CambiarPassword from '@/pantallas/cambiar-password'
 import PoliticaDePrivacidad from '@/pantallas/politica-de-privacidad'
 import { RequiereAutenticacion } from '@/design-system/requiere-autenticacion'
 import AuthLayout from '../pantallas/auth/auth-layout'
@@ -49,6 +54,14 @@ export const mapaRutasComponentes = [
     element: (
       <div className='flex justify-center w-screen bg-gray-100'>
         <Login />
+      </div>
+    )
+  },
+  {
+    path: `/${rutas.cambiarPassword}`,
+    element: (
+      <div className='flex justify-center w-screen bg-gray-100'>
+        <CambiarPassword />
       </div>
     )
   },
@@ -118,6 +131,10 @@ export const mapaRutasComponentes = [
       { path: rutas.configuracion, element: <Configuracion /> },
       { path: rutas.generacionDeFixtures, element: <GeneracionDeFixtures /> },
       { path: rutas.sponsorsWebPublica, element: <SponsorsWebPublica /> },
+      { path: rutas.usuarios, element: <Usuarios /> },
+      { path: rutas.crearUsuario, element: <CrearUsuario /> },
+      { path: `${rutas.detalleUsuario}/:id`, element: <DetalleUsuario /> },
+      { path: `${rutas.editarUsuario}/:id`, element: <EditarUsuario /> },
       {
         path: `${rutas.fechasGeneracionFixture}/:id`,
         element: <FechasGeneracionFixture />
