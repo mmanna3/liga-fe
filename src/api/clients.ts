@@ -12566,6 +12566,7 @@ export interface IObtenerNombreUsuarioPorDniDTO {
 export class PartidoDTO implements IPartidoDTO {
   id?: number
   categoria?: string | undefined
+  orden?: number
   categoriaId!: number
   resultadoLocal!: string | undefined
   resultadoVisitante!: string | undefined
@@ -12585,6 +12586,7 @@ export class PartidoDTO implements IPartidoDTO {
     if (_data) {
       this.id = _data['id']
       this.categoria = _data['categoria']
+      this.orden = _data['orden']
       this.categoriaId = _data['categoriaId']
       this.resultadoLocal = _data['resultadoLocal']
       this.resultadoVisitante = _data['resultadoVisitante']
@@ -12604,6 +12606,7 @@ export class PartidoDTO implements IPartidoDTO {
     data = typeof data === 'object' ? data : {}
     data['id'] = this.id
     data['categoria'] = this.categoria
+    data['orden'] = this.orden
     data['categoriaId'] = this.categoriaId
     data['resultadoLocal'] = this.resultadoLocal
     data['resultadoVisitante'] = this.resultadoVisitante
@@ -12616,6 +12619,7 @@ export class PartidoDTO implements IPartidoDTO {
 export interface IPartidoDTO {
   id?: number
   categoria?: string | undefined
+  orden?: number
   categoriaId: number
   resultadoLocal: string | undefined
   resultadoVisitante: string | undefined

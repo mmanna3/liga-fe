@@ -20,7 +20,8 @@ import {
   buildRequests,
   etiquetasLocalVisitanteJornada,
   hayCambiosParaGuardarResultados,
-  hayFilasConResultadoIncompleto
+  hayFilasConResultadoIncompleto,
+  ordenarPartidosPorCategoria
 } from './lib'
 
 interface ModalCargaResultadosProps {
@@ -40,7 +41,10 @@ export function ModalCargaResultados({
   numeroFecha
 }: ModalCargaResultadosProps) {
   const queryClient = useQueryClient()
-  const partidos = jornada?.partidos ?? []
+  const partidos = useMemo(
+    () => ordenarPartidosPorCategoria(jornada?.partidos ?? []),
+    [jornada?.partidos]
+  )
 
   const [valores, setValores] = useState<
     { local: string; visitante: string }[]
@@ -59,7 +63,7 @@ export function ModalCargaResultados({
       return
     }
     setValores(
-      jornada.partidos.map((p) => ({
+      ordenarPartidosPorCategoria(jornada.partidos).map((p) => ({
         local: p.resultadoLocal ?? '',
         visitante: p.resultadoVisitante ?? ''
       }))

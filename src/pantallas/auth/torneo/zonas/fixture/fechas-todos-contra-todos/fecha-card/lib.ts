@@ -7,6 +7,12 @@ export type RequestCargarResultados = {
   partidos: PartidoDTO[]
 }
 
+export function ordenarPartidosPorCategoria(
+  partidos: PartidoDTO[]
+): PartidoDTO[] {
+  return [...partidos].sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0))
+}
+
 export function buildRequests(
   jornada: JornadaDTO,
   partidos: PartidoDTO[],
@@ -93,7 +99,7 @@ export function hayCambiosParaGuardarResultados(
   if (jornada.id == null) return false
   if (resultadosVerificados !== (jornada.resultadosVerificados ?? false))
     return true
-  const lista = jornada.partidos ?? []
+  const lista = ordenarPartidosPorCategoria(jornada.partidos ?? [])
   if (lista.length === 0) return false
   if (valores.length !== lista.length) return false
   return buildPartidosDtoParaCargar(lista, valores).length > 0
