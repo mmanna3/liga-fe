@@ -9,6 +9,7 @@ import { rutasNavegacion } from '@/ruteo/rutas'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import InputTelefonoCelular from './components/input-telefono-celular'
+import SelectorAgrupadoresMultiples from './components/selector-agrupadores-multiples'
 import {
   filtrarDigitosTelefonoCelular,
   formatearTelefonoCelularParaBackend,
@@ -22,6 +23,7 @@ export default function CrearArbitro() {
   const [apellido, setApellido] = useState<string>('')
   const [telefonoCelular, setTelefonoCelular] = useState<string>('')
   const [errorTelefono, setErrorTelefono] = useState<string>('')
+  const [torneoAgrupadorIds, setTorneoAgrupadorIds] = useState<number[]>([])
 
   const mutation = useApiMutation({
     fn: async (nuevoArbitro: ArbitroDTO) => {
@@ -47,7 +49,8 @@ export default function CrearArbitro() {
         dni,
         nombre,
         apellido,
-        telefonoCelular: formatearTelefonoCelularParaBackend(telefonoCelular)
+        telefonoCelular: formatearTelefonoCelularParaBackend(telefonoCelular),
+        torneoAgrupadorIds
       })
     )
   }
@@ -104,6 +107,10 @@ export default function CrearArbitro() {
             valor={telefonoCelular}
             error={errorTelefono}
             onChange={handleTelefonoChange}
+          />
+          <SelectorAgrupadoresMultiples
+            valor={torneoAgrupadorIds}
+            alCambiar={setTorneoAgrupadorIds}
           />
           <ContenedorBotones>
             <Boton type='submit' estaCargando={mutation.isPending}>

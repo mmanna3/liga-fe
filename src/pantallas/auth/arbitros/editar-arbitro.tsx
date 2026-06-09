@@ -11,12 +11,20 @@ import { rutasNavegacion } from '@/ruteo/rutas'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import InputTelefonoCelular from './components/input-telefono-celular'
+import SelectorAgrupadoresMultiples from './components/selector-agrupadores-multiples'
 import {
   extraerDigitosTelefonoCelular,
   filtrarDigitosTelefonoCelular,
   formatearTelefonoCelularParaBackend,
   validarDigitosTelefonoCelular
 } from './utilidades-telefono-celular'
+
+function mismosIds(a: number[], b: number[]): boolean {
+  if (a.length !== b.length) return false
+  const ordenadosA = [...a].sort((x, y) => x - y)
+  const ordenadosB = [...b].sort((x, y) => x - y)
+  return ordenadosA.every((id, i) => id === ordenadosB[i])
+}
 
 export default function EditarArbitro() {
   const { id } = useParams<{ id: string }>()
@@ -26,6 +34,7 @@ export default function EditarArbitro() {
   const [apellido, setApellido] = useState<string>('')
   const [telefonoCelular, setTelefonoCelular] = useState<string>('')
   const [errorTelefono, setErrorTelefono] = useState<string>('')
+  const [torneoAgrupadorIds, setTorneoAgrupadorIds] = useState<number[]>([])
 
   const {
     data: arbitro,
@@ -49,6 +58,7 @@ export default function EditarArbitro() {
       setNombre(arbitro.nombre || '')
       setApellido(arbitro.apellido || '')
       setTelefonoCelular(extraerDigitosTelefonoCelular(arbitro.telefonoCelular))
+      setTorneoAgrupadorIds(arbitro.torneoAgrupadorIds ?? [])
     }
   }, [arbitro])
 
@@ -56,12 +66,14 @@ export default function EditarArbitro() {
   const telefonoInicial = extraerDigitosTelefonoCelular(
     arbitro?.telefonoCelular
   )
+  const agrupadoresIniciales = arbitro?.torneoAgrupadorIds ?? []
   const hayCambios =
     !!arbitro &&
     (dni !== arbitro.dni ||
       nombre !== arbitro.nombre ||
       apellido !== arbitro.apellido ||
-      telefonoCelular !== telefonoInicial)
+      telefonoCelular !== telefonoInicial ||
+      !mismosIds(torneoAgrupadorIds, agrupadoresIniciales))
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -83,7 +95,8 @@ export default function EditarArbitro() {
         dni,
         nombre,
         apellido,
-        telefonoCelular: telefonoBackend
+        telefonoCelular: telefonoBackend,
+        torneoAgrupadorIds
       })
     )
     navigate(rutasNavegacion.arbitros)
@@ -146,6 +159,10 @@ export default function EditarArbitro() {
               valor={telefonoCelular}
               error={errorTelefono}
               onChange={handleTelefonoChange}
+            />
+            <SelectorAgrupadoresMultiples
+              valor={torneoAgrupadorIds}
+              alCambiar={setTorneoAgrupadorIds}
             />
             <ContenedorBotones>
               <Boton

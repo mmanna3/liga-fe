@@ -42,6 +42,17 @@ export default function TablaArbitros({
       cell: ({ row }) => (
         <span>{row.original.telefonoCelular?.trim() || '—'}</span>
       )
+    },
+    {
+      id: 'agrupadores',
+      header: 'Agrupadores',
+      cell: ({ row }) => {
+        const nombres =
+          row.original.torneoAgrupadores
+            ?.map((a) => a.torneoAgrupadorNombre)
+            .filter(Boolean) ?? []
+        return <span>{nombres.length > 0 ? nombres.join(', ') : '—'}</span>
+      }
     }
   ]
 

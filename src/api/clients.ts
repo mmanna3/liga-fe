@@ -9417,6 +9417,8 @@ export class ArbitroDTO implements IArbitroDTO {
   nombre!: string
   apellido!: string
   telefonoCelular?: string | undefined
+  torneoAgrupadorIds?: number[] | undefined
+  torneoAgrupadores?: ArbitroTorneoAgrupadorDTO[] | undefined
 
   constructor(data?: IArbitroDTO) {
     if (data) {
@@ -9434,6 +9436,16 @@ export class ArbitroDTO implements IArbitroDTO {
       this.nombre = _data['nombre']
       this.apellido = _data['apellido']
       this.telefonoCelular = _data['telefonoCelular']
+      if (Array.isArray(_data['torneoAgrupadorIds'])) {
+        this.torneoAgrupadorIds = [] as any
+        for (let item of _data['torneoAgrupadorIds'])
+          this.torneoAgrupadorIds!.push(item)
+      }
+      if (Array.isArray(_data['torneoAgrupadores'])) {
+        this.torneoAgrupadores = [] as any
+        for (let item of _data['torneoAgrupadores'])
+          this.torneoAgrupadores!.push(ArbitroTorneoAgrupadorDTO.fromJS(item))
+      }
     }
   }
 
@@ -9451,6 +9463,16 @@ export class ArbitroDTO implements IArbitroDTO {
     data['nombre'] = this.nombre
     data['apellido'] = this.apellido
     data['telefonoCelular'] = this.telefonoCelular
+    if (Array.isArray(this.torneoAgrupadorIds)) {
+      data['torneoAgrupadorIds'] = []
+      for (let item of this.torneoAgrupadorIds)
+        data['torneoAgrupadorIds'].push(item)
+    }
+    if (Array.isArray(this.torneoAgrupadores)) {
+      data['torneoAgrupadores'] = []
+      for (let item of this.torneoAgrupadores)
+        data['torneoAgrupadores'].push(item.toJSON())
+    }
     return data
   }
 }
@@ -9461,6 +9483,52 @@ export interface IArbitroDTO {
   nombre: string
   apellido: string
   telefonoCelular?: string | undefined
+  torneoAgrupadorIds?: number[] | undefined
+  torneoAgrupadores?: ArbitroTorneoAgrupadorDTO[] | undefined
+}
+
+export class ArbitroTorneoAgrupadorDTO implements IArbitroTorneoAgrupadorDTO {
+  id?: number
+  torneoAgrupadorId?: number
+  torneoAgrupadorNombre?: string | undefined
+
+  constructor(data?: IArbitroTorneoAgrupadorDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.torneoAgrupadorId = _data['torneoAgrupadorId']
+      this.torneoAgrupadorNombre = _data['torneoAgrupadorNombre']
+    }
+  }
+
+  static fromJS(data: any): ArbitroTorneoAgrupadorDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new ArbitroTorneoAgrupadorDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['torneoAgrupadorId'] = this.torneoAgrupadorId
+    data['torneoAgrupadorNombre'] = this.torneoAgrupadorNombre
+    return data
+  }
+}
+
+export interface IArbitroTorneoAgrupadorDTO {
+  id?: number
+  torneoAgrupadorId?: number
+  torneoAgrupadorNombre?: string | undefined
 }
 
 export class CambiarEscudoDTO implements ICambiarEscudoDTO {
