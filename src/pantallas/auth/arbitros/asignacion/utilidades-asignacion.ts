@@ -101,14 +101,14 @@ export function construirMensajeWhatsappArbitro(
     datos.direccionLocal,
     datos.localidadLocal
   )
-  const parteMaps = urlMaps ? `\n\n📍 Link Google Maps:\n${urlMaps}` : ''
+  const parteMaps = urlMaps ? `\n\n>> Link Google Maps:\n${urlMaps}` : ''
 
   return (
-    `👋 Hola ${datos.nombre} ${datos.apellido}, tu próxima jornada es ` +
-    `⚽ *${datos.local} vs ${datos.visitante}* del ` +
-    `🏆 *Torneo ${datos.torneoNombre} - ${datos.faseNombre} - ${datos.zonaNombre}* ` +
-    `📅 el día ${diaTexto} en el Club ${datos.nombreClubLocal}${parteUbicacion}.${parteMaps}` +
-    `\n\n—\nEDeFI Administración`
+    `Hola ${datos.nombre} ${datos.apellido}, tu próxima jornada es ` +
+    `*${datos.local} vs ${datos.visitante}* del ` +
+    `*Torneo ${datos.torneoNombre} - ${datos.faseNombre} - ${datos.zonaNombre}*.\n` +
+    `El día ${diaTexto} en el Club ${datos.nombreClubLocal}${parteUbicacion}.${parteMaps}` +
+    `\n\n--\nEDeFI Administración`
   )
 }
 
