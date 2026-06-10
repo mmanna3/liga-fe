@@ -894,6 +894,59 @@ export class Client {
   /**
    * @return OK
    */
+  marcarWhatsappEnviadoArbitroJornada(
+    jornadaId: number,
+    arbitroId: number
+  ): Promise<void> {
+    let url_ =
+      this.baseUrl +
+      '/api/Arbitro/jornada/{jornadaId}/arbitros/{arbitroId}/whatsapp-enviado'
+    if (jornadaId === undefined || jornadaId === null)
+      throw new Error("The parameter 'jornadaId' must be defined.")
+    url_ = url_.replace('{jornadaId}', encodeURIComponent('' + jornadaId))
+    if (arbitroId === undefined || arbitroId === null)
+      throw new Error("The parameter 'arbitroId' must be defined.")
+    url_ = url_.replace('{arbitroId}', encodeURIComponent('' + arbitroId))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'PUT',
+      headers: {}
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processMarcarWhatsappEnviadoArbitroJornada(_response)
+    })
+  }
+
+  protected processMarcarWhatsappEnviadoArbitroJornada(
+    response: Response
+  ): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
   arbitroAll(): Promise<ArbitroDTO[]> {
     let url_ = this.baseUrl + '/api/Arbitro'
     url_ = url_.replace(/[?&]$/, '')
@@ -9529,7 +9582,9 @@ export class ArbitroAsignadoDTO implements IArbitroAsignadoDTO {
   id!: number
   nombre!: string | undefined
   apellido!: string | undefined
+  telefonoCelular?: string | undefined
   orden!: number
+  whatsappEnviado!: boolean
 
   constructor(data?: IArbitroAsignadoDTO) {
     if (data) {
@@ -9545,7 +9600,9 @@ export class ArbitroAsignadoDTO implements IArbitroAsignadoDTO {
       this.id = _data['id']
       this.nombre = _data['nombre']
       this.apellido = _data['apellido']
+      this.telefonoCelular = _data['telefonoCelular']
       this.orden = _data['orden']
+      this.whatsappEnviado = _data['whatsappEnviado']
     }
   }
 
@@ -9561,7 +9618,9 @@ export class ArbitroAsignadoDTO implements IArbitroAsignadoDTO {
     data['id'] = this.id
     data['nombre'] = this.nombre
     data['apellido'] = this.apellido
+    data['telefonoCelular'] = this.telefonoCelular
     data['orden'] = this.orden
+    data['whatsappEnviado'] = this.whatsappEnviado
     return data
   }
 }
@@ -9570,7 +9629,9 @@ export interface IArbitroAsignadoDTO {
   id: number
   nombre: string | undefined
   apellido: string | undefined
+  telefonoCelular?: string | undefined
   orden: number
+  whatsappEnviado: boolean
 }
 
 export class ArbitroConJornadasAsignacionDTO implements IArbitroConJornadasAsignacionDTO {
@@ -9711,6 +9772,7 @@ export class ArbitroElegibleAsignacionDTO implements IArbitroElegibleAsignacionD
   id!: number
   nombre!: string | undefined
   apellido!: string | undefined
+  telefonoCelular?: string | undefined
   jornadasAsignadasEnProximasFechas!: JornadaAsignadaResumenDTO[] | undefined
 
   constructor(data?: IArbitroElegibleAsignacionDTO) {
@@ -9727,6 +9789,7 @@ export class ArbitroElegibleAsignacionDTO implements IArbitroElegibleAsignacionD
       this.id = _data['id']
       this.nombre = _data['nombre']
       this.apellido = _data['apellido']
+      this.telefonoCelular = _data['telefonoCelular']
       if (Array.isArray(_data['jornadasAsignadasEnProximasFechas'])) {
         this.jornadasAsignadasEnProximasFechas = [] as any
         for (let item of _data['jornadasAsignadasEnProximasFechas'])
@@ -9749,6 +9812,7 @@ export class ArbitroElegibleAsignacionDTO implements IArbitroElegibleAsignacionD
     data['id'] = this.id
     data['nombre'] = this.nombre
     data['apellido'] = this.apellido
+    data['telefonoCelular'] = this.telefonoCelular
     if (Array.isArray(this.jornadasAsignadasEnProximasFechas)) {
       data['jornadasAsignadasEnProximasFechas'] = []
       for (let item of this.jornadasAsignadasEnProximasFechas)
@@ -9762,6 +9826,7 @@ export interface IArbitroElegibleAsignacionDTO {
   id: number
   nombre: string | undefined
   apellido: string | undefined
+  telefonoCelular?: string | undefined
   jornadasAsignadasEnProximasFechas: JornadaAsignadaResumenDTO[] | undefined
 }
 
@@ -12607,8 +12672,13 @@ export class JornadaAsignacionDTO implements IJornadaAsignacionDTO {
   id!: number
   dia!: Date
   diaSemana!: string | undefined
+  torneoNombre!: string | undefined
+  faseNombre!: string | undefined
+  zonaNombre!: string | undefined
   local!: string | undefined
   visitante!: string | undefined
+  nombreClubLocal!: string | undefined
+  direccionLocal?: string | undefined
   localidadLocal?: string | undefined
   arbitrosAsignados!: ArbitroAsignadoDTO[] | undefined
 
@@ -12628,8 +12698,13 @@ export class JornadaAsignacionDTO implements IJornadaAsignacionDTO {
         ? new Date(_data['dia'].toString())
         : <any>undefined
       this.diaSemana = _data['diaSemana']
+      this.torneoNombre = _data['torneoNombre']
+      this.faseNombre = _data['faseNombre']
+      this.zonaNombre = _data['zonaNombre']
       this.local = _data['local']
       this.visitante = _data['visitante']
+      this.nombreClubLocal = _data['nombreClubLocal']
+      this.direccionLocal = _data['direccionLocal']
       this.localidadLocal = _data['localidadLocal']
       if (Array.isArray(_data['arbitrosAsignados'])) {
         this.arbitrosAsignados = [] as any
@@ -12651,8 +12726,13 @@ export class JornadaAsignacionDTO implements IJornadaAsignacionDTO {
     data['id'] = this.id
     data['dia'] = this.dia ? formatDate(this.dia) : <any>undefined
     data['diaSemana'] = this.diaSemana
+    data['torneoNombre'] = this.torneoNombre
+    data['faseNombre'] = this.faseNombre
+    data['zonaNombre'] = this.zonaNombre
     data['local'] = this.local
     data['visitante'] = this.visitante
+    data['nombreClubLocal'] = this.nombreClubLocal
+    data['direccionLocal'] = this.direccionLocal
     data['localidadLocal'] = this.localidadLocal
     if (Array.isArray(this.arbitrosAsignados)) {
       data['arbitrosAsignados'] = []
@@ -12667,8 +12747,13 @@ export interface IJornadaAsignacionDTO {
   id: number
   dia: Date
   diaSemana: string | undefined
+  torneoNombre: string | undefined
+  faseNombre: string | undefined
+  zonaNombre: string | undefined
   local: string | undefined
   visitante: string | undefined
+  nombreClubLocal: string | undefined
+  direccionLocal?: string | undefined
   localidadLocal?: string | undefined
   arbitrosAsignados: ArbitroAsignadoDTO[] | undefined
 }

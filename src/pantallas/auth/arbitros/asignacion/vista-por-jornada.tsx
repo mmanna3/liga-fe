@@ -22,12 +22,14 @@ import {
 interface VistaPorJornadaProps {
   data: AsignacionArbitrosPorAgrupadorDTO
   slotsPorJornada: Record<number, { arbitro1: string; arbitro2: string }>
+  whatsappEnviadoPorAsignacion: Record<string, boolean>
   jornadaGuardandoId: number | null
   alCambiarArbitros: (
     jornadaId: number,
     arbitro1: string,
     arbitro2: string
   ) => void
+  alMarcarWhatsappEnviado: (jornadaId: number, arbitroId: number) => void
 }
 
 function SeccionColapsable({
@@ -70,18 +72,22 @@ function TorneoAsignacionTree({
   torneo,
   arbitrosElegibles,
   slotsPorJornada,
+  whatsappEnviadoPorAsignacion,
   jornadaGuardandoId,
-  alCambiarArbitros
+  alCambiarArbitros,
+  alMarcarWhatsappEnviado
 }: {
   torneo: TorneoAsignacionDTO
   arbitrosElegibles: ArbitroElegibleAsignacionDTO[]
   slotsPorJornada: Record<number, { arbitro1: string; arbitro2: string }>
+  whatsappEnviadoPorAsignacion: Record<string, boolean>
   jornadaGuardandoId: number | null
   alCambiarArbitros: (
     jornadaId: number,
     arbitro1: string,
     arbitro2: string
   ) => void
+  alMarcarWhatsappEnviado: (jornadaId: number, arbitroId: number) => void
 }) {
   return (
     <SeccionColapsable titulo={torneo.nombre ?? 'Torneo'}>
@@ -151,6 +157,9 @@ function TorneoAsignacionTree({
                             arbitrosElegibles={arbitrosElegibles}
                             arbitro1Id={slots.arbitro1}
                             arbitro2Id={slots.arbitro2}
+                            whatsappEnviadoPorAsignacion={
+                              whatsappEnviadoPorAsignacion
+                            }
                             guardando={jornadaGuardandoId === jornada.id}
                             alCambiarArbitro1={(id) =>
                               alCambiarArbitros(jornada.id, id, slots.arbitro2)
@@ -158,6 +167,7 @@ function TorneoAsignacionTree({
                             alCambiarArbitro2={(id) =>
                               alCambiarArbitros(jornada.id, slots.arbitro1, id)
                             }
+                            alMarcarWhatsappEnviado={alMarcarWhatsappEnviado}
                           />
                         )
                       })}
@@ -176,8 +186,10 @@ function TorneoAsignacionTree({
 export default function VistaPorJornada({
   data,
   slotsPorJornada,
+  whatsappEnviadoPorAsignacion,
   jornadaGuardandoId,
-  alCambiarArbitros
+  alCambiarArbitros,
+  alMarcarWhatsappEnviado
 }: VistaPorJornadaProps) {
   const torneos = data.torneos ?? []
   const arbitrosElegibles = data.arbitrosElegibles ?? []
@@ -198,8 +210,10 @@ export default function VistaPorJornada({
           torneo={torneo}
           arbitrosElegibles={arbitrosElegibles}
           slotsPorJornada={slotsPorJornada}
+          whatsappEnviadoPorAsignacion={whatsappEnviadoPorAsignacion}
           jornadaGuardandoId={jornadaGuardandoId}
           alCambiarArbitros={alCambiarArbitros}
+          alMarcarWhatsappEnviado={alMarcarWhatsappEnviado}
         />
       ))}
     </div>

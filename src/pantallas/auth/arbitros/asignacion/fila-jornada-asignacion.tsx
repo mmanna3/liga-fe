@@ -4,7 +4,9 @@ import type {
 } from '@/api/clients'
 import { cn } from '@/logica-compartida/utils'
 import { Check } from 'lucide-react'
+import BotonWhatsappArbitro from './boton-whatsapp-arbitro'
 import {
+  claveWhatsappJornadaArbitro,
   formatearDiaCorto,
   jornadaTieneAsignacion
 } from './utilidades-asignacion'
@@ -15,9 +17,60 @@ interface FilaJornadaAsignacionProps {
   arbitrosElegibles: ArbitroElegibleAsignacionDTO[]
   arbitro1Id: string
   arbitro2Id: string
+  whatsappEnviadoPorAsignacion: Record<string, boolean>
   guardando: boolean
   alCambiarArbitro1: (arbitroId: string) => void
   alCambiarArbitro2: (arbitroId: string) => void
+  alMarcarWhatsappEnviado: (jornadaId: number, arbitroId: number) => void
+}
+
+function SlotArbitroConWhatsapp({
+  titulo,
+  jornada,
+  arbitrosElegibles,
+  arbitroId,
+  otroSlotArbitroId,
+  whatsappEnviado,
+  guardando,
+  alCambiar,
+  alMarcarWhatsappEnviado
+}: {
+  titulo: string
+  jornada: JornadaAsignacionDTO
+  arbitrosElegibles: ArbitroElegibleAsignacionDTO[]
+  arbitroId: string
+  otroSlotArbitroId: string
+  whatsappEnviado: boolean
+  guardando: boolean
+  alCambiar: (arbitroId: string) => void
+  alMarcarWhatsappEnviado: (jornadaId: number, arbitroId: number) => void
+}) {
+  return (
+    <div className='flex min-w-[200px] flex-1 items-end gap-2'>
+      <div className='min-w-0 flex-1'>
+        <SelectorArbitroJornada
+          titulo={titulo}
+          jornada={jornada}
+          arbitrosElegibles={arbitrosElegibles}
+          valor={arbitroId}
+          otroSlotArbitroId={otroSlotArbitroId}
+          deshabilitado={guardando}
+          alCambiar={alCambiar}
+        />
+      </div>
+      <BotonWhatsappArbitro
+        jornada={jornada}
+        arbitroId={arbitroId}
+        arbitrosElegibles={arbitrosElegibles}
+        whatsappEnviado={whatsappEnviado}
+        deshabilitado={guardando}
+        alMarcarEnviado={() => {
+          if (arbitroId === 'sin-arbitro') return
+          alMarcarWhatsappEnviado(jornada.id, Number(arbitroId))
+        }}
+      />
+    </div>
+  )
 }
 
 export default function FilaJornadaAsignacion({
@@ -25,11 +78,27 @@ export default function FilaJornadaAsignacion({
   arbitrosElegibles,
   arbitro1Id,
   arbitro2Id,
+  whatsappEnviadoPorAsignacion,
   guardando,
   alCambiarArbitro1,
-  alCambiarArbitro2
+  alCambiarArbitro2,
+  alMarcarWhatsappEnviado
 }: FilaJornadaAsignacionProps) {
   const tieneAsignacion = jornadaTieneAsignacion(arbitro1Id, arbitro2Id)
+
+  const whatsappEnviado1 =
+    arbitro1Id !== 'sin-arbitro'
+      ? (whatsappEnviadoPorAsignacion[
+          claveWhatsappJornadaArbitro(jornada.id, Number(arbitro1Id))
+        ] ?? false)
+      : false
+
+  const whatsappEnviado2 =
+    arbitro2Id !== 'sin-arbitro'
+      ? (whatsappEnviadoPorAsignacion[
+          claveWhatsappJornadaArbitro(jornada.id, Number(arbitro2Id))
+        ] ?? false)
+      : false
 
   return (
     <div
@@ -67,23 +136,27 @@ export default function FilaJornadaAsignacion({
         )}
       </div>
       <div className='flex flex-col gap-3 sm:flex-row sm:items-end'>
-        <SelectorArbitroJornada
+        <SlotArbitroConWhatsapp
           titulo='Árbitro 1'
           jornada={jornada}
           arbitrosElegibles={arbitrosElegibles}
-          valor={arbitro1Id}
+          arbitroId={arbitro1Id}
           otroSlotArbitroId={arbitro2Id}
-          deshabilitado={guardando}
+          whatsappEnviado={whatsappEnviado1}
+          guardando={guardando}
           alCambiar={alCambiarArbitro1}
+          alMarcarWhatsappEnviado={alMarcarWhatsappEnviado}
         />
-        <SelectorArbitroJornada
+        <SlotArbitroConWhatsapp
           titulo='Árbitro 2'
           jornada={jornada}
           arbitrosElegibles={arbitrosElegibles}
-          valor={arbitro2Id}
+          arbitroId={arbitro2Id}
           otroSlotArbitroId={arbitro1Id}
-          deshabilitado={guardando}
+          whatsappEnviado={whatsappEnviado2}
+          guardando={guardando}
           alCambiar={alCambiarArbitro2}
+          alMarcarWhatsappEnviado={alMarcarWhatsappEnviado}
         />
       </div>
     </div>

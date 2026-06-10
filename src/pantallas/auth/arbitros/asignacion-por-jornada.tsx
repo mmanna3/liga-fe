@@ -17,6 +17,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import VistaPorArbitro from './asignacion/vista-por-arbitro'
 import VistaPorJornada from './asignacion/vista-por-jornada'
+import { claveWhatsappJornadaArbitro } from './asignacion/utilidades-asignacion'
 
 function construirSlotsIniciales(data: AsignacionArbitrosPorAgrupadorDTO) {
   const slots: Record<number, { arbitro1: string; arbitro2: string }> = {}
@@ -38,6 +39,25 @@ function construirSlotsIniciales(data: AsignacionArbitrosPorAgrupadorDTO) {
   return slots
 }
 
+function construirWhatsappEnviadoInicial(
+  data: AsignacionArbitrosPorAgrupadorDTO
+): Record<string, boolean> {
+  const mapa: Record<string, boolean> = {}
+  for (const torneo of data.torneos ?? []) {
+    for (const fase of torneo.fases ?? []) {
+      for (const zona of fase.zonas ?? []) {
+        for (const jornada of zona.proximaFecha?.jornadas ?? []) {
+          for (const arbitro of jornada.arbitrosAsignados ?? []) {
+            mapa[claveWhatsappJornadaArbitro(jornada.id, arbitro.id)] =
+              arbitro.whatsappEnviado
+          }
+        }
+      }
+    }
+  }
+  return mapa
+}
+
 function idsDesdeSlots(arbitro1: string, arbitro2: string): number[] {
   const ids: number[] = []
   if (arbitro1 !== 'sin-arbitro') ids.push(Number(arbitro1))
@@ -55,6 +75,8 @@ export default function AsignacionPorJornada() {
   const [jornadaGuardandoId, setJornadaGuardandoId] = useState<number | null>(
     null
   )
+  const [whatsappEnviadoPorAsignacion, setWhatsappEnviadoPorAsignacion] =
+    useState<Record<string, boolean>>({})
 
   const queryClient = useQueryClient()
   const agrupadorId = Number(agrupadorSeleccionado)
@@ -100,7 +122,12 @@ export default function AsignacionPorJornada() {
   })
 
   useEffect(() => {
-    if (asignacion) setSlotsPorJornada(construirSlotsIniciales(asignacion))
+    if (asignacion) {
+      setSlotsPorJornada(construirSlotsIniciales(asignacion))
+      setWhatsappEnviadoPorAsignacion(
+        construirWhatsappEnviadoInicial(asignacion)
+      )
+    }
   }, [asignacion])
 
   const mutationAsignar = useMutation({
@@ -126,6 +153,34 @@ export default function AsignacionPorJornada() {
       if (asignacion) setSlotsPorJornada(construirSlotsIniciales(asignacion))
     }
   })
+
+  const mutationWhatsapp = useMutation({
+    mutationFn: async ({
+      jornadaId,
+      arbitroId
+    }: {
+      jornadaId: number
+      arbitroId: number
+    }) => {
+      await api.marcarWhatsappEnviadoArbitroJornada(jornadaId, arbitroId)
+    },
+    onMutate: ({ jornadaId, arbitroId }) => {
+      const clave = claveWhatsappJornadaArbitro(jornadaId, arbitroId)
+      setWhatsappEnviadoPorAsignacion((prev) => ({ ...prev, [clave]: true }))
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey })
+    },
+    onError: (_, { jornadaId, arbitroId }) => {
+      const clave = claveWhatsappJornadaArbitro(jornadaId, arbitroId)
+      setWhatsappEnviadoPorAsignacion((prev) => ({ ...prev, [clave]: false }))
+      toast.error('No se pudo registrar el envío de WhatsApp')
+    }
+  })
+
+  const alMarcarWhatsappEnviado = (jornadaId: number, arbitroId: number) => {
+    mutationWhatsapp.mutate({ jornadaId, arbitroId })
+  }
 
   const alCambiarArbitros = (
     jornadaId: number,
@@ -188,8 +243,10 @@ export default function AsignacionPorJornada() {
                   <VistaPorJornada
                     data={asignacion}
                     slotsPorJornada={slotsPorJornada}
+                    whatsappEnviadoPorAsignacion={whatsappEnviadoPorAsignacion}
                     jornadaGuardandoId={jornadaGuardandoId}
                     alCambiarArbitros={alCambiarArbitros}
+                    alMarcarWhatsappEnviado={alMarcarWhatsappEnviado}
                   />
                 </TabsContent>
                 <TabsContent value='por-arbitro' className='mt-0'>

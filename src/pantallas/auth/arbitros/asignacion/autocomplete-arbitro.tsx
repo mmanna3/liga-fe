@@ -204,12 +204,16 @@ export default function AutocompleteArbitro({
           </ul>
         </PopoverContent>
       </Popover>
-      {textoConflictoSeleccionado && (
-        <p className='flex items-center gap-1 text-xs text-amber-700'>
-          <AlertTriangle className='h-3.5 w-3.5 shrink-0' />
-          Ya tiene jornada ese día
-        </p>
-      )}
+      <p
+        className={cn(
+          'flex min-h-4 items-center gap-1 text-xs text-amber-700',
+          !textoConflictoSeleccionado && 'invisible'
+        )}
+        aria-hidden={!textoConflictoSeleccionado}
+      >
+        <AlertTriangle className='h-3.5 w-3.5 shrink-0' />
+        Ya tiene jornada ese día
+      </p>
     </div>
   )
 }
