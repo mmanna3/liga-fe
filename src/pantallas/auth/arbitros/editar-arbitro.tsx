@@ -3,8 +3,8 @@ import { ArbitroDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
+import ModalEliminacion from '@/design-system/modal-eliminacion'
 import { Boton } from '@/design-system/ykn-ui/boton'
-import ContenedorBotones from '@/design-system/ykn-ui/contenedor-botones'
 import { Input } from '@/design-system/ykn-ui/input'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import { rutasNavegacion } from '@/ruteo/rutas'
@@ -50,6 +50,14 @@ export default function EditarArbitro() {
       await api.arbitroPUT(Number(id), arbitroActualizado)
     },
     mensajeDeExito: 'Árbitro actualizado correctamente'
+  })
+
+  const eliminarMutation = useApiMutation({
+    fn: async (arbitroId: number) => {
+      await api.arbitroDELETE(arbitroId)
+    },
+    antesDeMensajeExito: () => navigate(rutasNavegacion.datosArbitros),
+    mensajeDeExito: `El árbitro '${arbitro?.nombre} ${arbitro?.apellido}' fue eliminado.`
   })
 
   useEffect(() => {
@@ -164,7 +172,26 @@ export default function EditarArbitro() {
               valor={torneoAgrupadorIds}
               alCambiar={setTorneoAgrupadorIds}
             />
-            <ContenedorBotones>
+            <div className='flex justify-between gap-2'>
+              {arbitro && (
+                <ModalEliminacion
+                  titulo='Eliminar árbitro'
+                  subtitulo={`¿Confirmás que querés eliminar a ${arbitro.nombre} ${arbitro.apellido}? También se quitarán sus asignaciones a jornadas.`}
+                  eliminarOnClick={() => eliminarMutation.mutate(arbitro.id!)}
+                  eliminarTexto='Eliminar árbitro'
+                  estaCargando={eliminarMutation.isPending}
+                  trigger={
+                    <Boton
+                      type='button'
+                      variant='outline'
+                      className='border-destructive text-destructive hover:bg-destructive/10'
+                      disabled={eliminarMutation.isPending}
+                    >
+                      Eliminar
+                    </Boton>
+                  }
+                />
+              )}
               <Boton
                 type='submit'
                 estaCargando={mutation.isPending}
@@ -172,7 +199,7 @@ export default function EditarArbitro() {
               >
                 Guardar
               </Boton>
-            </ContenedorBotones>
+            </div>
           </form>
         }
       />
