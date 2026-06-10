@@ -10,10 +10,14 @@ import {
   CardHeader,
   CardTitle
 } from '@/design-system/base-ui/card'
-import { ChevronDown, ChevronRight } from 'lucide-react'
+import { cn } from '@/logica-compartida/utils'
+import { Check, ChevronDown, ChevronRight } from 'lucide-react'
 import { useState } from 'react'
 import FilaJornadaAsignacion from './fila-jornada-asignacion'
-import { formatearDiaCorto } from './utilidades-asignacion'
+import {
+  formatearDiaCorto,
+  jornadaTieneAsignacion
+} from './utilidades-asignacion'
 
 interface VistaPorJornadaProps {
   data: AsignacionArbitrosPorAgrupadorDTO
@@ -101,16 +105,41 @@ function TorneoAsignacionTree({
                   .filter(Boolean)
                   .join(' · ')
 
+                const jornadas = pf.jornadas ?? []
+                const zonaCompleta =
+                  jornadas.length > 0 &&
+                  jornadas.every((j) => {
+                    const slots = slotsPorJornada[j.id] ?? {
+                      arbitro1: 'sin-arbitro',
+                      arbitro2: 'sin-arbitro'
+                    }
+                    return jornadaTieneAsignacion(
+                      slots.arbitro1,
+                      slots.arbitro2
+                    )
+                  })
+
                 return (
                   <Card key={zona.id} className='shadow-none'>
                     <CardHeader className='pb-2'>
                       <CardTitle className='flex flex-wrap items-center gap-2 text-base'>
                         <span>{zona.nombre}</span>
-                        <Badge variant='secondary'>{etiquetaFecha}</Badge>
+                        <Badge
+                          variant='secondary'
+                          className={cn(
+                            zonaCompleta &&
+                              'border-emerald-600 bg-emerald-100 text-emerald-900'
+                          )}
+                        >
+                          {zonaCompleta && (
+                            <Check className='mr-1 h-3 w-3' aria-hidden />
+                          )}
+                          {etiquetaFecha}
+                        </Badge>
                       </CardTitle>
                     </CardHeader>
                     <CardContent className='pt-0'>
-                      {(pf.jornadas ?? []).map((jornada) => {
+                      {jornadas.map((jornada) => {
                         const slots = slotsPorJornada[jornada.id] ?? {
                           arbitro1: 'sin-arbitro',
                           arbitro2: 'sin-arbitro'

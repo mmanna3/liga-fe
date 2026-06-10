@@ -17,7 +17,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import VistaPorArbitro from './asignacion/vista-por-arbitro'
 import VistaPorJornada from './asignacion/vista-por-jornada'
-import { obtenerRangoAnios } from './asignacion/utilidades-asignacion'
 
 function construirSlotsIniciales(data: AsignacionArbitrosPorAgrupadorDTO) {
   const slots: Record<number, { arbitro1: string; arbitro2: string }> = {}
@@ -48,8 +47,7 @@ function idsDesdeSlots(arbitro1: string, arbitro2: string): number[] {
 }
 
 export default function AsignacionPorJornada() {
-  const anioActual = new Date().getFullYear()
-  const [anioSeleccionado, setAnioSeleccionado] = useState(String(anioActual))
+  const anio = new Date().getFullYear()
   const [agrupadorSeleccionado, setAgrupadorSeleccionado] = useState('')
   const [slotsPorJornada, setSlotsPorJornada] = useState<
     Record<number, { arbitro1: string; arbitro2: string }>
@@ -59,11 +57,10 @@ export default function AsignacionPorJornada() {
   )
 
   const queryClient = useQueryClient()
-  const anio = Number(anioSeleccionado)
   const agrupadorId = Number(agrupadorSeleccionado)
 
   const { data: torneosAnio } = useApiQuery({
-    key: ['torneos', 'filtrar', anioSeleccionado],
+    key: ['torneos', 'filtrar', anio],
     fn: async () => await api.torneosFiltrar(anio, undefined)
   })
 
@@ -99,7 +96,7 @@ export default function AsignacionPorJornada() {
   } = useApiQuery({
     key: queryKey,
     fn: async () => await api.arbitroAsignacionPorAgrupador(agrupadorId, anio),
-    activado: agrupadorId > 0 && anio > 0
+    activado: agrupadorId > 0
   })
 
   useEffect(() => {
@@ -145,64 +142,49 @@ export default function AsignacionPorJornada() {
     })
   }
 
-  const aniosDisponibles = useMemo(
-    () => obtenerRangoAnios(anioActual),
-    [anioActual]
-  )
-
-  const filtros = (
-    <div className='grid gap-4 sm:grid-cols-2'>
-      <ListaDesplegable
-        titulo='Año'
-        opciones={aniosDisponibles.map((a) => ({
-          value: String(a),
-          label: String(a)
-        }))}
-        valor={anioSeleccionado}
-        alCambiar={setAnioSeleccionado}
-      />
-      <ListaDesplegable
-        titulo='Agrupador'
-        placeholder={
-          agrupadoresConTorneos.length === 0
-            ? 'Sin agrupadores con torneos'
-            : 'Seleccioná un agrupador'
-        }
-        opciones={agrupadoresConTorneos.map((a) => ({
-          value: a.id,
-          label: a.nombre
-        }))}
-        valor={agrupadorSeleccionado}
-        alCambiar={setAgrupadorSeleccionado}
-        deshabilitado={agrupadoresConTorneos.length === 0}
-      />
-    </div>
-  )
-
   return (
     <FlujoHomeLayout
-      titulo='Asignación por jornada'
-      iconoTitulo='Arbitros'
+      titulo='Próxima fecha'
+      iconoTitulo='Pelota'
       pathBotonVolver={rutasNavegacion.arbitros}
       contenedorClassName='max-w-6xl'
       contenido={
-        <div className='space-y-6'>
-          {filtros}
+        <Tabs defaultValue='por-jornada' className='w-full space-y-6'>
+          <div className='flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between'>
+            <div className='min-w-[200px] flex-1 max-w-md'>
+              <ListaDesplegable
+                titulo='Agrupador'
+                placeholder={
+                  agrupadoresConTorneos.length === 0
+                    ? 'Sin agrupadores con torneos este año'
+                    : 'Seleccioná un agrupador'
+                }
+                opciones={agrupadoresConTorneos.map((a) => ({
+                  value: a.id,
+                  label: a.nombre
+                }))}
+                valor={agrupadorSeleccionado}
+                alCambiar={setAgrupadorSeleccionado}
+                deshabilitado={agrupadoresConTorneos.length === 0}
+              />
+            </div>
+            <TabsList className='grid w-full grid-cols-2 sm:w-auto sm:min-w-[280px]'>
+              <TabsTrigger value='por-jornada'>Por jornada</TabsTrigger>
+              <TabsTrigger value='por-arbitro'>Por árbitro</TabsTrigger>
+            </TabsList>
+          </div>
+
           <ContenedorCargandoYError
             estaCargando={isLoading && agrupadorId > 0}
             hayError={isError}
           >
             {!agrupadorSeleccionado ? (
               <p className='py-8 text-center text-muted-foreground'>
-                Seleccioná un agrupador con torneos en el año elegido.
+                Seleccioná un agrupador con torneos este año.
               </p>
             ) : asignacion ? (
-              <Tabs defaultValue='por-jornada' className='w-full'>
-                <TabsList className='grid w-full max-w-md grid-cols-2'>
-                  <TabsTrigger value='por-jornada'>Por jornada</TabsTrigger>
-                  <TabsTrigger value='por-arbitro'>Por árbitro</TabsTrigger>
-                </TabsList>
-                <TabsContent value='por-jornada' className='mt-6'>
+              <>
+                <TabsContent value='por-jornada' className='mt-0'>
                   <VistaPorJornada
                     data={asignacion}
                     slotsPorJornada={slotsPorJornada}
@@ -210,15 +192,15 @@ export default function AsignacionPorJornada() {
                     alCambiarArbitros={alCambiarArbitros}
                   />
                 </TabsContent>
-                <TabsContent value='por-arbitro' className='mt-6'>
+                <TabsContent value='por-arbitro' className='mt-0'>
                   <VistaPorArbitro
                     arbitros={asignacion.arbitrosConJornadas ?? []}
                   />
                 </TabsContent>
-              </Tabs>
+              </>
             ) : null}
           </ContenedorCargandoYError>
-        </div>
+        </Tabs>
       }
     />
   )

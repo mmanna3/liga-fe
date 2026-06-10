@@ -8,8 +8,11 @@ import {
   CardTitle
 } from '@/design-system/base-ui/card'
 import { Label } from '@/design-system/base-ui/label'
+import { Input } from '@/design-system/ykn-ui/input'
+import { Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import {
+  coincideBusquedaArbitro,
   formatearDiaCorto,
   nombreCompletoArbitro
 } from './utilidades-asignacion'
@@ -20,14 +23,35 @@ interface VistaPorArbitroProps {
 
 export default function VistaPorArbitro({ arbitros }: VistaPorArbitroProps) {
   const [soloSinProximaJornada, setSoloSinProximaJornada] = useState(false)
+  const [busqueda, setBusqueda] = useState('')
 
   const arbitrosFiltrados = useMemo(() => {
-    if (!soloSinProximaJornada) return arbitros
-    return arbitros.filter((a) => (a.jornadasProximaFecha ?? []).length === 0)
-  }, [arbitros, soloSinProximaJornada])
+    let lista = arbitros
+    if (soloSinProximaJornada) {
+      lista = lista.filter((a) => (a.jornadasProximaFecha ?? []).length === 0)
+    }
+    if (busqueda.trim()) {
+      lista = lista.filter((a) =>
+        coincideBusquedaArbitro(a.nombre, a.apellido, busqueda)
+      )
+    }
+    return lista
+  }, [arbitros, soloSinProximaJornada, busqueda])
+
+  const hayFiltrosActivos = soloSinProximaJornada || busqueda.trim().length > 0
 
   return (
     <div className='space-y-4'>
+      <div className='relative'>
+        <Search className='pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+        <Input
+          className='pl-9'
+          placeholder='Buscar por nombre o apellido…'
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+        />
+      </div>
+
       <div className='flex items-center gap-2 rounded-lg border border-border bg-muted/30 px-4 py-3'>
         <Checkbox
           id='filtro-sin-jornada'
@@ -43,9 +67,11 @@ export default function VistaPorArbitro({ arbitros }: VistaPorArbitroProps) {
 
       {arbitrosFiltrados.length === 0 ? (
         <p className='py-8 text-center text-muted-foreground'>
-          {soloSinProximaJornada
-            ? 'Todos los árbitros del agrupador tienen al menos una jornada asignada en la próxima fecha.'
-            : 'No hay árbitros habilitados para este agrupador.'}
+          {arbitros.length === 0
+            ? 'No hay árbitros habilitados para este agrupador.'
+            : hayFiltrosActivos
+              ? 'No hay árbitros que coincidan con la búsqueda o los filtros.'
+              : 'No hay árbitros habilitados para este agrupador.'}
         </p>
       ) : (
         <div className='grid gap-4 md:grid-cols-2'>

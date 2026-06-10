@@ -52,12 +52,12 @@ export default function ArbitrosHub() {
           >
             <CardHeader>
               <CardTitle className='flex items-center gap-2'>
-                <Icono nombre='Fixture' className='h-8 w-8' />
-                Asignación por jornada
+                <Icono nombre='Pelota' className='h-8 w-8' />
+                Próxima fecha
               </CardTitle>
               <CardDescription>
-                Asigná árbitros a las jornadas de la próxima fecha por
-                agrupador, o consultá la carga de cada árbitro.
+                Asigná árbitros a la próxima fecha de cada agrupador o consultá
+                la carga de cada árbitro.
               </CardDescription>
             </CardHeader>
           </Card>
