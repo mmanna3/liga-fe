@@ -29,6 +29,8 @@ export const rutas = {
   eliminarDelegado: 'delegados/eliminar',
   aprobarRechazarDelegado: 'delegados/aprobar-rechazar',
   arbitros: 'arbitros',
+  datosArbitros: 'arbitros/datos',
+  asignacionArbitros: 'arbitros/asignacion',
   crearArbitro: 'arbitros/crear',
   editarArbitro: 'arbitros/editar',
   configuracion: 'configuracion',

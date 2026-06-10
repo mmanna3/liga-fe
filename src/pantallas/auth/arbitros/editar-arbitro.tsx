@@ -99,7 +99,7 @@ export default function EditarArbitro() {
         torneoAgrupadorIds
       })
     )
-    navigate(rutasNavegacion.arbitros)
+    navigate(rutasNavegacion.datosArbitros)
   }
 
   const handleTelefonoChange = (valor: string) => {
@@ -122,7 +122,7 @@ export default function EditarArbitro() {
       <LayoutSegundoNivel
         titulo='Editar árbitro'
         maxWidth='2xl'
-        pathBotonVolver={rutasNavegacion.arbitros}
+        pathBotonVolver={rutasNavegacion.datosArbitros}
         contenido={
           <form onSubmit={handleSubmit} className='space-y-4'>
             <Input

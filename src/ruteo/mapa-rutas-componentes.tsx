@@ -9,7 +9,9 @@ import DetalleUsuario from '@/pantallas/auth/configuracion/usuarios/detalle-usua
 import EditarUsuario from '@/pantallas/auth/configuracion/usuarios/editar-usuario'
 import DetalleClub from '@/pantallas/auth/club/detalle-club'
 import AprobarRechazarDelegado from '@/pantallas/auth/delegados/aprobar-rechazar-delegado'
-import Arbitros from '@/pantallas/auth/arbitros/arbitros'
+import ArbitrosHub from '@/pantallas/auth/arbitros/arbitros-hub'
+import DatosArbitros from '@/pantallas/auth/arbitros/datos-arbitros'
+import AsignacionPorJornada from '@/pantallas/auth/arbitros/asignacion-por-jornada'
 import CrearArbitro from '@/pantallas/auth/arbitros/crear-arbitro'
 import EditarArbitro from '@/pantallas/auth/arbitros/editar-arbitro'
 import Delegados from '@/pantallas/auth/delegados/delegados'
@@ -141,7 +143,9 @@ export const mapaRutasComponentes = [
       },
       { path: rutas.superAdmin, element: <SuperAdmin /> },
       { path: rutas.delegados, element: <Delegados /> },
-      { path: rutas.arbitros, element: <Arbitros /> },
+      { path: rutas.arbitros, element: <ArbitrosHub /> },
+      { path: rutas.datosArbitros, element: <DatosArbitros /> },
+      { path: rutas.asignacionArbitros, element: <AsignacionPorJornada /> },
       { path: rutas.crearArbitro, element: <CrearArbitro /> },
       { path: `${rutas.editarArbitro}/:id`, element: <EditarArbitro /> },
       { path: `${rutas.detalleDelegado}/:id`, element: <DetalleDelegado /> },

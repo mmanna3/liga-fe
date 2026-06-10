@@ -778,6 +778,120 @@ export class Client {
   }
 
   /**
+   * @param agrupadorId (optional)
+   * @param anio (optional)
+   * @return OK
+   */
+  arbitroAsignacionPorAgrupador(
+    agrupadorId: number | undefined,
+    anio: number | undefined
+  ): Promise<AsignacionArbitrosPorAgrupadorDTO> {
+    let url_ = this.baseUrl + '/api/Arbitro/asignacion-por-agrupador?'
+    if (agrupadorId === null)
+      throw new Error("The parameter 'agrupadorId' cannot be null.")
+    else if (agrupadorId !== undefined)
+      url_ += 'agrupadorId=' + encodeURIComponent('' + agrupadorId) + '&'
+    if (anio === null) throw new Error("The parameter 'anio' cannot be null.")
+    else if (anio !== undefined)
+      url_ += 'anio=' + encodeURIComponent('' + anio) + '&'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processArbitroAsignacionPorAgrupador(_response)
+    })
+  }
+
+  protected processArbitroAsignacionPorAgrupador(
+    response: Response
+  ): Promise<AsignacionArbitrosPorAgrupadorDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = AsignacionArbitrosPorAgrupadorDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<AsignacionArbitrosPorAgrupadorDTO>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  asignarArbitrosJornada(
+    jornadaId: number,
+    body: AsignarArbitrosJornadaDTO | undefined
+  ): Promise<void> {
+    let url_ = this.baseUrl + '/api/Arbitro/jornada/{jornadaId}/arbitros'
+    if (jornadaId === undefined || jornadaId === null)
+      throw new Error("The parameter 'jornadaId' must be defined.")
+    url_ = url_.replace('{jornadaId}', encodeURIComponent('' + jornadaId))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processAsignarArbitrosJornada(_response)
+    })
+  }
+
+  protected processAsignarArbitrosJornada(response: Response): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
    * @return OK
    */
   arbitroAll(): Promise<ArbitroDTO[]> {
@@ -9411,6 +9525,112 @@ export interface IAprobarJugadorDTO {
   jugadorEquipoId?: number
 }
 
+export class ArbitroAsignadoDTO implements IArbitroAsignadoDTO {
+  id!: number
+  nombre!: string | undefined
+  apellido!: string | undefined
+  orden!: number
+
+  constructor(data?: IArbitroAsignadoDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.nombre = _data['nombre']
+      this.apellido = _data['apellido']
+      this.orden = _data['orden']
+    }
+  }
+
+  static fromJS(data: any): ArbitroAsignadoDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new ArbitroAsignadoDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['nombre'] = this.nombre
+    data['apellido'] = this.apellido
+    data['orden'] = this.orden
+    return data
+  }
+}
+
+export interface IArbitroAsignadoDTO {
+  id: number
+  nombre: string | undefined
+  apellido: string | undefined
+  orden: number
+}
+
+export class ArbitroConJornadasAsignacionDTO implements IArbitroConJornadasAsignacionDTO {
+  arbitroId!: number
+  nombre!: string | undefined
+  apellido!: string | undefined
+  jornadasProximaFecha!: JornadaAsignadaResumenDTO[] | undefined
+
+  constructor(data?: IArbitroConJornadasAsignacionDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.arbitroId = _data['arbitroId']
+      this.nombre = _data['nombre']
+      this.apellido = _data['apellido']
+      if (Array.isArray(_data['jornadasProximaFecha'])) {
+        this.jornadasProximaFecha = [] as any
+        for (let item of _data['jornadasProximaFecha'])
+          this.jornadasProximaFecha!.push(
+            JornadaAsignadaResumenDTO.fromJS(item)
+          )
+      }
+    }
+  }
+
+  static fromJS(data: any): ArbitroConJornadasAsignacionDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new ArbitroConJornadasAsignacionDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['arbitroId'] = this.arbitroId
+    data['nombre'] = this.nombre
+    data['apellido'] = this.apellido
+    if (Array.isArray(this.jornadasProximaFecha)) {
+      data['jornadasProximaFecha'] = []
+      for (let item of this.jornadasProximaFecha)
+        data['jornadasProximaFecha'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface IArbitroConJornadasAsignacionDTO {
+  arbitroId: number
+  nombre: string | undefined
+  apellido: string | undefined
+  jornadasProximaFecha: JornadaAsignadaResumenDTO[] | undefined
+}
+
 export class ArbitroDTO implements IArbitroDTO {
   id?: number
   dni!: string
@@ -9487,6 +9707,64 @@ export interface IArbitroDTO {
   torneoAgrupadores?: ArbitroTorneoAgrupadorDTO[] | undefined
 }
 
+export class ArbitroElegibleAsignacionDTO implements IArbitroElegibleAsignacionDTO {
+  id!: number
+  nombre!: string | undefined
+  apellido!: string | undefined
+  jornadasAsignadasEnProximasFechas!: JornadaAsignadaResumenDTO[] | undefined
+
+  constructor(data?: IArbitroElegibleAsignacionDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.nombre = _data['nombre']
+      this.apellido = _data['apellido']
+      if (Array.isArray(_data['jornadasAsignadasEnProximasFechas'])) {
+        this.jornadasAsignadasEnProximasFechas = [] as any
+        for (let item of _data['jornadasAsignadasEnProximasFechas'])
+          this.jornadasAsignadasEnProximasFechas!.push(
+            JornadaAsignadaResumenDTO.fromJS(item)
+          )
+      }
+    }
+  }
+
+  static fromJS(data: any): ArbitroElegibleAsignacionDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new ArbitroElegibleAsignacionDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['nombre'] = this.nombre
+    data['apellido'] = this.apellido
+    if (Array.isArray(this.jornadasAsignadasEnProximasFechas)) {
+      data['jornadasAsignadasEnProximasFechas'] = []
+      for (let item of this.jornadasAsignadasEnProximasFechas)
+        data['jornadasAsignadasEnProximasFechas'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface IArbitroElegibleAsignacionDTO {
+  id: number
+  nombre: string | undefined
+  apellido: string | undefined
+  jornadasAsignadasEnProximasFechas: JornadaAsignadaResumenDTO[] | undefined
+}
+
 export class ArbitroTorneoAgrupadorDTO implements IArbitroTorneoAgrupadorDTO {
   id?: number
   torneoAgrupadorId?: number
@@ -9529,6 +9807,119 @@ export interface IArbitroTorneoAgrupadorDTO {
   id?: number
   torneoAgrupadorId?: number
   torneoAgrupadorNombre?: string | undefined
+}
+
+export class AsignacionArbitrosPorAgrupadorDTO implements IAsignacionArbitrosPorAgrupadorDTO {
+  arbitrosElegibles!: ArbitroElegibleAsignacionDTO[] | undefined
+  torneos!: TorneoAsignacionDTO[] | undefined
+  arbitrosConJornadas!: ArbitroConJornadasAsignacionDTO[] | undefined
+
+  constructor(data?: IAsignacionArbitrosPorAgrupadorDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      if (Array.isArray(_data['arbitrosElegibles'])) {
+        this.arbitrosElegibles = [] as any
+        for (let item of _data['arbitrosElegibles'])
+          this.arbitrosElegibles!.push(
+            ArbitroElegibleAsignacionDTO.fromJS(item)
+          )
+      }
+      if (Array.isArray(_data['torneos'])) {
+        this.torneos = [] as any
+        for (let item of _data['torneos'])
+          this.torneos!.push(TorneoAsignacionDTO.fromJS(item))
+      }
+      if (Array.isArray(_data['arbitrosConJornadas'])) {
+        this.arbitrosConJornadas = [] as any
+        for (let item of _data['arbitrosConJornadas'])
+          this.arbitrosConJornadas!.push(
+            ArbitroConJornadasAsignacionDTO.fromJS(item)
+          )
+      }
+    }
+  }
+
+  static fromJS(data: any): AsignacionArbitrosPorAgrupadorDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new AsignacionArbitrosPorAgrupadorDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    if (Array.isArray(this.arbitrosElegibles)) {
+      data['arbitrosElegibles'] = []
+      for (let item of this.arbitrosElegibles)
+        data['arbitrosElegibles'].push(item.toJSON())
+    }
+    if (Array.isArray(this.torneos)) {
+      data['torneos'] = []
+      for (let item of this.torneos) data['torneos'].push(item.toJSON())
+    }
+    if (Array.isArray(this.arbitrosConJornadas)) {
+      data['arbitrosConJornadas'] = []
+      for (let item of this.arbitrosConJornadas)
+        data['arbitrosConJornadas'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface IAsignacionArbitrosPorAgrupadorDTO {
+  arbitrosElegibles: ArbitroElegibleAsignacionDTO[] | undefined
+  torneos: TorneoAsignacionDTO[] | undefined
+  arbitrosConJornadas: ArbitroConJornadasAsignacionDTO[] | undefined
+}
+
+export class AsignarArbitrosJornadaDTO implements IAsignarArbitrosJornadaDTO {
+  arbitroIds!: number[] | undefined
+
+  constructor(data?: IAsignarArbitrosJornadaDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      if (Array.isArray(_data['arbitroIds'])) {
+        this.arbitroIds = [] as any
+        for (let item of _data['arbitroIds']) this.arbitroIds!.push(item)
+      }
+    }
+  }
+
+  static fromJS(data: any): AsignarArbitrosJornadaDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new AsignarArbitrosJornadaDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    if (Array.isArray(this.arbitroIds)) {
+      data['arbitroIds'] = []
+      for (let item of this.arbitroIds) data['arbitroIds'].push(item)
+    }
+    return data
+  }
+}
+
+export interface IAsignarArbitrosJornadaDTO {
+  arbitroIds: number[] | undefined
 }
 
 export class CambiarEscudoDTO implements ICambiarEscudoDTO {
@@ -11231,6 +11622,57 @@ export enum EstadoJugadorEnum {
   _6 = 6
 }
 
+export class FaseAsignacionDTO implements IFaseAsignacionDTO {
+  id!: number
+  nombre!: string | undefined
+  zonas!: ZonaAsignacionDTO[] | undefined
+
+  constructor(data?: IFaseAsignacionDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.nombre = _data['nombre']
+      if (Array.isArray(_data['zonas'])) {
+        this.zonas = [] as any
+        for (let item of _data['zonas'])
+          this.zonas!.push(ZonaAsignacionDTO.fromJS(item))
+      }
+    }
+  }
+
+  static fromJS(data: any): FaseAsignacionDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new FaseAsignacionDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['nombre'] = this.nombre
+    if (Array.isArray(this.zonas)) {
+      data['zonas'] = []
+      for (let item of this.zonas) data['zonas'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface IFaseAsignacionDTO {
+  id: number
+  nombre: string | undefined
+  zonas: ZonaAsignacionDTO[] | undefined
+}
+
 export class FaseDTO implements IFaseDTO {
   id?: number
   nombre!: string
@@ -12159,6 +12601,158 @@ export interface IInstanciasDTO {
   titulo?: string | undefined
   dia?: string | undefined
   partidos?: PartidoEliminacionDirectaDTO[] | undefined
+}
+
+export class JornadaAsignacionDTO implements IJornadaAsignacionDTO {
+  id!: number
+  dia!: Date
+  diaSemana!: string | undefined
+  local!: string | undefined
+  visitante!: string | undefined
+  localidadLocal?: string | undefined
+  arbitrosAsignados!: ArbitroAsignadoDTO[] | undefined
+
+  constructor(data?: IJornadaAsignacionDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.dia = _data['dia']
+        ? new Date(_data['dia'].toString())
+        : <any>undefined
+      this.diaSemana = _data['diaSemana']
+      this.local = _data['local']
+      this.visitante = _data['visitante']
+      this.localidadLocal = _data['localidadLocal']
+      if (Array.isArray(_data['arbitrosAsignados'])) {
+        this.arbitrosAsignados = [] as any
+        for (let item of _data['arbitrosAsignados'])
+          this.arbitrosAsignados!.push(ArbitroAsignadoDTO.fromJS(item))
+      }
+    }
+  }
+
+  static fromJS(data: any): JornadaAsignacionDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new JornadaAsignacionDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['dia'] = this.dia ? formatDate(this.dia) : <any>undefined
+    data['diaSemana'] = this.diaSemana
+    data['local'] = this.local
+    data['visitante'] = this.visitante
+    data['localidadLocal'] = this.localidadLocal
+    if (Array.isArray(this.arbitrosAsignados)) {
+      data['arbitrosAsignados'] = []
+      for (let item of this.arbitrosAsignados)
+        data['arbitrosAsignados'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface IJornadaAsignacionDTO {
+  id: number
+  dia: Date
+  diaSemana: string | undefined
+  local: string | undefined
+  visitante: string | undefined
+  localidadLocal?: string | undefined
+  arbitrosAsignados: ArbitroAsignadoDTO[] | undefined
+}
+
+export class JornadaAsignadaResumenDTO implements IJornadaAsignadaResumenDTO {
+  jornadaId!: number
+  dia!: Date
+  diaSemana!: string | undefined
+  torneoNombre!: string | undefined
+  faseNombre!: string | undefined
+  zonaNombre!: string | undefined
+  local!: string | undefined
+  visitante!: string | undefined
+  localidadLocal?: string | undefined
+  fechaNumero?: number | undefined
+  instanciaNombre?: string | undefined
+  orden!: number
+
+  constructor(data?: IJornadaAsignadaResumenDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.jornadaId = _data['jornadaId']
+      this.dia = _data['dia']
+        ? new Date(_data['dia'].toString())
+        : <any>undefined
+      this.diaSemana = _data['diaSemana']
+      this.torneoNombre = _data['torneoNombre']
+      this.faseNombre = _data['faseNombre']
+      this.zonaNombre = _data['zonaNombre']
+      this.local = _data['local']
+      this.visitante = _data['visitante']
+      this.localidadLocal = _data['localidadLocal']
+      this.fechaNumero = _data['fechaNumero']
+      this.instanciaNombre = _data['instanciaNombre']
+      this.orden = _data['orden']
+    }
+  }
+
+  static fromJS(data: any): JornadaAsignadaResumenDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new JornadaAsignadaResumenDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['jornadaId'] = this.jornadaId
+    data['dia'] = this.dia ? formatDate(this.dia) : <any>undefined
+    data['diaSemana'] = this.diaSemana
+    data['torneoNombre'] = this.torneoNombre
+    data['faseNombre'] = this.faseNombre
+    data['zonaNombre'] = this.zonaNombre
+    data['local'] = this.local
+    data['visitante'] = this.visitante
+    data['localidadLocal'] = this.localidadLocal
+    data['fechaNumero'] = this.fechaNumero
+    data['instanciaNombre'] = this.instanciaNombre
+    data['orden'] = this.orden
+    return data
+  }
+}
+
+export interface IJornadaAsignadaResumenDTO {
+  jornadaId: number
+  dia: Date
+  diaSemana: string | undefined
+  torneoNombre: string | undefined
+  faseNombre: string | undefined
+  zonaNombre: string | undefined
+  local: string | undefined
+  visitante: string | undefined
+  localidadLocal?: string | undefined
+  fechaNumero?: number | undefined
+  instanciaNombre?: string | undefined
+  orden: number
 }
 
 export class JornadaDTO implements IJornadaDTO {
@@ -13301,6 +13895,71 @@ export interface IPosicionesDTO {
   verGoles?: boolean
 }
 
+export class ProximaFechaAsignacionDTO implements IProximaFechaAsignacionDTO {
+  fechaId!: number
+  dia!: Date
+  diaSemana!: string | undefined
+  numero?: number | undefined
+  instanciaNombre?: string | undefined
+  jornadas!: JornadaAsignacionDTO[] | undefined
+
+  constructor(data?: IProximaFechaAsignacionDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.fechaId = _data['fechaId']
+      this.dia = _data['dia']
+        ? new Date(_data['dia'].toString())
+        : <any>undefined
+      this.diaSemana = _data['diaSemana']
+      this.numero = _data['numero']
+      this.instanciaNombre = _data['instanciaNombre']
+      if (Array.isArray(_data['jornadas'])) {
+        this.jornadas = [] as any
+        for (let item of _data['jornadas'])
+          this.jornadas!.push(JornadaAsignacionDTO.fromJS(item))
+      }
+    }
+  }
+
+  static fromJS(data: any): ProximaFechaAsignacionDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new ProximaFechaAsignacionDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['fechaId'] = this.fechaId
+    data['dia'] = this.dia ? formatDate(this.dia) : <any>undefined
+    data['diaSemana'] = this.diaSemana
+    data['numero'] = this.numero
+    data['instanciaNombre'] = this.instanciaNombre
+    if (Array.isArray(this.jornadas)) {
+      data['jornadas'] = []
+      for (let item of this.jornadas) data['jornadas'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface IProximaFechaAsignacionDTO {
+  fechaId: number
+  dia: Date
+  diaSemana: string | undefined
+  numero?: number | undefined
+  instanciaNombre?: string | undefined
+  jornadas: JornadaAsignacionDTO[] | undefined
+}
+
 export class RechazarJugadorDTO implements IRechazarJugadorDTO {
   id?: number
   dni!: string
@@ -13796,6 +14455,57 @@ export interface ITorneoAgrupadorDTO {
   torneos?: TorneoDTO[] | undefined
 }
 
+export class TorneoAsignacionDTO implements ITorneoAsignacionDTO {
+  id!: number
+  nombre!: string | undefined
+  fases!: FaseAsignacionDTO[] | undefined
+
+  constructor(data?: ITorneoAsignacionDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.nombre = _data['nombre']
+      if (Array.isArray(_data['fases'])) {
+        this.fases = [] as any
+        for (let item of _data['fases'])
+          this.fases!.push(FaseAsignacionDTO.fromJS(item))
+      }
+    }
+  }
+
+  static fromJS(data: any): TorneoAsignacionDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new TorneoAsignacionDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['nombre'] = this.nombre
+    if (Array.isArray(this.fases)) {
+      data['fases'] = []
+      for (let item of this.fases) data['fases'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface ITorneoAsignacionDTO {
+  id: number
+  nombre: string | undefined
+  fases: FaseAsignacionDTO[] | undefined
+}
+
 export class TorneoCategoriaDTO implements ITorneoCategoriaDTO {
   id?: number
   nombre!: string
@@ -14049,6 +14759,54 @@ export interface IUsuarioDTO {
   id?: number
   nombreUsuario?: string | undefined
   delegadoId?: number | undefined
+}
+
+export class ZonaAsignacionDTO implements IZonaAsignacionDTO {
+  id!: number
+  nombre!: string | undefined
+  proximaFecha?: ProximaFechaAsignacionDTO
+
+  constructor(data?: IZonaAsignacionDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.nombre = _data['nombre']
+      this.proximaFecha = _data['proximaFecha']
+        ? ProximaFechaAsignacionDTO.fromJS(_data['proximaFecha'])
+        : <any>undefined
+    }
+  }
+
+  static fromJS(data: any): ZonaAsignacionDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new ZonaAsignacionDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['nombre'] = this.nombre
+    data['proximaFecha'] = this.proximaFecha
+      ? this.proximaFecha.toJSON()
+      : <any>undefined
+    return data
+  }
+}
+
+export interface IZonaAsignacionDTO {
+  id: number
+  nombre: string | undefined
+  proximaFecha?: ProximaFechaAsignacionDTO
 }
 
 export class ZonaDTO implements IZonaDTO {

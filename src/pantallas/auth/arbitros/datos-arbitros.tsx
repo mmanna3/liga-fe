@@ -5,7 +5,7 @@ import { rutasNavegacion } from '@/ruteo/rutas'
 import { useNavigate } from 'react-router-dom'
 import TablaArbitros from './components/tabla'
 
-export default function Arbitros() {
+export default function DatosArbitros() {
   const navigate = useNavigate()
 
   const { data, isLoading, isError } = useApiQuery({
@@ -15,9 +15,9 @@ export default function Arbitros() {
 
   return (
     <FlujoHomeLayout
-      titulo='Árbitros'
+      titulo='Datos de los árbitros'
       iconoTitulo='Arbitros'
-      ocultarBotonVolver
+      pathBotonVolver={rutasNavegacion.arbitros}
       contenedorClassName='max-w-6xl'
       botonera={{
         iconos: [

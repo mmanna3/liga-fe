@@ -29,7 +29,7 @@ export default function CrearArbitro() {
     fn: async (nuevoArbitro: ArbitroDTO) => {
       await api.arbitroPOST(nuevoArbitro)
     },
-    antesDeMensajeExito: () => navigate(rutasNavegacion.arbitros),
+    antesDeMensajeExito: () => navigate(rutasNavegacion.datosArbitros),
     mensajeDeExito: `Árbitro '${nombre} ${apellido}' creado correctamente`
   })
 
@@ -70,7 +70,7 @@ export default function CrearArbitro() {
     <LayoutSegundoNivel
       titulo='Agregar árbitro'
       maxWidth='2xl'
-      pathBotonVolver={rutasNavegacion.arbitros}
+      pathBotonVolver={rutasNavegacion.datosArbitros}
       contenido={
         <form onSubmit={handleSubmit} className='space-y-4'>
           <Input
