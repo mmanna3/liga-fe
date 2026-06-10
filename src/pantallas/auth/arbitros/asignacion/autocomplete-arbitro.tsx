@@ -38,6 +38,7 @@ interface AutocompleteArbitroProps {
   opciones: OpcionArbitroAutocomplete[]
   deshabilitado?: boolean
   textoConflictoSeleccionado?: string | null
+  accionDerecha?: React.ReactNode
   alCambiar: (arbitroId: string) => void
 }
 
@@ -67,6 +68,7 @@ export default function AutocompleteArbitro({
   opciones,
   deshabilitado,
   textoConflictoSeleccionado,
+  accionDerecha,
   alCambiar
 }: AutocompleteArbitroProps) {
   const [abierto, setAbierto] = useState(false)
@@ -118,92 +120,96 @@ export default function AutocompleteArbitro({
   return (
     <div className='min-w-[200px] flex-1 space-y-1'>
       <Label className='text-sm font-medium'>{titulo}</Label>
-      <Popover open={abierto} onOpenChange={setAbierto}>
-        <PopoverTrigger asChild>
-          <Button
-            type='button'
-            variant='outline'
-            role='combobox'
-            aria-expanded={abierto}
-            disabled={deshabilitado}
-            className={cn(
-              'w-full justify-between font-normal',
-              textoConflictoSeleccionado && 'border-amber-500/60 bg-amber-50/50'
-            )}
+      <div className='flex items-center gap-2'>
+        <Popover open={abierto} onOpenChange={setAbierto}>
+          <PopoverTrigger asChild>
+            <Button
+              type='button'
+              variant='outline'
+              role='combobox'
+              aria-expanded={abierto}
+              disabled={deshabilitado}
+              className={cn(
+                'min-w-0 flex-1 justify-between font-normal',
+                textoConflictoSeleccionado &&
+                  'border-amber-500/60 bg-amber-50/50'
+              )}
+            >
+              <span className='truncate'>{etiquetaSeleccionada}</span>
+              <ChevronsUpDown className='h-4 w-4 shrink-0 opacity-50' />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent
+            className='w-[var(--radix-popover-trigger-width)] p-0'
+            align='start'
           >
-            <span className='truncate'>{etiquetaSeleccionada}</span>
-            <ChevronsUpDown className='h-4 w-4 shrink-0 opacity-50' />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent
-          className='w-[var(--radix-popover-trigger-width)] p-0'
-          align='start'
-        >
-          <div className='border-b border-border p-2'>
-            <Input
-              ref={inputRef}
-              placeholder='Buscar nombre o apellido…'
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
+            <div className='border-b border-border p-2'>
+              <Input
+                ref={inputRef}
+                placeholder='Buscar nombre o apellido…'
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+                onKeyDown={manejarKeyDownLista}
+              />
+            </div>
+            <ul
+              className='max-h-60 overflow-y-auto p-1'
+              role='listbox'
               onKeyDown={manejarKeyDownLista}
-            />
-          </div>
-          <ul
-            className='max-h-60 overflow-y-auto p-1'
-            role='listbox'
-            onKeyDown={manejarKeyDownLista}
-          >
-            <li>
-              <button
-                type='button'
-                className={cn(
-                  'w-full rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent',
-                  valor === SIN_ARBITRO && 'bg-accent'
-                )}
-                onClick={() => seleccionar(SIN_ARBITRO)}
-              >
-                Sin árbitro
-              </button>
-            </li>
-            {opcionesVisibles.length === 0 ? (
-              <li className='px-2 py-3 text-center text-sm text-muted-foreground'>
-                No hay árbitros que coincidan
+            >
+              <li>
+                <button
+                  type='button'
+                  className={cn(
+                    'w-full rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent',
+                    valor === SIN_ARBITRO && 'bg-accent'
+                  )}
+                  onClick={() => seleccionar(SIN_ARBITRO)}
+                >
+                  Sin árbitro
+                </button>
               </li>
-            ) : (
-              opcionesVisibles.map((opcion) => (
-                <li key={opcion.id}>
-                  <TooltipProvider delayDuration={300}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          type='button'
-                          className={cn(
-                            'flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent',
-                            valor === opcion.id && 'bg-accent',
-                            opcion.tieneConflicto &&
-                              'text-amber-800 hover:bg-amber-50'
-                          )}
-                          onClick={() => seleccionar(opcion.id)}
-                        >
-                          {opcion.tieneConflicto && (
-                            <AlertTriangle className='h-3.5 w-3.5 shrink-0' />
-                          )}
-                          <span className='truncate'>{opcion.nombre}</span>
-                        </button>
-                      </TooltipTrigger>
-                      {opcion.textoConflicto && (
-                        <TooltipContent side='right' className='max-w-xs'>
-                          Ya tiene jornada ese día: {opcion.textoConflicto}
-                        </TooltipContent>
-                      )}
-                    </Tooltip>
-                  </TooltipProvider>
+              {opcionesVisibles.length === 0 ? (
+                <li className='px-2 py-3 text-center text-sm text-muted-foreground'>
+                  No hay árbitros que coincidan
                 </li>
-              ))
-            )}
-          </ul>
-        </PopoverContent>
-      </Popover>
+              ) : (
+                opcionesVisibles.map((opcion) => (
+                  <li key={opcion.id}>
+                    <TooltipProvider delayDuration={300}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            type='button'
+                            className={cn(
+                              'flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent',
+                              valor === opcion.id && 'bg-accent',
+                              opcion.tieneConflicto &&
+                                'text-amber-800 hover:bg-amber-50'
+                            )}
+                            onClick={() => seleccionar(opcion.id)}
+                          >
+                            {opcion.tieneConflicto && (
+                              <AlertTriangle className='h-3.5 w-3.5 shrink-0' />
+                            )}
+                            <span className='truncate'>{opcion.nombre}</span>
+                          </button>
+                        </TooltipTrigger>
+                        {opcion.textoConflicto && (
+                          <TooltipContent side='right' className='max-w-xs'>
+                            Ya tiene jornada ese día: {opcion.textoConflicto}
+                          </TooltipContent>
+                        )}
+                      </Tooltip>
+                    </TooltipProvider>
+                  </li>
+                ))
+              )}
+            </ul>
+          </PopoverContent>
+        </Popover>
+        {accionDerecha}
+      </div>
       <p
         className={cn(
           'flex min-h-4 items-center gap-1 text-xs text-amber-700',

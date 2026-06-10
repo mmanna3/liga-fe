@@ -15,6 +15,7 @@ interface SelectorArbitroJornadaProps {
   valor: string
   otroSlotArbitroId: string
   deshabilitado?: boolean
+  accionDerecha?: React.ReactNode
   alCambiar: (arbitroId: string) => void
 }
 
@@ -40,6 +41,7 @@ export default function SelectorArbitroJornada({
   valor,
   otroSlotArbitroId,
   deshabilitado,
+  accionDerecha,
   alCambiar
 }: SelectorArbitroJornadaProps) {
   const opciones = useMemo(
@@ -65,6 +67,7 @@ export default function SelectorArbitroJornada({
       opciones={opciones}
       deshabilitado={deshabilitado}
       textoConflictoSeleccionado={textoConflicto}
+      accionDerecha={accionDerecha}
       alCambiar={alCambiar}
     />
   )

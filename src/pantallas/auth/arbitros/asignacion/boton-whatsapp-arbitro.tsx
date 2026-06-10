@@ -46,9 +46,7 @@ export default function BotonWhatsappArbitro({
   alMarcarEnviado
 }: BotonWhatsappArbitroProps) {
   if (arbitroId === 'sin-arbitro') {
-    return (
-      <div className='mb-0.5 flex h-9 w-9 shrink-0 items-center justify-center' />
-    )
+    return <div className='h-9 w-9 shrink-0' aria-hidden />
   }
 
   const arbitro = arbitrosElegibles.find((a) => String(a.id) === arbitroId)
@@ -76,13 +74,19 @@ export default function BotonWhatsappArbitro({
   const url = telefono ? construirUrlWhatsapp(telefono, mensaje) : ''
   const sinTelefono = !url
 
+  const textoHint = sinTelefono
+    ? 'El árbitro no tiene teléfono celular cargado'
+    : whatsappEnviado
+      ? 'Mensaje ya enviado'
+      : 'Enviar mensaje'
+
   const boton = (
     <Button
       type='button'
       variant='outline'
       size='icon'
       className={cn(
-        'mb-0.5 shrink-0',
+        'shrink-0',
         whatsappEnviado
           ? 'border-muted-foreground/30 text-muted-foreground'
           : 'border-[#25D366]/40 text-[#25D366] hover:bg-[#25D366]/10 hover:text-[#128C7E]'
@@ -93,30 +97,20 @@ export default function BotonWhatsappArbitro({
         window.open(url, '_blank', 'noopener,noreferrer')
         alMarcarEnviado()
       }}
-      aria-label={
-        whatsappEnviado
-          ? 'WhatsApp enviado'
-          : 'Enviar mensaje por WhatsApp al árbitro'
-      }
+      aria-label={textoHint}
     >
       <IconoWhatsapp />
     </Button>
   )
 
-  if (sinTelefono) {
-    return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <span tabIndex={0}>{boton}</span>
-          </TooltipTrigger>
-          <TooltipContent>
-            El árbitro no tiene teléfono celular cargado
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    )
-  }
-
-  return boton
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span tabIndex={sinTelefono ? 0 : undefined}>{boton}</span>
+        </TooltipTrigger>
+        <TooltipContent>{textoHint}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  )
 }

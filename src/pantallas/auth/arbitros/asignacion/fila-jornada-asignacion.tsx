@@ -46,30 +46,28 @@ function SlotArbitroConWhatsapp({
   alMarcarWhatsappEnviado: (jornadaId: number, arbitroId: number) => void
 }) {
   return (
-    <div className='flex min-w-[200px] flex-1 items-end gap-2'>
-      <div className='min-w-0 flex-1'>
-        <SelectorArbitroJornada
-          titulo={titulo}
+    <SelectorArbitroJornada
+      titulo={titulo}
+      jornada={jornada}
+      arbitrosElegibles={arbitrosElegibles}
+      valor={arbitroId}
+      otroSlotArbitroId={otroSlotArbitroId}
+      deshabilitado={guardando}
+      alCambiar={alCambiar}
+      accionDerecha={
+        <BotonWhatsappArbitro
           jornada={jornada}
+          arbitroId={arbitroId}
           arbitrosElegibles={arbitrosElegibles}
-          valor={arbitroId}
-          otroSlotArbitroId={otroSlotArbitroId}
+          whatsappEnviado={whatsappEnviado}
           deshabilitado={guardando}
-          alCambiar={alCambiar}
+          alMarcarEnviado={() => {
+            if (arbitroId === 'sin-arbitro') return
+            alMarcarWhatsappEnviado(jornada.id, Number(arbitroId))
+          }}
         />
-      </div>
-      <BotonWhatsappArbitro
-        jornada={jornada}
-        arbitroId={arbitroId}
-        arbitrosElegibles={arbitrosElegibles}
-        whatsappEnviado={whatsappEnviado}
-        deshabilitado={guardando}
-        alMarcarEnviado={() => {
-          if (arbitroId === 'sin-arbitro') return
-          alMarcarWhatsappEnviado(jornada.id, Number(arbitroId))
-        }}
-      />
-    </div>
+      }
+    />
   )
 }
 

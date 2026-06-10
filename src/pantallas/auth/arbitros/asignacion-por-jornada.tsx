@@ -200,6 +200,16 @@ export default function AsignacionPorJornada() {
   return (
     <FlujoHomeLayout
       titulo='Próxima fecha'
+      subtitulo={
+        <>
+          <span className='text-emerald-600'>En verde</span>, los mensajes de
+          Whatsapp que faltan enviar.{' '}
+          <span className='text-muted-foreground'>En gris</span>, los ya
+          enviados. Advertencia: No se puede saber con exactitud qué mensaje se
+          envió o no, el ícono pasará a gris luego de hacerle clic, asumiendo
+          que el mensaje fue enviado.
+        </>
+      }
       iconoTitulo='Pelota'
       pathBotonVolver={rutasNavegacion.arbitros}
       contenedorClassName='max-w-6xl'
