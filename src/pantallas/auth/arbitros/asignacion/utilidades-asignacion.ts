@@ -80,6 +80,15 @@ export interface DatosMensajeWhatsappArbitro {
   localidadLocal?: string | null
 }
 
+function construirUrlGoogleMaps(
+  direccion?: string | null,
+  localidad?: string | null
+): string | null {
+  const consulta = [direccion, localidad].filter(Boolean).join(', ')
+  if (!consulta) return null
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(consulta)}`
+}
+
 export function construirMensajeWhatsappArbitro(
   datos: DatosMensajeWhatsappArbitro
 ): string {
@@ -88,12 +97,18 @@ export function construirMensajeWhatsappArbitro(
     .filter(Boolean)
     .join(', ')
   const parteUbicacion = ubicacion ? ` en *${ubicacion}*` : ''
+  const urlMaps = construirUrlGoogleMaps(
+    datos.direccionLocal,
+    datos.localidadLocal
+  )
+  const parteMaps = urlMaps ? `\n\n📍 Link Google Maps:\n${urlMaps}` : ''
 
   return (
-    `Hola ${datos.nombre} ${datos.apellido}, tu próxima jornada es ` +
-    `*${datos.local} vs ${datos.visitante}* del ` +
-    `*Torneo ${datos.torneoNombre} - ${datos.faseNombre} - ${datos.zonaNombre}* ` +
-    `el día ${diaTexto} en el Club ${datos.nombreClubLocal}${parteUbicacion}.`
+    `👋 Hola ${datos.nombre} ${datos.apellido}, tu próxima jornada es ` +
+    `⚽ *${datos.local} vs ${datos.visitante}* del ` +
+    `🏆 *Torneo ${datos.torneoNombre} - ${datos.faseNombre} - ${datos.zonaNombre}* ` +
+    `📅 el día ${diaTexto} en el Club ${datos.nombreClubLocal}${parteUbicacion}.${parteMaps}` +
+    `\n\n—\nEDeFI Administración`
   )
 }
 
