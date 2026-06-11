@@ -12,6 +12,7 @@ import {
   useEstructuraFases
 } from './detalle-torneo/components/gestion-fases-torneo/gestion-fases-torneo'
 import { useDetalleTorneo } from './detalle-torneo/hooks/use-detalle-torneo'
+import { formatearHorarioDeJuego } from './detalle-torneo/lib'
 import ModalActualizarFasesTablaAnual from './detalle-torneo/modal-actualizar-fases-tabla-anual'
 
 export default function DetalleTorneo() {
@@ -36,6 +37,8 @@ export default function DetalleTorneo() {
     setCategorias,
     seVenLosGolesEnTablaDePosiciones,
     setSeVenLosGolesEnTablaDePosiciones,
+    horarioDeJuego,
+    setHorarioDeJuego,
     eliminarMutation,
     guardarDatosBasicosMutation,
     toggleVisibilidadAppMutation
@@ -51,13 +54,15 @@ export default function DetalleTorneo() {
       temporada,
       agrupadorId,
       categorias,
-      seVenLosGolesEnTablaDePosiciones
+      seVenLosGolesEnTablaDePosiciones,
+      horarioDeJuego
     }),
     setNombre,
     setTemporada,
     setAgrupadorId,
     setCategorias,
     setSeVenLosGolesEnTablaDePosiciones,
+    setHorarioDeJuego,
     setEditando
   })
 
@@ -130,6 +135,12 @@ export default function DetalleTorneo() {
                         onChange={(e) => setTemporada(e.target.value)}
                         placeholder='2026'
                       />
+                      <Input
+                        tipo='time'
+                        titulo='Horario de juego'
+                        value={horarioDeJuego}
+                        onChange={(e) => setHorarioDeJuego(e.target.value)}
+                      />
                     </>
                   ) : (
                     <>
@@ -144,6 +155,14 @@ export default function DetalleTorneo() {
                           Temporada/Año
                         </label>
                         <p className='font-medium'>{temporada || '—'}</p>
+                      </div>
+                      <div>
+                        <label className='text-sm font-semibold text-muted-foreground block mb-2'>
+                          Horario de juego
+                        </label>
+                        <p className='font-medium'>
+                          {formatearHorarioDeJuego(horarioDeJuego)}
+                        </p>
                       </div>
                     </>
                   )}

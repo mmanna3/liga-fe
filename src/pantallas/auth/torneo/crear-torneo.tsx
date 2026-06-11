@@ -58,6 +58,12 @@ export default function CrearTorneo() {
               placeholder='2026'
               error={errors.temporada?.message}
             />
+            <Input
+              tipo='time'
+              titulo='Horario de juego'
+              value={datos.horarioDeJuego ?? ''}
+              onChange={(e) => setValue('horarioDeJuego', e.target.value)}
+            />
           </div>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
             <SwitchVerGoles

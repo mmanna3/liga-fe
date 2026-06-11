@@ -10744,6 +10744,7 @@ export class CrearTorneoDTO implements ICrearTorneoDTO {
   anio!: number
   esVisibleEnApp!: boolean
   seVenLosGolesEnTablaDePosiciones!: boolean
+  horarioDeJuego?: string | undefined
   torneoAgrupadorId?: number
   faseAperturaId?: number | undefined
   faseAperturaNombre?: string | undefined
@@ -10772,6 +10773,7 @@ export class CrearTorneoDTO implements ICrearTorneoDTO {
       this.esVisibleEnApp = _data['esVisibleEnApp']
       this.seVenLosGolesEnTablaDePosiciones =
         _data['seVenLosGolesEnTablaDePosiciones']
+      this.horarioDeJuego = _data['horarioDeJuego']
       this.torneoAgrupadorId = _data['torneoAgrupadorId']
       this.faseAperturaId = _data['faseAperturaId']
       this.faseAperturaNombre = _data['faseAperturaNombre']
@@ -10809,6 +10811,7 @@ export class CrearTorneoDTO implements ICrearTorneoDTO {
     data['esVisibleEnApp'] = this.esVisibleEnApp
     data['seVenLosGolesEnTablaDePosiciones'] =
       this.seVenLosGolesEnTablaDePosiciones
+    data['horarioDeJuego'] = this.horarioDeJuego
     data['torneoAgrupadorId'] = this.torneoAgrupadorId
     data['faseAperturaId'] = this.faseAperturaId
     data['faseAperturaNombre'] = this.faseAperturaNombre
@@ -10837,6 +10840,7 @@ export interface ICrearTorneoDTO {
   anio: number
   esVisibleEnApp: boolean
   seVenLosGolesEnTablaDePosiciones: boolean
+  horarioDeJuego?: string | undefined
   torneoAgrupadorId?: number
   faseAperturaId?: number | undefined
   faseAperturaNombre?: string | undefined
@@ -14653,6 +14657,7 @@ export class TorneoDTO implements ITorneoDTO {
   anio!: number
   esVisibleEnApp!: boolean
   seVenLosGolesEnTablaDePosiciones!: boolean
+  horarioDeJuego?: string | undefined
   torneoAgrupadorId?: number
   faseAperturaId?: number | undefined
   faseAperturaNombre?: string | undefined
@@ -14680,6 +14685,7 @@ export class TorneoDTO implements ITorneoDTO {
       this.esVisibleEnApp = _data['esVisibleEnApp']
       this.seVenLosGolesEnTablaDePosiciones =
         _data['seVenLosGolesEnTablaDePosiciones']
+      this.horarioDeJuego = _data['horarioDeJuego']
       this.torneoAgrupadorId = _data['torneoAgrupadorId']
       this.faseAperturaId = _data['faseAperturaId']
       this.faseAperturaNombre = _data['faseAperturaNombre']
@@ -14714,6 +14720,7 @@ export class TorneoDTO implements ITorneoDTO {
     data['esVisibleEnApp'] = this.esVisibleEnApp
     data['seVenLosGolesEnTablaDePosiciones'] =
       this.seVenLosGolesEnTablaDePosiciones
+    data['horarioDeJuego'] = this.horarioDeJuego
     data['torneoAgrupadorId'] = this.torneoAgrupadorId
     data['faseAperturaId'] = this.faseAperturaId
     data['faseAperturaNombre'] = this.faseAperturaNombre
@@ -14739,6 +14746,7 @@ export interface ITorneoDTO {
   anio: number
   esVisibleEnApp: boolean
   seVenLosGolesEnTablaDePosiciones: boolean
+  horarioDeJuego?: string | undefined
   torneoAgrupadorId?: number
   faseAperturaId?: number | undefined
   faseAperturaNombre?: string | undefined

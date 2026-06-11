@@ -6,7 +6,11 @@ import useApiQuery from '@/api/hooks/use-api-query'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { categoriasACategoriaDto, categoriasDtoACategoria } from '../lib'
+import {
+  categoriasACategoriaDto,
+  categoriasDtoACategoria,
+  horarioParaInput
+} from '../lib'
 import type { Categoria } from '../../crear-torneo/tipos'
 
 export function useDetalleTorneo() {
@@ -32,6 +36,7 @@ export function useDetalleTorneo() {
     seVenLosGolesEnTablaDePosiciones,
     setSeVenLosGolesEnTablaDePosiciones
   ] = useState(true)
+  const [horarioDeJuego, setHorarioDeJuego] = useState('')
   const [categorias, setCategorias] = useState<Categoria[]>(
     categoriasDtoACategoria([])
   )
@@ -44,6 +49,7 @@ export function useDetalleTorneo() {
     setSeVenLosGolesEnTablaDePosiciones(
       torneo.seVenLosGolesEnTablaDePosiciones ?? true
     )
+    setHorarioDeJuego(horarioParaInput(torneo.horarioDeJuego))
     setCategorias(categoriasDtoACategoria(torneo.categorias ?? []))
   }, [torneo])
 
@@ -55,6 +61,7 @@ export function useDetalleTorneo() {
     setSeVenLosGolesEnTablaDePosiciones(
       torneo.seVenLosGolesEnTablaDePosiciones ?? true
     )
+    setHorarioDeJuego(horarioParaInput(torneo.horarioDeJuego))
     setCategorias(categoriasDtoACategoria(torneo.categorias ?? []))
     setEditando(false)
   }
@@ -80,7 +87,8 @@ export function useDetalleTorneo() {
         ),
         fases: undefined,
         esVisibleEnApp: torneo.esVisibleEnApp,
-        seVenLosGolesEnTablaDePosiciones
+        seVenLosGolesEnTablaDePosiciones,
+        horarioDeJuego: horarioDeJuego.trim() || undefined
       })
       await api.torneoPUT(torneoId, body)
     },
@@ -116,6 +124,8 @@ export function useDetalleTorneo() {
     setCategorias,
     seVenLosGolesEnTablaDePosiciones,
     setSeVenLosGolesEnTablaDePosiciones,
+    horarioDeJuego,
+    setHorarioDeJuego,
     handleCancelarEdicion,
     eliminarMutation,
     guardarDatosBasicosMutation,

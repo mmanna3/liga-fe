@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom'
 import {
   categoriasACategoriaDto,
   categoriasDtoACategoria,
+  horarioParaInput,
   type FaseEstado
 } from '../../../lib'
 import type { Categoria } from '../../../../crear-torneo/tipos'
@@ -50,12 +51,14 @@ interface UseEstructuraFasesParams {
     agrupadorId: number | null
     categorias: Categoria[]
     seVenLosGolesEnTablaDePosiciones: boolean
+    horarioDeJuego: string
   }
   setNombre: (n: string) => void
   setTemporada: (t: string) => void
   setAgrupadorId: (a: number | null) => void
   setCategorias: (c: Categoria[]) => void
   setSeVenLosGolesEnTablaDePosiciones: (v: boolean) => void
+  setHorarioDeJuego: (h: string) => void
   setEditando: (e: boolean) => void
 }
 
@@ -70,6 +73,7 @@ export function useEstructuraFases({
   setAgrupadorId,
   setCategorias,
   setSeVenLosGolesEnTablaDePosiciones,
+  setHorarioDeJuego,
   setEditando
 }: UseEstructuraFasesParams) {
   const navigate = useNavigate()
@@ -250,7 +254,8 @@ export function useEstructuraFases({
         temporada,
         agrupadorId,
         categorias,
-        seVenLosGolesEnTablaDePosiciones
+        seVenLosGolesEnTablaDePosiciones,
+        horarioDeJuego
       } = getDatosBasicos()
 
       const todasLasFases: FaseEstado[] = []
@@ -286,7 +291,8 @@ export function useEstructuraFases({
         ),
         fases: fasesValidas.map((f) => new FaseDTO({ ...f, torneoId })),
         esVisibleEnApp: torneo.esVisibleEnApp,
-        seVenLosGolesEnTablaDePosiciones
+        seVenLosGolesEnTablaDePosiciones,
+        horarioDeJuego: horarioDeJuego.trim() || undefined
       })
       await api.torneoPUT(torneoId, body)
     },
@@ -302,6 +308,7 @@ export function useEstructuraFases({
     setSeVenLosGolesEnTablaDePosiciones(
       torneo.seVenLosGolesEnTablaDePosiciones ?? true
     )
+    setHorarioDeJuego(horarioParaInput(torneo.horarioDeJuego))
     setCategorias(categoriasDtoACategoria(torneo.categorias ?? []))
     setElementos(torneoFasesAElementos(torneo.fases ?? []))
     setEditando(false)

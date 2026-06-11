@@ -1,4 +1,5 @@
 import type { TorneoDTO, FaseDTO } from '@/api/clients'
+import { formatearHorarioDeJuego } from '../detalle-torneo/lib'
 import { Card, CardContent } from '@/design-system/base-ui/card'
 import Icono from '@/design-system/ykn-ui/icono'
 import { rutasNavegacion } from '@/ruteo/rutas'
@@ -30,7 +31,11 @@ export default function TorneoCard({ torneo }: TorneoCardProps) {
   const fases = torneo.fases ?? []
 
   const agrupador = torneo.torneoAgrupadorNombre ?? 'Sin agrupador'
-  const subtitulo = `${agrupador} - ${torneo.anio}`
+  const horario =
+    torneo.horarioDeJuego != null && torneo.horarioDeJuego !== ''
+      ? ` · ${formatearHorarioDeJuego(torneo.horarioDeJuego)}`
+      : ''
+  const subtitulo = `${agrupador} - ${torneo.anio}${horario}`
 
   return (
     <Card

@@ -24,6 +24,7 @@ const esquema = z
     nombre: z.string().min(1, 'El nombre es requerido'),
     temporada: z.string().min(1, 'La temporada es requerida'),
     seVenLosGolesEnTablaDePosiciones: z.boolean(),
+    horarioDeJuego: z.string().optional(),
     agrupadorId: z.number().optional(),
     categorias: z
       .array(
@@ -57,6 +58,7 @@ const valoresIniciales: Partial<DatosFormulario> = {
   nombre: '',
   temporada: new Date().getFullYear().toString(),
   seVenLosGolesEnTablaDePosiciones: true,
+  horarioDeJuego: '',
   agrupadorId: undefined,
   categorias: []
 }
@@ -133,7 +135,8 @@ export function useCrearTorneo() {
           primeraFase,
           esVisibleEnApp: true,
           seVenLosGolesEnTablaDePosiciones:
-            datos.seVenLosGolesEnTablaDePosiciones
+            datos.seVenLosGolesEnTablaDePosiciones,
+          horarioDeJuego: datos.horarioDeJuego?.trim() || undefined
         })
       )
     },
@@ -145,6 +148,7 @@ export function useCrearTorneo() {
     nombre: watch('nombre'),
     temporada: watch('temporada'),
     seVenLosGolesEnTablaDePosiciones: watch('seVenLosGolesEnTablaDePosiciones'),
+    horarioDeJuego: watch('horarioDeJuego'),
     agrupadorId: watch('agrupadorId'),
     categorias: watch('categorias')
   }

@@ -2,6 +2,16 @@ import { TorneoCategoriaDTO, TipoDeFaseEnum } from '@/api/clients'
 import type { OpcionSelector } from '@/design-system/ykn-ui/selector-simple'
 import type { Categoria } from '../crear-torneo/tipos'
 
+export function horarioParaInput(val?: string | null): string {
+  if (!val) return ''
+  return val.slice(0, 5)
+}
+
+export function formatearHorarioDeJuego(val?: string | null): string {
+  if (!val) return '—'
+  return val.slice(0, 5)
+}
+
 export const OPCIONES_FORMATO: OpcionSelector[] = [
   { id: 'todos-contra-todos', titulo: 'Todos contra todos' },
   { id: 'eliminacion-directa', titulo: 'Eliminación directa' }

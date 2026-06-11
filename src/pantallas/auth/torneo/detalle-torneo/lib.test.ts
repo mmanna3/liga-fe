@@ -3,9 +3,35 @@ import { describe, expect, it } from 'vitest'
 import {
   categoriasACategoriaDto,
   categoriasDtoACategoria,
+  formatearHorarioDeJuego,
+  horarioParaInput,
   tipoDeFaseAOpción,
   tipoDeFaseNombreDesdeEnum
 } from './lib'
+
+// ---------------------------------------------------------------------------
+// horario
+// ---------------------------------------------------------------------------
+
+describe('horarioParaInput', () => {
+  it('devuelve HH:mm desde un valor con segundos', () => {
+    expect(horarioParaInput('20:30:00')).toBe('20:30')
+  })
+
+  it('devuelve vacío si no hay valor', () => {
+    expect(horarioParaInput(null)).toBe('')
+  })
+})
+
+describe('formatearHorarioDeJuego', () => {
+  it('muestra el horario recortado', () => {
+    expect(formatearHorarioDeJuego('18:45:00')).toBe('18:45')
+  })
+
+  it('muestra guión si no hay valor', () => {
+    expect(formatearHorarioDeJuego(undefined)).toBe('—')
+  })
+})
 
 // ---------------------------------------------------------------------------
 // tipoDeFaseAOpción
