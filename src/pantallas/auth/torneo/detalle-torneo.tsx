@@ -80,7 +80,7 @@ export default function DetalleTorneo() {
         titulo={`${torneo.nombre}`}
         iconoTitulo='Torneos'
         pathBotonVolver={rutasNavegacion.torneos}
-        maxWidth='2xl'
+        maxWidth='6xl'
         contenidoEnCard={false}
         botonera={{
           iconos: [
@@ -118,9 +118,9 @@ export default function DetalleTorneo() {
           <div className='space-y-4'>
             <Card className='shadow-md'>
               <CardContent className='py-2 space-y-4'>
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
-                  {editando ? (
-                    <>
+                {editando ? (
+                  <>
+                    <div className='grid grid-cols-1 md:grid-cols-3 gap-3'>
                       <Input
                         tipo='text'
                         titulo='Nombre del torneo *'
@@ -141,40 +141,59 @@ export default function DetalleTorneo() {
                         value={horarioDeJuego}
                         onChange={(e) => setHorarioDeJuego(e.target.value)}
                       />
-                    </>
-                  ) : (
-                    <>
+                    </div>
+                    <SelectorAgrupador
+                      valor={agrupadorId}
+                      alCambiar={setAgrupadorId}
+                    />
+                    <div className='grid grid-cols-1 md:grid-cols-3 gap-3'>
+                      <SwitchVerGoles
+                        value={seVenLosGolesEnTablaDePosiciones}
+                        onChange={setSeVenLosGolesEnTablaDePosiciones}
+                      />
                       <div>
-                        <label className='text-sm font-semibold text-muted-foreground block mb-2'>
-                          Nombre del torneo
+                        <label className='text-md font-semibold block mb-2'>
+                          Fases sumadas para Tabla Anual
                         </label>
-                        <p className='font-medium'>{nombre || '—'}</p>
-                      </div>
-                      <div>
-                        <label className='text-sm font-semibold text-muted-foreground block mb-2'>
-                          Temporada/Año
-                        </label>
-                        <p className='font-medium'>{temporada || '—'}</p>
-                      </div>
-                      <div>
-                        <label className='text-sm font-semibold text-muted-foreground block mb-2'>
-                          Horario de juego
-                        </label>
-                        <p className='font-medium'>
-                          {formatearHorarioDeJuego(horarioDeJuego)}
+                        <p
+                          className='font-medium underline text-green-700 hover:text-green-600 cursor-pointer'
+                          onClick={() => setModalTablaAnualAbierto(true)}
+                        >
+                          {torneo.faseAperturaNombre != null &&
+                          torneo.faseClausuraNombre != null ? (
+                            <>
+                              {torneo.faseAperturaNombre},{' '}
+                              {torneo.faseClausuraNombre}
+                            </>
+                          ) : (
+                            'No hay tabla de posiciones Anual'
+                          )}
                         </p>
                       </div>
-                    </>
-                  )}
-                </div>
-
-                {editando ? (
-                  <SelectorAgrupador
-                    valor={agrupadorId}
-                    alCambiar={setAgrupadorId}
-                  />
+                    </div>
+                  </>
                 ) : (
-                  <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
+                  <div className='grid grid-cols-1 md:grid-cols-3 gap-3'>
+                    <div>
+                      <label className='text-sm font-semibold text-muted-foreground block mb-2'>
+                        Nombre del torneo
+                      </label>
+                      <p className='font-medium'>{nombre || '—'}</p>
+                    </div>
+                    <div>
+                      <label className='text-sm font-semibold text-muted-foreground block mb-2'>
+                        Temporada/Año
+                      </label>
+                      <p className='font-medium'>{temporada || '—'}</p>
+                    </div>
+                    <div>
+                      <label className='text-sm font-semibold text-muted-foreground block mb-2'>
+                        Horario de juego
+                      </label>
+                      <p className='font-medium'>
+                        {formatearHorarioDeJuego(horarioDeJuego)}
+                      </p>
+                    </div>
                     <div>
                       <label className='text-sm font-semibold text-muted-foreground block mb-2'>
                         Agrupador
@@ -199,43 +218,14 @@ export default function DetalleTorneo() {
                         )}
                       </p>
                     </div>
-                  </div>
-                )}
-
-                {editando ? (
-                  <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
-                    <SwitchVerGoles
-                      value={seVenLosGolesEnTablaDePosiciones}
-                      onChange={setSeVenLosGolesEnTablaDePosiciones}
-                    />
                     <div>
-                      <label className='text-md font-semibold block mb-2'>
-                        Fases sumadas para Tabla Anual
+                      <label className='text-sm font-semibold text-muted-foreground block mb-2'>
+                        Ver goles en tablas de posiciones
                       </label>
-                      <p
-                        className='font-medium underline text-green-700 hover:text-green-600 cursor-pointer'
-                        onClick={() => setModalTablaAnualAbierto(true)}
-                      >
-                        {torneo.faseAperturaNombre != null &&
-                        torneo.faseClausuraNombre != null ? (
-                          <>
-                            {torneo.faseAperturaNombre},{' '}
-                            {torneo.faseClausuraNombre}
-                          </>
-                        ) : (
-                          'No hay tabla de posiciones Anual'
-                        )}
+                      <p className='font-medium'>
+                        {seVenLosGolesEnTablaDePosiciones ? 'Sí' : 'No'}
                       </p>
                     </div>
-                  </div>
-                ) : (
-                  <div>
-                    <label className='text-sm font-semibold text-muted-foreground block mb-2'>
-                      Ver goles en tablas de posiciones
-                    </label>
-                    <p className='font-medium'>
-                      {seVenLosGolesEnTablaDePosiciones ? 'Sí' : 'No'}
-                    </p>
                   </div>
                 )}
 

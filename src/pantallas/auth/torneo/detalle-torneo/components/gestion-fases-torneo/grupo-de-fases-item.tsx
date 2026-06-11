@@ -5,9 +5,9 @@ import Icono from '@/design-system/ykn-ui/icono'
 import { useDroppable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
 import {
+  rectSortingStrategy,
   SortableContext,
-  useSortable,
-  verticalListSortingStrategy
+  useSortable
 } from '@dnd-kit/sortable'
 import { cn } from '@/logica-compartida/utils'
 import { GripVertical } from 'lucide-react'
@@ -171,7 +171,8 @@ export function GrupoDeFasesItem({
         <div
           ref={setNodeRef}
           className={cn(
-            'min-h-[80px] space-y-2 rounded-md p-2 transition-colors',
+            'min-h-[80px] rounded-md p-2 transition-colors',
+            grupo.fases.length > 0 && 'grid grid-cols-1 lg:grid-cols-2 gap-2',
             isOver && 'bg-primary/5 ring-2 ring-primary/30 ring-inset'
           )}
         >
@@ -182,7 +183,7 @@ export function GrupoDeFasesItem({
           ) : (
             <SortableContext
               items={idsOrdenados}
-              strategy={verticalListSortingStrategy}
+              strategy={rectSortingStrategy}
             >
               {grupo.fases.map((fase, faseIndex) => (
                 <FaseSortableEnGrupo

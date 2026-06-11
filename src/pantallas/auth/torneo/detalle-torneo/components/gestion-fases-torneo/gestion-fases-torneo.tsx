@@ -60,7 +60,7 @@ export function GestionFasesTorneo({
   return (
     <>
       <DndContext sensors={sensors} onDragEnd={onDragEnd}>
-        <div className='space-y-4'>
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
           {elementos.map((el, index) => {
             if (el.tipo === 'fase') {
               return (
@@ -85,24 +85,27 @@ export function GestionFasesTorneo({
             }
 
             return (
-              <GrupoDeFasesItem
-                key={el.grupo.idLocal}
-                grupo={el.grupo}
-                torneoId={torneoId}
-                nombreTorneo={torneo.nombre}
-                torneoFases={torneoFases}
-                categoriasTorneo={torneo.categorias ?? []}
-                onActualizarNombre={(nombre) => actualizarGrupo(index, nombre)}
-                onActualizarFase={(faseIndex, campo, valor) =>
-                  actualizarFaseEnGrupo(index, faseIndex, campo, valor)
-                }
-                onEliminarFase={(faseIndex) =>
-                  eliminarFaseDeGrupo(index, faseIndex)
-                }
-                onEliminarGrupo={() => eliminarGrupo(index)}
-                onIrAZonas={irAZonas}
-                estaGuardando={estaGuardandoZonas}
-              />
+              <div key={el.grupo.idLocal} className='col-span-full'>
+                <GrupoDeFasesItem
+                  grupo={el.grupo}
+                  torneoId={torneoId}
+                  nombreTorneo={torneo.nombre}
+                  torneoFases={torneoFases}
+                  categoriasTorneo={torneo.categorias ?? []}
+                  onActualizarNombre={(nombre) =>
+                    actualizarGrupo(index, nombre)
+                  }
+                  onActualizarFase={(faseIndex, campo, valor) =>
+                    actualizarFaseEnGrupo(index, faseIndex, campo, valor)
+                  }
+                  onEliminarFase={(faseIndex) =>
+                    eliminarFaseDeGrupo(index, faseIndex)
+                  }
+                  onEliminarGrupo={() => eliminarGrupo(index)}
+                  onIrAZonas={irAZonas}
+                  estaGuardando={estaGuardandoZonas}
+                />
+              </div>
             )
           })}
         </div>
