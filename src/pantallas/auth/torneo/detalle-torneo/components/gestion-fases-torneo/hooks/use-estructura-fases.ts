@@ -6,9 +6,10 @@ import {
   ZonaDTO
 } from '@/api/clients'
 import { api } from '@/api/api'
+import { fasesReordenar } from '@/api/fases-reordenar-api'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import { rutasNavegacion } from '@/ruteo/rutas'
-import { useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
@@ -28,15 +29,21 @@ import {
   crearGrupoVacio,
   eliminarFaseDeElementos,
   eliminarGrupoDevolviendoFases,
+  elementosTienenGrupos,
+  faseIdsEnOrdenDesdeElementos,
   idDragFaseEnGrupo,
   idDragGrupoDrop,
+  idTopLevelDesdeElemento,
   moverFaseTopLevelAGrupo,
   parseFaseIdDesdeTopLevelDragId,
   parseGrupoIdLocalDesdeDropId,
   parseGrupoIdLocalDesdeFaseGrupoId,
+  parseGrupoIdLocalDesdeTopLevelDragId,
   PREFIJO_DRAG_FASE_GRUPO,
+  reordenarElementosTopLevelPorIndices,
   reordenarFasesEnGrupo,
   renumerarElementosTopLevel,
+  sincronizarNumerosFasesDesdeTorneo,
   torneoFasesAElementos
 } from '../lib/estructura-utils'
 
@@ -86,8 +93,43 @@ export function useEstructuraFases({
   // Grupos y asignación fase↔grupo son estado local hasta que exista el backend.
   useEffect(() => {
     if (!torneo) return
-    setElementos(torneoFasesAElementos(torneo.fases ?? []))
+    setElementos((prev) => {
+      if (elementosTienenGrupos(prev)) {
+        return sincronizarNumerosFasesDesdeTorneo(prev, torneo.fases ?? [])
+      }
+      return torneoFasesAElementos(torneo.fases ?? [])
+    })
   }, [torneo])
+
+  const reordenarFasesMutation = useMutation({
+    mutationFn: async (faseIds: number[]) => {
+      await fasesReordenar(torneoId, faseIds)
+    },
+    onSuccess: () => {
+      void refetch()
+    },
+    onError: (error: unknown) => {
+      console.error('Error al reordenar fases:', error)
+      toast.error('No se pudo guardar el orden de las fases')
+      void refetch()
+    }
+  })
+
+  const persistirOrdenFases = useCallback(
+    (nuevosElementos: ElementoEstructuraTorneo[]) => {
+      const faseIds = faseIdsEnOrdenDesdeElementos(nuevosElementos)
+      const totalFasesTorneo = torneo?.fases?.length ?? 0
+      if (
+        faseIds.length === 0 ||
+        faseIds.length !== totalFasesTorneo ||
+        reordenarFasesMutation.isPending
+      ) {
+        return
+      }
+      reordenarFasesMutation.mutate(faseIds)
+    },
+    [reordenarFasesMutation, torneo?.fases?.length]
+  )
 
   const actualizarFaseTopLevel = (
     index: number,
@@ -211,7 +253,36 @@ export function useEstructuraFases({
           setElementos((prev) =>
             moverFaseTopLevelAGrupo(prev, faseTopId, grupoIdLocal)
           )
+          return
         }
+
+        setElementos((prev) => {
+          const prevTopIds = prev.map(idTopLevelDesdeElemento)
+          const prevOldIndex = prevTopIds.indexOf(activeId)
+          let prevNewIndex = prevTopIds.indexOf(overId)
+          if (prevNewIndex < 0) {
+            const grupoTopId = parseGrupoIdLocalDesdeTopLevelDragId(overId)
+            if (grupoTopId) {
+              prevNewIndex = prevTopIds.findIndex(
+                (id) => parseGrupoIdLocalDesdeTopLevelDragId(id) === grupoTopId
+              )
+            }
+          }
+          if (
+            prevOldIndex < 0 ||
+            prevNewIndex < 0 ||
+            prevOldIndex === prevNewIndex
+          ) {
+            return prev
+          }
+          const nuevosElementos = reordenarElementosTopLevelPorIndices(
+            prev,
+            prevOldIndex,
+            prevNewIndex
+          )
+          persistirOrdenFases(nuevosElementos)
+          return nuevosElementos
+        })
         return
       }
 
@@ -239,11 +310,18 @@ export function useEstructuraFases({
             newIndex = ids.length - 1
           }
           if (oldIndex < 0 || newIndex < 0 || oldIndex === newIndex) return prev
-          return reordenarFasesEnGrupo(prev, grupoIdLocal, oldIndex, newIndex)
+          const nuevosElementos = reordenarFasesEnGrupo(
+            prev,
+            grupoIdLocal,
+            oldIndex,
+            newIndex
+          )
+          persistirOrdenFases(nuevosElementos)
+          return nuevosElementos
         })
       }
     },
-    []
+    [persistirOrdenFases]
   )
 
   const guardarMutation = useApiMutation<void>({
@@ -427,7 +505,10 @@ export function useEstructuraFases({
     agregarGrupoDeFases,
     eliminarFaseMutation,
     guardarMutation,
-    estaGuardandoZonas: guardarMutation.isPending || creandoZonasEliminacion,
+    estaGuardandoZonas:
+      guardarMutation.isPending ||
+      creandoZonasEliminacion ||
+      reordenarFasesMutation.isPending,
     irAZonas,
     handleCancelarEdicion,
     handleDragEnd

@@ -7,10 +7,16 @@ import {
   useSensor,
   useSensors
 } from '@dnd-kit/core'
-import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
+import {
+  rectSortingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates
+} from '@dnd-kit/sortable'
+import { useMemo } from 'react'
 import { BotoneraFases } from './botonera-fases'
 import { FaseEnLista } from './fase-en-lista'
-import { GrupoDeFasesItem } from './grupo-de-fases-item'
+import { GrupoEnLista } from './grupo-en-lista'
+import { idTopLevelDesdeElemento } from './lib/estructura-utils'
 import type { useEstructuraFases } from './hooks/use-estructura-fases'
 
 type EstructuraFasesApi = ReturnType<typeof useEstructuraFases>
@@ -57,36 +63,45 @@ export function GestionFasesTorneo({
     handleDragEnd(String(active.id), String(over.id))
   }
 
+  const topLevelSortableIds = useMemo(
+    () => elementos.map(idTopLevelDesdeElemento),
+    [elementos]
+  )
+
   return (
     <>
       <DndContext sensors={sensors} onDragEnd={onDragEnd}>
-        <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
-          {elementos.map((el, index) => {
-            if (el.tipo === 'fase') {
-              return (
-                <FaseEnLista
-                  key={el.fase.id ?? `fase-top-${index}`}
-                  fase={el.fase}
-                  faseIndex={index}
-                  faseOriginal={torneoFases.find(
-                    (f: FaseDTO) => f.id === el.fase.id
-                  )}
-                  torneoId={torneoId}
-                  nombreTorneo={torneo.nombre}
-                  categoriasTorneo={torneo.categorias ?? []}
-                  onActualizar={(campo, valor) =>
-                    actualizarFaseTopLevel(index, campo, valor)
-                  }
-                  onEliminar={() => eliminarFaseTopLevel(index)}
-                  onIrAZonas={irAZonas}
-                  estaGuardando={estaGuardandoZonas}
-                />
-              )
-            }
+        <SortableContext
+          items={topLevelSortableIds}
+          strategy={rectSortingStrategy}
+        >
+          <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
+            {elementos.map((el, index) => {
+              if (el.tipo === 'fase') {
+                return (
+                  <FaseEnLista
+                    key={el.fase.id ?? `fase-top-${index}`}
+                    fase={el.fase}
+                    faseIndex={index}
+                    faseOriginal={torneoFases.find(
+                      (f: FaseDTO) => f.id === el.fase.id
+                    )}
+                    torneoId={torneoId}
+                    nombreTorneo={torneo.nombre}
+                    categoriasTorneo={torneo.categorias ?? []}
+                    onActualizar={(campo, valor) =>
+                      actualizarFaseTopLevel(index, campo, valor)
+                    }
+                    onEliminar={() => eliminarFaseTopLevel(index)}
+                    onIrAZonas={irAZonas}
+                    estaGuardando={estaGuardandoZonas}
+                  />
+                )
+              }
 
-            return (
-              <div key={el.grupo.idLocal} className='col-span-full'>
-                <GrupoDeFasesItem
+              return (
+                <GrupoEnLista
+                  key={el.grupo.idLocal}
                   grupo={el.grupo}
                   torneoId={torneoId}
                   nombreTorneo={torneo.nombre}
@@ -105,10 +120,10 @@ export function GestionFasesTorneo({
                   onIrAZonas={irAZonas}
                   estaGuardando={estaGuardandoZonas}
                 />
-              </div>
-            )
-          })}
-        </div>
+              )
+            })}
+          </div>
+        </SortableContext>
       </DndContext>
 
       {!editando && (

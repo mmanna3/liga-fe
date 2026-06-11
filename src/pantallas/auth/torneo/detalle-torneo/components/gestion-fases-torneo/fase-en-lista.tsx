@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/design-system/base-ui/card'
-import { useDraggable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
+import { useSortable } from '@dnd-kit/sortable'
 import { cn } from '@/logica-compartida/utils'
 import { GripVertical } from 'lucide-react'
 import type { FaseDTO, TorneoCategoriaDTO } from '@/api/clients'
@@ -34,11 +34,18 @@ export function FaseEnLista({
   estaGuardando
 }: FaseEnListaProps) {
   const dragId = idDragFaseTopLevel(fase)
-  const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({ id: dragId })
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id: dragId })
 
   const style = {
     transform: CSS.Translate.toString(transform),
+    transition,
     zIndex: isDragging ? 2 : undefined
   }
 
@@ -57,7 +64,7 @@ export function FaseEnLista({
                 'mt-1 flex h-8 w-8 shrink-0 cursor-grab touch-none items-center justify-center rounded-md',
                 'text-muted-foreground hover:bg-muted/80 active:cursor-grabbing'
               )}
-              aria-label='Arrastrar fase al grupo'
+              aria-label='Reordenar fase'
               {...attributes}
               {...listeners}
             >

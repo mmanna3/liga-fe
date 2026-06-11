@@ -4,6 +4,7 @@ import { tipoDeFaseAOpción, type FaseEstado } from '../../../lib'
 import type { ElementoEstructuraTorneo, GrupoDeFasesEstado } from './tipos'
 
 export const PREFIJO_DRAG_FASE_TOP = 'top-fase-'
+export const PREFIJO_DRAG_GRUPO_TOP = 'top-grupo-'
 export const PREFIJO_DRAG_GRUPO_DROP = 'grupo-drop-'
 export const PREFIJO_DRAG_FASE_GRUPO = 'grupo-fase-'
 
@@ -53,6 +54,16 @@ export function idDragFaseTopLevel(fase: FaseEstado): string {
   return `${PREFIJO_DRAG_FASE_TOP}${fase.id ?? fase.numero}`
 }
 
+export function idDragGrupoTopLevel(grupo: GrupoDeFasesEstado): string {
+  return `${PREFIJO_DRAG_GRUPO_TOP}${grupo.idLocal}`
+}
+
+export function idTopLevelDesdeElemento(el: ElementoEstructuraTorneo): string {
+  return el.tipo === 'fase'
+    ? idDragFaseTopLevel(el.fase)
+    : idDragGrupoTopLevel(el.grupo)
+}
+
 export function idDragGrupoDrop(
   grupoOrIdLocal: GrupoDeFasesEstado | string
 ): string {
@@ -90,6 +101,13 @@ export function parseGrupoIdLocalDesdeFaseGrupoId(
 export function parseFaseIdDesdeTopLevelDragId(dragId: string): string | null {
   if (!dragId.startsWith(PREFIJO_DRAG_FASE_TOP)) return null
   return dragId.slice(PREFIJO_DRAG_FASE_TOP.length)
+}
+
+export function parseGrupoIdLocalDesdeTopLevelDragId(
+  dragId: string
+): string | null {
+  if (!dragId.startsWith(PREFIJO_DRAG_GRUPO_TOP)) return null
+  return dragId.slice(PREFIJO_DRAG_GRUPO_TOP.length)
 }
 
 export function contarFases(elementos: ElementoEstructuraTorneo[]): number {
@@ -255,6 +273,58 @@ export function eliminarFaseDeElementos(
   )
 }
 
+export function reordenarElementosTopLevelPorIndices(
+  elementos: ElementoEstructuraTorneo[],
+  oldIndex: number,
+  newIndex: number
+): ElementoEstructuraTorneo[] {
+  return renumerarElementosTopLevel(arrayMove(elementos, oldIndex, newIndex))
+}
+
+export function faseIdsEnOrdenDesdeElementos(
+  elementos: ElementoEstructuraTorneo[]
+): number[] {
+  const ids: number[] = []
+  for (const el of elementos) {
+    if (el.tipo === 'fase') {
+      if (el.fase.id != null && el.fase.id > 0) ids.push(el.fase.id)
+    } else {
+      for (const f of el.grupo.fases) {
+        if (f.id != null && f.id > 0) ids.push(f.id)
+      }
+    }
+  }
+  return ids
+}
+
+export function sincronizarNumerosFasesDesdeTorneo(
+  elementos: ElementoEstructuraTorneo[],
+  fases: FaseDTO[]
+): ElementoEstructuraTorneo[] {
+  const porId = new Map(fases.map((f) => [f.id, f]))
+  return elementos.map((el) => {
+    if (el.tipo === 'fase') {
+      const api = el.fase.id != null ? porId.get(el.fase.id) : undefined
+      if (!api) return el
+      return {
+        ...el,
+        fase: { ...el.fase, numero: api.numero ?? el.fase.numero }
+      }
+    }
+    return {
+      ...el,
+      grupo: {
+        ...el.grupo,
+        fases: el.grupo.fases.map((f) => {
+          const api = f.id != null ? porId.get(f.id) : undefined
+          if (!api) return f
+          return { ...f, numero: api.numero ?? f.numero }
+        })
+      }
+    }
+  })
+}
+
 export function indiceFaseTopLevelPorId(
   elementos: ElementoEstructuraTorneo[],
   faseId: number
@@ -262,4 +332,10 @@ export function indiceFaseTopLevelPorId(
   return elementos.findIndex(
     (el) => el.tipo === 'fase' && el.fase.id === faseId
   )
+}
+
+export function elementosTienenGrupos(
+  elementos: ElementoEstructuraTorneo[]
+): boolean {
+  return elementos.some((el) => el.tipo === 'grupo')
 }
