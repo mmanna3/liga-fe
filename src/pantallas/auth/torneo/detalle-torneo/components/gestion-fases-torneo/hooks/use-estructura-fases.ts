@@ -1,4 +1,5 @@
 import {
+  FaseCategoriaDTO,
   TorneoCategoriaDTO,
   TorneoDTO,
   FaseDTO,
@@ -192,28 +193,6 @@ export function useEstructuraFases({
       }
     })
   }
-
-  const agregarFaseMutation = useApiMutation<void>({
-    fn: async () => {
-      const maxNumero = Math.max(
-        0,
-        ...(torneo?.fases ?? []).map((f) => f.numero ?? 0)
-      )
-      await api.fasesPOST(
-        torneoId,
-        new FaseDTO({
-          numero: maxNumero + 1,
-          nombre: 'Nueva fase',
-          tipoDeFase: TipoDeFaseEnum._1,
-          estadoFaseId: 100,
-          esVisibleEnApp: true,
-          torneoId
-        })
-      )
-    },
-    antesDeMensajeExito: () => refetch(),
-    mensajeDeExito: 'Fase creada'
-  })
 
   const agregarGrupoDeFases = (grupoPadreIdLocal?: string) => {
     const padre = grupoPadreIdLocal
@@ -485,14 +464,14 @@ export function useEstructuraFases({
   const asegurarZonasEliminacionDirecta = async (
     faseId: number,
     faseApi: FaseDTO | undefined,
-    categoriasOverride?: TorneoCategoriaDTO[]
+    categoriasOverride?: FaseCategoriaDTO[]
   ) => {
     if (faseApi?.tipoDeFase !== TipoDeFaseEnum._2) return
 
     const zonasExistentes = await api.zonasAll(faseId)
     if (zonasExistentes.length > 0) return
 
-    const categorias = categoriasOverride ?? torneo?.categorias ?? []
+    const categorias = categoriasOverride ?? faseApi?.categorias ?? []
     const categoriasConId = categorias.filter(
       (c): c is typeof c & { id: number } => c.id != null && c.id > 0
     )
@@ -531,7 +510,11 @@ export function useEstructuraFases({
 
     const faseApi = torneoFases.find((f) => f.id === faseId)
     try {
-      await asegurarZonasEliminacionDirecta(faseId, faseApi)
+      await asegurarZonasEliminacionDirecta(
+        faseId,
+        faseApi,
+        faseApi?.categorias
+      )
     } catch {
       return
     }
@@ -542,6 +525,7 @@ export function useEstructuraFases({
   }
 
   return {
+    refetch,
     torneoFases,
     elementos,
     contarFases: () => contarFases(elementos),
@@ -550,8 +534,11 @@ export function useEstructuraFases({
     actualizarGrupo,
     eliminarFasePorId,
     eliminarGrupo,
-    agregarFaseMutation,
     agregarGrupoDeFases,
+    maxNumeroFase: Math.max(
+      0,
+      ...(torneo?.fases ?? []).map((f) => f.numero ?? 0)
+    ),
     eliminarFaseMutation,
     guardarMutation,
     estaGuardandoZonas:

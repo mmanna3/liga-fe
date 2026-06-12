@@ -1,7 +1,7 @@
 import { api } from '@/api/api'
 import {
   LeyendaTablaPosicionesDTO,
-  type TorneoCategoriaDTO,
+  type FaseCategoriaDTO,
   type ZonaDTO
 } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
@@ -34,7 +34,7 @@ const MAX_LEYENDA = 1000
 
 function etiquetaCategoria(
   leyenda: LeyendaTablaPosicionesDTO,
-  categorias: TorneoCategoriaDTO[]
+  categorias: FaseCategoriaDTO[]
 ): string {
   if (leyenda.categoriaId == null) return 'General'
   const cat = categorias.find((c) => c.id === leyenda.categoriaId)
@@ -55,7 +55,7 @@ function ordenarLeyendasPorCategoria(
 
 function agruparPorCategoria(
   leyendas: LeyendaTablaPosicionesDTO[],
-  categorias: TorneoCategoriaDTO[]
+  categorias: FaseCategoriaDTO[]
 ) {
   const mapa = new Map<string, LeyendaTablaPosicionesDTO[]>()
   for (const l of leyendas) {
@@ -84,7 +84,7 @@ interface ModalZonaLeyendasProps {
   nombreFase: string
   tipoDeFase: string
   nombreZona: string
-  categorias: TorneoCategoriaDTO[]
+  categorias: FaseCategoriaDTO[]
 }
 
 export default function ModalZonaLeyendas({

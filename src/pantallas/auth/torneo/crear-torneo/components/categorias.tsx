@@ -351,7 +351,9 @@ export function Categorias({
 
   return (
     <div>
-      <Label className='block mb-2 text-md font-semibold'>{titulo}</Label>
+      {titulo ? (
+        <Label className='block mb-2 text-md font-semibold'>{titulo}</Label>
+      ) : null}
 
       {valor.length > 0 && valor.some((c) => c.nombre) && renderBadges()}
 

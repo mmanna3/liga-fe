@@ -4456,6 +4456,380 @@ export class Client {
   }
 
   /**
+   * @return OK
+   */
+  categoriasAll(torneoId: number, faseId: number): Promise<FaseCategoriaDTO[]> {
+    let url_ = this.baseUrl + '/api/Torneo/{torneoId}/fases/{faseId}/categorias'
+    if (torneoId === undefined || torneoId === null)
+      throw new Error("The parameter 'torneoId' must be defined.")
+    url_ = url_.replace('{torneoId}', encodeURIComponent('' + torneoId))
+    if (faseId === undefined || faseId === null)
+      throw new Error("The parameter 'faseId' must be defined.")
+    url_ = url_.replace('{faseId}', encodeURIComponent('' + faseId))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processCategoriasAll(_response)
+    })
+  }
+
+  protected processCategoriasAll(
+    response: Response
+  ): Promise<FaseCategoriaDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(FaseCategoriaDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<FaseCategoriaDTO[]>(null as any)
+  }
+
+  /**
+   * @param faseIdQuery (optional)
+   * @param id (optional)
+   * @return OK
+   */
+  categoriasPOST(
+    torneoId: number,
+    faseIdQuery: number | undefined,
+    nombre: string,
+    anioDesde: number,
+    anioHasta: number,
+    orden: number,
+    faseIdPath: number,
+    id: number | undefined
+  ): Promise<FaseCategoriaDTO> {
+    let url_ =
+      this.baseUrl + '/api/Torneo/{torneoId}/fases/{faseId}/categorias?'
+    if (torneoId === undefined || torneoId === null)
+      throw new Error("The parameter 'torneoId' must be defined.")
+    url_ = url_.replace('{torneoId}', encodeURIComponent('' + torneoId))
+    if (faseIdPath === undefined || faseIdPath === null)
+      throw new Error("The parameter 'faseIdPath' must be defined.")
+    url_ = url_.replace('{FaseId}', encodeURIComponent('' + faseIdPath))
+    if (faseIdQuery === null)
+      throw new Error("The parameter 'faseIdQuery' cannot be null.")
+    else if (faseIdQuery !== undefined)
+      url_ += 'faseId=' + encodeURIComponent('' + faseIdQuery) + '&'
+    if (nombre === undefined || nombre === null)
+      throw new Error(
+        "The parameter 'nombre' must be defined and cannot be null."
+      )
+    else url_ += 'Nombre=' + encodeURIComponent('' + nombre) + '&'
+    if (anioDesde === undefined || anioDesde === null)
+      throw new Error(
+        "The parameter 'anioDesde' must be defined and cannot be null."
+      )
+    else url_ += 'AnioDesde=' + encodeURIComponent('' + anioDesde) + '&'
+    if (anioHasta === undefined || anioHasta === null)
+      throw new Error(
+        "The parameter 'anioHasta' must be defined and cannot be null."
+      )
+    else url_ += 'AnioHasta=' + encodeURIComponent('' + anioHasta) + '&'
+    if (orden === undefined || orden === null)
+      throw new Error(
+        "The parameter 'orden' must be defined and cannot be null."
+      )
+    else url_ += 'Orden=' + encodeURIComponent('' + orden) + '&'
+    if (id === null) throw new Error("The parameter 'id' cannot be null.")
+    else if (id !== undefined) url_ += 'Id=' + encodeURIComponent('' + id) + '&'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'POST',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processCategoriasPOST(_response)
+    })
+  }
+
+  protected processCategoriasPOST(
+    response: Response
+  ): Promise<FaseCategoriaDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = FaseCategoriaDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<FaseCategoriaDTO>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  categoriasGET(
+    torneoId: number,
+    faseId: number,
+    id: number
+  ): Promise<FaseCategoriaDTO> {
+    let url_ =
+      this.baseUrl + '/api/Torneo/{torneoId}/fases/{faseId}/categorias/{id}'
+    if (torneoId === undefined || torneoId === null)
+      throw new Error("The parameter 'torneoId' must be defined.")
+    url_ = url_.replace('{torneoId}', encodeURIComponent('' + torneoId))
+    if (faseId === undefined || faseId === null)
+      throw new Error("The parameter 'faseId' must be defined.")
+    url_ = url_.replace('{faseId}', encodeURIComponent('' + faseId))
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processCategoriasGET(_response)
+    })
+  }
+
+  protected processCategoriasGET(
+    response: Response
+  ): Promise<FaseCategoriaDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = FaseCategoriaDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<FaseCategoriaDTO>(null as any)
+  }
+
+  /**
+   * @param faseIdQuery (optional)
+   * @param idQuery (optional)
+   * @return OK
+   */
+  categoriasPUT(
+    torneoId: number,
+    faseIdQuery: number | undefined,
+    idQuery: number | undefined,
+    nombre: string,
+    anioDesde: number,
+    anioHasta: number,
+    orden: number,
+    faseIdPath: number,
+    idPath: number
+  ): Promise<FaseCategoriaDTO> {
+    let url_ =
+      this.baseUrl + '/api/Torneo/{torneoId}/fases/{faseId}/categorias/{id}?'
+    if (torneoId === undefined || torneoId === null)
+      throw new Error("The parameter 'torneoId' must be defined.")
+    url_ = url_.replace('{torneoId}', encodeURIComponent('' + torneoId))
+    if (faseIdPath === undefined || faseIdPath === null)
+      throw new Error("The parameter 'faseIdPath' must be defined.")
+    url_ = url_.replace('{FaseId}', encodeURIComponent('' + faseIdPath))
+    if (idPath === undefined || idPath === null)
+      throw new Error("The parameter 'idPath' must be defined.")
+    url_ = url_.replace('{Id}', encodeURIComponent('' + idPath))
+    if (faseIdQuery === null)
+      throw new Error("The parameter 'faseIdQuery' cannot be null.")
+    else if (faseIdQuery !== undefined)
+      url_ += 'faseId=' + encodeURIComponent('' + faseIdQuery) + '&'
+    if (idQuery === null)
+      throw new Error("The parameter 'idQuery' cannot be null.")
+    else if (idQuery !== undefined)
+      url_ += 'id=' + encodeURIComponent('' + idQuery) + '&'
+    if (nombre === undefined || nombre === null)
+      throw new Error(
+        "The parameter 'nombre' must be defined and cannot be null."
+      )
+    else url_ += 'Nombre=' + encodeURIComponent('' + nombre) + '&'
+    if (anioDesde === undefined || anioDesde === null)
+      throw new Error(
+        "The parameter 'anioDesde' must be defined and cannot be null."
+      )
+    else url_ += 'AnioDesde=' + encodeURIComponent('' + anioDesde) + '&'
+    if (anioHasta === undefined || anioHasta === null)
+      throw new Error(
+        "The parameter 'anioHasta' must be defined and cannot be null."
+      )
+    else url_ += 'AnioHasta=' + encodeURIComponent('' + anioHasta) + '&'
+    if (orden === undefined || orden === null)
+      throw new Error(
+        "The parameter 'orden' must be defined and cannot be null."
+      )
+    else url_ += 'Orden=' + encodeURIComponent('' + orden) + '&'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'PUT',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processCategoriasPUT(_response)
+    })
+  }
+
+  protected processCategoriasPUT(
+    response: Response
+  ): Promise<FaseCategoriaDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = FaseCategoriaDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<FaseCategoriaDTO>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  categoriasDELETE(
+    torneoId: number,
+    faseId: number,
+    id: number
+  ): Promise<void> {
+    let url_ =
+      this.baseUrl + '/api/Torneo/{torneoId}/fases/{faseId}/categorias/{id}'
+    if (torneoId === undefined || torneoId === null)
+      throw new Error("The parameter 'torneoId' must be defined.")
+    url_ = url_.replace('{torneoId}', encodeURIComponent('' + torneoId))
+    if (faseId === undefined || faseId === null)
+      throw new Error("The parameter 'faseId' must be defined.")
+    url_ = url_.replace('{faseId}', encodeURIComponent('' + faseId))
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'DELETE',
+      headers: {}
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processCategoriasDELETE(_response)
+    })
+  }
+
+  protected processCategoriasDELETE(response: Response): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
    * @param body (optional)
    * @return OK
    */
@@ -8464,7 +8838,7 @@ export class Client {
   /**
    * @return OK
    */
-  categoriasAll(padreId: number): Promise<TorneoCategoriaDTO[]> {
+  categoriasAll2(padreId: number): Promise<TorneoCategoriaDTO[]> {
     let url_ = this.baseUrl + '/api/Torneo/{padreId}/categorias'
     if (padreId === undefined || padreId === null)
       throw new Error("The parameter 'padreId' must be defined.")
@@ -8479,11 +8853,11 @@ export class Client {
     }
 
     return this.http.fetch(url_, options_).then((_response: Response) => {
-      return this.processCategoriasAll(_response)
+      return this.processCategoriasAll2(_response)
     })
   }
 
-  protected processCategoriasAll(
+  protected processCategoriasAll2(
     response: Response
   ): Promise<TorneoCategoriaDTO[]> {
     const status = response.status
@@ -8524,7 +8898,7 @@ export class Client {
    * @param body (optional)
    * @return OK
    */
-  categoriasPOST(
+  categoriasPOST2(
     padreId: number,
     body: TorneoCategoriaDTO | undefined
   ): Promise<TorneoCategoriaDTO> {
@@ -8546,11 +8920,11 @@ export class Client {
     }
 
     return this.http.fetch(url_, options_).then((_response: Response) => {
-      return this.processCategoriasPOST(_response)
+      return this.processCategoriasPOST2(_response)
     })
   }
 
-  protected processCategoriasPOST(
+  protected processCategoriasPOST2(
     response: Response
   ): Promise<TorneoCategoriaDTO> {
     const status = response.status
@@ -8584,7 +8958,7 @@ export class Client {
   /**
    * @return OK
    */
-  categoriasGET(padreId: number, id: number): Promise<TorneoCategoriaDTO> {
+  categoriasGET2(padreId: number, id: number): Promise<TorneoCategoriaDTO> {
     let url_ = this.baseUrl + '/api/Torneo/{padreId}/categorias/{id}'
     if (padreId === undefined || padreId === null)
       throw new Error("The parameter 'padreId' must be defined.")
@@ -8602,11 +8976,11 @@ export class Client {
     }
 
     return this.http.fetch(url_, options_).then((_response: Response) => {
-      return this.processCategoriasGET(_response)
+      return this.processCategoriasGET2(_response)
     })
   }
 
-  protected processCategoriasGET(
+  protected processCategoriasGET2(
     response: Response
   ): Promise<TorneoCategoriaDTO> {
     const status = response.status
@@ -8641,7 +9015,7 @@ export class Client {
    * @param body (optional)
    * @return OK
    */
-  categoriasPUT(
+  categoriasPUT2(
     padreId: number,
     id: number,
     body: TorneoCategoriaDTO | undefined
@@ -8666,11 +9040,11 @@ export class Client {
     }
 
     return this.http.fetch(url_, options_).then((_response: Response) => {
-      return this.processCategoriasPUT(_response)
+      return this.processCategoriasPUT2(_response)
     })
   }
 
-  protected processCategoriasPUT(response: Response): Promise<void> {
+  protected processCategoriasPUT2(response: Response): Promise<void> {
     const status = response.status
     let _headers: any = {}
     if (response.headers && response.headers.forEach) {
@@ -8696,7 +9070,7 @@ export class Client {
   /**
    * @return OK
    */
-  categoriasDELETE(padreId: number, id: number): Promise<number> {
+  categoriasDELETE2(padreId: number, id: number): Promise<number> {
     let url_ = this.baseUrl + '/api/Torneo/{padreId}/categorias/{id}'
     if (padreId === undefined || padreId === null)
       throw new Error("The parameter 'padreId' must be defined.")
@@ -8714,11 +9088,11 @@ export class Client {
     }
 
     return this.http.fetch(url_, options_).then((_response: Response) => {
-      return this.processCategoriasDELETE(_response)
+      return this.processCategoriasDELETE2(_response)
     })
   }
 
-  protected processCategoriasDELETE(response: Response): Promise<number> {
+  protected processCategoriasDELETE2(response: Response): Promise<number> {
     const status = response.status
     let _headers: any = {}
     if (response.headers && response.headers.forEach) {
@@ -12248,6 +12622,62 @@ export interface IFaseAsignacionDTO {
   zonas: ZonaAsignacionDTO[] | undefined
 }
 
+export class FaseCategoriaDTO implements IFaseCategoriaDTO {
+  id?: number
+  nombre!: string
+  anioDesde!: number
+  anioHasta!: number
+  orden!: number
+  faseId?: number
+
+  constructor(data?: IFaseCategoriaDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.nombre = _data['nombre']
+      this.anioDesde = _data['anioDesde']
+      this.anioHasta = _data['anioHasta']
+      this.orden = _data['orden']
+      this.faseId = _data['faseId']
+    }
+  }
+
+  static fromJS(data: any): FaseCategoriaDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new FaseCategoriaDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['nombre'] = this.nombre
+    data['anioDesde'] = this.anioDesde
+    data['anioHasta'] = this.anioHasta
+    data['orden'] = this.orden
+    data['faseId'] = this.faseId
+    return data
+  }
+}
+
+export interface IFaseCategoriaDTO {
+  id?: number
+  nombre: string
+  anioDesde: number
+  anioHasta: number
+  orden: number
+  faseId?: number
+}
+
 export class FaseDTO implements IFaseDTO {
   id?: number
   nombre!: string
@@ -12261,6 +12691,7 @@ export class FaseDTO implements IFaseDTO {
   esVisibleEnApp!: boolean
   sePuedeEditar?: boolean
   zonas?: ZonaDeFaseDTO[] | undefined
+  categorias?: FaseCategoriaDTO[] | undefined
 
   constructor(data?: IFaseDTO) {
     if (data) {
@@ -12289,6 +12720,11 @@ export class FaseDTO implements IFaseDTO {
         for (let item of _data['zonas'])
           this.zonas!.push(ZonaDeFaseDTO.fromJS(item))
       }
+      if (Array.isArray(_data['categorias'])) {
+        this.categorias = [] as any
+        for (let item of _data['categorias'])
+          this.categorias!.push(FaseCategoriaDTO.fromJS(item))
+      }
     }
   }
 
@@ -12316,6 +12752,10 @@ export class FaseDTO implements IFaseDTO {
       data['zonas'] = []
       for (let item of this.zonas) data['zonas'].push(item.toJSON())
     }
+    if (Array.isArray(this.categorias)) {
+      data['categorias'] = []
+      for (let item of this.categorias) data['categorias'].push(item.toJSON())
+    }
     return data
   }
 }
@@ -12333,6 +12773,7 @@ export interface IFaseDTO {
   esVisibleEnApp: boolean
   sePuedeEditar?: boolean
   zonas?: ZonaDeFaseDTO[] | undefined
+  categorias?: FaseCategoriaDTO[] | undefined
 }
 
 export class FechaDTO implements IFechaDTO {

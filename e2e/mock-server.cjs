@@ -411,6 +411,24 @@ const AGRUPADOR_DETALLE = {
   torneos: [TORNEO_1]
 }
 
+const CATEGORIA_PLANTILLA_SUB12 = {
+  id: 1,
+  nombre: 'Sub 12',
+  anioDesde: 2014,
+  anioHasta: 2015,
+  torneoId: 1,
+  orden: 1
+}
+
+const CATEGORIA_FASE_SUB12 = {
+  id: 1001,
+  nombre: 'Sub 12',
+  anioDesde: 2014,
+  anioHasta: 2015,
+  faseId: 100,
+  orden: 1
+}
+
 const TORNEO_CON_FASES = {
   id: 1,
   nombre: 'Torneo Apertura 2026',
@@ -418,9 +436,7 @@ const TORNEO_CON_FASES = {
   torneoAgrupadorId: 1,
   torneoAgrupadorNombre: 'Liga Infantil',
   sePuedeEditar: false,
-  categorias: [
-    { id: 1, nombre: 'Sub 12', anioDesde: 2014, anioHasta: 2015, torneoId: 1 }
-  ],
+  categorias: [CATEGORIA_PLANTILLA_SUB12],
   fases: [
     {
       id: 100,
@@ -430,7 +446,8 @@ const TORNEO_CON_FASES = {
       tipoDeFaseNombre: 'Todos contra todos',
       sePuedeEditar: false,
       zonas: [],
-      estadoFaseId: 100
+      estadoFaseId: 100,
+      categorias: [CATEGORIA_FASE_SUB12]
     }
   ]
 }
@@ -445,7 +462,17 @@ const TORNEO_EDITABLE_CON_NUEVA_FASE = {
   ...TORNEO_EDITABLE,
   fases: [
     ...TORNEO_EDITABLE.fases,
-    { id: 101, numero: 2, nombre: 'Nueva fase', tipoDeFase: 1, tipoDeFaseNombre: 'Todos contra todos', sePuedeEditar: true, zonas: [], estadoFaseId: 100 }
+    {
+      id: 101,
+      numero: 2,
+      nombre: 'Nueva fase',
+      tipoDeFase: 1,
+      tipoDeFaseNombre: 'Todos contra todos',
+      sePuedeEditar: true,
+      zonas: [],
+      estadoFaseId: 100,
+      categorias: [{ ...CATEGORIA_FASE_SUB12, id: 1002, faseId: 101 }]
+    }
   ]
 }
 
@@ -454,8 +481,8 @@ const GRUPO_FASES_1 = { id: 50, nombre: 'Grupo A', numero: 2, torneoId: 1, grupo
 const TORNEO_CON_GRUPOS = {
   ...TORNEO_EDITABLE,
   fases: [
-    { id: 100, numero: 1, nombre: 'Primera Fase', tipoDeFase: 1, tipoDeFaseNombre: 'Todos contra todos', sePuedeEditar: true, zonas: [], estadoFaseId: 100, grupoDeFasesId: null },
-    { id: 101, numero: 1, nombre: 'Fase en grupo', tipoDeFase: 1, tipoDeFaseNombre: 'Todos contra todos', sePuedeEditar: true, zonas: [], estadoFaseId: 100, grupoDeFasesId: 50 }
+    { id: 100, numero: 1, nombre: 'Primera Fase', tipoDeFase: 1, tipoDeFaseNombre: 'Todos contra todos', sePuedeEditar: true, zonas: [], estadoFaseId: 100, grupoDeFasesId: null, categorias: [CATEGORIA_FASE_SUB12] },
+    { id: 101, numero: 1, nombre: 'Fase en grupo', tipoDeFase: 1, tipoDeFaseNombre: 'Todos contra todos', sePuedeEditar: true, zonas: [], estadoFaseId: 100, grupoDeFasesId: 50, categorias: [{ ...CATEGORIA_FASE_SUB12, id: 1003, faseId: 101 }] }
   ],
   gruposDeFases: [GRUPO_FASES_1]
 }
@@ -640,7 +667,17 @@ const ROUTES = [
     pattern: /^\/api\/Torneo\/\d+\/fases$/,
     scenarios: {
       happy: null,
-      torneo_editable_con_nueva_fase: { id: 101, numero: 2, nombre: 'Nueva fase', tipoDeFase: 1, estadoFaseId: 100, esVisibleEnApp: true, sePuedeEditar: true, torneoId: 1 }
+      torneo_editable_con_nueva_fase: {
+        id: 101,
+        numero: 2,
+        nombre: 'Nueva fase',
+        tipoDeFase: 1,
+        estadoFaseId: 100,
+        esVisibleEnApp: true,
+        sePuedeEditar: true,
+        torneoId: 1,
+        categorias: [{ ...CATEGORIA_FASE_SUB12, id: 1002, faseId: 101 }]
+      }
     }
   },
   // Fases de torneo — actualizar

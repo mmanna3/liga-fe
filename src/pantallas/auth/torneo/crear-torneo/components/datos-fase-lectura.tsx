@@ -1,4 +1,4 @@
-import { type TorneoCategoriaDTO, type ZonaDeFaseDTO } from '@/api/clients'
+import { type FaseCategoriaDTO, type ZonaDeFaseDTO } from '@/api/clients'
 import {
   Tooltip,
   TooltipContent,
@@ -29,7 +29,7 @@ interface DatosFaseLecturaProps {
   faseId?: number
   nombreTorneo?: string
   nombreFase?: string
-  categorias?: TorneoCategoriaDTO[]
+  categorias?: FaseCategoriaDTO[]
 }
 
 function ZonaItem({
@@ -47,7 +47,7 @@ function ZonaItem({
   nombreTorneo?: string
   nombreFase?: string
   tipoDeFase: string
-  categorias: TorneoCategoriaDTO[]
+  categorias: FaseCategoriaDTO[]
 }) {
   const navigate = useNavigate()
   const [modalLeyendasAbierto, setModalLeyendasAbierto] = useState(false)

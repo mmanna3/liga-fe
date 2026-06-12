@@ -1,4 +1,8 @@
-import { TorneoCategoriaDTO, TipoDeFaseEnum } from '@/api/clients'
+import {
+  FaseCategoriaDTO,
+  TorneoCategoriaDTO,
+  TipoDeFaseEnum
+} from '@/api/clients'
 import type { OpcionSelector } from '@/design-system/ykn-ui/selector-simple'
 import type { Categoria } from '../crear-torneo/tipos'
 
@@ -40,19 +44,49 @@ export function tipoDeFaseNombreDesdeEnum(tipoDeFase?: TipoDeFaseEnum): string {
 export function categoriasDtoACategoria(
   dtos: TorneoCategoriaDTO[]
 ): Categoria[] {
-  const ordenados = [...(dtos ?? [])].sort((a, b) => {
-    const ao = a.orden ?? Number.MAX_SAFE_INTEGER
-    const bo = b.orden ?? Number.MAX_SAFE_INTEGER
-    if (ao !== bo) return ao - bo
-    return (a.id ?? 0) - (b.id ?? 0)
-  })
-  return ordenados.map((c, index) => ({
+  return ordenarCategoriasDto(dtos).map((c, index) => ({
     id: String(c.id ?? `${Date.now()}-${Math.random()}`),
     nombre: c.nombre ?? '',
     anioDesde: String(c.anioDesde ?? ''),
     anioHasta: String(c.anioHasta ?? ''),
     orden: index + 1
   }))
+}
+
+function ordenarCategoriasDto<T extends { orden?: number; id?: number }>(
+  dtos: T[]
+): T[] {
+  return [...(dtos ?? [])].sort((a, b) => {
+    const ao = a.orden ?? Number.MAX_SAFE_INTEGER
+    const bo = b.orden ?? Number.MAX_SAFE_INTEGER
+    if (ao !== bo) return ao - bo
+    return (a.id ?? 0) - (b.id ?? 0)
+  })
+}
+
+export function faseCategoriasDtoACategoria(
+  dtos: FaseCategoriaDTO[]
+): Categoria[] {
+  return ordenarCategoriasDto(dtos).map((c, index) => ({
+    id: String(c.id ?? `${Date.now()}-${Math.random()}`),
+    nombre: c.nombre ?? '',
+    anioDesde: String(c.anioDesde ?? ''),
+    anioHasta: String(c.anioHasta ?? ''),
+    orden: index + 1
+  }))
+}
+
+export function faseCategoriasACategoriaDto(
+  cats: Categoria[],
+  faseId?: number
+): FaseCategoriaDTO[] {
+  return categoriasACategoriaDto(cats).map(
+    (c) =>
+      new FaseCategoriaDTO({
+        ...c,
+        faseId
+      })
+  )
 }
 
 export function categoriasACategoriaDto(

@@ -1,7 +1,9 @@
 import { api } from '@/api/api'
-import { FaseDTO, TipoDeFaseEnum } from '@/api/clients'
+import { FaseCategoriaDTO, FaseDTO, TipoDeFaseEnum } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import { useQueryClient } from '@tanstack/react-query'
+import type { Categoria } from '../../../crear-torneo/tipos'
+import { faseCategoriasACategoriaDto } from '../../lib'
 
 interface UseFaseItemParams {
   torneoId: number
@@ -52,8 +54,32 @@ export function useFaseItem({ torneoId, faseOriginal }: UseFaseItemParams) {
     mensajeDeExito: 'Formato actualizado'
   })
 
+  const guardarCategoriasMutation = useApiMutation<Categoria[]>({
+    fn: async (categorias) => {
+      if (!faseOriginal?.id) return
+      const categoriasDto = faseCategoriasACategoriaDto(
+        categorias,
+        faseOriginal.id
+      ).map((c) => new FaseCategoriaDTO({ ...c }))
+      await api.fasesPUT(
+        torneoId,
+        faseOriginal.id,
+        new FaseDTO({
+          ...faseOriginal,
+          torneoId,
+          categorias: categoriasDto
+        })
+      )
+    },
+    antesDeMensajeExito: () => {
+      queryClient.invalidateQueries({ queryKey: ['torneo'] })
+    },
+    mensajeDeExito: 'Categorías actualizadas'
+  })
+
   return {
     cambiarNombreMutation,
-    cambiarFormatoMutation
+    cambiarFormatoMutation,
+    guardarCategoriasMutation
   }
 }

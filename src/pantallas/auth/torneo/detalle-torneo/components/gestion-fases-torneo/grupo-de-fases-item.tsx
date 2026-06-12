@@ -11,7 +11,7 @@ import {
 } from '@dnd-kit/sortable'
 import { cn } from '@/logica-compartida/utils'
 import { GripVertical, Layers } from 'lucide-react'
-import type { FaseDTO, TorneoCategoriaDTO } from '@/api/clients'
+import type { FaseDTO } from '@/api/clients'
 import { TituloFase } from '../../../crear-torneo/components/titulo-fase'
 import { FaseItem } from '../fase-item/fase-item'
 import type { FaseEstado } from '../../lib'
@@ -39,7 +39,6 @@ interface GrupoDeFasesItemProps extends GrupoDeFasesCallbacks {
   torneoId: number
   nombreTorneo: string
   torneoFases: FaseDTO[]
-  categoriasTorneo: TorneoCategoriaDTO[]
   estaGuardando: boolean
   sortable?: boolean
 }
@@ -51,7 +50,6 @@ interface FaseSortableEnGrupoProps {
   torneoId: number
   nombreTorneo: string
   faseOriginal?: FaseDTO
-  categoriasTorneo: TorneoCategoriaDTO[]
   onActualizar: (campo: string, valor: string) => void
   onEliminar: () => void
   onIrAZonas: (faseId: number) => void
@@ -65,7 +63,6 @@ function FaseSortableEnGrupo({
   torneoId,
   nombreTorneo,
   faseOriginal,
-  categoriasTorneo,
   onActualizar,
   onEliminar,
   onIrAZonas,
@@ -114,7 +111,7 @@ function FaseSortableEnGrupo({
             fase={fase}
             faseIndex={faseIndex}
             faseOriginal={faseOriginal}
-            categoriasTorneo={categoriasTorneo}
+            categoriasFase={faseOriginal?.categorias ?? []}
             onActualizar={onActualizar}
             onEliminar={onEliminar}
             onIrAZonas={() => {
@@ -135,7 +132,6 @@ export function GrupoDeFasesItem({
   torneoId,
   nombreTorneo,
   torneoFases,
-  categoriasTorneo,
   onActualizarGrupo,
   onActualizarFase,
   onEliminarFase,
@@ -251,7 +247,6 @@ export function GrupoDeFasesItem({
                       faseOriginal={torneoFases.find(
                         (f) => f.id === el.fase.id
                       )}
-                      categoriasTorneo={categoriasTorneo}
                       onActualizar={(campo, valor) => {
                         if (el.fase.id != null) {
                           onActualizarFase(el.fase.id, campo, valor)
@@ -276,7 +271,6 @@ export function GrupoDeFasesItem({
                     torneoId={torneoId}
                     nombreTorneo={nombreTorneo}
                     torneoFases={torneoFases}
-                    categoriasTorneo={categoriasTorneo}
                     callbacks={{
                       onActualizarGrupo,
                       onActualizarFase,
@@ -320,7 +314,6 @@ interface SubgrupoEnContenedorProps {
   torneoId: number
   nombreTorneo: string
   torneoFases: FaseDTO[]
-  categoriasTorneo: TorneoCategoriaDTO[]
   callbacks: GrupoDeFasesCallbacks
   estaGuardando: boolean
 }
@@ -332,7 +325,6 @@ function SubgrupoEnContenedor({
   torneoId,
   nombreTorneo,
   torneoFases,
-  categoriasTorneo,
   callbacks,
   estaGuardando
 }: SubgrupoEnContenedorProps) {
@@ -377,7 +369,6 @@ function SubgrupoEnContenedor({
           torneoId={torneoId}
           nombreTorneo={nombreTorneo}
           torneoFases={torneoFases}
-          categoriasTorneo={categoriasTorneo}
           {...callbacks}
           estaGuardando={estaGuardando}
         />

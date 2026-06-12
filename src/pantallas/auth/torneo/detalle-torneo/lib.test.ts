@@ -1,8 +1,14 @@
-import { TorneoCategoriaDTO, TipoDeFaseEnum } from '@/api/clients'
+import {
+  FaseCategoriaDTO,
+  TorneoCategoriaDTO,
+  TipoDeFaseEnum
+} from '@/api/clients'
 import { describe, expect, it } from 'vitest'
 import {
   categoriasACategoriaDto,
   categoriasDtoACategoria,
+  faseCategoriasACategoriaDto,
+  faseCategoriasDtoACategoria,
   formatearHorarioDeJuego,
   horarioParaInput,
   tipoDeFaseAOpción,
@@ -275,5 +281,46 @@ describe('categoriasACategoriaDto', () => {
     const result = categoriasACategoriaDto(cats)
     expect(result.map((r) => r.nombre)).toEqual(['A', 'B'])
     expect(result.map((r) => r.orden)).toEqual([1, 2])
+  })
+})
+
+// ---------------------------------------------------------------------------
+// faseCategoriasDtoACategoria / faseCategoriasACategoriaDto
+// ---------------------------------------------------------------------------
+
+describe('faseCategoriasDtoACategoria', () => {
+  it('convierte FaseCategoriaDTO a Categoria', () => {
+    const dtos = [
+      new FaseCategoriaDTO({
+        id: 10,
+        nombre: 'Sub 12',
+        anioDesde: 2014,
+        anioHasta: 2015,
+        orden: 1,
+        faseId: 100
+      })
+    ]
+    const result = faseCategoriasDtoACategoria(dtos)
+    expect(result[0].id).toBe('10')
+    expect(result[0].nombre).toBe('Sub 12')
+    expect(result[0].orden).toBe(1)
+  })
+})
+
+describe('faseCategoriasACategoriaDto', () => {
+  it('incluye faseId en el DTO', () => {
+    const cats = [
+      {
+        id: '5',
+        nombre: 'Mayores',
+        anioDesde: '1990',
+        anioHasta: '2005',
+        orden: 1
+      }
+    ]
+    const result = faseCategoriasACategoriaDto(cats, 100)
+    expect(result[0].id).toBe(5)
+    expect(result[0].faseId).toBe(100)
+    expect(result[0].nombre).toBe('Mayores')
   })
 })

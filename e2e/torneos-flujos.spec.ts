@@ -80,6 +80,8 @@ test.describe('Torneos — flujos profundos', () => {
     // Cambiamos el escenario para que el POST y el refetch GET devuelvan la fase nueva
     await setScenario('torneo_editable_con_nueva_fase')
     await page.getByRole('button', { name: 'Agregar fase' }).click()
+    await expect(page.getByRole('dialog')).toBeVisible()
+    await page.getByRole('button', { name: 'Crear fase' }).click()
 
     await expect(page.getByText('Nueva fase')).toBeVisible()
   })

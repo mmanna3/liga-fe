@@ -3,7 +3,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { useSortable } from '@dnd-kit/sortable'
 import { cn } from '@/logica-compartida/utils'
 import { GripVertical } from 'lucide-react'
-import type { FaseDTO, TorneoCategoriaDTO } from '@/api/clients'
+import type { FaseCategoriaDTO, FaseDTO } from '@/api/clients'
 import { FaseItem } from '../fase-item/fase-item'
 import type { FaseEstado } from '../../lib'
 import { idDragFaseTopLevel } from './lib/estructura-utils'
@@ -14,7 +14,7 @@ interface FaseEnListaProps {
   faseOriginal?: FaseDTO
   torneoId: number
   nombreTorneo: string
-  categoriasTorneo: TorneoCategoriaDTO[]
+  categoriasFase: FaseCategoriaDTO[]
   onActualizar: (campo: string, valor: string) => void
   onEliminar: () => void
   onIrAZonas: (faseId: number) => void
@@ -27,7 +27,7 @@ export function FaseEnLista({
   faseOriginal,
   torneoId,
   nombreTorneo,
-  categoriasTorneo,
+  categoriasFase,
   onActualizar,
   onEliminar,
   onIrAZonas,
@@ -77,7 +77,7 @@ export function FaseEnLista({
                 fase={fase}
                 faseIndex={faseIndex}
                 faseOriginal={faseOriginal}
-                categoriasTorneo={categoriasTorneo}
+                categoriasFase={categoriasFase}
                 onActualizar={onActualizar}
                 onEliminar={onEliminar}
                 onIrAZonas={() => {

@@ -230,6 +230,7 @@ export default function DetalleTorneo() {
                 )}
 
                 <Categorias
+                  titulo='Categorías del torneo (plantilla para nuevas fases)'
                   valor={categorias}
                   alCambiar={setCategorias}
                   soloLectura={!editando}

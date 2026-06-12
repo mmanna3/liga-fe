@@ -1,7 +1,7 @@
 import {
   TipoDeFaseEnum,
-  type FaseDTO,
-  type TorneoCategoriaDTO
+  type FaseCategoriaDTO,
+  type FaseDTO
 } from '@/api/clients'
 import { useToggleVisibilidadFaseEnApp } from '@/api/hooks/use-visibilidad-en-app'
 import {
@@ -24,11 +24,14 @@ import { Boton } from '@/design-system/ykn-ui/boton'
 import Icono from '@/design-system/ykn-ui/icono'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
 import { rutasNavegacion } from '@/ruteo/rutas'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Categorias } from '../../../crear-torneo/components/categorias'
 import { DatosFaseLectura } from '../../../crear-torneo/components/datos-fase-lectura'
 import { TituloFase } from '../../../crear-torneo/components/titulo-fase'
+import type { Categoria } from '../../../crear-torneo/tipos'
 import {
+  faseCategoriasDtoACategoria,
   OPCIONES_FORMATO,
   tipoDeFaseNombreDesdeEnum,
   type FaseEstado
@@ -41,7 +44,7 @@ interface FaseItemProps {
   fase: FaseEstado
   faseIndex: number
   faseOriginal?: FaseDTO
-  categoriasTorneo?: TorneoCategoriaDTO[]
+  categoriasFase?: FaseCategoriaDTO[]
   onActualizar: (campo: string, valor: string) => void
   onEliminar: () => void
   /** Si se provee, se llama al hacer clic en el ícono de zonas (guarda antes de navegar). Recibe el index de la fase. */
@@ -52,13 +55,22 @@ interface FaseItemProps {
   enCard?: boolean
 }
 
+function categoriasCompletas(cats: Categoria[]): boolean {
+  return cats.some(
+    (c) =>
+      c.nombre.trim() !== '' &&
+      c.anioDesde.trim() !== '' &&
+      c.anioHasta.trim() !== ''
+  )
+}
+
 export function FaseItem({
   torneoId,
   nombreTorneo,
   fase,
   faseIndex,
   faseOriginal,
-  categoriasTorneo = [],
+  categoriasFase = [],
   onActualizar,
   onEliminar,
   onIrAZonas,
@@ -68,7 +80,15 @@ export function FaseItem({
   const navigate = useNavigate()
   const [mostrarNoSePuedeEliminar, setMostrarNoSePuedeEliminar] =
     useState(false)
-  const { cambiarNombreMutation, cambiarFormatoMutation } = useFaseItem({
+  const [editandoCategorias, setEditandoCategorias] = useState(false)
+  const [categoriasEdicion, setCategoriasEdicion] = useState<Categoria[]>([])
+  const [errorCategorias, setErrorCategorias] = useState<string | undefined>()
+
+  const {
+    cambiarNombreMutation,
+    cambiarFormatoMutation,
+    guardarCategoriasMutation
+  } = useFaseItem({
     torneoId,
     faseOriginal
   })
@@ -77,6 +97,13 @@ export function FaseItem({
     faseOriginal?.id,
     faseOriginal?.esVisibleEnApp
   )
+
+  useEffect(() => {
+    if (!editandoCategorias) {
+      setCategoriasEdicion(faseCategoriasDtoACategoria(categoriasFase))
+      setErrorCategorias(undefined)
+    }
+  }, [categoriasFase, editandoCategorias])
 
   const faseId = fase.id ?? 0
   const pathZonas = `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${faseId}/zonas`
@@ -90,6 +117,54 @@ export function FaseItem({
     !fase.sePuedeEditar || (esEliminacionDirecta && tieneZonas)
 
   const esVisibleFaseEnApp = faseOriginal?.esVisibleEnApp ?? true
+  const puedeEditarCategorias = faseOriginal?.id != null && editandoCategorias
+
+  const alternarEdicionCategorias = () => {
+    if (editandoCategorias) {
+      setCategoriasEdicion(faseCategoriasDtoACategoria(categoriasFase))
+      setErrorCategorias(undefined)
+      setEditandoCategorias(false)
+      return
+    }
+    setEditandoCategorias(true)
+  }
+
+  const botonEditarCategorias =
+    faseOriginal?.id != null ? (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Boton
+            type='button'
+            variant='outline'
+            className={
+              editandoCategorias
+                ? 'h-8 w-8 min-w-8 p-0 border-none shadow-none bg-muted'
+                : 'h-8 w-8 min-w-8 p-0 border-none shadow-none'
+            }
+            aria-label={
+              editandoCategorias
+                ? 'Cancelar edición de categorías'
+                : 'Editar categorías'
+            }
+            aria-pressed={editandoCategorias}
+            onClick={alternarEdicionCategorias}
+          >
+            <Icono nombre='Editar' className='h-5 w-5 shrink-0' />
+          </Boton>
+        </TooltipTrigger>
+        <TooltipContent
+          side='bottom'
+          className='max-w-xs px-4 py-3'
+          sideOffset={8}
+        >
+          <p>
+            {editandoCategorias
+              ? 'Cancelar edición de categorías'
+              : 'Editar categorías'}
+          </p>
+        </TooltipContent>
+      </Tooltip>
+    ) : null
 
   const botonVisibilidadEnApp =
     faseOriginal?.id != null ? (
@@ -172,6 +247,17 @@ export function FaseItem({
     </Boton>
   )
 
+  const guardarCategorias = () => {
+    if (!categoriasCompletas(categoriasEdicion)) {
+      setErrorCategorias('Agregá al menos una categoría completa')
+      return
+    }
+    setErrorCategorias(undefined)
+    guardarCategoriasMutation.mutate(categoriasEdicion, {
+      onSuccess: () => setEditandoCategorias(false)
+    })
+  }
+
   return (
     <div className={enCard ? 'space-y-2' : 'space-y-2 pt-6 border-t'}>
       <div className='flex items-start justify-between gap-2'>
@@ -183,6 +269,7 @@ export function FaseItem({
           soloLectura={false}
         />
         <div className='flex gap-0 shrink-0'>
+          {botonEditarCategorias}
           {botonVisibilidadEnApp}
           {botonZonas}
           {fase.sePuedeEditar ? (
@@ -210,7 +297,7 @@ export function FaseItem({
           faseId={faseId}
           nombreTorneo={nombreTorneo}
           nombreFase={fase.nombre}
-          categorias={categoriasTorneo}
+          categorias={categoriasFase}
         />
       ) : (
         <SelectorSimple
@@ -222,6 +309,30 @@ export function FaseItem({
             cambiarFormatoMutation.mutate(v)
           }}
         />
+      )}
+
+      {faseOriginal?.id != null && (
+        <div className='mt-2 border-t pt-2'>
+          <Categorias
+            titulo=''
+            valor={categoriasEdicion}
+            alCambiar={setCategoriasEdicion}
+            soloLectura={!puedeEditarCategorias}
+            error={errorCategorias}
+          />
+          {puedeEditarCategorias && (
+            <div className='flex justify-end mt-2'>
+              <Boton
+                type='button'
+                size='sm'
+                estaCargando={guardarCategoriasMutation.isPending}
+                onClick={guardarCategorias}
+              >
+                Guardar categorías
+              </Boton>
+            </div>
+          )}
+        </div>
       )}
 
       <AlertDialog

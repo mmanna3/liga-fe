@@ -13,8 +13,9 @@ import {
   SortableContext,
   sortableKeyboardCoordinates
 } from '@dnd-kit/sortable'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { BotoneraFases } from './botonera-fases'
+import { ModalCrearFase } from './modal-crear-fase'
 import { FaseEnLista } from './fase-en-lista'
 import { GrupoEnLista } from './grupo-en-lista'
 import { idTopLevelDesdeElemento } from './lib/estructura-utils'
@@ -43,12 +44,15 @@ export function GestionFasesTorneo({
     actualizarGrupo,
     eliminarFasePorId,
     eliminarGrupo,
-    agregarFaseMutation,
     agregarGrupoDeFases,
+    maxNumeroFase,
     estaGuardandoZonas,
     irAZonas,
-    handleDragEnd
+    handleDragEnd,
+    refetch
   } = estructura
+
+  const [modalCrearFaseAbierto, setModalCrearFaseAbierto] = useState(false)
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -92,7 +96,10 @@ export function GestionFasesTorneo({
                     )}
                     torneoId={torneoId}
                     nombreTorneo={torneo.nombre}
-                    categoriasTorneo={torneo.categorias ?? []}
+                    categoriasFase={
+                      torneoFases.find((f: FaseDTO) => f.id === el.fase.id)
+                        ?.categorias ?? []
+                    }
                     onActualizar={(campo, valor) =>
                       actualizarFaseTopLevel(index, campo, valor)
                     }
@@ -112,7 +119,6 @@ export function GestionFasesTorneo({
                   torneoId={torneoId}
                   nombreTorneo={torneo.nombre ?? ''}
                   torneoFases={torneoFases}
-                  categoriasTorneo={torneo.categorias ?? []}
                   onActualizarGrupo={actualizarGrupo}
                   onActualizarFase={actualizarFaseEnGrupo}
                   onEliminarFase={eliminarFasePorId}
@@ -128,11 +134,21 @@ export function GestionFasesTorneo({
       </DndContext>
 
       {!editando && (
-        <BotoneraFases
-          onAgregarFase={() => agregarFaseMutation.mutate()}
-          onAgregarGrupoDeFases={() => agregarGrupoDeFases()}
-          estaCargandoFase={agregarFaseMutation.isPending}
-        />
+        <>
+          <BotoneraFases
+            onAgregarFase={() => setModalCrearFaseAbierto(true)}
+            onAgregarGrupoDeFases={() => agregarGrupoDeFases()}
+            estaCargandoFase={false}
+          />
+          <ModalCrearFase
+            open={modalCrearFaseAbierto}
+            onOpenChange={setModalCrearFaseAbierto}
+            torneoId={torneoId}
+            categoriasPlantilla={torneo.categorias ?? []}
+            maxNumeroFase={maxNumeroFase}
+            alCrearExito={() => void refetch()}
+          />
+        </>
       )}
     </>
   )
