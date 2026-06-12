@@ -1,15 +1,25 @@
 import type { TorneoDTO, FaseDTO } from '@/api/clients'
 import { formatearHorarioDeJuego } from '../detalle-torneo/lib'
+import { torneoAElementos } from '../detalle-torneo/components/gestion-fases-torneo/lib/estructura-utils'
+import type { ElementoEstructuraTorneo } from '../detalle-torneo/components/gestion-fases-torneo/lib/tipos'
 import { Card, CardContent } from '@/design-system/base-ui/card'
 import Icono from '@/design-system/ykn-ui/icono'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useNavigate } from 'react-router-dom'
+import type { ReactNode } from 'react'
 
 interface TorneoCardProps {
   torneo: TorneoDTO
 }
 
-function FaseItem({ fase }: { fase: FaseDTO }) {
+interface FaseResumen {
+  id?: number
+  numero?: number
+  nombre?: string
+  tipoDeFaseNombre?: string
+}
+
+function FaseItem({ fase }: { fase: FaseResumen }) {
   const titulo = `${fase.nombre ?? ''}`.trim()
   const subtitulo = fase.tipoDeFaseNombre ?? ''
 
@@ -26,9 +36,54 @@ function FaseItem({ fase }: { fase: FaseDTO }) {
   )
 }
 
+function GrupoEncabezado({ nombre }: { nombre: string }) {
+  return (
+    <li className='mt-1 list-none'>
+      <p className='px-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground'>
+        {nombre}
+      </p>
+    </li>
+  )
+}
+
+function renderElementos(
+  elementos: ElementoEstructuraTorneo[],
+  torneoFases: FaseDTO[]
+): ReactNode[] {
+  return elementos.flatMap((el) => {
+    if (el.tipo === 'fase') {
+      const faseApi = torneoFases.find((f) => f.id === el.fase.id)
+      if (!faseApi) return []
+      return [
+        <FaseItem
+          key={`fase-${el.fase.id}`}
+          fase={{
+            id: faseApi.id,
+            numero: el.fase.numero,
+            nombre: faseApi.nombre,
+            tipoDeFaseNombre: faseApi.tipoDeFaseNombre
+          }}
+        />
+      ]
+    }
+
+    return [
+      <GrupoEncabezado
+        key={`grupo-${el.grupo.idLocal}`}
+        nombre={el.grupo.nombre}
+      />,
+      ...renderElementos(el.grupo.elementos, torneoFases)
+    ]
+  })
+}
+
 export default function TorneoCard({ torneo }: TorneoCardProps) {
   const navigate = useNavigate()
   const fases = torneo.fases ?? []
+  const elementos =
+    (torneo.gruposDeFases?.length ?? 0) > 0
+      ? torneoAElementos(fases, torneo.gruposDeFases ?? [])
+      : null
 
   const agrupador = torneo.torneoAgrupadorNombre ?? 'Sin agrupador'
   const horario =
@@ -67,13 +122,19 @@ export default function TorneoCard({ torneo }: TorneoCardProps) {
             </span>
           </div>
         </div>
-        {fases.length > 0 && (
-          <ul className='flex flex-col gap-1.5'>
-            {fases.map((fase) => (
-              <FaseItem key={fase.id} fase={fase} />
-            ))}
-          </ul>
-        )}
+        {elementos
+          ? elementos.length > 0 && (
+              <ul className='flex flex-col gap-1.5'>
+                {renderElementos(elementos, fases)}
+              </ul>
+            )
+          : fases.length > 0 && (
+              <ul className='flex flex-col gap-1.5'>
+                {fases.map((fase) => (
+                  <FaseItem key={fase.id} fase={fase} />
+                ))}
+              </ul>
+            )}
       </CardContent>
     </Card>
   )

@@ -18,6 +18,7 @@
  *   torneo_con_agrupadores   Agrupadores disponibles + crear torneo habilitado
  *   torneo_detalle           Torneo con fases (no editable, para navegar a zonas)
  *   torneo_editable          Torneo con fases editable (para guardar cambios)
+ *   torneo_con_grupos        Torneo con grupos de fases anidados
  *   torneo_zonas_vacio       Página de zonas sin zonas creadas, equipos disponibles
  *   torneo_zonas_con_datos   Página de zonas con una zona y equipo asignado
  */
@@ -448,6 +449,17 @@ const TORNEO_EDITABLE_CON_NUEVA_FASE = {
   ]
 }
 
+const GRUPO_FASES_1 = { id: 50, nombre: 'Grupo A', numero: 2, torneoId: 1, grupoDeFasesPadreId: null }
+
+const TORNEO_CON_GRUPOS = {
+  ...TORNEO_EDITABLE,
+  fases: [
+    { id: 100, numero: 1, nombre: 'Primera Fase', tipoDeFase: 1, tipoDeFaseNombre: 'Todos contra todos', sePuedeEditar: true, zonas: [], estadoFaseId: 100, grupoDeFasesId: null },
+    { id: 101, numero: 1, nombre: 'Fase en grupo', tipoDeFase: 1, tipoDeFaseNombre: 'Todos contra todos', sePuedeEditar: true, zonas: [], estadoFaseId: 100, grupoDeFasesId: 50 }
+  ],
+  gruposDeFases: [GRUPO_FASES_1]
+}
+
 // ---------------------------------------------------------------------------
 // Tabla de rutas
 // ---------------------------------------------------------------------------
@@ -597,6 +609,7 @@ const ROUTES = [
       happy: TORNEO_1,
       torneo_detalle: TORNEO_CON_FASES,
       torneo_editable: TORNEO_EDITABLE,
+      torneo_con_grupos: TORNEO_CON_GRUPOS,
       torneo_editable_sin_fases: { ...TORNEO_EDITABLE, fases: [] },
       torneo_editable_con_nueva_fase: TORNEO_EDITABLE_CON_NUEVA_FASE,
       torneo_zonas_vacio: TORNEO_CON_FASES,
@@ -640,7 +653,34 @@ const ROUTES = [
   {
     method: 'DELETE',
     pattern: /^\/api\/Torneo\/\d+\/fases\/\d+$/,
-    scenarios: { happy: 1, torneo_editable: 1, torneo_editable_sin_fases: 1 }
+    scenarios: { happy: 1, torneo_editable: 1, torneo_editable_sin_fases: 1, torneo_con_grupos: 1 }
+  },
+  // Grupos de fases — crear
+  {
+    method: 'POST',
+    pattern: /^\/api\/Torneo\/\d+\/grupos-de-fases$/,
+    scenarios: {
+      happy: { id: 51, nombre: 'Grupo de fases', numero: 2, torneoId: 1, grupoDeFasesPadreId: null },
+      torneo_con_grupos: { id: 51, nombre: 'Grupo de fases', numero: 3, torneoId: 1, grupoDeFasesPadreId: null },
+      torneo_editable: { id: 50, nombre: 'Grupo de fases', numero: 2, torneoId: 1, grupoDeFasesPadreId: null }
+    }
+  },
+  // Grupos de fases — actualizar / eliminar
+  {
+    method: 'PUT',
+    pattern: /^\/api\/Torneo\/\d+\/grupos-de-fases\/\d+$/,
+    scenarios: { happy: null, torneo_con_grupos: null, torneo_editable: null }
+  },
+  {
+    method: 'DELETE',
+    pattern: /^\/api\/Torneo\/\d+\/grupos-de-fases\/\d+$/,
+    scenarios: { happy: 50, torneo_con_grupos: 50, torneo_editable: 50 }
+  },
+  // Estructura de fases — persistir DnD
+  {
+    method: 'PUT',
+    pattern: /^\/api\/Torneo\/\d+\/estructura-fases$/,
+    scenarios: { happy: null, torneo_con_grupos: null, torneo_editable: null }
   },
   // Torneos — actualizar
   {

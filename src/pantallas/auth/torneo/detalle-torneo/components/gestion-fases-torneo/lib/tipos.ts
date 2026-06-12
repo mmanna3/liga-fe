@@ -5,9 +5,12 @@ export interface GrupoDeFasesEstado {
   idLocal: string
   numero: number
   nombre: string
-  fases: FaseEstado[]
+  grupoDeFasesPadreId?: number | null
+  elementos: ElementoEstructuraTorneo[]
 }
 
 export type ElementoEstructuraTorneo =
   | { tipo: 'fase'; fase: FaseEstado }
   | { tipo: 'grupo'; grupo: GrupoDeFasesEstado }
+
+export const PROFUNDIDAD_MAX_GRUPO = 2

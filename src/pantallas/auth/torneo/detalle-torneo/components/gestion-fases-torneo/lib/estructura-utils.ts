@@ -1,4 +1,5 @@
-import type { FaseDTO } from '@/api/clients'
+import type { FaseDTO, GrupoDeFasesDTO } from '@/api/clients'
+import type { EstructuraFasesItemPayload } from '@/api/estructura-fases-api'
 import { arrayMove } from '@dnd-kit/sortable'
 import { tipoDeFaseAOpción, type FaseEstado } from '../../../lib'
 import type { ElementoEstructuraTorneo, GrupoDeFasesEstado } from './tipos'
@@ -7,6 +8,7 @@ export const PREFIJO_DRAG_FASE_TOP = 'top-fase-'
 export const PREFIJO_DRAG_GRUPO_TOP = 'top-grupo-'
 export const PREFIJO_DRAG_GRUPO_DROP = 'grupo-drop-'
 export const PREFIJO_DRAG_FASE_GRUPO = 'grupo-fase-'
+export const SEPARADOR_FASE_GRUPO = '::'
 
 export function generarIdLocal(): string {
   return `local-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
@@ -22,32 +24,85 @@ export function faseDtoAFaseEstado(f: FaseDTO): FaseEstado {
   }
 }
 
-export function torneoFasesAElementos(
-  fases: FaseDTO[]
+export function torneoAElementos(
+  fases: FaseDTO[],
+  grupos: GrupoDeFasesDTO[] = []
 ): ElementoEstructuraTorneo[] {
-  const ordenadas = [...(fases ?? [])].sort(
-    (a, b) => (a.numero ?? 0) - (b.numero ?? 0)
+  return construirElementosDesdeApi(fases, grupos, null)
+}
+
+function construirElementosDesdeApi(
+  fases: FaseDTO[],
+  grupos: GrupoDeFasesDTO[],
+  contenedorGrupoId: number | null
+): ElementoEstructuraTorneo[] {
+  type Item = { numero: number; id: number; el: ElementoEstructuraTorneo }
+  const items: Item[] = []
+
+  for (const f of fases.filter(
+    (x) => (x.grupoDeFasesId ?? null) === contenedorGrupoId
+  )) {
+    items.push({
+      numero: f.numero ?? 0,
+      id: f.id ?? 0,
+      el: { tipo: 'fase', fase: faseDtoAFaseEstado(f) }
+    })
+  }
+
+  for (const g of grupos.filter(
+    (x) => (x.grupoDeFasesPadreId ?? null) === contenedorGrupoId
+  )) {
+    items.push({
+      numero: g.numero ?? 0,
+      id: g.id ?? 0,
+      el: {
+        tipo: 'grupo',
+        grupo: {
+          id: g.id,
+          idLocal: g.id != null ? `grupo-${g.id}` : generarIdLocal(),
+          numero: g.numero ?? 0,
+          nombre: g.nombre ?? 'Grupo de fases',
+          grupoDeFasesPadreId: g.grupoDeFasesPadreId,
+          elementos: construirElementosDesdeApi(fases, grupos, g.id ?? null)
+        }
+      }
+    })
+  }
+
+  return items
+    .sort((a, b) => a.numero - b.numero || a.id - b.id)
+    .map((x, i) => renumerarElementoEnContenedor(x.el, i + 1))
+}
+
+function renumerarElementoEnContenedor(
+  el: ElementoEstructuraTorneo,
+  numero: number
+): ElementoEstructuraTorneo {
+  if (el.tipo === 'fase') {
+    return { ...el, fase: { ...el.fase, numero } }
+  }
+  return {
+    ...el,
+    grupo: {
+      ...el.grupo,
+      numero,
+      elementos: renumerarElementosEnContenedor(el.grupo.elementos)
+    }
+  }
+}
+
+export function renumerarElementosEnContenedor(
+  elementos: ElementoEstructuraTorneo[]
+): ElementoEstructuraTorneo[] {
+  return elementos.map((el, index) =>
+    renumerarElementoEnContenedor(el, index + 1)
   )
-  return ordenadas.map((f) => ({
-    tipo: 'fase' as const,
-    fase: faseDtoAFaseEstado(f)
-  }))
 }
 
 export function renumerarElementosTopLevel(
   elementos: ElementoEstructuraTorneo[]
 ): ElementoEstructuraTorneo[] {
-  return elementos.map((el, index) => {
-    const numero = index + 1
-    if (el.tipo === 'fase') {
-      return { ...el, fase: { ...el.fase, numero } }
-    }
-    return { ...el, grupo: { ...el.grupo, numero } }
-  })
-}
-
-export function renumerarFasesGrupo(fases: FaseEstado[]): FaseEstado[] {
-  return fases.map((f, index) => ({ ...f, numero: index + 1 }))
+  return renumerarElementosEnContenedor(elementos)
 }
 
 export function idDragFaseTopLevel(fase: FaseEstado): string {
@@ -71,8 +126,6 @@ export function idDragGrupoDrop(
     typeof grupoOrIdLocal === 'string' ? grupoOrIdLocal : grupoOrIdLocal.idLocal
   return `${PREFIJO_DRAG_GRUPO_DROP}${idLocal}`
 }
-
-export const SEPARADOR_FASE_GRUPO = '::'
 
 export function idDragFaseEnGrupo(
   grupoIdLocal: string,
@@ -110,20 +163,162 @@ export function parseGrupoIdLocalDesdeTopLevelDragId(
   return dragId.slice(PREFIJO_DRAG_GRUPO_TOP.length)
 }
 
+/** Resuelve el grupo destino desde cualquier id de drag/drop (zona, sortable, fase en grupo). */
+export function parseGrupoIdLocalDesdeCualquierId(id: string): string | null {
+  return (
+    parseGrupoIdLocalDesdeDropId(id) ??
+    parseGrupoIdLocalDesdeFaseGrupoId(id) ??
+    parseGrupoIdLocalDesdeTopLevelDragId(id)
+  )
+}
+
+export function parseFaseIdDesdeFaseGrupoDragId(dragId: string): number | null {
+  if (!dragId.startsWith(PREFIJO_DRAG_FASE_GRUPO)) return null
+  const rest = dragId.slice(PREFIJO_DRAG_FASE_GRUPO.length)
+  const sep = rest.indexOf(SEPARADOR_FASE_GRUPO)
+  if (sep < 0) return null
+  const faseKey = rest.slice(sep + SEPARADOR_FASE_GRUPO.length)
+  const id = parseInt(faseKey, 10)
+  return Number.isNaN(id) ? null : id
+}
+
 export function contarFases(elementos: ElementoEstructuraTorneo[]): number {
   return elementos.reduce((acc, el) => {
     if (el.tipo === 'fase') return acc + 1
-    return acc + el.grupo.fases.length
+    return acc + contarFases(el.grupo.elementos)
   }, 0)
 }
 
-export function crearGrupoVacio(): GrupoDeFasesEstado {
+export function crearGrupoVacio(padreId?: number | null): GrupoDeFasesEstado {
   return {
     idLocal: generarIdLocal(),
     numero: 0,
     nombre: 'Grupo de fases',
-    fases: []
+    grupoDeFasesPadreId: padreId,
+    elementos: []
   }
+}
+
+export function estructuraAItemsDto(
+  elementos: ElementoEstructuraTorneo[]
+): EstructuraFasesItemPayload[] {
+  return elementos.map((el) => {
+    if (el.tipo === 'fase') {
+      return { tipo: 'fase' as const, faseId: el.fase.id! }
+    }
+    return {
+      tipo: 'grupo' as const,
+      grupoId: el.grupo.id!,
+      items: estructuraAItemsDto(el.grupo.elementos)
+    }
+  })
+}
+
+export function mapGruposRecursivo(
+  elementos: ElementoEstructuraTorneo[],
+  fn: (grupo: GrupoDeFasesEstado) => GrupoDeFasesEstado
+): ElementoEstructuraTorneo[] {
+  return elementos.map((el) => {
+    if (el.tipo !== 'grupo') return el
+    const grupo = fn(el.grupo)
+    return {
+      ...el,
+      grupo: {
+        ...grupo,
+        elementos: mapGruposRecursivo(grupo.elementos, fn)
+      }
+    }
+  })
+}
+
+export function encontrarGrupoPorIdLocal(
+  elementos: ElementoEstructuraTorneo[],
+  idLocal: string
+): GrupoDeFasesEstado | null {
+  for (const el of elementos) {
+    if (el.tipo === 'grupo') {
+      if (el.grupo.idLocal === idLocal) return el.grupo
+      const nested = encontrarGrupoPorIdLocal(el.grupo.elementos, idLocal)
+      if (nested) return nested
+    }
+  }
+  return null
+}
+
+export function encontrarPadreGrupoIdLocal(
+  elementos: ElementoEstructuraTorneo[],
+  grupoIdLocal: string,
+  padreIdLocal: string | null = null
+): string | null {
+  for (const el of elementos) {
+    if (el.tipo === 'grupo') {
+      if (el.grupo.idLocal === grupoIdLocal) return padreIdLocal
+      const nested = encontrarPadreGrupoIdLocal(
+        el.grupo.elementos,
+        grupoIdLocal,
+        el.grupo.idLocal
+      )
+      if (nested != null) return nested
+    }
+  }
+  return null
+}
+
+export function profundidadGrupo(
+  idLocal: string,
+  elementos: ElementoEstructuraTorneo[]
+): number {
+  function buscar(
+    els: ElementoEstructuraTorneo[],
+    profundidad: number
+  ): number | null {
+    for (const el of els) {
+      if (el.tipo === 'grupo') {
+        if (el.grupo.idLocal === idLocal) return profundidad
+        const nested = buscar(el.grupo.elementos, profundidad + 1)
+        if (nested != null) return nested
+      }
+    }
+    return null
+  }
+  return buscar(elementos, 1) ?? 1
+}
+
+export function reordenarElementosEnContenedorPorIndices(
+  elementos: ElementoEstructuraTorneo[],
+  oldIndex: number,
+  newIndex: number
+): ElementoEstructuraTorneo[] {
+  return renumerarElementosEnContenedor(
+    arrayMove(elementos, oldIndex, newIndex)
+  )
+}
+
+export function reordenarElementosTopLevelPorIndices(
+  elementos: ElementoEstructuraTorneo[],
+  oldIndex: number,
+  newIndex: number
+): ElementoEstructuraTorneo[] {
+  return reordenarElementosEnContenedorPorIndices(elementos, oldIndex, newIndex)
+}
+
+export function reordenarEnGrupoPorIdLocal(
+  elementos: ElementoEstructuraTorneo[],
+  grupoIdLocal: string,
+  oldIndex: number,
+  newIndex: number
+): ElementoEstructuraTorneo[] {
+  return mapGruposRecursivo(elementos, (grupo) => {
+    if (grupo.idLocal !== grupoIdLocal) return grupo
+    return {
+      ...grupo,
+      elementos: reordenarElementosEnContenedorPorIndices(
+        grupo.elementos,
+        oldIndex,
+        newIndex
+      )
+    }
+  })
 }
 
 export function moverFaseTopLevelAGrupo(
@@ -132,55 +327,172 @@ export function moverFaseTopLevelAGrupo(
   grupoIdLocal: string,
   indiceEnGrupo?: number
 ): ElementoEstructuraTorneo[] {
-  const indiceFase = elementos.findIndex(
-    (el) =>
-      el.tipo === 'fase' &&
-      (el.fase.id != null
-        ? String(el.fase.id) === faseTopId
-        : String(el.fase.numero) === faseTopId)
+  const faseId = parseInt(faseTopId, 10)
+  if (Number.isNaN(faseId)) {
+    const indiceFase = elementos.findIndex(
+      (el) => el.tipo === 'fase' && String(el.fase.numero) === faseTopId
+    )
+    if (indiceFase < 0) return elementos
+    const f = elementos[indiceFase]
+    if (f.tipo !== 'fase' || f.fase.id == null) return elementos
+    return moverFaseEntreContenedores(
+      elementos,
+      f.fase.id,
+      grupoIdLocal,
+      indiceEnGrupo
+    )
+  }
+  return moverFaseEntreContenedores(
+    elementos,
+    faseId,
+    grupoIdLocal,
+    indiceEnGrupo
   )
-  if (indiceFase < 0) return elementos
-
-  const faseMovida = elementos[indiceFase]
-  if (faseMovida.tipo !== 'fase') return elementos
-
-  const faseParaGrupo: FaseEstado = { ...faseMovida.fase, numero: 0 }
-  const sinFase = elementos.filter((_, i) => i !== indiceFase)
-
-  const conFaseEnGrupo = sinFase.map((el) => {
-    if (el.tipo !== 'grupo' || el.grupo.idLocal !== grupoIdLocal) return el
-    const fases = [...el.grupo.fases]
-    const insertAt =
-      indiceEnGrupo != null
-        ? Math.min(Math.max(indiceEnGrupo, 0), fases.length)
-        : fases.length
-    fases.splice(insertAt, 0, faseParaGrupo)
-    return {
-      ...el,
-      grupo: {
-        ...el.grupo,
-        fases: renumerarFasesGrupo(fases)
-      }
-    }
-  })
-
-  return renumerarElementosTopLevel(conFaseEnGrupo)
 }
 
-export function reordenarFasesEnGrupo(
+export function moverFaseEntreContenedores(
   elementos: ElementoEstructuraTorneo[],
-  grupoIdLocal: string,
-  oldIndex: number,
-  newIndex: number
+  faseId: number,
+  destinoGrupoIdLocal: string | null,
+  indiceEnDestino?: number
+): ElementoEstructuraTorneo[] {
+  let faseMovida: FaseEstado | undefined
+
+  const quitarFase = (
+    els: ElementoEstructuraTorneo[]
+  ): ElementoEstructuraTorneo[] =>
+    els
+      .filter((el) => {
+        if (el.tipo === 'fase' && el.fase.id === faseId) {
+          faseMovida = el.fase
+          return false
+        }
+        return true
+      })
+      .map((el) =>
+        el.tipo === 'grupo'
+          ? {
+              ...el,
+              grupo: {
+                ...el.grupo,
+                elementos: renumerarElementosEnContenedor(
+                  quitarFase(el.grupo.elementos)
+                )
+              }
+            }
+          : el
+      )
+
+  const sinFase = renumerarElementosTopLevel(quitarFase(elementos))
+  if (!faseMovida) return elementos
+
+  const insertarEn = (
+    els: ElementoEstructuraTorneo[],
+    contenedorGrupoIdLocal: string | null
+  ): ElementoEstructuraTorneo[] => {
+    if (contenedorGrupoIdLocal === destinoGrupoIdLocal) {
+      const nuevos = [...els]
+      const insertAt =
+        indiceEnDestino != null
+          ? Math.min(Math.max(indiceEnDestino, 0), nuevos.length)
+          : nuevos.length
+      nuevos.splice(insertAt, 0, {
+        tipo: 'fase',
+        fase: { ...faseMovida!, numero: 0 }
+      })
+      return renumerarElementosEnContenedor(nuevos)
+    }
+    return els.map((el) =>
+      el.tipo === 'grupo'
+        ? {
+            ...el,
+            grupo: {
+              ...el.grupo,
+              elementos: insertarEn(el.grupo.elementos, el.grupo.idLocal)
+            }
+          }
+        : el
+    )
+  }
+
+  if (destinoGrupoIdLocal === null) {
+    const top = [...sinFase]
+    const insertAt =
+      indiceEnDestino != null
+        ? Math.min(Math.max(indiceEnDestino, 0), top.length)
+        : top.length
+    top.splice(insertAt, 0, {
+      tipo: 'fase',
+      fase: { ...faseMovida, numero: 0 }
+    })
+    return renumerarElementosTopLevel(top)
+  }
+
+  return renumerarElementosTopLevel(insertarEn(sinFase, null))
+}
+
+export function actualizarFaseEnElementos(
+  elementos: ElementoEstructuraTorneo[],
+  faseId: number,
+  campo: string,
+  valor: string
 ): ElementoEstructuraTorneo[] {
   return elementos.map((el) => {
-    if (el.tipo !== 'grupo' || el.grupo.idLocal !== grupoIdLocal) return el
-    const fases = arrayMove(el.grupo.fases, oldIndex, newIndex)
-    return {
-      ...el,
-      grupo: { ...el.grupo, fases: renumerarFasesGrupo(fases) }
+    if (el.tipo === 'fase' && el.fase.id === faseId) {
+      return { ...el, fase: { ...el.fase, [campo]: valor } }
     }
+    if (el.tipo === 'grupo') {
+      return {
+        ...el,
+        grupo: {
+          ...el.grupo,
+          elementos: actualizarFaseEnElementos(
+            el.grupo.elementos,
+            faseId,
+            campo,
+            valor
+          )
+        }
+      }
+    }
+    return el
   })
+}
+
+export function actualizarNombreGrupo(
+  elementos: ElementoEstructuraTorneo[],
+  grupoIdLocal: string,
+  nombre: string
+): ElementoEstructuraTorneo[] {
+  return mapGruposRecursivo(elementos, (grupo) =>
+    grupo.idLocal === grupoIdLocal ? { ...grupo, nombre } : grupo
+  )
+}
+
+export function eliminarFaseDeElementos(
+  elementos: ElementoEstructuraTorneo[],
+  faseId: number
+): ElementoEstructuraTorneo[] {
+  const filtrar = (
+    els: ElementoEstructuraTorneo[]
+  ): ElementoEstructuraTorneo[] =>
+    els
+      .filter((el) => !(el.tipo === 'fase' && el.fase.id === faseId))
+      .map((el) =>
+        el.tipo === 'grupo'
+          ? {
+              ...el,
+              grupo: {
+                ...el.grupo,
+                elementos: renumerarElementosEnContenedor(
+                  filtrar(el.grupo.elementos)
+                )
+              }
+            }
+          : el
+      )
+
+  return renumerarElementosTopLevel(filtrar(elementos))
 }
 
 export function eliminarGrupoDevolviendoFases(
@@ -190,152 +502,74 @@ export function eliminarGrupoDevolviendoFases(
   const indiceGrupo = elementos.findIndex(
     (el) => el.tipo === 'grupo' && el.grupo.idLocal === grupoIdLocal
   )
-  if (indiceGrupo < 0) return elementos
-
-  const grupo = elementos[indiceGrupo]
-  if (grupo.tipo !== 'grupo') return elementos
-
-  const fasesSueltas: ElementoEstructuraTorneo[] = grupo.grupo.fases.map(
-    (f) => ({ tipo: 'fase' as const, fase: f })
-  )
-
-  const sinGrupo = [
-    ...elementos.slice(0, indiceGrupo),
-    ...fasesSueltas,
-    ...elementos.slice(indiceGrupo + 1)
-  ]
-
-  return renumerarElementosTopLevel(sinGrupo)
-}
-
-export function actualizarFaseEnElementos(
-  elementos: ElementoEstructuraTorneo[],
-  ubicacion:
-    | { nivel: 'top'; index: number }
-    | { nivel: 'grupo'; grupoIndex: number; faseIndex: number },
-  campo: string,
-  valor: string
-): ElementoEstructuraTorneo[] {
-  return elementos.map((el, i) => {
-    if (ubicacion.nivel === 'top') {
-      if (ubicacion.index !== i || el.tipo !== 'fase') return el
-      return { ...el, fase: { ...el.fase, [campo]: valor } }
-    }
-
-    if (ubicacion.nivel === 'grupo') {
-      if (ubicacion.grupoIndex !== i || el.tipo !== 'grupo') return el
-      return {
-        ...el,
-        grupo: {
-          ...el.grupo,
-          fases: el.grupo.fases.map((f, fi) =>
-            fi === ubicacion.faseIndex ? { ...f, [campo]: valor } : f
-          )
-        }
-      }
-    }
-
-    return el
-  })
-}
-
-export function actualizarNombreGrupo(
-  elementos: ElementoEstructuraTorneo[],
-  grupoIndex: number,
-  nombre: string
-): ElementoEstructuraTorneo[] {
-  return elementos.map((el, i) => {
-    if (i !== grupoIndex || el.tipo !== 'grupo') return el
-    return { ...el, grupo: { ...el.grupo, nombre } }
-  })
-}
-
-export function eliminarFaseDeElementos(
-  elementos: ElementoEstructuraTorneo[],
-  ubicacion:
-    | { nivel: 'top'; index: number }
-    | { nivel: 'grupo'; grupoIndex: number; faseIndex: number }
-): ElementoEstructuraTorneo[] {
-  if (ubicacion.nivel === 'top') {
-    const filtrados = elementos.filter((_, i) => i !== ubicacion.index)
-    return renumerarElementosTopLevel(filtrados)
+  if (indiceGrupo >= 0) {
+    const grupo = elementos[indiceGrupo]
+    if (grupo.tipo !== 'grupo') return elementos
+    const fasesSueltas = grupo.grupo.elementos.filter((e) => e.tipo === 'fase')
+    return renumerarElementosTopLevel([
+      ...elementos.slice(0, indiceGrupo),
+      ...fasesSueltas,
+      ...elementos.slice(indiceGrupo + 1)
+    ])
   }
 
   return renumerarElementosTopLevel(
-    elementos.map((el, i) => {
-      if (i !== ubicacion.grupoIndex || el.tipo !== 'grupo') return el
-      const fases = el.grupo.fases.filter((_, fi) => fi !== ubicacion.faseIndex)
-      return {
-        ...el,
-        grupo: { ...el.grupo, fases: renumerarFasesGrupo(fases) }
-      }
-    })
+    elementos.map((el) =>
+      el.tipo === 'grupo'
+        ? {
+            ...el,
+            grupo: {
+              ...el.grupo,
+              elementos: eliminarGrupoDevolviendoFases(
+                el.grupo.elementos,
+                grupoIdLocal
+              )
+            }
+          }
+        : el
+    )
   )
 }
 
-export function reordenarElementosTopLevelPorIndices(
+export function todosLosIdsFasePresentes(
   elementos: ElementoEstructuraTorneo[],
-  oldIndex: number,
-  newIndex: number
-): ElementoEstructuraTorneo[] {
-  return renumerarElementosTopLevel(arrayMove(elementos, oldIndex, newIndex))
+  totalFases: number
+): boolean {
+  const ids = recolectarFaseIds(elementos)
+  return ids.length === totalFases && ids.every((id) => id > 0)
 }
 
-export function faseIdsEnOrdenDesdeElementos(
+export function recolectarFaseIds(
   elementos: ElementoEstructuraTorneo[]
 ): number[] {
   const ids: number[] = []
   for (const el of elementos) {
-    if (el.tipo === 'fase') {
-      if (el.fase.id != null && el.fase.id > 0) ids.push(el.fase.id)
-    } else {
-      for (const f of el.grupo.fases) {
-        if (f.id != null && f.id > 0) ids.push(f.id)
-      }
+    if (el.tipo === 'fase' && el.fase.id != null && el.fase.id > 0) {
+      ids.push(el.fase.id)
+    } else if (el.tipo === 'grupo') {
+      ids.push(...recolectarFaseIds(el.grupo.elementos))
     }
   }
   return ids
 }
 
-export function sincronizarNumerosFasesDesdeTorneo(
-  elementos: ElementoEstructuraTorneo[],
-  fases: FaseDTO[]
-): ElementoEstructuraTorneo[] {
-  const porId = new Map(fases.map((f) => [f.id, f]))
-  return elementos.map((el) => {
-    if (el.tipo === 'fase') {
-      const api = el.fase.id != null ? porId.get(el.fase.id) : undefined
-      if (!api) return el
-      return {
-        ...el,
-        fase: { ...el.fase, numero: api.numero ?? el.fase.numero }
-      }
-    }
-    return {
-      ...el,
-      grupo: {
-        ...el.grupo,
-        fases: el.grupo.fases.map((f) => {
-          const api = f.id != null ? porId.get(f.id) : undefined
-          if (!api) return f
-          return { ...f, numero: api.numero ?? f.numero }
-        })
-      }
-    }
-  })
-}
-
-export function indiceFaseTopLevelPorId(
+export function buscarFaseEnElementos(
   elementos: ElementoEstructuraTorneo[],
   faseId: number
-): number {
-  return elementos.findIndex(
-    (el) => el.tipo === 'fase' && el.fase.id === faseId
-  )
+): FaseEstado | undefined {
+  for (const el of elementos) {
+    if (el.tipo === 'fase' && el.fase.id === faseId) return el.fase
+    if (el.tipo === 'grupo') {
+      const f = buscarFaseEnElementos(el.grupo.elementos, faseId)
+      if (f) return f
+    }
+  }
+  return undefined
 }
 
-export function elementosTienenGrupos(
-  elementos: ElementoEstructuraTorneo[]
-): boolean {
-  return elementos.some((el) => el.tipo === 'grupo')
+/** @deprecated usar torneoAElementos */
+export function torneoFasesAElementos(
+  fases: FaseDTO[]
+): ElementoEstructuraTorneo[] {
+  return torneoAElementos(fases, [])
 }

@@ -4183,6 +4183,58 @@ export class Client {
    * @param body (optional)
    * @return OK
    */
+  fasesReordenar(
+    padreId: number,
+    body: ReordenarFasesDTO | undefined
+  ): Promise<void> {
+    let url_ = this.baseUrl + '/api/Torneo/{padreId}/fases/reordenar'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processFasesReordenar(_response)
+    })
+  }
+
+  protected processFasesReordenar(response: Response): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
   fasesCambiarVisibilidadEnApp(
     padreId: number,
     id: number,
@@ -5383,6 +5435,293 @@ export class Client {
   }
 
   protected processFixtureAlgoritmoDELETE(response: Response): Promise<number> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = resultData200 !== undefined ? resultData200 : <any>null
+
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<number>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  gruposDeFasesAll(padreId: number): Promise<GrupoDeFasesDTO[]> {
+    let url_ = this.baseUrl + '/api/Torneo/{padreId}/grupos-de-fases'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processGruposDeFasesAll(_response)
+    })
+  }
+
+  protected processGruposDeFasesAll(
+    response: Response
+  ): Promise<GrupoDeFasesDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(GrupoDeFasesDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<GrupoDeFasesDTO[]>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  gruposDeFasesPOST(
+    padreId: number,
+    body: GrupoDeFasesDTO | undefined
+  ): Promise<GrupoDeFasesDTO> {
+    let url_ = this.baseUrl + '/api/Torneo/{padreId}/grupos-de-fases'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processGruposDeFasesPOST(_response)
+    })
+  }
+
+  protected processGruposDeFasesPOST(
+    response: Response
+  ): Promise<GrupoDeFasesDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = GrupoDeFasesDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<GrupoDeFasesDTO>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  gruposDeFasesGET(padreId: number, id: number): Promise<GrupoDeFasesDTO> {
+    let url_ = this.baseUrl + '/api/Torneo/{padreId}/grupos-de-fases/{id}'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processGruposDeFasesGET(_response)
+    })
+  }
+
+  protected processGruposDeFasesGET(
+    response: Response
+  ): Promise<GrupoDeFasesDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = GrupoDeFasesDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<GrupoDeFasesDTO>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  gruposDeFasesPUT(
+    padreId: number,
+    id: number,
+    body: GrupoDeFasesDTO | undefined
+  ): Promise<void> {
+    let url_ = this.baseUrl + '/api/Torneo/{padreId}/grupos-de-fases/{id}'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processGruposDeFasesPUT(_response)
+    })
+  }
+
+  protected processGruposDeFasesPUT(response: Response): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  gruposDeFasesDELETE(padreId: number, id: number): Promise<number> {
+    let url_ = this.baseUrl + '/api/Torneo/{padreId}/grupos-de-fases/{id}'
+    if (padreId === undefined || padreId === null)
+      throw new Error("The parameter 'padreId' must be defined.")
+    url_ = url_.replace('{padreId}', encodeURIComponent('' + padreId))
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'DELETE',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processGruposDeFasesDELETE(_response)
+    })
+  }
+
+  protected processGruposDeFasesDELETE(response: Response): Promise<number> {
     const status = response.status
     let _headers: any = {}
     if (response.headers && response.headers.forEach) {
@@ -7450,6 +7789,60 @@ export class Client {
   }
 
   protected processTorneoEditarFasesParaTablaAnual(
+    response: Response
+  ): Promise<void> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<void>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  torneoPersistirEstructuraFases(
+    id: number,
+    body: EstructuraFasesDTO | undefined
+  ): Promise<void> {
+    let url_ = this.baseUrl + '/api/Torneo/{id}/estructura-fases'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processTorneoPersistirEstructuraFases(_response)
+    })
+  }
+
+  protected processTorneoPersistirEstructuraFases(
     response: Response
   ): Promise<void> {
     const status = response.status
@@ -10753,6 +11146,7 @@ export class CrearTorneoDTO implements ICrearTorneoDTO {
   torneoAgrupadorNombre?: string | undefined
   sePuedeEditar?: boolean
   fases?: FaseDTO[] | undefined
+  gruposDeFases?: GrupoDeFasesDTO[] | undefined
   primeraFase?: FaseDTO
   categorias?: TorneoCategoriaDTO[] | undefined
 
@@ -10784,6 +11178,11 @@ export class CrearTorneoDTO implements ICrearTorneoDTO {
       if (Array.isArray(_data['fases'])) {
         this.fases = [] as any
         for (let item of _data['fases']) this.fases!.push(FaseDTO.fromJS(item))
+      }
+      if (Array.isArray(_data['gruposDeFases'])) {
+        this.gruposDeFases = [] as any
+        for (let item of _data['gruposDeFases'])
+          this.gruposDeFases!.push(GrupoDeFasesDTO.fromJS(item))
       }
       this.primeraFase = _data['primeraFase']
         ? FaseDTO.fromJS(_data['primeraFase'])
@@ -10823,6 +11222,11 @@ export class CrearTorneoDTO implements ICrearTorneoDTO {
       data['fases'] = []
       for (let item of this.fases) data['fases'].push(item.toJSON())
     }
+    if (Array.isArray(this.gruposDeFases)) {
+      data['gruposDeFases'] = []
+      for (let item of this.gruposDeFases)
+        data['gruposDeFases'].push(item.toJSON())
+    }
     data['primeraFase'] = this.primeraFase
       ? this.primeraFase.toJSON()
       : <any>undefined
@@ -10849,6 +11253,7 @@ export interface ICrearTorneoDTO {
   torneoAgrupadorNombre?: string | undefined
   sePuedeEditar?: boolean
   fases?: FaseDTO[] | undefined
+  gruposDeFases?: GrupoDeFasesDTO[] | undefined
   primeraFase?: FaseDTO
   categorias?: TorneoCategoriaDTO[] | undefined
 }
@@ -11691,6 +12096,107 @@ export enum EstadoJugadorEnum {
   _6 = 6
 }
 
+export class EstructuraFasesDTO implements IEstructuraFasesDTO {
+  items!: EstructuraFasesItemDTO[]
+
+  constructor(data?: IEstructuraFasesDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+    if (!data) {
+      this.items = []
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      if (Array.isArray(_data['items'])) {
+        this.items = [] as any
+        for (let item of _data['items'])
+          this.items!.push(EstructuraFasesItemDTO.fromJS(item))
+      }
+    }
+  }
+
+  static fromJS(data: any): EstructuraFasesDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new EstructuraFasesDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    if (Array.isArray(this.items)) {
+      data['items'] = []
+      for (let item of this.items) data['items'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface IEstructuraFasesDTO {
+  items: EstructuraFasesItemDTO[]
+}
+
+export class EstructuraFasesItemDTO implements IEstructuraFasesItemDTO {
+  tipo!: string
+  faseId?: number | undefined
+  grupoId?: number | undefined
+  items?: EstructuraFasesItemDTO[] | undefined
+
+  constructor(data?: IEstructuraFasesItemDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.tipo = _data['tipo']
+      this.faseId = _data['faseId']
+      this.grupoId = _data['grupoId']
+      if (Array.isArray(_data['items'])) {
+        this.items = [] as any
+        for (let item of _data['items'])
+          this.items!.push(EstructuraFasesItemDTO.fromJS(item))
+      }
+    }
+  }
+
+  static fromJS(data: any): EstructuraFasesItemDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new EstructuraFasesItemDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['tipo'] = this.tipo
+    data['faseId'] = this.faseId
+    data['grupoId'] = this.grupoId
+    if (Array.isArray(this.items)) {
+      data['items'] = []
+      for (let item of this.items) data['items'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface IEstructuraFasesItemDTO {
+  tipo: string
+  faseId?: number | undefined
+  grupoId?: number | undefined
+  items?: EstructuraFasesItemDTO[] | undefined
+}
+
 export class FaseAsignacionDTO implements IFaseAsignacionDTO {
   id!: number
   nombre!: string | undefined
@@ -11747,6 +12253,7 @@ export class FaseDTO implements IFaseDTO {
   nombre!: string
   numero!: number
   torneoId?: number
+  grupoDeFasesId?: number | undefined
   tipoDeFase!: TipoDeFaseEnum
   tipoDeFaseNombre?: string | undefined
   estadoFaseId?: number
@@ -11770,6 +12277,7 @@ export class FaseDTO implements IFaseDTO {
       this.nombre = _data['nombre']
       this.numero = _data['numero']
       this.torneoId = _data['torneoId']
+      this.grupoDeFasesId = _data['grupoDeFasesId']
       this.tipoDeFase = _data['tipoDeFase']
       this.tipoDeFaseNombre = _data['tipoDeFaseNombre']
       this.estadoFaseId = _data['estadoFaseId']
@@ -11797,6 +12305,7 @@ export class FaseDTO implements IFaseDTO {
     data['nombre'] = this.nombre
     data['numero'] = this.numero
     data['torneoId'] = this.torneoId
+    data['grupoDeFasesId'] = this.grupoDeFasesId
     data['tipoDeFase'] = this.tipoDeFase
     data['tipoDeFaseNombre'] = this.tipoDeFaseNombre
     data['estadoFaseId'] = this.estadoFaseId
@@ -11816,6 +12325,7 @@ export interface IFaseDTO {
   nombre: string
   numero: number
   torneoId?: number
+  grupoDeFasesId?: number | undefined
   tipoDeFase: TipoDeFaseEnum
   tipoDeFaseNombre?: string | undefined
   estadoFaseId?: number
@@ -12416,6 +12926,58 @@ export interface IFixturePartidoDTO {
   visitante?: string | undefined
 }
 
+export class GrupoDeFasesDTO implements IGrupoDeFasesDTO {
+  id?: number
+  nombre!: string
+  numero!: number
+  torneoId?: number
+  grupoDeFasesPadreId?: number | undefined
+
+  constructor(data?: IGrupoDeFasesDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.nombre = _data['nombre']
+      this.numero = _data['numero']
+      this.torneoId = _data['torneoId']
+      this.grupoDeFasesPadreId = _data['grupoDeFasesPadreId']
+    }
+  }
+
+  static fromJS(data: any): GrupoDeFasesDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new GrupoDeFasesDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['nombre'] = this.nombre
+    data['numero'] = this.numero
+    data['torneoId'] = this.torneoId
+    data['grupoDeFasesPadreId'] = this.grupoDeFasesPadreId
+    return data
+  }
+}
+
+export interface IGrupoDeFasesDTO {
+  id?: number
+  nombre: string
+  numero: number
+  torneoId?: number
+  grupoDeFasesPadreId?: number | undefined
+}
+
 export class InformacionInicialAgrupadorDTO implements IInformacionInicialAgrupadorDTO {
   id?: number
   nombre?: string | undefined
@@ -12471,13 +13033,17 @@ export interface IInformacionInicialAgrupadorDTO {
   torneos?: InformacionInicialTorneoDTO[] | undefined
 }
 
-export class InformacionInicialFaseDTO implements IInformacionInicialFaseDTO {
-  id?: number
+export class InformacionInicialElementoTorneoDTO implements IInformacionInicialElementoTorneoDTO {
+  tipo?: string | undefined
+  id?: number | undefined
   nombre?: string | undefined
   tipoDeFase?: string | undefined
   zonas?: InformacionInicialZonaDTO[] | undefined
+  grupoId?: number | undefined
+  nombreGrupo?: string | undefined
+  elementos?: InformacionInicialElementoTorneoDTO[] | undefined
 
-  constructor(data?: IInformacionInicialFaseDTO) {
+  constructor(data?: IInformacionInicialElementoTorneoDTO) {
     if (data) {
       for (var property in data) {
         if (data.hasOwnProperty(property))
@@ -12488,6 +13054,7 @@ export class InformacionInicialFaseDTO implements IInformacionInicialFaseDTO {
 
   init(_data?: any) {
     if (_data) {
+      this.tipo = _data['tipo']
       this.id = _data['id']
       this.nombre = _data['nombre']
       this.tipoDeFase = _data['tipoDeFase']
@@ -12496,18 +13063,26 @@ export class InformacionInicialFaseDTO implements IInformacionInicialFaseDTO {
         for (let item of _data['zonas'])
           this.zonas!.push(InformacionInicialZonaDTO.fromJS(item))
       }
+      this.grupoId = _data['grupoId']
+      this.nombreGrupo = _data['nombreGrupo']
+      if (Array.isArray(_data['elementos'])) {
+        this.elementos = [] as any
+        for (let item of _data['elementos'])
+          this.elementos!.push(InformacionInicialElementoTorneoDTO.fromJS(item))
+      }
     }
   }
 
-  static fromJS(data: any): InformacionInicialFaseDTO {
+  static fromJS(data: any): InformacionInicialElementoTorneoDTO {
     data = typeof data === 'object' ? data : {}
-    let result = new InformacionInicialFaseDTO()
+    let result = new InformacionInicialElementoTorneoDTO()
     result.init(data)
     return result
   }
 
   toJSON(data?: any) {
     data = typeof data === 'object' ? data : {}
+    data['tipo'] = this.tipo
     data['id'] = this.id
     data['nombre'] = this.nombre
     data['tipoDeFase'] = this.tipoDeFase
@@ -12515,21 +13090,31 @@ export class InformacionInicialFaseDTO implements IInformacionInicialFaseDTO {
       data['zonas'] = []
       for (let item of this.zonas) data['zonas'].push(item.toJSON())
     }
+    data['grupoId'] = this.grupoId
+    data['nombreGrupo'] = this.nombreGrupo
+    if (Array.isArray(this.elementos)) {
+      data['elementos'] = []
+      for (let item of this.elementos) data['elementos'].push(item.toJSON())
+    }
     return data
   }
 }
 
-export interface IInformacionInicialFaseDTO {
-  id?: number
+export interface IInformacionInicialElementoTorneoDTO {
+  tipo?: string | undefined
+  id?: number | undefined
   nombre?: string | undefined
   tipoDeFase?: string | undefined
   zonas?: InformacionInicialZonaDTO[] | undefined
+  grupoId?: number | undefined
+  nombreGrupo?: string | undefined
+  elementos?: InformacionInicialElementoTorneoDTO[] | undefined
 }
 
 export class InformacionInicialTorneoDTO implements IInformacionInicialTorneoDTO {
   id?: number
   nombre?: string | undefined
-  fases?: InformacionInicialFaseDTO[] | undefined
+  elementos?: InformacionInicialElementoTorneoDTO[] | undefined
 
   constructor(data?: IInformacionInicialTorneoDTO) {
     if (data) {
@@ -12544,10 +13129,10 @@ export class InformacionInicialTorneoDTO implements IInformacionInicialTorneoDTO
     if (_data) {
       this.id = _data['id']
       this.nombre = _data['nombre']
-      if (Array.isArray(_data['fases'])) {
-        this.fases = [] as any
-        for (let item of _data['fases'])
-          this.fases!.push(InformacionInicialFaseDTO.fromJS(item))
+      if (Array.isArray(_data['elementos'])) {
+        this.elementos = [] as any
+        for (let item of _data['elementos'])
+          this.elementos!.push(InformacionInicialElementoTorneoDTO.fromJS(item))
       }
     }
   }
@@ -12563,9 +13148,9 @@ export class InformacionInicialTorneoDTO implements IInformacionInicialTorneoDTO
     data = typeof data === 'object' ? data : {}
     data['id'] = this.id
     data['nombre'] = this.nombre
-    if (Array.isArray(this.fases)) {
-      data['fases'] = []
-      for (let item of this.fases) data['fases'].push(item.toJSON())
+    if (Array.isArray(this.elementos)) {
+      data['elementos'] = []
+      for (let item of this.elementos) data['elementos'].push(item.toJSON())
     }
     return data
   }
@@ -12574,7 +13159,7 @@ export class InformacionInicialTorneoDTO implements IInformacionInicialTorneoDTO
 export interface IInformacionInicialTorneoDTO {
   id?: number
   nombre?: string | undefined
-  fases?: InformacionInicialFaseDTO[] | undefined
+  elementos?: InformacionInicialElementoTorneoDTO[] | undefined
 }
 
 export class InformacionInicialZonaDTO implements IInformacionInicialZonaDTO {
@@ -14117,6 +14702,51 @@ export interface IRechazarJugadorDTO {
   motivo?: string | undefined
 }
 
+export class ReordenarFasesDTO implements IReordenarFasesDTO {
+  faseIds!: number[]
+
+  constructor(data?: IReordenarFasesDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+    if (!data) {
+      this.faseIds = []
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      if (Array.isArray(_data['faseIds'])) {
+        this.faseIds = [] as any
+        for (let item of _data['faseIds']) this.faseIds!.push(item)
+      }
+    }
+  }
+
+  static fromJS(data: any): ReordenarFasesDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new ReordenarFasesDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    if (Array.isArray(this.faseIds)) {
+      data['faseIds'] = []
+      for (let item of this.faseIds) data['faseIds'].push(item)
+    }
+    return data
+  }
+}
+
+export interface IReordenarFasesDTO {
+  faseIds: number[]
+}
+
 export class ReporteJugadoresHabilitadosFilaDTO implements IReporteJugadoresHabilitadosFilaDTO {
   torneoId?: number
   nombreTorneo?: string | undefined
@@ -14666,6 +15296,7 @@ export class TorneoDTO implements ITorneoDTO {
   torneoAgrupadorNombre?: string | undefined
   sePuedeEditar?: boolean
   fases?: FaseDTO[] | undefined
+  gruposDeFases?: GrupoDeFasesDTO[] | undefined
   categorias?: TorneoCategoriaDTO[] | undefined
 
   constructor(data?: ITorneoDTO) {
@@ -14696,6 +15327,11 @@ export class TorneoDTO implements ITorneoDTO {
       if (Array.isArray(_data['fases'])) {
         this.fases = [] as any
         for (let item of _data['fases']) this.fases!.push(FaseDTO.fromJS(item))
+      }
+      if (Array.isArray(_data['gruposDeFases'])) {
+        this.gruposDeFases = [] as any
+        for (let item of _data['gruposDeFases'])
+          this.gruposDeFases!.push(GrupoDeFasesDTO.fromJS(item))
       }
       if (Array.isArray(_data['categorias'])) {
         this.categorias = [] as any
@@ -14732,6 +15368,11 @@ export class TorneoDTO implements ITorneoDTO {
       data['fases'] = []
       for (let item of this.fases) data['fases'].push(item.toJSON())
     }
+    if (Array.isArray(this.gruposDeFases)) {
+      data['gruposDeFases'] = []
+      for (let item of this.gruposDeFases)
+        data['gruposDeFases'].push(item.toJSON())
+    }
     if (Array.isArray(this.categorias)) {
       data['categorias'] = []
       for (let item of this.categorias) data['categorias'].push(item.toJSON())
@@ -14755,6 +15396,7 @@ export interface ITorneoDTO {
   torneoAgrupadorNombre?: string | undefined
   sePuedeEditar?: boolean
   fases?: FaseDTO[] | undefined
+  gruposDeFases?: GrupoDeFasesDTO[] | undefined
   categorias?: TorneoCategoriaDTO[] | undefined
 }
 

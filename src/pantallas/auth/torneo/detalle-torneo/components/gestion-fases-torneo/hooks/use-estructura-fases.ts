@@ -2,11 +2,17 @@ import {
   TorneoCategoriaDTO,
   TorneoDTO,
   FaseDTO,
+  GrupoDeFasesDTO,
   TipoDeFaseEnum,
   ZonaDTO
 } from '@/api/clients'
 import { api } from '@/api/api'
-import { fasesReordenar } from '@/api/fases-reordenar-api'
+import { estructuraFasesPUT } from '@/api/estructura-fases-api'
+import {
+  gruposDeFasesDELETE,
+  gruposDeFasesPOST,
+  gruposDeFasesPUT
+} from '@/api/grupos-de-fases-api'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -16,39 +22,41 @@ import { useNavigate } from 'react-router-dom'
 import {
   categoriasACategoriaDto,
   categoriasDtoACategoria,
-  horarioParaInput,
-  type FaseEstado
+  horarioParaInput
 } from '../../../lib'
 import type { Categoria } from '../../../../crear-torneo/tipos'
-import type { TorneoDTO as TorneoDTOType } from '@/api/clients'
 import type { ElementoEstructuraTorneo } from '../lib/tipos'
 import {
   actualizarFaseEnElementos,
   actualizarNombreGrupo,
+  buscarFaseEnElementos,
   contarFases,
-  crearGrupoVacio,
   eliminarFaseDeElementos,
   eliminarGrupoDevolviendoFases,
-  elementosTienenGrupos,
-  faseIdsEnOrdenDesdeElementos,
+  estructuraAItemsDto,
+  encontrarGrupoPorIdLocal,
+  encontrarPadreGrupoIdLocal,
   idDragFaseEnGrupo,
   idDragGrupoDrop,
   idTopLevelDesdeElemento,
+  moverFaseEntreContenedores,
   moverFaseTopLevelAGrupo,
+  parseFaseIdDesdeFaseGrupoDragId,
   parseFaseIdDesdeTopLevelDragId,
-  parseGrupoIdLocalDesdeDropId,
+  parseGrupoIdLocalDesdeCualquierId,
   parseGrupoIdLocalDesdeFaseGrupoId,
   parseGrupoIdLocalDesdeTopLevelDragId,
   PREFIJO_DRAG_FASE_GRUPO,
+  PREFIJO_DRAG_GRUPO_TOP,
+  profundidadGrupo,
   reordenarElementosTopLevelPorIndices,
-  reordenarFasesEnGrupo,
-  renumerarElementosTopLevel,
-  sincronizarNumerosFasesDesdeTorneo,
-  torneoFasesAElementos
+  reordenarEnGrupoPorIdLocal,
+  todosLosIdsFasePresentes,
+  torneoAElementos
 } from '../lib/estructura-utils'
 
 interface UseEstructuraFasesParams {
-  torneo: TorneoDTOType | null | undefined
+  torneo: TorneoDTO | null | undefined
   torneoId: number
   id: string | undefined
   refetch: () => Promise<unknown>
@@ -69,6 +77,10 @@ interface UseEstructuraFasesParams {
   setEditando: (e: boolean) => void
 }
 
+function torneoAElementosDesdeDto(torneo: TorneoDTO | null | undefined) {
+  return torneoAElementos(torneo?.fases ?? [], torneo?.gruposDeFases ?? [])
+}
+
 export function useEstructuraFases({
   torneo,
   torneoId,
@@ -86,49 +98,43 @@ export function useEstructuraFases({
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const torneoFases = torneo?.fases ?? []
+  const torneoConGrupos = torneo
 
   const [elementos, setElementos] = useState<ElementoEstructuraTorneo[]>([])
   const [creandoZonasEliminacion, setCreandoZonasEliminacion] = useState(false)
 
-  // Grupos y asignación fase↔grupo son estado local hasta que exista el backend.
   useEffect(() => {
     if (!torneo) return
-    setElementos((prev) => {
-      if (elementosTienenGrupos(prev)) {
-        return sincronizarNumerosFasesDesdeTorneo(prev, torneo.fases ?? [])
-      }
-      return torneoFasesAElementos(torneo.fases ?? [])
-    })
-  }, [torneo])
+    setElementos(torneoAElementosDesdeDto(torneoConGrupos))
+  }, [torneo, torneoConGrupos])
 
-  const reordenarFasesMutation = useMutation({
-    mutationFn: async (faseIds: number[]) => {
-      await fasesReordenar(torneoId, faseIds)
+  const persistirEstructuraMutation = useMutation({
+    mutationFn: async (nuevosElementos: ElementoEstructuraTorneo[]) => {
+      const items = estructuraAItemsDto(nuevosElementos)
+      await estructuraFasesPUT(torneoId, items)
     },
     onSuccess: () => {
       void refetch()
     },
     onError: (error: unknown) => {
-      console.error('Error al reordenar fases:', error)
-      toast.error('No se pudo guardar el orden de las fases')
+      console.error('Error al persistir estructura:', error)
+      toast.error('No se pudo guardar la estructura de fases')
       void refetch()
     }
   })
 
-  const persistirOrdenFases = useCallback(
+  const persistirEstructura = useCallback(
     (nuevosElementos: ElementoEstructuraTorneo[]) => {
-      const faseIds = faseIdsEnOrdenDesdeElementos(nuevosElementos)
-      const totalFasesTorneo = torneo?.fases?.length ?? 0
+      const totalFases = torneo?.fases?.length ?? 0
       if (
-        faseIds.length === 0 ||
-        faseIds.length !== totalFasesTorneo ||
-        reordenarFasesMutation.isPending
+        !todosLosIdsFasePresentes(nuevosElementos, totalFases) ||
+        persistirEstructuraMutation.isPending
       ) {
         return
       }
-      reordenarFasesMutation.mutate(faseIds)
+      persistirEstructuraMutation.mutate(nuevosElementos)
     },
-    [reordenarFasesMutation, torneo?.fases?.length]
+    [persistirEstructuraMutation, torneo?.fases?.length]
   )
 
   const actualizarFaseTopLevel = (
@@ -136,29 +142,39 @@ export function useEstructuraFases({
     campo: string,
     valor: string
   ) => {
+    const el = elementos[index]
+    if (el?.tipo !== 'fase' || el.fase.id == null) return
     setElementos((prev) =>
-      actualizarFaseEnElementos(prev, { nivel: 'top', index }, campo, valor)
+      actualizarFaseEnElementos(prev, el.fase.id!, campo, valor)
     )
   }
 
   const actualizarFaseEnGrupo = (
-    grupoIndex: number,
-    faseIndex: number,
+    faseId: number,
     campo: string,
     valor: string
   ) => {
     setElementos((prev) =>
-      actualizarFaseEnElementos(
-        prev,
-        { nivel: 'grupo', grupoIndex, faseIndex },
-        campo,
-        valor
-      )
+      actualizarFaseEnElementos(prev, faseId, campo, valor)
     )
   }
 
-  const actualizarGrupo = (grupoIndex: number, nombre: string) => {
-    setElementos((prev) => actualizarNombreGrupo(prev, grupoIndex, nombre))
+  const actualizarGrupo = (grupoIdLocal: string, nombre: string) => {
+    setElementos((prev) => actualizarNombreGrupo(prev, grupoIdLocal, nombre))
+    const grupo = encontrarGrupoPorIdLocal(elementos, grupoIdLocal)
+    if (grupo?.id) {
+      void gruposDeFasesPUT(
+        torneoId,
+        grupo.id,
+        new GrupoDeFasesDTO({
+          id: grupo.id,
+          nombre,
+          numero: grupo.numero,
+          torneoId,
+          grupoDeFasesPadreId: grupo.grupoDeFasesPadreId ?? undefined
+        })
+      ).catch(() => toast.error('No se pudo guardar el nombre del grupo'))
+    }
   }
 
   const eliminarFaseMutation = useApiMutation<number>({
@@ -169,34 +185,10 @@ export function useEstructuraFases({
     mensajeDeExito: 'Fase eliminada'
   })
 
-  const eliminarFaseTopLevel = (index: number) => {
-    const el = elementos[index]
-    if (el?.tipo !== 'fase') return
-    const faseId = el.fase.id
-    if (!faseId) return
+  const eliminarFasePorId = (faseId: number) => {
     eliminarFaseMutation.mutate(faseId, {
       onSuccess: () => {
-        setElementos((prev) =>
-          eliminarFaseDeElementos(prev, { nivel: 'top', index })
-        )
-      }
-    })
-  }
-
-  const eliminarFaseDeGrupo = (grupoIndex: number, faseIndex: number) => {
-    const el = elementos[grupoIndex]
-    if (el?.tipo !== 'grupo') return
-    const faseId = el.grupo.fases[faseIndex]?.id
-    if (!faseId) return
-    eliminarFaseMutation.mutate(faseId, {
-      onSuccess: () => {
-        setElementos((prev) =>
-          eliminarFaseDeElementos(prev, {
-            nivel: 'grupo',
-            grupoIndex,
-            faseIndex
-          })
-        )
+        setElementos((prev) => eliminarFaseDeElementos(prev, faseId))
       }
     })
   }
@@ -223,21 +215,51 @@ export function useEstructuraFases({
     mensajeDeExito: 'Fase creada'
   })
 
-  const agregarGrupoDeFases = () => {
-    setElementos((prev) =>
-      renumerarElementosTopLevel([
-        ...prev,
-        { tipo: 'grupo', grupo: crearGrupoVacio() }
-      ])
-    )
+  const agregarGrupoDeFases = (grupoPadreIdLocal?: string) => {
+    const padre = grupoPadreIdLocal
+      ? encontrarGrupoPorIdLocal(elementos, grupoPadreIdLocal)
+      : null
+    const contenedor = padre?.elementos ?? elementos
+    const numero = contenedor.length + 1
+
+    void (async () => {
+      try {
+        await gruposDeFasesPOST(
+          torneoId,
+          new GrupoDeFasesDTO({
+            nombre: 'Grupo de fases',
+            numero,
+            grupoDeFasesPadreId: padre?.id ?? undefined
+          })
+        )
+        await refetch()
+        toast.success('Grupo de fases creado')
+      } catch (e) {
+        console.error(e)
+        toast.error('No se pudo crear el grupo de fases')
+      }
+    })()
   }
 
-  const eliminarGrupo = (grupoIndex: number) => {
-    const el = elementos[grupoIndex]
-    if (el?.tipo !== 'grupo') return
-    setElementos((prev) =>
-      eliminarGrupoDevolviendoFases(prev, el.grupo.idLocal)
-    )
+  const eliminarGrupo = (grupoIdLocal: string) => {
+    const grupo = encontrarGrupoPorIdLocal(elementos, grupoIdLocal)
+    if (!grupo?.id) {
+      setElementos((prev) => eliminarGrupoDevolviendoFases(prev, grupoIdLocal))
+      return
+    }
+    void (async () => {
+      try {
+        await gruposDeFasesDELETE(torneoId, grupo.id!)
+        setElementos((prev) =>
+          eliminarGrupoDevolviendoFases(prev, grupoIdLocal)
+        )
+        await refetch()
+        toast.success('Grupo eliminado')
+      } catch (e) {
+        console.error(e)
+        toast.error('No se pudo eliminar el grupo')
+      }
+    })()
   }
 
   const handleDragEnd = useCallback(
@@ -246,13 +268,17 @@ export function useEstructuraFases({
 
       const faseTopId = parseFaseIdDesdeTopLevelDragId(activeId)
       if (faseTopId != null) {
-        const grupoIdLocal =
-          parseGrupoIdLocalDesdeDropId(overId) ??
-          parseGrupoIdLocalDesdeFaseGrupoId(overId)
-        if (grupoIdLocal) {
-          setElementos((prev) =>
-            moverFaseTopLevelAGrupo(prev, faseTopId, grupoIdLocal)
-          )
+        const grupoDestinoId = parseGrupoIdLocalDesdeCualquierId(overId)
+        if (grupoDestinoId) {
+          setElementos((prev) => {
+            const nuevos = moverFaseTopLevelAGrupo(
+              prev,
+              faseTopId,
+              grupoDestinoId
+            )
+            persistirEstructura(nuevos)
+            return nuevos
+          })
           return
         }
 
@@ -264,7 +290,8 @@ export function useEstructuraFases({
             const grupoTopId = parseGrupoIdLocalDesdeTopLevelDragId(overId)
             if (grupoTopId) {
               prevNewIndex = prevTopIds.findIndex(
-                (id) => parseGrupoIdLocalDesdeTopLevelDragId(id) === grupoTopId
+                (rid) =>
+                  parseGrupoIdLocalDesdeTopLevelDragId(rid) === grupoTopId
               )
             }
           }
@@ -280,29 +307,82 @@ export function useEstructuraFases({
             prevOldIndex,
             prevNewIndex
           )
-          persistirOrdenFases(nuevosElementos)
+          persistirEstructura(nuevosElementos)
           return nuevosElementos
         })
         return
       }
 
-      if (activeId.startsWith(PREFIJO_DRAG_FASE_GRUPO)) {
-        const grupoIdLocal = parseGrupoIdLocalDesdeFaseGrupoId(activeId)
-        if (!grupoIdLocal) return
+      const grupoTopId = parseGrupoIdLocalDesdeTopLevelDragId(activeId)
+      if (grupoTopId != null) {
+        setElementos((prev) => {
+          const prevTopIds = prev.map(idTopLevelDesdeElemento)
+          const oldIndex = prevTopIds.indexOf(activeId)
+          let newIndex = prevTopIds.indexOf(overId)
+          if (newIndex < 0) {
+            const overGrupo = parseGrupoIdLocalDesdeTopLevelDragId(overId)
+            if (overGrupo) {
+              newIndex = prevTopIds.findIndex(
+                (rid) => parseGrupoIdLocalDesdeTopLevelDragId(rid) === overGrupo
+              )
+            }
+          }
+          if (oldIndex < 0 || newIndex < 0 || oldIndex === newIndex) return prev
+          const nuevos = reordenarElementosTopLevelPorIndices(
+            prev,
+            oldIndex,
+            newIndex
+          )
+          persistirEstructura(nuevos)
+          return nuevos
+        })
+        return
+      }
 
-        const overGrupoId =
-          parseGrupoIdLocalDesdeFaseGrupoId(overId) ??
-          parseGrupoIdLocalDesdeDropId(overId)
-        if (overGrupoId !== grupoIdLocal) return
+      if (activeId.startsWith(PREFIJO_DRAG_FASE_GRUPO)) {
+        const grupoOrigenId = parseGrupoIdLocalDesdeCualquierId(activeId)
+        if (!grupoOrigenId) return
+
+        const faseId = parseFaseIdDesdeFaseGrupoDragId(activeId)
+        if (faseId == null) return
+
+        const grupoDestinoId = parseGrupoIdLocalDesdeCualquierId(overId)
+
+        if (grupoDestinoId && grupoDestinoId !== grupoOrigenId) {
+          setElementos((prev) => {
+            const nuevos = moverFaseEntreContenedores(
+              prev,
+              faseId,
+              grupoDestinoId
+            )
+            persistirEstructura(nuevos)
+            return nuevos
+          })
+          return
+        }
+
+        if (grupoDestinoId !== grupoOrigenId) {
+          const faseTopOver = parseFaseIdDesdeTopLevelDragId(overId)
+          if (faseTopOver != null) {
+            setElementos((prev) => {
+              const nuevos = moverFaseEntreContenedores(prev, faseId, null)
+              persistirEstructura(nuevos)
+              return nuevos
+            })
+          }
+          return
+        }
+
+        const grupoIdLocal = grupoOrigenId
 
         setElementos((prev) => {
-          const grupoEl = prev.find(
-            (el) => el.tipo === 'grupo' && el.grupo.idLocal === grupoIdLocal
-          )
-          if (grupoEl?.tipo !== 'grupo') return prev
+          const grupoEl = encontrarGrupoPorIdLocal(prev, grupoIdLocal)
+          if (!grupoEl) return prev
 
-          const ids = grupoEl.grupo.fases.map((f, i) =>
-            idDragFaseEnGrupo(grupoIdLocal, f, i)
+          const ids = grupoEl.elementos.map((el, i) =>
+            el.tipo === 'fase'
+              ? idDragFaseEnGrupo(grupoIdLocal, el.fase, i)
+              : idTopLevelDesdeElemento(el)
           )
           const oldIndex = ids.indexOf(activeId)
           let newIndex = ids.indexOf(overId)
@@ -310,18 +390,51 @@ export function useEstructuraFases({
             newIndex = ids.length - 1
           }
           if (oldIndex < 0 || newIndex < 0 || oldIndex === newIndex) return prev
-          const nuevosElementos = reordenarFasesEnGrupo(
+          const nuevosElementos = reordenarEnGrupoPorIdLocal(
             prev,
             grupoIdLocal,
             oldIndex,
             newIndex
           )
-          persistirOrdenFases(nuevosElementos)
+          persistirEstructura(nuevosElementos)
           return nuevosElementos
+        })
+        return
+      }
+
+      const nestedGrupoId = parseGrupoIdLocalDesdeTopLevelDragId(activeId)
+      if (nestedGrupoId && activeId.startsWith(PREFIJO_DRAG_GRUPO_TOP)) {
+        const padreId = encontrarPadreGrupoIdLocal(elementos, nestedGrupoId)
+        if (padreId == null) return
+
+        setElementos((prev) => {
+          const padre = encontrarGrupoPorIdLocal(prev, padreId)
+          if (!padre) return prev
+
+          const ids = padre.elementos.map(idTopLevelDesdeElemento)
+          const oldIndex = ids.indexOf(activeId)
+          let newIndex = ids.indexOf(overId)
+          if (newIndex < 0) {
+            const overFaseGrupo = parseGrupoIdLocalDesdeFaseGrupoId(overId)
+            if (overFaseGrupo === padreId) {
+              newIndex = ids.findIndex((id) =>
+                id.startsWith(PREFIJO_DRAG_FASE_GRUPO)
+              )
+            }
+          }
+          if (oldIndex < 0 || newIndex < 0 || oldIndex === newIndex) return prev
+          const nuevos = reordenarEnGrupoPorIdLocal(
+            prev,
+            padreId,
+            oldIndex,
+            newIndex
+          )
+          persistirEstructura(nuevos)
+          return nuevos
         })
       }
     },
-    [persistirOrdenFases]
+    [elementos, persistirEstructura]
   )
 
   const guardarMutation = useApiMutation<void>({
@@ -336,29 +449,6 @@ export function useEstructuraFases({
         horarioDeJuego
       } = getDatosBasicos()
 
-      const todasLasFases: FaseEstado[] = []
-      for (const el of elementos) {
-        if (el.tipo === 'fase') {
-          todasLasFases.push(el.fase)
-        } else {
-          todasLasFases.push(...el.grupo.fases)
-        }
-      }
-
-      const fasesValidas = todasLasFases
-        .filter((f) => f.nombre.trim() && f.formato)
-        .map((f) => ({
-          id: f.id,
-          numero: f.numero,
-          nombre: f.nombre.trim(),
-          tipoDeFase:
-            f.formato === 'todos-contra-todos'
-              ? TipoDeFaseEnum._1
-              : TipoDeFaseEnum._2,
-          estadoFaseId: 100,
-          esVisibleEnApp: true
-        }))
-
       const body = new TorneoDTO({
         id: torneo.id,
         nombre,
@@ -367,7 +457,7 @@ export function useEstructuraFases({
         categorias: categoriasACategoriaDto(categorias).map(
           (c) => new TorneoCategoriaDTO({ ...c, torneoId })
         ),
-        fases: fasesValidas.map((f) => new FaseDTO({ ...f, torneoId })),
+        fases: undefined,
         esVisibleEnApp: torneo.esVisibleEnApp,
         seVenLosGolesEnTablaDePosiciones,
         horarioDeJuego: horarioDeJuego.trim() || undefined
@@ -388,7 +478,7 @@ export function useEstructuraFases({
     )
     setHorarioDeJuego(horarioParaInput(torneo.horarioDeJuego))
     setCategorias(categoriasDtoACategoria(torneo.categorias ?? []))
-    setElementos(torneoFasesAElementos(torneo.fases ?? []))
+    setElementos(torneoAElementosDesdeDto(torneoConGrupos))
     setEditando(false)
   }
 
@@ -436,48 +526,8 @@ export function useEstructuraFases({
   const irAZonas = async (faseId: number) => {
     if (creandoZonasEliminacion) return
 
-    let faseEnEstado: FaseEstado | undefined
-    for (const el of elementos) {
-      if (el.tipo === 'fase' && el.fase.id === faseId) {
-        faseEnEstado = el.fase
-        break
-      }
-      if (el.tipo === 'grupo') {
-        const f = el.grupo.fases.find((x) => x.id === faseId)
-        if (f) {
-          faseEnEstado = f
-          break
-        }
-      }
-    }
+    const faseEnEstado = buscarFaseEnElementos(elementos, faseId)
     if (!faseEnEstado) return
-
-    const faseTieneId = faseEnEstado.id != null && faseEnEstado.id > 0
-
-    if (!faseTieneId) {
-      await guardarMutation.mutateAsync(undefined)
-      const torneoActualizado = await queryClient.fetchQuery({
-        queryKey: ['torneo', id],
-        queryFn: () => api.torneoGET(torneoId)
-      })
-      const faseActualizada = torneoActualizado?.fases?.find(
-        (f: { numero?: number }) => f.numero === faseEnEstado!.numero
-      )
-      if (!faseActualizada?.id) return
-      try {
-        await asegurarZonasEliminacionDirecta(
-          faseActualizada.id,
-          faseActualizada,
-          torneoActualizado?.categorias
-        )
-      } catch {
-        return
-      }
-      navigate(
-        `${rutasNavegacion.detalleTorneo}/${torneoId}/fases/${faseActualizada.id}/zonas`
-      )
-      return
-    }
 
     const faseApi = torneoFases.find((f) => f.id === faseId)
     try {
@@ -498,8 +548,7 @@ export function useEstructuraFases({
     actualizarFaseTopLevel,
     actualizarFaseEnGrupo,
     actualizarGrupo,
-    eliminarFaseTopLevel,
-    eliminarFaseDeGrupo,
+    eliminarFasePorId,
     eliminarGrupo,
     agregarFaseMutation,
     agregarGrupoDeFases,
@@ -508,9 +557,10 @@ export function useEstructuraFases({
     estaGuardandoZonas:
       guardarMutation.isPending ||
       creandoZonasEliminacion ||
-      reordenarFasesMutation.isPending,
+      persistirEstructuraMutation.isPending,
     irAZonas,
     handleCancelarEdicion,
-    handleDragEnd
+    handleDragEnd,
+    profundidadGrupo: (idLocal: string) => profundidadGrupo(idLocal, elementos)
   }
 }

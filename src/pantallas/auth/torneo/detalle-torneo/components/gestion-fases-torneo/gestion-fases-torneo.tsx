@@ -4,6 +4,7 @@ import {
   type DragEndEvent,
   KeyboardSensor,
   PointerSensor,
+  pointerWithin,
   useSensor,
   useSensors
 } from '@dnd-kit/core'
@@ -40,8 +41,7 @@ export function GestionFasesTorneo({
     actualizarFaseTopLevel,
     actualizarFaseEnGrupo,
     actualizarGrupo,
-    eliminarFaseTopLevel,
-    eliminarFaseDeGrupo,
+    eliminarFasePorId,
     eliminarGrupo,
     agregarFaseMutation,
     agregarGrupoDeFases,
@@ -70,7 +70,11 @@ export function GestionFasesTorneo({
 
   return (
     <>
-      <DndContext sensors={sensors} onDragEnd={onDragEnd}>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={pointerWithin}
+        onDragEnd={onDragEnd}
+      >
         <SortableContext
           items={topLevelSortableIds}
           strategy={rectSortingStrategy}
@@ -92,7 +96,9 @@ export function GestionFasesTorneo({
                     onActualizar={(campo, valor) =>
                       actualizarFaseTopLevel(index, campo, valor)
                     }
-                    onEliminar={() => eliminarFaseTopLevel(index)}
+                    onEliminar={() => {
+                      if (el.fase.id != null) eliminarFasePorId(el.fase.id)
+                    }}
                     onIrAZonas={irAZonas}
                     estaGuardando={estaGuardandoZonas}
                   />
@@ -104,19 +110,14 @@ export function GestionFasesTorneo({
                   key={el.grupo.idLocal}
                   grupo={el.grupo}
                   torneoId={torneoId}
-                  nombreTorneo={torneo.nombre}
+                  nombreTorneo={torneo.nombre ?? ''}
                   torneoFases={torneoFases}
                   categoriasTorneo={torneo.categorias ?? []}
-                  onActualizarNombre={(nombre) =>
-                    actualizarGrupo(index, nombre)
-                  }
-                  onActualizarFase={(faseIndex, campo, valor) =>
-                    actualizarFaseEnGrupo(index, faseIndex, campo, valor)
-                  }
-                  onEliminarFase={(faseIndex) =>
-                    eliminarFaseDeGrupo(index, faseIndex)
-                  }
-                  onEliminarGrupo={() => eliminarGrupo(index)}
+                  onActualizarGrupo={actualizarGrupo}
+                  onActualizarFase={actualizarFaseEnGrupo}
+                  onEliminarFase={eliminarFasePorId}
+                  onEliminarGrupo={eliminarGrupo}
+                  onAgregarSubgrupo={agregarGrupoDeFases}
                   onIrAZonas={irAZonas}
                   estaGuardando={estaGuardandoZonas}
                 />
@@ -129,7 +130,7 @@ export function GestionFasesTorneo({
       {!editando && (
         <BotoneraFases
           onAgregarFase={() => agregarFaseMutation.mutate()}
-          onAgregarGrupoDeFases={agregarGrupoDeFases}
+          onAgregarGrupoDeFases={() => agregarGrupoDeFases()}
           estaCargandoFase={agregarFaseMutation.isPending}
         />
       )}
