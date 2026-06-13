@@ -95,7 +95,7 @@ function FaseSortableEnGrupo({
         <button
           type='button'
           className={cn(
-            'mt-1 flex h-8 w-8 shrink-0 cursor-grab touch-none items-center justify-center rounded-md',
+            'flex h-7 w-7 shrink-0 cursor-grab touch-none items-center justify-center rounded-md',
             'text-muted-foreground hover:bg-muted/80 active:cursor-grabbing'
           )}
           aria-label='Reordenar fase en el grupo'
