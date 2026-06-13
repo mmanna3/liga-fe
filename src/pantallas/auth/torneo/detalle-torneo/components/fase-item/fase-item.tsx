@@ -129,6 +129,9 @@ export function FaseItem({
     setEditandoCategorias(true)
   }
 
+  const claseBotonAccion =
+    'h-7 w-7 min-w-7 p-0 border-none shadow-none text-muted-foreground hover:text-foreground/80 hover:bg-muted/50'
+
   const botonEditarCategorias =
     faseOriginal?.id != null ? (
       <Tooltip>
@@ -138,8 +141,8 @@ export function FaseItem({
             variant='outline'
             className={
               editandoCategorias
-                ? 'h-8 w-8 min-w-8 p-0 border-none shadow-none bg-muted'
-                : 'h-8 w-8 min-w-8 p-0 border-none shadow-none'
+                ? `${claseBotonAccion} bg-muted text-foreground hover:bg-muted hover:text-foreground`
+                : claseBotonAccion
             }
             aria-label={
               editandoCategorias
@@ -149,7 +152,7 @@ export function FaseItem({
             aria-pressed={editandoCategorias}
             onClick={alternarEdicionCategorias}
           >
-            <Icono nombre='Editar' className='h-5 w-5 shrink-0' />
+            <Icono nombre='Editar' className='h-4 w-4 shrink-0' />
           </Boton>
         </TooltipTrigger>
         <TooltipContent
@@ -174,7 +177,7 @@ export function FaseItem({
             <Boton
               type='button'
               variant='outline'
-              className='h-8 w-8 min-w-8 p-0 border-none shadow-none'
+              className={claseBotonAccion}
               estaCargando={toggleVisibilidadFaseMutation.isPending}
               aria-label={
                 esVisibleFaseEnApp
@@ -185,7 +188,7 @@ export function FaseItem({
             >
               <Icono
                 nombre={esVisibleFaseEnApp ? 'Visible' : 'NoVisible'}
-                className='h-5 w-5 shrink-0'
+                className='h-4 w-4 shrink-0'
               />
             </Boton>
           </TooltipTrigger>
@@ -210,14 +213,14 @@ export function FaseItem({
         <Boton
           type='button'
           variant='outline'
-          className='h-8 w-8 min-w-8 p-0 border-none shadow-none'
+          className={claseBotonAccion}
           estaCargando={estaGuardando}
           aria-label='Zonas de la fase'
           onClick={() =>
             onIrAZonas ? onIrAZonas(faseIndex) : navigate(pathZonas)
           }
         >
-          <Icono nombre='Zonas' className='h-5 w-5 shrink-0' />
+          <Icono nombre='Equipos' className='h-4 w-4 shrink-0' />
         </Boton>
       </TooltipTrigger>
       <TooltipContent
@@ -236,14 +239,14 @@ export function FaseItem({
       variant='outline'
       className={
         fase.sePuedeEditar
-          ? 'h-8 w-8 min-w-8 p-0 border-none shadow-none text-destructive hover:text-destructive'
-          : 'h-8 w-8 min-w-8 p-0 border-none shadow-none'
+          ? `${claseBotonAccion} hover:text-destructive/80 hover:bg-destructive/5`
+          : claseBotonAccion
       }
       onClick={
         fase.sePuedeEditar ? undefined : () => setMostrarNoSePuedeEliminar(true)
       }
     >
-      <Icono nombre='Eliminar' className='h-5 w-5 shrink-0' />
+      <Icono nombre='Eliminar' className='h-4 w-4 shrink-0' />
     </Boton>
   )
 
@@ -269,9 +272,9 @@ export function FaseItem({
           soloLectura={false}
         />
         <div className='flex gap-0 shrink-0'>
+          {botonZonas}
           {botonEditarCategorias}
           {botonVisibilidadEnApp}
-          {botonZonas}
           {fase.sePuedeEditar ? (
             <ModalEliminacion
               titulo='Eliminar fase'
