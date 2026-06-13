@@ -2,15 +2,15 @@ import { Badge } from '@/design-system/base-ui/badge'
 import { Input } from '@/design-system/base-ui/input'
 import { Label } from '@/design-system/base-ui/label'
 import { Boton } from '@/design-system/ykn-ui/boton'
+import { cn } from '@/logica-compartida/utils'
 import {
   DndContext,
-  type DragEndEvent,
   KeyboardSensor,
   PointerSensor,
   useSensor,
-  useSensors
+  useSensors,
+  type DragEndEvent
 } from '@dnd-kit/core'
-import { CSS } from '@dnd-kit/utilities'
 import {
   arrayMove,
   rectSortingStrategy,
@@ -18,12 +18,16 @@ import {
   sortableKeyboardCoordinates,
   useSortable
 } from '@dnd-kit/sortable'
-import { cn } from '@/logica-compartida/utils'
-import { Plus, Trash2, X, GripVertical } from 'lucide-react'
+import { CSS } from '@dnd-kit/utilities'
+import { GripVertical, Plus, Trash2, X } from 'lucide-react'
 import { useMemo, useState, type MouseEvent } from 'react'
 import type { Categoria } from '../tipos'
 
 const ANIO_ACTUAL = new Date().getFullYear()
+
+const CLASE_BADGE_CATEGORIA =
+  'bg-primary/10 text-primary border-primary/20 px-1.5 py-1.5 text-xs'
+const CLASE_BADGE_CATEGORIA_EDITABLE = `${CLASE_BADGE_CATEGORIA} cursor-pointer hover:bg-primary/20 transition-colors`
 
 /** Ordena por `orden`, renumera 1…n en categorías con nombre y luego las sin nombre. */
 function ordenarYRenumerar(cats: Categoria[]): Categoria[] {
@@ -105,7 +109,7 @@ function SortableBadgeCategoria({
         <button
           type='button'
           className={cn(
-            'mr-0.5 flex h-7 w-7 shrink-0 cursor-grab touch-none items-center justify-center rounded-md',
+            'mr-0.5 flex h-6 w-6 shrink-0 cursor-grab touch-none items-center justify-center rounded-md',
             'text-muted-foreground hover:bg-muted/80 active:cursor-grabbing'
           )}
           aria-label='Reordenar categoría'
@@ -117,15 +121,13 @@ function SortableBadgeCategoria({
       )}
       <Badge
         variant='secondary'
-        className={`bg-primary/10 text-primary border-primary/20 pl-3 pr-1.5 py-1.5 text-sm ${
-          soloLectura
-            ? ''
-            : 'cursor-pointer hover:bg-primary/20 transition-colors'
-        }`}
+        className={
+          soloLectura ? CLASE_BADGE_CATEGORIA : CLASE_BADGE_CATEGORIA_EDITABLE
+        }
         onClick={soloLectura ? undefined : onClicBadge}
       >
         {categoria.nombre}
-        {(categoria.anioDesde || categoria.anioHasta) && (
+        {!soloLectura && (categoria.anioDesde || categoria.anioHasta) && (
           <span className='ml-1'>
             {categoria.anioDesde === categoria.anioHasta
               ? `(${categoria.anioDesde || '—'})`
@@ -299,17 +301,15 @@ export function Categorias({
         <Badge
           key={categoria.id}
           variant='secondary'
-          className={`bg-primary/10 text-primary border-primary/20 pl-3 pr-1.5 py-1.5 text-sm ${
-            soloLectura
-              ? ''
-              : 'cursor-pointer hover:bg-primary/20 transition-colors'
-          }`}
+          className={
+            soloLectura ? CLASE_BADGE_CATEGORIA : CLASE_BADGE_CATEGORIA_EDITABLE
+          }
           onClick={
             soloLectura ? undefined : () => alClickearCategoria(categoria.id)
           }
         >
           {categoria.nombre}
-          {(categoria.anioDesde || categoria.anioHasta) && (
+          {!soloLectura && (categoria.anioDesde || categoria.anioHasta) && (
             <span className='ml-1'>
               {categoria.anioDesde === categoria.anioHasta
                 ? `(${categoria.anioDesde || '—'})`
@@ -333,7 +333,9 @@ export function Categorias({
     )
 
     const inner = (
-      <div className='flex flex-wrap items-center gap-2 mb-3'>{badgeNodes}</div>
+      <div className='flex flex-wrap items-center gap-1.5 mb-3'>
+        {badgeNodes}
+      </div>
     )
 
     if (mostrarAsaReorden) {
