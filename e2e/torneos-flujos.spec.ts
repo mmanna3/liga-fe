@@ -1,5 +1,14 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 import { login, setScenario } from './helpers'
+
+/** Sección de categorías plantilla del torneo (no las de cada fase). */
+function seccionCategoriasTorneo(page: Page) {
+  return page.locator('[data-slot="card-content"]').filter({
+    has: page.getByText('Categorías del torneo (plantilla para nuevas fases)', {
+      exact: true
+    })
+  })
+}
 
 test.describe('Torneos — flujos profundos', () => {
   test.describe.configure({ mode: 'serial' })
@@ -67,7 +76,8 @@ test.describe('Torneos — flujos profundos', () => {
     await expect(page.getByText('Torneo Apertura 2026').first()).toBeVisible()
     await expect(page.getByText('Primera Fase')).toBeVisible()
     await expect(page.getByText('Todos contra todos')).toBeVisible()
-    await expect(page.getByText('Sub 12')).toBeVisible()
+    // Sub 12 aparece en la plantilla del torneo y en las categorías de la fase
+    await expect(page.getByText('Sub 12')).toHaveCount(2)
   })
 
   test('agrega una fase nueva desde el detalle del torneo', async ({ page }) => {
@@ -83,6 +93,7 @@ test.describe('Torneos — flujos profundos', () => {
     await expect(page.getByRole('dialog')).toBeVisible()
     await page.getByRole('button', { name: 'Crear fase' }).click()
 
+    await expect(page.getByRole('dialog')).not.toBeVisible()
     await expect(page.getByText('Nueva fase')).toBeVisible()
   })
 
@@ -423,14 +434,16 @@ test.describe('Torneos — flujos profundos', () => {
 
     await page.getByRole('button', { name: 'Editar torneo' }).click()
 
-    // "Sub 12" debe estar visible como badge
-    await expect(page.getByText('Sub 12')).toBeVisible()
+    const categoriasTorneo = seccionCategoriasTorneo(page)
+
+    // "Sub 12" debe estar visible como badge en la plantilla del torneo
+    await expect(categoriasTorneo.getByText('Sub 12')).toBeVisible()
 
     // Clic en la X del badge "Sub 12"
     // El badge contiene un <button> con el icono X para quitar la categoría
-    await page.getByText('Sub 12').locator('button').click()
+    await categoriasTorneo.getByText('Sub 12').locator('button').click()
 
-    await expect(page.getByText('Sub 12')).not.toBeVisible()
+    await expect(categoriasTorneo.getByText('Sub 12')).not.toBeVisible()
 
     let bodyEnviado: unknown = null
     await page.route('**/api/Torneo/1', async (route) => {
