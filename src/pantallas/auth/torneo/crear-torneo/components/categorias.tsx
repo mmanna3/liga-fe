@@ -354,7 +354,14 @@ export function Categorias({
   return (
     <div>
       {titulo ? (
-        <Label className='block mb-2 text-md font-semibold'>{titulo}</Label>
+        <Label
+          className={cn(
+            'block mb-2 font-semibold',
+            soloLectura ? 'text-sm text-muted-foreground' : 'text-md'
+          )}
+        >
+          {titulo}
+        </Label>
       ) : null}
 
       {valor.length > 0 && valor.some((c) => c.nombre) && renderBadges()}
