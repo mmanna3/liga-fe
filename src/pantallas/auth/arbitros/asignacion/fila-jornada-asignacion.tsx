@@ -9,7 +9,8 @@ import BotonWhatsappArbitro from './boton-whatsapp-arbitro'
 import {
   claveWhatsappJornadaArbitro,
   formatearDiaCorto,
-  jornadaTieneAsignacion
+  jornadaTieneAsignacion,
+  type DatosWhatsappEnviadoArbitro
 } from './utilidades-asignacion'
 import SelectorArbitroJornada from './selector-arbitro-jornada'
 
@@ -24,7 +25,11 @@ interface FilaJornadaAsignacionProps {
   guardando: boolean
   alCambiarArbitro1: (arbitroId: string) => void
   alCambiarArbitro2: (arbitroId: string) => void
-  alMarcarWhatsappEnviado: (jornadaId: number, arbitroId: number) => void
+  alMarcarWhatsappEnviado: (
+    jornadaId: number,
+    arbitroId: number,
+    datos: DatosWhatsappEnviadoArbitro
+  ) => void
 }
 
 function SlotArbitroConWhatsapp({
@@ -50,7 +55,11 @@ function SlotArbitroConWhatsapp({
   whatsappEnviado: boolean
   guardando: boolean
   alCambiar: (arbitroId: string) => void
-  alMarcarWhatsappEnviado: (jornadaId: number, arbitroId: number) => void
+  alMarcarWhatsappEnviado: (
+    jornadaId: number,
+    arbitroId: number,
+    datos: DatosWhatsappEnviadoArbitro
+  ) => void
 }) {
   return (
     <SelectorArbitroJornada
@@ -70,9 +79,9 @@ function SlotArbitroConWhatsapp({
           horarioDeJuegoTorneo={horarioDeJuegoTorneo}
           whatsappEnviado={whatsappEnviado}
           deshabilitado={guardando}
-          alMarcarEnviado={() => {
+          alMarcarEnviado={(datos) => {
             if (arbitroId === 'sin-arbitro') return
-            alMarcarWhatsappEnviado(jornada.id, Number(arbitroId))
+            alMarcarWhatsappEnviado(jornada.id, Number(arbitroId), datos)
           }}
         />
       }

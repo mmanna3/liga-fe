@@ -14,6 +14,7 @@ import { cn } from '@/logica-compartida/utils'
 import { useState } from 'react'
 import { IconoWhatsapp } from './icono-whatsapp'
 import ModalWhatsappArbitro from './modal-whatsapp-arbitro'
+import type { DatosWhatsappEnviadoArbitro } from './utilidades-asignacion'
 import { telefonoParaWaMe } from './utilidades-asignacion'
 
 interface BotonWhatsappArbitroProps {
@@ -24,7 +25,7 @@ interface BotonWhatsappArbitroProps {
   horarioDeJuegoTorneo?: string | null
   whatsappEnviado: boolean
   deshabilitado?: boolean
-  alMarcarEnviado: () => void
+  alMarcarEnviado: (datos: DatosWhatsappEnviadoArbitro) => void
 }
 
 export default function BotonWhatsappArbitro({

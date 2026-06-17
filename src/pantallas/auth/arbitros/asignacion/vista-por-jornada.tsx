@@ -16,7 +16,8 @@ import { useState } from 'react'
 import FilaJornadaAsignacion from './fila-jornada-asignacion'
 import {
   formatearDiaCorto,
-  jornadaTieneAsignacion
+  jornadaTieneAsignacion,
+  type DatosWhatsappEnviadoArbitro
 } from './utilidades-asignacion'
 
 interface VistaPorJornadaProps {
@@ -29,7 +30,11 @@ interface VistaPorJornadaProps {
     arbitro1: string,
     arbitro2: string
   ) => void
-  alMarcarWhatsappEnviado: (jornadaId: number, arbitroId: number) => void
+  alMarcarWhatsappEnviado: (
+    jornadaId: number,
+    arbitroId: number,
+    datos: DatosWhatsappEnviadoArbitro
+  ) => void
 }
 
 function SeccionColapsable({
@@ -87,7 +92,11 @@ function TorneoAsignacionTree({
     arbitro1: string,
     arbitro2: string
   ) => void
-  alMarcarWhatsappEnviado: (jornadaId: number, arbitroId: number) => void
+  alMarcarWhatsappEnviado: (
+    jornadaId: number,
+    arbitroId: number,
+    datos: DatosWhatsappEnviadoArbitro
+  ) => void
 }) {
   return (
     <SeccionColapsable titulo={torneo.nombre ?? 'Torneo'}>

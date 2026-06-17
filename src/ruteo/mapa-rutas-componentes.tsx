@@ -12,6 +12,7 @@ import AprobarRechazarDelegado from '@/pantallas/auth/delegados/aprobar-rechazar
 import ArbitrosHub from '@/pantallas/auth/arbitros/arbitros-hub'
 import DatosArbitros from '@/pantallas/auth/arbitros/datos-arbitros'
 import AsignacionPorJornada from '@/pantallas/auth/arbitros/asignacion-por-jornada'
+import AsignacionHistorica from '@/pantallas/auth/arbitros/asignacion-historica'
 import CrearArbitro from '@/pantallas/auth/arbitros/crear-arbitro'
 import EditarArbitro from '@/pantallas/auth/arbitros/editar-arbitro'
 import Delegados from '@/pantallas/auth/delegados/delegados'
@@ -215,6 +216,7 @@ export const mapaRutasComponentes = [
       { path: rutas.arbitros, element: <ArbitrosHub /> },
       { path: rutas.datosArbitros, element: <DatosArbitros /> },
       { path: rutas.asignacionArbitros, element: <AsignacionPorJornada /> },
+      { path: rutas.historicoArbitros, element: <AsignacionHistorica /> },
       { path: rutas.crearArbitro, element: <CrearArbitro /> },
       { path: `${rutas.editarArbitro}/:id`, element: <EditarArbitro /> },
       { path: `${rutas.detalleDelegado}/:id`, element: <DetalleDelegado /> },

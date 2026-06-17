@@ -1,6 +1,10 @@
 import { api } from '@/api/api'
 import type { AsignacionArbitrosPorAgrupadorDTO } from '@/api/clients'
-import { AsignarArbitrosJornadaDTO } from '@/api/clients'
+import {
+  AsignarArbitrosJornadaDTO,
+  MarcarWhatsappEnviadoArbitroJornadaDTO,
+  WhatsappCategoriaSnapshotDTO
+} from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
 import {
@@ -17,7 +21,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import VistaPorArbitro from './asignacion/vista-por-arbitro'
 import VistaPorJornada from './asignacion/vista-por-jornada'
-import { claveWhatsappJornadaArbitro } from './asignacion/utilidades-asignacion'
+import {
+  claveWhatsappJornadaArbitro,
+  type DatosWhatsappEnviadoArbitro
+} from './asignacion/utilidades-asignacion'
 
 function construirSlotsIniciales(data: AsignacionArbitrosPorAgrupadorDTO) {
   const slots: Record<number, { arbitro1: string; arbitro2: string }> = {}
@@ -157,12 +164,28 @@ export default function AsignacionPorJornada() {
   const mutationWhatsapp = useMutation({
     mutationFn: async ({
       jornadaId,
-      arbitroId
+      arbitroId,
+      datos
     }: {
       jornadaId: number
       arbitroId: number
+      datos: DatosWhatsappEnviadoArbitro
     }) => {
-      await api.marcarWhatsappEnviadoArbitroJornada(jornadaId, arbitroId)
+      await api.marcarWhatsappEnviadoArbitroJornada(
+        jornadaId,
+        arbitroId,
+        new MarcarWhatsappEnviadoArbitroJornadaDTO({
+          horarioInicio: datos.horarioInicio || undefined,
+          observaciones: datos.observaciones || undefined,
+          categorias: datos.categorias.map(
+            (c) =>
+              new WhatsappCategoriaSnapshotDTO({
+                id: c.id,
+                nombre: c.nombre
+              })
+          )
+        })
+      )
     },
     onMutate: ({ jornadaId, arbitroId }) => {
       const clave = claveWhatsappJornadaArbitro(jornadaId, arbitroId)
@@ -178,8 +201,12 @@ export default function AsignacionPorJornada() {
     }
   })
 
-  const alMarcarWhatsappEnviado = (jornadaId: number, arbitroId: number) => {
-    mutationWhatsapp.mutate({ jornadaId, arbitroId })
+  const alMarcarWhatsappEnviado = (
+    jornadaId: number,
+    arbitroId: number,
+    datos: DatosWhatsappEnviadoArbitro
+  ) => {
+    mutationWhatsapp.mutate({ jornadaId, arbitroId, datos })
   }
 
   const alCambiarArbitros = (

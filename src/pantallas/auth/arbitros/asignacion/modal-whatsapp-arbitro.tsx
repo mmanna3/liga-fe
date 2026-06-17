@@ -22,7 +22,8 @@ import {
   construirMensajeWhatsappArbitro,
   construirUrlWhatsapp,
   etiquetaCategoriaFase,
-  horarioParaInput
+  horarioParaInput,
+  type DatosWhatsappEnviadoArbitro
 } from './utilidades-asignacion'
 
 interface ModalWhatsappArbitroProps {
@@ -33,7 +34,7 @@ interface ModalWhatsappArbitroProps {
   telefono?: string | null
   categoriasFase: FaseCategoriaDTO[]
   horarioDeJuegoDefault?: string | null
-  alEnviar: () => void
+  alEnviar: (datos: DatosWhatsappEnviadoArbitro) => void
 }
 
 function categoriasOrdenadas(
@@ -114,7 +115,19 @@ export default function ModalWhatsappArbitro({
   const handleEnviar = () => {
     if (!url || !puedeEnviar) return
     window.open(url, '_blank', 'noopener,noreferrer')
-    alEnviar()
+    const categoriasEnviadas = categorias
+      .filter((categoria) =>
+        categoriasSeleccionadas.has(claveCategoriaFase(categoria))
+      )
+      .map((categoria) => ({
+        id: categoria.id ?? 0,
+        nombre: etiquetaCategoriaFase(categoria)
+      }))
+    alEnviar({
+      horarioInicio,
+      observaciones,
+      categorias: categoriasEnviadas
+    })
     onOpenChange(false)
   }
 

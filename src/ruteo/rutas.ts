@@ -31,6 +31,7 @@ export const rutas = {
   arbitros: 'arbitros',
   datosArbitros: 'arbitros/datos',
   asignacionArbitros: 'arbitros/asignacion',
+  historicoArbitros: 'arbitros/historico',
   crearArbitro: 'arbitros/crear',
   editarArbitro: 'arbitros/editar',
   configuracion: 'configuracion',

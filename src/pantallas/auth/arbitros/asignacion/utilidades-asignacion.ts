@@ -164,3 +164,50 @@ export function claveWhatsappJornadaArbitro(
 ): string {
   return `${jornadaId}-${arbitroId}`
 }
+
+export interface DatosWhatsappEnviadoArbitro {
+  horarioInicio: string
+  observaciones: string
+  categorias: { id: number; nombre: string }[]
+}
+
+export function formatearDetalleWhatsappHistorico(
+  whatsapp?: {
+    enviado?: boolean
+    horarioInicio?: string | null
+    observaciones?: string | null
+    categoriasNombres?: string[] | null
+    enviadoEn?: Date | null
+  } | null
+): string[] {
+  if (!whatsapp?.enviado) return []
+
+  const lineas: string[] = []
+  const categorias = (whatsapp.categoriasNombres ?? []).filter(Boolean)
+  if (categorias.length > 0) {
+    lineas.push(`Categorías: ${categorias.join(', ')}`)
+  }
+  if (whatsapp.horarioInicio?.trim()) {
+    lineas.push(`Horario: ${horarioParaInput(whatsapp.horarioInicio)}`)
+  }
+  if (whatsapp.observaciones?.trim()) {
+    lineas.push(`Observaciones: ${whatsapp.observaciones.trim()}`)
+  }
+  if (whatsapp.enviadoEn) {
+    lineas.push(
+      `Enviado: ${whatsapp.enviadoEn.toLocaleString('es-AR', {
+        dateStyle: 'short',
+        timeStyle: 'short'
+      })}`
+    )
+  }
+  return lineas
+}
+
+export function obtenerRangoAniosArbitros(anioActual: number): number[] {
+  const desde = anioActual - 20
+  const hasta = anioActual + 1
+  const anios: number[] = []
+  for (let a = hasta; a >= desde; a--) anios.push(a)
+  return anios
+}

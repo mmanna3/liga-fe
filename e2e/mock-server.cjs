@@ -21,6 +21,8 @@
  *   torneo_con_grupos        Torneo con grupos de fases anidados
  *   torneo_zonas_vacio       Página de zonas sin zonas creadas, equipos disponibles
  *   torneo_zonas_con_datos   Página de zonas con una zona y equipo asignado
+ *   arbitros_historico       Asignaciones históricas de árbitros con datos
+ *   arbitros_historico_vacio Asignaciones históricas sin resultados
  */
 const http = require('http')
 const { URL } = require('url')
@@ -435,6 +437,123 @@ const FECHA_ELIMINACION_FINAL = {
   ]
 }
 
+const TORNEO_ARB_HISTORICO = {
+  id: 1,
+  nombre: 'Torneo Apertura 2026',
+  anio: new Date().getFullYear(),
+  torneoAgrupadorId: 1,
+  torneoAgrupadorNombre: 'Liga Infantil',
+  fases: []
+}
+
+const ASIGNACION_HISTORICA_ARB = {
+  torneos: [
+    {
+      id: 1,
+      nombre: 'Torneo Apertura 2026',
+      horarioDeJuego: '20:00',
+      fases: [
+        {
+          id: 100,
+          nombre: 'Fase regular',
+          categorias: [
+            {
+              id: 1001,
+              nombre: 'Sub 12',
+              anioDesde: 2014,
+              anioHasta: 2015,
+              faseId: 100,
+              orden: 1
+            }
+          ],
+          zonas: [
+            {
+              id: 1,
+              nombre: 'Zona A',
+              fechasHistoricas: [
+                {
+                  fechaId: 50,
+                  dia: '2026-01-10',
+                  diaSemana: 'Sábado',
+                  numero: 1,
+                  instanciaNombre: null,
+                  jornadas: [
+                    {
+                      id: 500,
+                      dia: '2026-01-10',
+                      diaSemana: 'Sábado',
+                      torneoNombre: 'Torneo Apertura 2026',
+                      faseNombre: 'Fase regular',
+                      zonaNombre: 'Zona A',
+                      local: 'Infantil A',
+                      visitante: 'Infantil B',
+                      nombreClubLocal: 'Club Defensores del Norte',
+                      direccionLocal: 'Av. Test 123',
+                      localidadLocal: 'Rosario',
+                      arbitrosAsignados: [
+                        {
+                          id: 1,
+                          nombre: 'Juan',
+                          apellido: 'Uno',
+                          telefonoCelular: '+5491111223344',
+                          orden: 1,
+                          whatsappEnviado: true,
+                          whatsapp: {
+                            enviado: true,
+                            horarioInicio: '20:30',
+                            observaciones: 'Llegar 15 min antes',
+                            categoriasNombres: ['Sub 12'],
+                            enviadoEn: '2026-01-08T18:00:00'
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  arbitrosConJornadas: [
+    {
+      arbitroId: 1,
+      nombre: 'Juan',
+      apellido: 'Uno',
+      jornadasHistoricas: [
+        {
+          jornadaId: 500,
+          dia: '2026-01-10',
+          diaSemana: 'Sábado',
+          torneoNombre: 'Torneo Apertura 2026',
+          faseNombre: 'Fase regular',
+          zonaNombre: 'Zona A',
+          local: 'Infantil A',
+          visitante: 'Infantil B',
+          localidadLocal: 'Rosario',
+          fechaNumero: 1,
+          instanciaNombre: null,
+          orden: 1,
+          whatsapp: {
+            enviado: true,
+            horarioInicio: '20:30',
+            observaciones: 'Llegar 15 min antes',
+            categoriasNombres: ['Sub 12'],
+            enviadoEn: '2026-01-08T18:00:00'
+          }
+        }
+      ]
+    }
+  ]
+}
+
+const ASIGNACION_HISTORICA_VACIA = {
+  torneos: [],
+  arbitrosConJornadas: []
+}
+
 const TORNEO_1 = {
   id: 1,
   nombre: 'Torneo Apertura 2026',
@@ -666,7 +785,9 @@ const ROUTES = [
       torneos_con_datos: [TORNEO_1],
       torneo_detalle: [TORNEO_CON_FASES],
       torneo_editable: [TORNEO_EDITABLE],
-      torneo_con_agrupadores: []
+      torneo_con_agrupadores: [],
+      arbitros_historico: [TORNEO_ARB_HISTORICO],
+      arbitros_historico_vacio: [TORNEO_ARB_HISTORICO]
     }
   },
   // Torneos — detalle
@@ -958,6 +1079,16 @@ const ROUTES = [
     scenarios: {
       happy: null,
       fixture_eliminacion_directa_con_fechas: null
+    }
+  },
+
+  {
+    method: 'GET',
+    pattern: /^\/api\/Arbitro\/asignacion-historica-por-agrupador/,
+    scenarios: {
+      happy: ASIGNACION_HISTORICA_VACIA,
+      arbitros_historico: ASIGNACION_HISTORICA_ARB,
+      arbitros_historico_vacio: ASIGNACION_HISTORICA_VACIA
     }
   },
 

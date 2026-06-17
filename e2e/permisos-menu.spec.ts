@@ -48,7 +48,7 @@ test.describe('Permisos en menú lateral', () => {
     await loginAsUsuarioSoloTorneos(page)
     await page.goto('/torneos/detalle/1')
 
-    await expect(page.getByText('Torneo Apertura 2026')).toBeVisible()
+    await expect(page.getByText('Torneo Apertura 2026').first()).toBeVisible()
     await expect(page.locator('button[aria-label="Eliminar"]')).toHaveCount(0)
   })
 
