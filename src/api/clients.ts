@@ -14532,6 +14532,7 @@ export class LoginResponseDTO implements ILoginResponseDTO {
   exito?: boolean
   token?: string | undefined
   error?: string | undefined
+  permisos?: UsuarioAccesoModuloDTO[] | undefined
 
   constructor(data?: ILoginResponseDTO) {
     if (data) {
@@ -14547,6 +14548,11 @@ export class LoginResponseDTO implements ILoginResponseDTO {
       this.exito = _data['exito']
       this.token = _data['token']
       this.error = _data['error']
+      if (Array.isArray(_data['permisos'])) {
+        this.permisos = []
+        for (let item of _data['permisos'])
+          this.permisos!.push(UsuarioAccesoModuloDTO.fromJS(item))
+      }
     }
   }
 
@@ -14562,6 +14568,11 @@ export class LoginResponseDTO implements ILoginResponseDTO {
     data['exito'] = this.exito
     data['token'] = this.token
     data['error'] = this.error
+    if (Array.isArray(this.permisos)) {
+      data['permisos'] = []
+      for (let item of this.permisos)
+        data['permisos'].push(item ? item.toJSON() : undefined)
+    }
     return data
   }
 }
@@ -14570,6 +14581,7 @@ export interface ILoginResponseDTO {
   exito?: boolean
   token?: string | undefined
   error?: string | undefined
+  permisos?: UsuarioAccesoModuloDTO[] | undefined
 }
 
 export class ObtenerClubDTO implements IObtenerClubDTO {
@@ -15845,12 +15857,53 @@ export interface ITorneoDTO {
   categorias?: TorneoCategoriaDTO[] | undefined
 }
 
+export class UsuarioAccesoModuloDTO implements IUsuarioAccesoModuloDTO {
+  modulo?: number
+  nivel?: number
+
+  constructor(data?: IUsuarioAccesoModuloDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.modulo = _data['modulo']
+      this.nivel = _data['nivel']
+    }
+  }
+
+  static fromJS(data: any): UsuarioAccesoModuloDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new UsuarioAccesoModuloDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['modulo'] = this.modulo
+    data['nivel'] = this.nivel
+    return data
+  }
+}
+
+export interface IUsuarioAccesoModuloDTO {
+  modulo?: number
+  nivel?: number
+}
+
 export class UsuarioAdminDTO implements IUsuarioAdminDTO {
   id?: number
   nombreUsuario!: string
   rolId!: number
   rolNombre?: string | undefined
   blanqueoPendiente?: boolean
+  accesosModulo?: UsuarioAccesoModuloDTO[] | undefined
 
   constructor(data?: IUsuarioAdminDTO) {
     if (data) {
@@ -15868,6 +15921,11 @@ export class UsuarioAdminDTO implements IUsuarioAdminDTO {
       this.rolId = _data['rolId']
       this.rolNombre = _data['rolNombre']
       this.blanqueoPendiente = _data['blanqueoPendiente']
+      if (Array.isArray(_data['accesosModulo'])) {
+        this.accesosModulo = []
+        for (let item of _data['accesosModulo'])
+          this.accesosModulo!.push(UsuarioAccesoModuloDTO.fromJS(item))
+      }
     }
   }
 
@@ -15885,6 +15943,11 @@ export class UsuarioAdminDTO implements IUsuarioAdminDTO {
     data['rolId'] = this.rolId
     data['rolNombre'] = this.rolNombre
     data['blanqueoPendiente'] = this.blanqueoPendiente
+    if (Array.isArray(this.accesosModulo)) {
+      data['accesosModulo'] = []
+      for (let item of this.accesosModulo)
+        data['accesosModulo'].push(item ? item.toJSON() : undefined)
+    }
     return data
   }
 }
@@ -15895,6 +15958,7 @@ export interface IUsuarioAdminDTO {
   rolId: number
   rolNombre?: string | undefined
   blanqueoPendiente?: boolean
+  accesosModulo?: UsuarioAccesoModuloDTO[] | undefined
 }
 
 export class UsuarioDTO implements IUsuarioDTO {

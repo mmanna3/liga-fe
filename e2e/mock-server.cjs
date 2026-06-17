@@ -32,15 +32,51 @@ let SCENARIO = process.env.SCENARIO || 'happy'
 // JWT mínimo decodificable por jwtDecode
 // ---------------------------------------------------------------------------
 const headerB64 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'
-const payloadB64 = Buffer.from(
-  JSON.stringify({ role: 'Administrador', name: 'Admin E2E', exp: 9999999999 })
-).toString('base64url')
-const TOKEN_E2E = `${headerB64}.${payloadB64}.fake-e2e-signature`
-
 const payloadConsultaB64 = Buffer.from(
-  JSON.stringify({ role: 'Consulta', name: 'Consulta E2E', exp: 9999999999 })
+  JSON.stringify({ role: 'Consulta', name: 'Consulta E2E', exp: 9999999999, permisos: '[]' })
 ).toString('base64url')
 const TOKEN_CONSULTA = `${headerB64}.${payloadConsultaB64}.fake-e2e-signature`
+
+const PERMISOS_TODOS_CT = [
+  { modulo: 1, nivel: 2 },
+  { modulo: 2, nivel: 2 },
+  { modulo: 3, nivel: 2 },
+  { modulo: 4, nivel: 2 },
+  { modulo: 5, nivel: 2 },
+  { modulo: 6, nivel: 2 },
+  { modulo: 7, nivel: 2 },
+  { modulo: 8, nivel: 2 }
+]
+
+const PERMISOS_SOLO_TORNEOS_EDICION = [{ modulo: 1, nivel: 1 }]
+
+const PERMISOS_SOLO_TORNEOS_CT = [{ modulo: 1, nivel: 2 }]
+
+function tokenConPermisos(role, name, permisos) {
+  const payload = Buffer.from(
+    JSON.stringify({
+      role,
+      name,
+      exp: 9999999999,
+      permisos: JSON.stringify(permisos)
+    })
+  ).toString('base64url')
+  return `${headerB64}.${payload}.fake-e2e-signature`
+}
+
+const TOKEN_E2E = tokenConPermisos('Administrador', 'Admin E2E', PERMISOS_TODOS_CT)
+const TOKEN_SIN_PERMISOS = tokenConPermisos('Usuario', 'Sin permisos E2E', [])
+const TOKEN_SOLO_TORNEOS_EDICION = tokenConPermisos(
+  'Usuario',
+  'Solo Torneos Edición',
+  PERMISOS_SOLO_TORNEOS_EDICION
+)
+const TOKEN_SOLO_TORNEOS_CT = tokenConPermisos(
+  'Usuario',
+  'Solo Torneos CT',
+  PERMISOS_SOLO_TORNEOS_CT
+)
+const TOKEN_SUPER_ADMIN = tokenConPermisos('SuperAdministrador', 'Super Admin E2E', [])
 
 // ---------------------------------------------------------------------------
 // Fixtures
@@ -923,6 +959,58 @@ const ROUTES = [
       happy: null,
       fixture_eliminacion_directa_con_fechas: null
     }
+  },
+
+  {
+    method: 'GET',
+    pattern: '/api/Usuario/roles-asignables',
+    scenarios: {
+      happy: [
+        { id: 1, nombre: 'Administrador' },
+        { id: 2, nombre: 'Usuario' },
+        { id: 3, nombre: 'Consulta' }
+      ]
+    }
+  },
+  {
+    method: 'GET',
+    pattern: '/api/Usuario',
+    scenarios: {
+      happy: [
+        {
+          id: 1,
+          nombreUsuario: 'operador',
+          rolId: 2,
+          rolNombre: 'Usuario',
+          blanqueoPendiente: false,
+          accesosModulo: PERMISOS_SOLO_TORNEOS_EDICION
+        }
+      ]
+    }
+  },
+  {
+    method: 'GET',
+    pattern: /^\/api\/Usuario\/\d+$/,
+    scenarios: {
+      happy: {
+        id: 1,
+        nombreUsuario: 'operador',
+        rolId: 2,
+        rolNombre: 'Usuario',
+        blanqueoPendiente: false,
+        accesosModulo: PERMISOS_SOLO_TORNEOS_EDICION
+      }
+    }
+  },
+  {
+    method: 'POST',
+    pattern: '/api/Usuario',
+    scenarios: { happy: { id: 2, nombreUsuario: 'nuevo', rolId: 2, accesosModulo: [] } }
+  },
+  {
+    method: 'PUT',
+    pattern: /^\/api\/Usuario\/\d+$/,
+    scenarios: { happy: null }
   }
 ]
 
@@ -978,6 +1066,12 @@ const server = http.createServer((req, res) => {
     return
   }
 
+  if (req.method === 'GET' && pathname === '/api/Auth/permisos') {
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    res.end(JSON.stringify(PERMISOS_TODOS_CT))
+    return
+  }
+
   if (req.method === 'POST' && pathname === '/api/Auth/login') {
     let body = ''
     req.on('data', (chunk) => {
@@ -998,9 +1092,38 @@ const server = http.createServer((req, res) => {
         // credenciales por defecto
       }
 
-      const token = usuario === 'consulta' ? TOKEN_CONSULTA : TOKEN_E2E
+      const loginPorUsuario = {
+        admin: {
+          token: TOKEN_E2E,
+          permisos: PERMISOS_TODOS_CT
+        },
+        consulta: {
+          token: TOKEN_CONSULTA,
+          permisos: []
+        },
+        sinperm: {
+          token: TOKEN_SIN_PERMISOS,
+          permisos: []
+        },
+        'solo-torneos': {
+          token: TOKEN_SOLO_TORNEOS_EDICION,
+          permisos: PERMISOS_SOLO_TORNEOS_EDICION
+        },
+        'solo-torneos-ct': {
+          token: TOKEN_SOLO_TORNEOS_CT,
+          permisos: PERMISOS_SOLO_TORNEOS_CT
+        },
+        superadmin: {
+          token: TOKEN_SUPER_ADMIN,
+          permisos: []
+        }
+      }
+
+      const login = loginPorUsuario[usuario] ?? loginPorUsuario.admin
       res.writeHead(200, { 'Content-Type': 'application/json' })
-      res.end(JSON.stringify({ exito: true, token }))
+      res.end(
+        JSON.stringify({ exito: true, token: login.token, permisos: login.permisos })
+      )
     })
     return
   }

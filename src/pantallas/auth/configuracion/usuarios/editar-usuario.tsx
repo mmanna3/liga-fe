@@ -8,15 +8,23 @@ import ContenedorBotones from '@/design-system/ykn-ui/contenedor-botones'
 import { Input } from '@/design-system/ykn-ui/input'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
+import { seleccionDesdeAccesos } from '@/logica-compartida/permisos'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import MatrizPermisosModulo, {
+  accesosDesdeSeleccion,
+  type SeleccionPermisos
+} from './components/matriz-permisos-modulo'
 
 export default function EditarUsuario() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [nombreUsuario, setNombreUsuario] = useState('')
   const [rolId, setRolId] = useState('')
+  const [permisos, setPermisos] = useState<SeleccionPermisos>(() =>
+    seleccionDesdeAccesos([])
+  )
 
   const {
     data: usuario,
@@ -47,13 +55,27 @@ export default function EditarUsuario() {
     if (usuario) {
       setNombreUsuario(usuario.nombreUsuario || '')
       setRolId(String(usuario.rolId))
+      setPermisos(seleccionDesdeAccesos(usuario.accesosModulo))
     }
   }, [usuario])
+
+  const accesosActuales = accesosDesdeSeleccion(permisos)
+  const accesosOriginales = usuario?.accesosModulo ?? []
+
+  const permisosCambiaron =
+    accesosActuales.length !== accesosOriginales.length ||
+    accesosActuales.some(
+      (a) =>
+        !accesosOriginales.some(
+          (o) => o.modulo === a.modulo && o.nivel === a.nivel
+        )
+    )
 
   const hayCambios =
     !!usuario &&
     (nombreUsuario.trim().toLowerCase() !== usuario.nombreUsuario ||
-      Number(rolId) !== usuario.rolId)
+      Number(rolId) !== usuario.rolId ||
+      permisosCambiaron)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -63,7 +85,8 @@ export default function EditarUsuario() {
       new UsuarioAdminDTO({
         id: usuario.id,
         nombreUsuario: nombreUsuario.trim().toLowerCase(),
-        rolId: Number(rolId)
+        rolId: Number(rolId),
+        accesosModulo: accesosActuales
       })
     )
     navigate(`${rutasNavegacion.detalleUsuario}/${id}`)
@@ -104,6 +127,7 @@ export default function EditarUsuario() {
                 columnasPorRenglon={roles.length <= 3 ? roles.length : 3}
               />
             )}
+            <MatrizPermisosModulo valor={permisos} onChange={setPermisos} />
             <ContenedorBotones>
               <Boton
                 type='submit'

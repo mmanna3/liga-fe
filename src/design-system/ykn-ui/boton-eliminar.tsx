@@ -16,6 +16,7 @@ import ModalEliminacion from '@/design-system/modal-eliminacion'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import Icono from '@/design-system/ykn-ui/icono'
 import { useAuth } from '@/logica-compartida/hooks/use-auth'
+import type { ModuloSistema } from '@/logica-compartida/permisos'
 import { cn } from '@/logica-compartida/utils'
 import * as React from 'react'
 
@@ -31,6 +32,8 @@ export interface BotonEliminarProps {
   variant?: BotonEliminarVariant
   puedeEliminar?: boolean
   textoNoSePuedeEliminar?: string
+  /** Si se indica, el botón depende del permiso de eliminación en ese módulo */
+  modulo?: ModuloSistema
   className?: string
   trigger?: React.ReactNode
   /** Estilo compacto para botoneras de header (h-8 w-8) */
@@ -124,12 +127,16 @@ export function BotonEliminar({
   textoNoSePuedeEliminar,
   className,
   trigger,
-  compacto = false
+  compacto = false,
+  modulo
 }: BotonEliminarProps) {
   const esAdmin = useAuth((state) => state.esAdmin)
+  const puedeEliminarModulo = useAuth((state) => state.puedeEliminar)
   const [abrirNoSePuede, setAbrirNoSePuede] = React.useState(false)
 
-  if (!esAdmin()) {
+  const puedeVerBoton = modulo != null ? puedeEliminarModulo(modulo) : esAdmin()
+
+  if (!puedeVerBoton) {
     return null
   }
 

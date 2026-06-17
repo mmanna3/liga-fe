@@ -13,6 +13,7 @@ import ModalDnisExpulsadosDeLaLiga from './modal-dnis-expulsados-de-la-liga'
 import ModalEscudoPorDefecto from './modal-escudo-por-defecto'
 import ModalHabilitacionFichaje from './modal-habilitacion-fichaje'
 import { VisibleSoloParaAdmin } from '@/design-system/visible-solo-para-admin'
+import { ModuloSistema } from '@/logica-compartida/hooks/use-auth'
 
 export default function Configuracion() {
   const navigate = useNavigate()
@@ -112,7 +113,7 @@ export default function Configuracion() {
                 </CardDescription>
               </CardHeader>
             </Card>
-            <VisibleSoloParaAdmin>
+            <VisibleSoloParaAdmin modulo={ModuloSistema.Configuracion}>
               <Card
                 className='cursor-pointer transition-colors hover:bg-muted/50'
                 role='button'

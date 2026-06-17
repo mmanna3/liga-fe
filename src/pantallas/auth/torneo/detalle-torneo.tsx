@@ -3,6 +3,7 @@ import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/ykn-ui/input'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import { rutasNavegacion } from '@/ruteo/rutas'
+import { ModuloSistema } from '@/logica-compartida/hooks/use-auth'
 import { Fragment, useState } from 'react'
 import { Categorias } from './crear-torneo/components/categorias'
 import { SelectorAgrupador } from './crear-torneo/components/selector-agrupador'
@@ -103,6 +104,7 @@ export default function DetalleTorneo() {
             {
               alApretar: () => eliminarMutation.mutate(undefined),
               tooltip: 'Eliminar',
+              modulo: ModuloSistema.Torneos,
               puedeEliminar,
               textoNoSePuedeEliminar:
                 'Este torneo tiene fases. Para eliminar el torneo, eliminá primero las fases que tiene.',

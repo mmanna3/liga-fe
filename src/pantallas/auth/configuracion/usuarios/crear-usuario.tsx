@@ -8,14 +8,22 @@ import ContenedorBotones from '@/design-system/ykn-ui/contenedor-botones'
 import { Input } from '@/design-system/ykn-ui/input'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
+import { seleccionDesdeAccesos } from '@/logica-compartida/permisos'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import MatrizPermisosModulo, {
+  accesosDesdeSeleccion,
+  type SeleccionPermisos
+} from './components/matriz-permisos-modulo'
 
 export default function CrearUsuario() {
   const navigate = useNavigate()
   const [nombreUsuario, setNombreUsuario] = useState('')
   const [rolId, setRolId] = useState('')
+  const [permisos, setPermisos] = useState<SeleccionPermisos>(() =>
+    seleccionDesdeAccesos([])
+  )
 
   const {
     data: roles,
@@ -41,7 +49,8 @@ export default function CrearUsuario() {
     mutation.mutate(
       new UsuarioAdminDTO({
         nombreUsuario: nombreUsuario.trim().toLowerCase(),
-        rolId: Number(rolId)
+        rolId: Number(rolId),
+        accesosModulo: accesosDesdeSeleccion(permisos)
       })
     )
   }
@@ -85,6 +94,7 @@ export default function CrearUsuario() {
                 columnasPorRenglon={roles.length <= 3 ? roles.length : 3}
               />
             )}
+            <MatrizPermisosModulo valor={permisos} onChange={setPermisos} />
             <ContenedorBotones>
               <Boton
                 type='submit'

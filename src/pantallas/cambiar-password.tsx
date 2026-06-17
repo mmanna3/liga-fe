@@ -54,7 +54,7 @@ export default function CambiarPassword() {
       )
 
       if (response.exito && response.token) {
-        setAuthFromToken(response.token, usuario)
+        setAuthFromToken(response.token, usuario, response.permisos)
         navigate('/', { replace: true })
       } else {
         setError(response.error || 'No se pudo cambiar la contraseña')

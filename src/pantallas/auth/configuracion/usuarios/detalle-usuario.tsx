@@ -16,6 +16,7 @@ import Icono from '@/design-system/ykn-ui/icono'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useNavigate, useParams } from 'react-router-dom'
 import DialogoBlanquearClaveUsuario from './components/dialogo-blanquear-clave-usuario'
+import PermisosModuloLectura from './components/permisos-modulo-lectura'
 
 export default function DetalleUsuario() {
   const { id } = useParams<{ id: string }>()
@@ -80,6 +81,14 @@ export default function DetalleUsuario() {
                     usuario.blanqueoPendiente ? 'Blanqueo pendiente' : 'Activo'
                   }
                 />
+                <div className='border-t pt-4'>
+                  <PermisosModuloLectura
+                    accesosModulo={usuario.accesosModulo}
+                    esSuperAdministrador={
+                      usuario.rolNombre === 'SuperAdministrador'
+                    }
+                  />
+                </div>
                 <VisibleSoloParaAdmin>
                   {!usuario.blanqueoPendiente && (
                     <div className='flex justify-end pt-2'>

@@ -65,7 +65,7 @@ export default function ModalCambiarPassword({
       )
 
       if (response.exito && response.token) {
-        setAuthFromToken(response.token, userName)
+        setAuthFromToken(response.token, userName ?? '', response.permisos)
         toast.success('Contraseña actualizada correctamente')
         handleOpenChange(false)
       } else {

@@ -2,22 +2,40 @@ import type { Page } from '@playwright/test'
 
 const MOCK_URL = 'http://localhost:3001'
 
-export async function login(page: Page) {
+async function loginConCredenciales(
+  page: Page,
+  usuario: string,
+  password: string
+) {
   await page.goto('/login')
-  await page.getByTestId('input-usuario').fill('admin')
-  await page.getByTestId('input-password').fill('admin123')
+  await page.getByTestId('input-usuario').fill(usuario)
+  await page.getByTestId('input-password').fill(password)
   await page.getByTestId('boton-ingresar').click()
-  // Esperar el menú lateral (indica login exitoso) en vez de waitForURL('/')
-  // porque Playwright trata URLs con/sin trailing slash como distintas
   await page.getByTestId('menu-lateral').waitFor({ state: 'visible' })
 }
 
+export async function login(page: Page) {
+  await loginConCredenciales(page, 'admin', 'admin123')
+}
+
 export async function loginAsConsulta(page: Page) {
-  await page.goto('/login')
-  await page.getByTestId('input-usuario').fill('consulta')
-  await page.getByTestId('input-password').fill('consulta123')
-  await page.getByTestId('boton-ingresar').click()
-  await page.getByTestId('menu-lateral').waitFor({ state: 'visible' })
+  await loginConCredenciales(page, 'consulta', 'consulta123')
+}
+
+export async function loginAsUsuarioSinPermisos(page: Page) {
+  await loginConCredenciales(page, 'sinperm', 'clave123')
+}
+
+export async function loginAsUsuarioSoloTorneos(page: Page) {
+  await loginConCredenciales(page, 'solo-torneos', 'clave123')
+}
+
+export async function loginAsUsuarioSoloTorneosControlTotal(page: Page) {
+  await loginConCredenciales(page, 'solo-torneos-ct', 'clave123')
+}
+
+export async function loginAsSuperAdmin(page: Page) {
+  await loginConCredenciales(page, 'superadmin', 'clave123')
 }
 
 export async function setScenario(scenario: string) {

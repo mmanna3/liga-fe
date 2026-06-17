@@ -1,40 +1,65 @@
 import { Toaster } from '@/design-system/base-ui/sonner'
-import { useAuth } from '@/logica-compartida/hooks/use-auth'
+import { ModuloSistema, useAuth } from '@/logica-compartida/hooks/use-auth'
+import type { NombreIcono } from '@/design-system/ykn-ui/icono'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { Outlet, useNavigate } from 'react-router-dom'
 import MenuLateral from './menu-lateral'
 
-const baseMenuItems = [
-  { name: 'Torneos', path: rutasNavegacion.torneos, icono: 'Torneos' as const },
-  { name: 'Clubes', path: rutasNavegacion.clubs, icono: 'Clubes' as const },
-  { name: 'Equipos', path: rutasNavegacion.equipos, icono: 'Equipos' as const },
+type MenuItem = {
+  name: string
+  path: string
+  icono: NombreIcono
+  modulo: ModuloSistema
+}
+
+const menuItemsConfig: MenuItem[] = [
+  {
+    name: 'Torneos',
+    path: rutasNavegacion.torneos,
+    icono: 'Torneos',
+    modulo: ModuloSistema.Torneos
+  },
+  {
+    name: 'Clubes',
+    path: rutasNavegacion.clubs,
+    icono: 'Clubes',
+    modulo: ModuloSistema.Clubes
+  },
+  {
+    name: 'Equipos',
+    path: rutasNavegacion.equipos,
+    icono: 'Equipos',
+    modulo: ModuloSistema.Equipos
+  },
   {
     name: 'Jugadores',
     path: rutasNavegacion.jugadores,
-    icono: 'Jugadores' as const
+    icono: 'Jugadores',
+    modulo: ModuloSistema.Jugadores
   },
   {
     name: 'Delegados',
     path: rutasNavegacion.delegados,
-    icono: 'Delegados' as const
+    icono: 'Delegados',
+    modulo: ModuloSistema.Delegados
   },
   {
     name: 'Árbitros',
     path: rutasNavegacion.arbitros,
-    icono: 'Arbitros' as const
-  }
-]
-
-const adminMenuItems = [
+    icono: 'Arbitros',
+    modulo: ModuloSistema.Arbitros
+  },
   {
     name: 'Reportes',
     path: rutasNavegacion.reportes,
-    icono: 'Reportes' as const
+    icono: 'Reportes',
+    modulo: ModuloSistema.Reportes
   },
   {
     name: 'Configuración',
     path: rutasNavegacion.configuracion,
-    icono: 'Configuracion' as const
+    icono: 'Configuracion',
+    modulo: ModuloSistema.Configuracion
   }
 ]
 
@@ -47,16 +72,16 @@ const superAdminMenuItems = [
 ]
 
 export default function AuthLayout() {
-  const esAdmin = useAuth((state) => state.esAdmin)
+  const tieneAccesoModulo = useAuth((state) => state.tieneAccesoModulo)
+  const esSuperAdministrador = useAuth((state) => state.esSuperAdministrador)
   const { userRole, userName, logout } = useAuth()
   const navigate = useNavigate()
 
-  const esSuperAdmin = userRole === 'SuperAdministrador'
   const menuItems = [
-    ...baseMenuItems,
-    ...(esAdmin() ? adminMenuItems : []),
-    ...(esSuperAdmin ? superAdminMenuItems : [])
+    ...menuItemsConfig.filter((item) => tieneAccesoModulo(item.modulo)),
+    ...(esSuperAdministrador() ? superAdminMenuItems : [])
   ]
+
   const handleLogout = () => {
     logout()
     navigate('/login')
@@ -72,7 +97,6 @@ export default function AuthLayout() {
         onLogout={handleLogout}
       />
 
-      {/* Contenido de la página */}
       <main className='flex flex-1 flex-col w-full min-h-0 p-6 bg-slate-100 print:bg-white print:p-4'>
         <div className='flex w-full flex-1 flex-col min-h-0'>
           <Outlet />

@@ -4,6 +4,7 @@ import {
   TooltipTrigger
 } from '@/design-system/base-ui/tooltip'
 import { VisibleSoloParaAdmin } from '@/design-system/visible-solo-para-admin'
+import type { ModuloSistema } from '@/logica-compartida/permisos'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { BotonEliminar } from '@/design-system/ykn-ui/boton-eliminar'
 import Icono, { type NombreIcono } from '@/design-system/ykn-ui/icono'
@@ -33,6 +34,8 @@ export interface IconoBotonera {
   }
   /** Opcional. Spinner y botón deshabilitado (p. ej. mutación en curso). */
   estaCargando?: boolean
+  /** Módulo para validar permiso de eliminación */
+  modulo?: ModuloSistema
 }
 
 export interface BotoneraProps {
@@ -59,6 +62,7 @@ function IconoBoton({ item }: { item: IconoBotonera }) {
         tooltip={item.tooltip}
         puedeEliminar={item.puedeEliminar}
         textoNoSePuedeEliminar={item.textoNoSePuedeEliminar}
+        modulo={item.modulo}
         compacto
       />
     )

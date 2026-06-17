@@ -43,6 +43,8 @@ import Login from '@/pantallas/login'
 import CambiarPassword from '@/pantallas/cambiar-password'
 import PoliticaDePrivacidad from '@/pantallas/politica-de-privacidad'
 import { RequiereAutenticacion } from '@/design-system/requiere-autenticacion'
+import { RequierePermisoModulo } from '@/design-system/requiere-permiso-modulo'
+import { ModuloSistema } from '@/logica-compartida/hooks/use-auth'
 import AuthLayout from '../pantallas/auth/auth-layout'
 import Club from '../pantallas/auth/club/club'
 import CrearClub from '../pantallas/auth/club/crear-club'
@@ -124,19 +126,86 @@ export const mapaRutasComponentes = [
         path: `${rutas.detalleTorneo}/:id/fases/:faseId/zonas/:zonaId/fixture`,
         element: <Fixture />
       },
-      { path: rutas.reportes, element: <ReportesPage /> },
-      { path: rutas.reportePagos, element: <ReportePagosPage /> },
+      {
+        path: rutas.reportes,
+        element: (
+          <RequierePermisoModulo modulo={ModuloSistema.Reportes}>
+            <ReportesPage />
+          </RequierePermisoModulo>
+        )
+      },
+      {
+        path: rutas.reportePagos,
+        element: (
+          <RequierePermisoModulo modulo={ModuloSistema.Reportes}>
+            <ReportePagosPage />
+          </RequierePermisoModulo>
+        )
+      },
       {
         path: rutas.reporteJugadoresHabilitadosPorTorneo,
-        element: <ReporteJugadoresHabilitadosPorTorneoPage />
+        element: (
+          <RequierePermisoModulo modulo={ModuloSistema.Reportes}>
+            <ReporteJugadoresHabilitadosPorTorneoPage />
+          </RequierePermisoModulo>
+        )
       },
-      { path: rutas.configuracion, element: <Configuracion /> },
-      { path: rutas.generacionDeFixtures, element: <GeneracionDeFixtures /> },
-      { path: rutas.sponsorsWebPublica, element: <SponsorsWebPublica /> },
-      { path: rutas.usuarios, element: <Usuarios /> },
-      { path: rutas.crearUsuario, element: <CrearUsuario /> },
-      { path: `${rutas.detalleUsuario}/:id`, element: <DetalleUsuario /> },
-      { path: `${rutas.editarUsuario}/:id`, element: <EditarUsuario /> },
+      {
+        path: rutas.configuracion,
+        element: (
+          <RequierePermisoModulo modulo={ModuloSistema.Configuracion}>
+            <Configuracion />
+          </RequierePermisoModulo>
+        )
+      },
+      {
+        path: rutas.generacionDeFixtures,
+        element: (
+          <RequierePermisoModulo modulo={ModuloSistema.Configuracion}>
+            <GeneracionDeFixtures />
+          </RequierePermisoModulo>
+        )
+      },
+      {
+        path: rutas.sponsorsWebPublica,
+        element: (
+          <RequierePermisoModulo modulo={ModuloSistema.Configuracion}>
+            <SponsorsWebPublica />
+          </RequierePermisoModulo>
+        )
+      },
+      {
+        path: rutas.usuarios,
+        element: (
+          <RequierePermisoModulo modulo={ModuloSistema.Configuracion}>
+            <Usuarios />
+          </RequierePermisoModulo>
+        )
+      },
+      {
+        path: rutas.crearUsuario,
+        element: (
+          <RequierePermisoModulo modulo={ModuloSistema.Configuracion}>
+            <CrearUsuario />
+          </RequierePermisoModulo>
+        )
+      },
+      {
+        path: `${rutas.detalleUsuario}/:id`,
+        element: (
+          <RequierePermisoModulo modulo={ModuloSistema.Configuracion}>
+            <DetalleUsuario />
+          </RequierePermisoModulo>
+        )
+      },
+      {
+        path: `${rutas.editarUsuario}/:id`,
+        element: (
+          <RequierePermisoModulo modulo={ModuloSistema.Configuracion}>
+            <EditarUsuario />
+          </RequierePermisoModulo>
+        )
+      },
       {
         path: `${rutas.fechasGeneracionFixture}/:id`,
         element: <FechasGeneracionFixture />
