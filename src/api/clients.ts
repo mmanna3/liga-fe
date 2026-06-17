@@ -10872,6 +10872,7 @@ export interface ICambiarEstadoDelJugadorDTO {
 
 export class CambiarPasswordDTO implements ICambiarPasswordDTO {
   usuario!: string
+  passwordActual?: string | undefined
   passwordNuevo!: string
 
   constructor(data?: ICambiarPasswordDTO) {
@@ -10886,6 +10887,7 @@ export class CambiarPasswordDTO implements ICambiarPasswordDTO {
   init(_data?: any) {
     if (_data) {
       this.usuario = _data['usuario']
+      this.passwordActual = _data['passwordActual']
       this.passwordNuevo = _data['passwordNuevo']
     }
   }
@@ -10900,6 +10902,7 @@ export class CambiarPasswordDTO implements ICambiarPasswordDTO {
   toJSON(data?: any) {
     data = typeof data === 'object' ? data : {}
     data['usuario'] = this.usuario
+    data['passwordActual'] = this.passwordActual
     data['passwordNuevo'] = this.passwordNuevo
     return data
   }
@@ -10907,6 +10910,7 @@ export class CambiarPasswordDTO implements ICambiarPasswordDTO {
 
 export interface ICambiarPasswordDTO {
   usuario: string
+  passwordActual?: string | undefined
   passwordNuevo: string
 }
 

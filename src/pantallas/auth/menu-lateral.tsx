@@ -9,6 +9,7 @@ import Icono from '@/design-system/ykn-ui/icono'
 import { cn } from '@/logica-compartida/utils'
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
+import ModalCambiarPassword from './components/modal-cambiar-password'
 
 interface MenuItem {
   name: string
@@ -28,9 +29,11 @@ function ContenidoMenu({
   userName,
   userRole,
   onLogout,
+  onAvatarClick,
   onLinkClick,
   navClassName = 'space-y-2 flex-1'
 }: MenuLateralProps & {
+  onAvatarClick: () => void
   onLinkClick?: () => void
   navClassName?: string
 }) {
@@ -65,9 +68,14 @@ function ContenidoMenu({
           </div>
         )}
         <div className='flex items-center gap-3 px-3 py-2 group'>
-          <div className='w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center'>
+          <button
+            type='button'
+            onClick={onAvatarClick}
+            title='Cambiar mi contraseña'
+            className='w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center shrink-0 hover:bg-gray-600 transition cursor-pointer'
+          >
             <Icono nombre='Usuario' className='w-5 h-5 text-gray-300' />
-          </div>
+          </button>
           <div className='flex-1 min-w-0'>
             <div className='font-medium text-sm text-white truncate'>
               {userName ?? ''}
@@ -97,9 +105,20 @@ export default function MenuLateral({
   onLogout
 }: MenuLateralProps) {
   const [sheetOpen, setSheetOpen] = useState(false)
+  const [modalPasswordOpen, setModalPasswordOpen] = useState(false)
+
+  const handleAvatarClick = () => {
+    setModalPasswordOpen(true)
+    setSheetOpen(false)
+  }
 
   return (
     <>
+      <ModalCambiarPassword
+        open={modalPasswordOpen}
+        onOpenChange={setModalPasswordOpen}
+      />
+
       {/* Desktop */}
       <aside
         className='admin-sidebar print:hidden hidden md:flex flex-col w-64 bg-gray-900 text-white p-4'
@@ -110,6 +129,7 @@ export default function MenuLateral({
           userName={userName}
           userRole={userRole}
           onLogout={onLogout}
+          onAvatarClick={handleAvatarClick}
         />
       </aside>
 
@@ -133,6 +153,7 @@ export default function MenuLateral({
               userName={userName}
               userRole={userRole}
               onLogout={onLogout}
+              onAvatarClick={handleAvatarClick}
               onLinkClick={() => setSheetOpen(false)}
               navClassName='space-y-2'
             />
