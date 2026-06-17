@@ -12,7 +12,7 @@ test.describe('Restricción de borrado por permisos', () => {
     await loginAsUsuarioSoloTorneos(page)
     await page.goto('/torneos/detalle/1')
 
-    await expect(page.getByText('Torneo Apertura 2026')).toBeVisible()
+    await expect(page.getByText('Torneo Apertura 2026').first()).toBeVisible()
     await expect(page.locator('button[aria-label="Eliminar"]')).toHaveCount(0)
   })
 
@@ -23,7 +23,7 @@ test.describe('Restricción de borrado por permisos', () => {
     await loginAsUsuarioSoloTorneos(page)
     await page.goto('/jugadores/detalle/1')
 
-    await expect(page.getByText('Juan', { exact: true })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Juan González' })).toBeVisible()
     await expect(page.locator('button[aria-label="Eliminar"]')).toHaveCount(0)
   })
 
