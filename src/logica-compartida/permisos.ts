@@ -1,5 +1,9 @@
 import type { UsuarioAccesoModuloDTO } from '@/api/clients'
-import { UsuarioAccesoModuloDTO as UsuarioAccesoModuloDTOClass } from '@/api/clients'
+import {
+  ModuloSistema as ModuloSistemaApi,
+  NivelAcceso as NivelAccesoApi,
+  UsuarioAccesoModuloDTO as UsuarioAccesoModuloDTOClass
+} from '@/api/clients'
 
 export enum ModuloSistema {
   Torneos = 1,
@@ -20,6 +24,22 @@ export enum NivelAcceso {
 export type PermisoModulo = {
   modulo: ModuloSistema
   nivel: NivelAcceso
+}
+
+function moduloDesdeApi(modulo: ModuloSistemaApi): ModuloSistema {
+  return modulo as number as ModuloSistema
+}
+
+function nivelDesdeApi(nivel: NivelAccesoApi): NivelAcceso {
+  return nivel as number as NivelAcceso
+}
+
+function moduloParaApi(modulo: ModuloSistema): ModuloSistemaApi {
+  return modulo as number as ModuloSistemaApi
+}
+
+function nivelParaApi(nivel: NivelAcceso): NivelAccesoApi {
+  return nivel as number as NivelAccesoApi
 }
 
 export const MODULOS_SISTEMA: {
@@ -50,8 +70,8 @@ export function normalizarPermisos(
         p.modulo <= ModuloSistema.Configuracion
     )
     .map((p) => ({
-      modulo: p.modulo as ModuloSistema,
-      nivel: p.nivel as NivelAcceso
+      modulo: moduloDesdeApi(p.modulo!),
+      nivel: nivelDesdeApi(p.nivel!)
     }))
 }
 
@@ -118,8 +138,8 @@ export function aDtoAccesosModulo(
     if (nivel == null) return []
     return [
       new UsuarioAccesoModuloDTOClass({
-        modulo,
-        nivel
+        modulo: moduloParaApi(modulo),
+        nivel: nivelParaApi(nivel)
       })
     ]
   })
@@ -134,7 +154,7 @@ export function seleccionDesdeAccesos(
   }
   for (const acceso of accesos ?? []) {
     if (acceso.modulo != null && acceso.nivel != null) {
-      mapa[acceso.modulo as ModuloSistema] = acceso.nivel as NivelAcceso
+      mapa[moduloDesdeApi(acceso.modulo)] = nivelDesdeApi(acceso.nivel)
     }
   }
   return mapa

@@ -1,5 +1,6 @@
 import type {
   ArbitroElegibleAsignacionDTO,
+  FaseCategoriaDTO,
   JornadaAsignacionDTO
 } from '@/api/clients'
 import { cn } from '@/logica-compartida/utils'
@@ -15,6 +16,8 @@ import SelectorArbitroJornada from './selector-arbitro-jornada'
 interface FilaJornadaAsignacionProps {
   jornada: JornadaAsignacionDTO
   arbitrosElegibles: ArbitroElegibleAsignacionDTO[]
+  categoriasFase: FaseCategoriaDTO[]
+  horarioDeJuegoTorneo?: string | null
   arbitro1Id: string
   arbitro2Id: string
   whatsappEnviadoPorAsignacion: Record<string, boolean>
@@ -28,6 +31,8 @@ function SlotArbitroConWhatsapp({
   titulo,
   jornada,
   arbitrosElegibles,
+  categoriasFase,
+  horarioDeJuegoTorneo,
   arbitroId,
   otroSlotArbitroId,
   whatsappEnviado,
@@ -38,6 +43,8 @@ function SlotArbitroConWhatsapp({
   titulo: string
   jornada: JornadaAsignacionDTO
   arbitrosElegibles: ArbitroElegibleAsignacionDTO[]
+  categoriasFase: FaseCategoriaDTO[]
+  horarioDeJuegoTorneo?: string | null
   arbitroId: string
   otroSlotArbitroId: string
   whatsappEnviado: boolean
@@ -59,6 +66,8 @@ function SlotArbitroConWhatsapp({
           jornada={jornada}
           arbitroId={arbitroId}
           arbitrosElegibles={arbitrosElegibles}
+          categoriasFase={categoriasFase}
+          horarioDeJuegoTorneo={horarioDeJuegoTorneo}
           whatsappEnviado={whatsappEnviado}
           deshabilitado={guardando}
           alMarcarEnviado={() => {
@@ -74,6 +83,8 @@ function SlotArbitroConWhatsapp({
 export default function FilaJornadaAsignacion({
   jornada,
   arbitrosElegibles,
+  categoriasFase,
+  horarioDeJuegoTorneo,
   arbitro1Id,
   arbitro2Id,
   whatsappEnviadoPorAsignacion,
@@ -138,6 +149,8 @@ export default function FilaJornadaAsignacion({
           titulo='Árbitro 1'
           jornada={jornada}
           arbitrosElegibles={arbitrosElegibles}
+          categoriasFase={categoriasFase}
+          horarioDeJuegoTorneo={horarioDeJuegoTorneo}
           arbitroId={arbitro1Id}
           otroSlotArbitroId={arbitro2Id}
           whatsappEnviado={whatsappEnviado1}
@@ -149,6 +162,8 @@ export default function FilaJornadaAsignacion({
           titulo='Árbitro 2'
           jornada={jornada}
           arbitrosElegibles={arbitrosElegibles}
+          categoriasFase={categoriasFase}
+          horarioDeJuegoTorneo={horarioDeJuegoTorneo}
           arbitroId={arbitro2Id}
           otroSlotArbitroId={arbitro1Id}
           whatsappEnviado={whatsappEnviado2}

@@ -155,6 +155,8 @@ function TorneoAsignacionTree({
                             key={jornada.id}
                             jornada={jornada}
                             arbitrosElegibles={arbitrosElegibles}
+                            categoriasFase={fase.categorias ?? []}
+                            horarioDeJuegoTorneo={torneo.horarioDeJuego}
                             arbitro1Id={slots.arbitro1}
                             arbitro2Id={slots.arbitro2}
                             whatsappEnviadoPorAsignacion={

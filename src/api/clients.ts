@@ -1316,6 +1316,62 @@ export class Client {
   /**
    * @return OK
    */
+  permisos(): Promise<UsuarioAccesoModuloDTO[]> {
+    let url_ = this.baseUrl + '/api/Auth/permisos'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processPermisos(_response)
+    })
+  }
+
+  protected processPermisos(
+    response: Response
+  ): Promise<UsuarioAccesoModuloDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(UsuarioAccesoModuloDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<UsuarioAccesoModuloDTO[]>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
   generarBackupBaseDeDatos(): Promise<void> {
     let url_ = this.baseUrl + '/api/Backup/generar-backup-base-de-datos'
     url_ = url_.replace(/[?&]$/, '')
@@ -12578,6 +12634,7 @@ export interface IEstructuraFasesItemDTO {
 export class FaseAsignacionDTO implements IFaseAsignacionDTO {
   id!: number
   nombre!: string | undefined
+  categorias!: FaseCategoriaDTO[] | undefined
   zonas!: ZonaAsignacionDTO[] | undefined
 
   constructor(data?: IFaseAsignacionDTO) {
@@ -12593,6 +12650,11 @@ export class FaseAsignacionDTO implements IFaseAsignacionDTO {
     if (_data) {
       this.id = _data['id']
       this.nombre = _data['nombre']
+      if (Array.isArray(_data['categorias'])) {
+        this.categorias = [] as any
+        for (let item of _data['categorias'])
+          this.categorias!.push(FaseCategoriaDTO.fromJS(item))
+      }
       if (Array.isArray(_data['zonas'])) {
         this.zonas = [] as any
         for (let item of _data['zonas'])
@@ -12612,6 +12674,10 @@ export class FaseAsignacionDTO implements IFaseAsignacionDTO {
     data = typeof data === 'object' ? data : {}
     data['id'] = this.id
     data['nombre'] = this.nombre
+    if (Array.isArray(this.categorias)) {
+      data['categorias'] = []
+      for (let item of this.categorias) data['categorias'].push(item.toJSON())
+    }
     if (Array.isArray(this.zonas)) {
       data['zonas'] = []
       for (let item of this.zonas) data['zonas'].push(item.toJSON())
@@ -12623,6 +12689,7 @@ export class FaseAsignacionDTO implements IFaseAsignacionDTO {
 export interface IFaseAsignacionDTO {
   id: number
   nombre: string | undefined
+  categorias: FaseCategoriaDTO[] | undefined
   zonas: ZonaAsignacionDTO[] | undefined
 }
 
@@ -13556,9 +13623,65 @@ export interface IInformacionInicialElementoTorneoDTO {
   elementos?: InformacionInicialElementoTorneoDTO[] | undefined
 }
 
+export class InformacionInicialFaseDTO implements IInformacionInicialFaseDTO {
+  id?: number
+  nombre?: string | undefined
+  tipoDeFase?: string | undefined
+  zonas?: InformacionInicialZonaDTO[] | undefined
+
+  constructor(data?: IInformacionInicialFaseDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.nombre = _data['nombre']
+      this.tipoDeFase = _data['tipoDeFase']
+      if (Array.isArray(_data['zonas'])) {
+        this.zonas = [] as any
+        for (let item of _data['zonas'])
+          this.zonas!.push(InformacionInicialZonaDTO.fromJS(item))
+      }
+    }
+  }
+
+  static fromJS(data: any): InformacionInicialFaseDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new InformacionInicialFaseDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['nombre'] = this.nombre
+    data['tipoDeFase'] = this.tipoDeFase
+    if (Array.isArray(this.zonas)) {
+      data['zonas'] = []
+      for (let item of this.zonas) data['zonas'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface IInformacionInicialFaseDTO {
+  id?: number
+  nombre?: string | undefined
+  tipoDeFase?: string | undefined
+  zonas?: InformacionInicialZonaDTO[] | undefined
+}
+
 export class InformacionInicialTorneoDTO implements IInformacionInicialTorneoDTO {
   id?: number
   nombre?: string | undefined
+  fases?: InformacionInicialFaseDTO[] | undefined
   elementos?: InformacionInicialElementoTorneoDTO[] | undefined
 
   constructor(data?: IInformacionInicialTorneoDTO) {
@@ -13574,6 +13697,11 @@ export class InformacionInicialTorneoDTO implements IInformacionInicialTorneoDTO
     if (_data) {
       this.id = _data['id']
       this.nombre = _data['nombre']
+      if (Array.isArray(_data['fases'])) {
+        this.fases = [] as any
+        for (let item of _data['fases'])
+          this.fases!.push(InformacionInicialFaseDTO.fromJS(item))
+      }
       if (Array.isArray(_data['elementos'])) {
         this.elementos = [] as any
         for (let item of _data['elementos'])
@@ -13593,6 +13721,10 @@ export class InformacionInicialTorneoDTO implements IInformacionInicialTorneoDTO
     data = typeof data === 'object' ? data : {}
     data['id'] = this.id
     data['nombre'] = this.nombre
+    if (Array.isArray(this.fases)) {
+      data['fases'] = []
+      for (let item of this.fases) data['fases'].push(item.toJSON())
+    }
     if (Array.isArray(this.elementos)) {
       data['elementos'] = []
       for (let item of this.elementos) data['elementos'].push(item.toJSON())
@@ -13604,6 +13736,7 @@ export class InformacionInicialTorneoDTO implements IInformacionInicialTorneoDTO
 export interface IInformacionInicialTorneoDTO {
   id?: number
   nombre?: string | undefined
+  fases?: InformacionInicialFaseDTO[] | undefined
   elementos?: InformacionInicialElementoTorneoDTO[] | undefined
 }
 
@@ -14549,7 +14682,7 @@ export class LoginResponseDTO implements ILoginResponseDTO {
       this.token = _data['token']
       this.error = _data['error']
       if (Array.isArray(_data['permisos'])) {
-        this.permisos = []
+        this.permisos = [] as any
         for (let item of _data['permisos'])
           this.permisos!.push(UsuarioAccesoModuloDTO.fromJS(item))
       }
@@ -14570,8 +14703,7 @@ export class LoginResponseDTO implements ILoginResponseDTO {
     data['error'] = this.error
     if (Array.isArray(this.permisos)) {
       data['permisos'] = []
-      for (let item of this.permisos)
-        data['permisos'].push(item ? item.toJSON() : undefined)
+      for (let item of this.permisos) data['permisos'].push(item.toJSON())
     }
     return data
   }
@@ -14582,6 +14714,22 @@ export interface ILoginResponseDTO {
   token?: string | undefined
   error?: string | undefined
   permisos?: UsuarioAccesoModuloDTO[] | undefined
+}
+
+export enum ModuloSistema {
+  _1 = 1,
+  _2 = 2,
+  _3 = 3,
+  _4 = 4,
+  _5 = 5,
+  _6 = 6,
+  _7 = 7,
+  _8 = 8
+}
+
+export enum NivelAcceso {
+  _1 = 1,
+  _2 = 2
 }
 
 export class ObtenerClubDTO implements IObtenerClubDTO {
@@ -15634,6 +15782,7 @@ export interface ITorneoAgrupadorDTO {
 export class TorneoAsignacionDTO implements ITorneoAsignacionDTO {
   id!: number
   nombre!: string | undefined
+  horarioDeJuego?: string | undefined
   fases!: FaseAsignacionDTO[] | undefined
 
   constructor(data?: ITorneoAsignacionDTO) {
@@ -15649,6 +15798,7 @@ export class TorneoAsignacionDTO implements ITorneoAsignacionDTO {
     if (_data) {
       this.id = _data['id']
       this.nombre = _data['nombre']
+      this.horarioDeJuego = _data['horarioDeJuego']
       if (Array.isArray(_data['fases'])) {
         this.fases = [] as any
         for (let item of _data['fases'])
@@ -15668,6 +15818,7 @@ export class TorneoAsignacionDTO implements ITorneoAsignacionDTO {
     data = typeof data === 'object' ? data : {}
     data['id'] = this.id
     data['nombre'] = this.nombre
+    data['horarioDeJuego'] = this.horarioDeJuego
     if (Array.isArray(this.fases)) {
       data['fases'] = []
       for (let item of this.fases) data['fases'].push(item.toJSON())
@@ -15679,6 +15830,7 @@ export class TorneoAsignacionDTO implements ITorneoAsignacionDTO {
 export interface ITorneoAsignacionDTO {
   id: number
   nombre: string | undefined
+  horarioDeJuego?: string | undefined
   fases: FaseAsignacionDTO[] | undefined
 }
 
@@ -15858,8 +16010,8 @@ export interface ITorneoDTO {
 }
 
 export class UsuarioAccesoModuloDTO implements IUsuarioAccesoModuloDTO {
-  modulo?: number
-  nivel?: number
+  modulo?: ModuloSistema
+  nivel?: NivelAcceso
 
   constructor(data?: IUsuarioAccesoModuloDTO) {
     if (data) {
@@ -15893,8 +16045,8 @@ export class UsuarioAccesoModuloDTO implements IUsuarioAccesoModuloDTO {
 }
 
 export interface IUsuarioAccesoModuloDTO {
-  modulo?: number
-  nivel?: number
+  modulo?: ModuloSistema
+  nivel?: NivelAcceso
 }
 
 export class UsuarioAdminDTO implements IUsuarioAdminDTO {
@@ -15922,7 +16074,7 @@ export class UsuarioAdminDTO implements IUsuarioAdminDTO {
       this.rolNombre = _data['rolNombre']
       this.blanqueoPendiente = _data['blanqueoPendiente']
       if (Array.isArray(_data['accesosModulo'])) {
-        this.accesosModulo = []
+        this.accesosModulo = [] as any
         for (let item of _data['accesosModulo'])
           this.accesosModulo!.push(UsuarioAccesoModuloDTO.fromJS(item))
       }
@@ -15946,7 +16098,7 @@ export class UsuarioAdminDTO implements IUsuarioAdminDTO {
     if (Array.isArray(this.accesosModulo)) {
       data['accesosModulo'] = []
       for (let item of this.accesosModulo)
-        data['accesosModulo'].push(item ? item.toJSON() : undefined)
+        data['accesosModulo'].push(item.toJSON())
     }
     return data
   }

@@ -206,8 +206,8 @@ export default function AsignacionPorJornada() {
           Whatsapp que faltan enviar.{' '}
           <span className='text-muted-foreground'>En gris</span>, los ya
           enviados. Advertencia: No se puede saber con exactitud qué mensaje se
-          envió o no, el ícono pasará a gris luego de hacerle clic, asumiendo
-          que el mensaje fue enviado.
+          envió o no; el ícono pasará a gris al confirmar el envío desde el
+          modal, asumiendo que el mensaje fue enviado.
         </>
       }
       iconoTitulo='Pelota'

@@ -65,6 +65,29 @@ export function telefonoParaWaMe(telefono?: string | null): string | null {
   return digitos.length >= 10 ? digitos : null
 }
 
+export function horarioParaInput(val?: string | null): string {
+  if (!val?.trim()) return ''
+  return val.slice(0, 5)
+}
+
+export function claveCategoriaFase(categoria: {
+  id?: number
+  nombre: string
+  orden: number
+}): string {
+  return categoria.id != null
+    ? String(categoria.id)
+    : `${categoria.nombre}-${categoria.orden}`
+}
+
+export function etiquetaCategoriaFase(categoria: {
+  nombre: string
+  anioDesde: number
+  anioHasta: number
+}): string {
+  return categoria.nombre
+}
+
 export interface DatosMensajeWhatsappArbitro {
   nombre: string
   apellido: string
@@ -78,6 +101,9 @@ export interface DatosMensajeWhatsappArbitro {
   nombreClubLocal: string
   direccionLocal?: string | null
   localidadLocal?: string | null
+  horarioInicio?: string
+  categoriasSeleccionadas?: string[]
+  observaciones?: string
 }
 
 function construirUrlGoogleMaps(
@@ -93,6 +119,10 @@ export function construirMensajeWhatsappArbitro(
   datos: DatosMensajeWhatsappArbitro
 ): string {
   const diaTexto = formatearDiaMensajeWhatsapp(datos.dia, datos.diaSemana)
+  const horario = datos.horarioInicio?.trim()
+    ? horarioParaInput(datos.horarioInicio)
+    : ''
+  const parteHorario = horario ? ` a las *${horario}*` : ''
   const ubicacion = [datos.direccionLocal, datos.localidadLocal]
     .filter(Boolean)
     .join(', ')
@@ -102,12 +132,19 @@ export function construirMensajeWhatsappArbitro(
     datos.localidadLocal
   )
   const parteMaps = urlMaps ? `\n\n>> Link Google Maps:\n${urlMaps}` : ''
+  const parteCategorias =
+    datos.categoriasSeleccionadas && datos.categoriasSeleccionadas.length > 0
+      ? `\nCategorías a dirigir: *${datos.categoriasSeleccionadas.join(', ')}*`
+      : ''
+  const parteObservaciones = datos.observaciones?.trim()
+    ? `\n\n*Observaciones:* ${datos.observaciones.trim()}`
+    : ''
 
   return (
     `Hola ${datos.nombre} ${datos.apellido}, tu próxima jornada es ` +
     `*${datos.local} vs ${datos.visitante}* del ` +
     `*Torneo ${datos.torneoNombre} - ${datos.faseNombre} - ${datos.zonaNombre}*.\n` +
-    `El día ${diaTexto} en el Club ${datos.nombreClubLocal}${parteUbicacion}.${parteMaps}` +
+    `El día ${diaTexto}${parteHorario} en el Club ${datos.nombreClubLocal}${parteUbicacion}.${parteCategorias}${parteObservaciones}${parteMaps}` +
     `\n\n--\nEDeFI Administración`
   )
 }
