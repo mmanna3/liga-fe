@@ -967,8 +967,7 @@ const ROUTES = [
     scenarios: {
       happy: [
         { id: 1, nombre: 'Administrador' },
-        { id: 2, nombre: 'Usuario' },
-        { id: 3, nombre: 'Consulta' }
+        { id: 2, nombre: 'Usuario' }
       ]
     }
   },

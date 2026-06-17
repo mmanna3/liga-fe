@@ -1,37 +1,37 @@
 import { expect, test } from '@playwright/test'
-import { login, loginAsConsulta, setScenario } from './helpers'
+import { login, loginAsUsuarioSoloTorneos, setScenario } from './helpers'
 
-test.describe('Restricción de borrado por rol', () => {
+test.describe('Restricción de borrado por permisos', () => {
   test.beforeEach(async () => {
     await setScenario('happy')
   })
 
-  test('usuario Consulta no ve el botón eliminar en detalle de torneo', async ({
+  test('usuario con edición en Torneos no ve el botón eliminar en detalle de torneo', async ({
     page
   }) => {
-    await loginAsConsulta(page)
+    await loginAsUsuarioSoloTorneos(page)
     await page.goto('/torneos/detalle/1')
 
     await expect(page.getByText('Torneo Apertura 2026')).toBeVisible()
     await expect(page.locator('button[aria-label="Eliminar"]')).toHaveCount(0)
   })
 
-  test('usuario Consulta no ve el botón eliminar en detalle de jugador', async ({
+  test('usuario con edición en Torneos no ve el botón eliminar en detalle de jugador', async ({
     page
   }) => {
     await setScenario('jugadores_con_datos')
-    await loginAsConsulta(page)
+    await loginAsUsuarioSoloTorneos(page)
     await page.goto('/jugadores/detalle/1')
 
     await expect(page.getByText('Juan', { exact: true })).toBeVisible()
     await expect(page.locator('button[aria-label="Eliminar"]')).toHaveCount(0)
   })
 
-  test('usuario Consulta no ve el botón eliminar en fase editable', async ({
+  test('usuario con edición en Torneos no ve el botón eliminar en fase editable', async ({
     page
   }) => {
     await setScenario('torneo_editable')
-    await loginAsConsulta(page)
+    await loginAsUsuarioSoloTorneos(page)
     await page.goto('/torneos/detalle/1')
 
     await expect(page.getByText('Primera Fase')).toBeVisible()
