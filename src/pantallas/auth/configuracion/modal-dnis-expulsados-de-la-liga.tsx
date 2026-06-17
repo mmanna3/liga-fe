@@ -12,6 +12,7 @@ import { Input } from '@/design-system/base-ui/input'
 import { Label } from '@/design-system/base-ui/label'
 import { Textarea } from '@/design-system/base-ui/textarea'
 import { Boton } from '@/design-system/ykn-ui/boton'
+import { BotonEliminar } from '@/design-system/ykn-ui/boton-eliminar'
 import Icono from '@/design-system/ykn-ui/icono'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
@@ -166,18 +167,15 @@ export default function ModalDnisExpulsadosDeLaLiga({
                       </p>
                     </div>
                     {item.id != null && (
-                      <Boton
-                        type='button'
+                      <BotonEliminar
+                        titulo='Quitar DNI de la lista'
+                        subtitulo={`¿Confirmás que querés quitar el DNI ${item.dni} de la lista de expulsados?`}
+                        eliminarTexto='Quitar'
+                        onEliminar={() => eliminarMutation.mutate(item.id!)}
+                        estaCargando={eliminarMutation.isPending}
                         variant='ghost'
-                        size='icon'
-                        className='shrink-0 text-muted-foreground hover:text-destructive'
-                        title='Quitar de la lista'
-                        disabled={eliminarMutation.isPending}
-                        onClick={() => eliminarMutation.mutate(item.id!)}
-                      >
-                        <Icono nombre='Eliminar' className='size-4' />
-                        <span className='sr-only'>Eliminar</span>
-                      </Boton>
+                        tooltip='Quitar de la lista'
+                      />
                     )}
                   </li>
                 ))}

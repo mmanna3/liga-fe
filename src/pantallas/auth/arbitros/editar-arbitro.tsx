@@ -3,7 +3,7 @@ import { ArbitroDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
-import ModalEliminacion from '@/design-system/modal-eliminacion'
+import { BotonEliminar } from '@/design-system/ykn-ui/boton-eliminar'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/ykn-ui/input'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
@@ -174,22 +174,13 @@ export default function EditarArbitro() {
             />
             <div className='flex justify-between gap-2'>
               {arbitro && (
-                <ModalEliminacion
+                <BotonEliminar
                   titulo='Eliminar árbitro'
                   subtitulo={`¿Confirmás que querés eliminar a ${arbitro.nombre} ${arbitro.apellido}? También se quitarán sus asignaciones a jornadas.`}
-                  eliminarOnClick={() => eliminarMutation.mutate(arbitro.id!)}
                   eliminarTexto='Eliminar árbitro'
+                  onEliminar={() => eliminarMutation.mutate(arbitro.id!)}
                   estaCargando={eliminarMutation.isPending}
-                  trigger={
-                    <Boton
-                      type='button'
-                      variant='outline'
-                      className='border-destructive text-destructive hover:bg-destructive/10'
-                      disabled={eliminarMutation.isPending}
-                    >
-                      Eliminar
-                    </Boton>
-                  }
+                  variant='texto-destructivo'
                 />
               )}
               <Boton

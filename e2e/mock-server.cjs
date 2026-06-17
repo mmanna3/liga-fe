@@ -37,6 +37,11 @@ const payloadB64 = Buffer.from(
 ).toString('base64url')
 const TOKEN_E2E = `${headerB64}.${payloadB64}.fake-e2e-signature`
 
+const payloadConsultaB64 = Buffer.from(
+  JSON.stringify({ role: 'Consulta', name: 'Consulta E2E', exp: 9999999999 })
+).toString('base64url')
+const TOKEN_CONSULTA = `${headerB64}.${payloadConsultaB64}.fake-e2e-signature`
+
 // ---------------------------------------------------------------------------
 // Fixtures
 // ---------------------------------------------------------------------------
@@ -969,6 +974,33 @@ const server = http.createServer((req, res) => {
         res.writeHead(400)
         res.end()
       }
+    })
+    return
+  }
+
+  if (req.method === 'POST' && pathname === '/api/Auth/login') {
+    let body = ''
+    req.on('data', (chunk) => {
+      body += chunk
+    })
+    req.on('end', () => {
+      if (SCENARIO === 'credenciales_invalidas') {
+        res.writeHead(200, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify({ exito: false, token: null }))
+        return
+      }
+
+      let usuario = 'admin'
+      try {
+        const parsed = JSON.parse(body)
+        usuario = parsed.usuario ?? 'admin'
+      } catch {
+        // credenciales por defecto
+      }
+
+      const token = usuario === 'consulta' ? TOKEN_CONSULTA : TOKEN_E2E
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ exito: true, token }))
     })
     return
   }

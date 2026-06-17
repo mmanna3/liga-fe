@@ -3,8 +3,8 @@ import { AprobarDelegadoEnElClubDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
+import { BotonEliminar } from '@/design-system/ykn-ui/boton-eliminar'
 import AprobarRechazarHeaderDelegado from './components/aprobar-rechazar-header-delegado'
-import DialogoEliminarDelegado from './components/dialogo-eliminar-delegado'
 import { Card, CardContent, CardHeader } from '@/design-system/base-ui/card'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import BotonVolver from '@/design-system/ykn-ui/boton-volver'
@@ -109,10 +109,11 @@ const AprobarRechazarDelegado: React.FC = () => {
                 Aprobar
               </Boton>
 
-              <DialogoEliminarDelegado
-                descripcion='Tené en cuenta que podés editar cualquiera de sus datos. Si confirmás la eliminación, toda su información se perderá y tendrá que volver a ficharse.'
-                delegadoId={delegado.id!}
-                onConfirm={(id) => rechazarMutation.mutate(id)}
+              <BotonEliminar
+                titulo='¿Estás seguro de borrar definitivamente del sistema este delegado?'
+                subtitulo='Tené en cuenta que podés editar cualquiera de sus datos. Si confirmás la eliminación, toda su información se perderá y tendrá que volver a ficharse.'
+                eliminarTexto='Eliminar definitivamente'
+                onEliminar={() => rechazarMutation.mutate(delegado.id!)}
                 estaCargando={
                   aprobarMutation.isPending || rechazarMutation.isPending
                 }

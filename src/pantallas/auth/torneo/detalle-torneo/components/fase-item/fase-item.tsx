@@ -5,22 +5,13 @@ import {
 } from '@/api/clients'
 import { useToggleVisibilidadFaseEnApp } from '@/api/hooks/use-visibilidad-en-app'
 import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from '@/design-system/base-ui/alert-dialog'
-import {
   Tooltip,
   TooltipContent,
   TooltipTrigger
 } from '@/design-system/base-ui/tooltip'
-import ModalEliminacion from '@/design-system/modal-eliminacion'
 import { VisibleSoloParaAdmin } from '@/design-system/visible-solo-para-admin'
 import { Boton } from '@/design-system/ykn-ui/boton'
+import { BotonEliminar } from '@/design-system/ykn-ui/boton-eliminar'
 import Icono from '@/design-system/ykn-ui/icono'
 import SelectorSimple from '@/design-system/ykn-ui/selector-simple'
 import { rutasNavegacion } from '@/ruteo/rutas'
@@ -78,8 +69,6 @@ export function FaseItem({
   enCard = false
 }: FaseItemProps) {
   const navigate = useNavigate()
-  const [mostrarNoSePuedeEliminar, setMostrarNoSePuedeEliminar] =
-    useState(false)
   const [editandoCategorias, setEditandoCategorias] = useState(false)
   const [categoriasEdicion, setCategoriasEdicion] = useState<Categoria[]>([])
   const [errorCategorias, setErrorCategorias] = useState<string | undefined>()
@@ -233,23 +222,6 @@ export function FaseItem({
     </Tooltip>
   )
 
-  const botonEliminar = (
-    <Boton
-      type='button'
-      variant='outline'
-      className={
-        fase.sePuedeEditar
-          ? `${claseBotonAccion} hover:text-destructive/80 hover:bg-destructive/5`
-          : claseBotonAccion
-      }
-      onClick={
-        fase.sePuedeEditar ? undefined : () => setMostrarNoSePuedeEliminar(true)
-      }
-    >
-      <Icono nombre='Eliminar' className='h-4 w-4 shrink-0' />
-    </Boton>
-  )
-
   const guardarCategorias = () => {
     if (!categoriasCompletas(categoriasEdicion)) {
       setErrorCategorias('Agregá al menos una categoría completa')
@@ -275,17 +247,16 @@ export function FaseItem({
           {botonZonas}
           {botonEditarCategorias}
           {botonVisibilidadEnApp}
-          {fase.sePuedeEditar ? (
-            <ModalEliminacion
-              titulo='Eliminar fase'
-              subtitulo={`¿Estás seguro de que querés eliminar la fase "${fase.nombre}"?`}
-              eliminarOnClick={onEliminar}
-              eliminarTexto='Eliminar'
-              trigger={botonEliminar}
-            />
-          ) : (
-            botonEliminar
-          )}
+          <BotonEliminar
+            titulo='Eliminar fase'
+            subtitulo={`¿Estás seguro de que querés eliminar la fase "${fase.nombre}"?`}
+            onEliminar={onEliminar}
+            puedeEliminar={fase.sePuedeEditar}
+            textoNoSePuedeEliminar='Esta fase no se puede eliminar. Para eliminarla, eliminá primero todas sus zonas.'
+            compacto
+            className={claseBotonAccion}
+            tooltip='Eliminar fase'
+          />
         </div>
       </div>
 
@@ -337,24 +308,6 @@ export function FaseItem({
           )}
         </div>
       )}
-
-      <AlertDialog
-        open={mostrarNoSePuedeEliminar}
-        onOpenChange={(open) => !open && setMostrarNoSePuedeEliminar(false)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>No se puede eliminar</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta fase no se puede eliminar. Para eliminarla, eliminá primero
-              todas sus zonas.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Volver</AlertDialogCancel>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   )
 }

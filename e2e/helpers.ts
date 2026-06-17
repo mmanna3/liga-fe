@@ -12,6 +12,14 @@ export async function login(page: Page) {
   await page.getByTestId('menu-lateral').waitFor({ state: 'visible' })
 }
 
+export async function loginAsConsulta(page: Page) {
+  await page.goto('/login')
+  await page.getByTestId('input-usuario').fill('consulta')
+  await page.getByTestId('input-password').fill('consulta123')
+  await page.getByTestId('boton-ingresar').click()
+  await page.getByTestId('menu-lateral').waitFor({ state: 'visible' })
+}
+
 export async function setScenario(scenario: string) {
   await fetch(`${MOCK_URL}/_set-scenario`, {
     method: 'POST',

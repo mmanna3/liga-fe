@@ -10,6 +10,7 @@ import { Input } from '@/design-system/base-ui/input'
 import { Label } from '@/design-system/base-ui/label'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
 import { Boton } from '@/design-system/ykn-ui/boton'
+import { BotonEliminar } from '@/design-system/ykn-ui/boton-eliminar'
 import Icono from '@/design-system/ykn-ui/icono'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useQueryClient } from '@tanstack/react-query'
@@ -218,18 +219,17 @@ export default function SponsorsWebPublica() {
                     <div className='flex items-start justify-between gap-2'>
                       <p className='font-medium'>{sponsor.nombre}</p>
                       {sponsor.id != null && (
-                        <Boton
-                          type='button'
+                        <BotonEliminar
+                          titulo='Eliminar sponsor'
+                          subtitulo={`¿Confirmás que querés eliminar el sponsor "${sponsor.nombre}"?`}
+                          eliminarTexto='Eliminar'
+                          onEliminar={() =>
+                            eliminarMutation.mutate(sponsor.id!)
+                          }
+                          estaCargando={eliminarMutation.isPending}
                           variant='ghost'
-                          size='icon'
-                          className='shrink-0 text-muted-foreground hover:text-destructive'
-                          title='Eliminar sponsor'
-                          disabled={eliminarMutation.isPending}
-                          onClick={() => eliminarMutation.mutate(sponsor.id!)}
-                        >
-                          <Icono nombre='Eliminar' className='size-4' />
-                          <span className='sr-only'>Eliminar</span>
-                        </Boton>
+                          tooltip='Eliminar sponsor'
+                        />
                       )}
                     </div>
                   </li>

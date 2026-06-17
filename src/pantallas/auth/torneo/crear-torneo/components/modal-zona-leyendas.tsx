@@ -24,8 +24,9 @@ import {
 import { Switch } from '@/design-system/base-ui/switch'
 import { Textarea } from '@/design-system/base-ui/textarea'
 import { Boton } from '@/design-system/ykn-ui/boton'
+import { BotonEliminar } from '@/design-system/ykn-ui/boton-eliminar'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { MessageSquareMore, Trash2 } from 'lucide-react'
+import { MessageSquareMore } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 
 const VALOR_CATEGORIA_GENERAL = 'general'
@@ -400,28 +401,22 @@ export default function ModalZonaLeyendas({
                             </p>
                           )}
                         </div>
-                        <Boton
-                          type='button'
-                          variant='ghost'
-                          size='icon'
-                          className='h-8 w-8 shrink-0 text-destructive hover:bg-destructive/10 hover:text-destructive'
-                          aria-label='Eliminar leyenda'
+                        <BotonEliminar
+                          titulo='Eliminar leyenda'
+                          subtitulo='¿Confirmás que querés eliminar esta leyenda de la zona?'
+                          eliminarTexto='Eliminar'
+                          onEliminar={() => {
+                            if (item.id != null)
+                              eliminarMutation.mutate(item.id)
+                          }}
                           estaCargando={
                             eliminarMutation.isPending &&
                             eliminarMutation.variables === item.id
                           }
-                          disabled={
-                            item.id == null ||
-                            (eliminarMutation.isPending &&
-                              eliminarMutation.variables !== item.id)
-                          }
-                          onClick={() => {
-                            if (item.id != null)
-                              eliminarMutation.mutate(item.id)
-                          }}
-                        >
-                          <Trash2 className='h-4 w-4' />
-                        </Boton>
+                          variant='ghost'
+                          tooltip='Eliminar leyenda'
+                          className='h-8 w-8 shrink-0 text-destructive hover:bg-destructive/10 hover:text-destructive'
+                        />
                       </li>
                     ))}
                   </ul>

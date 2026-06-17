@@ -7,7 +7,7 @@ import {
   TooltipContent,
   TooltipTrigger
 } from '@/design-system/base-ui/tooltip'
-import ModalEliminacion from '@/design-system/modal-eliminacion'
+import { BotonEliminar } from '@/design-system/ykn-ui/boton-eliminar'
 import { VisibleSoloParaAdmin } from '@/design-system/visible-solo-para-admin'
 import Icono from '@/design-system/ykn-ui/icono'
 import { useState } from 'react'
@@ -89,7 +89,6 @@ export interface FechaModoLecturaProps {
   onEditar: () => void
   onEliminar: () => void
   estaCargandoEliminar: boolean
-  mostrarBotonEliminar: boolean
 }
 
 export function FechaModoLectura({
@@ -97,8 +96,7 @@ export function FechaModoLectura({
   zonaId,
   onEditar,
   onEliminar,
-  estaCargandoEliminar,
-  mostrarBotonEliminar
+  estaCargandoEliminar
 }: FechaModoLecturaProps) {
   const diaDisplay = formatDia(fecha.dia)
   const toggleVisibilidadFechaMutation = useToggleVisibilidadFechaEnApp(
@@ -180,24 +178,16 @@ export function FechaModoLectura({
               className='size-3.5 text-muted-foreground '
             />
           </Button>
-          {mostrarBotonEliminar && (
-            <ModalEliminacion
-              titulo='Eliminar fecha'
-              subtitulo={`¿Confirmás que querés eliminar la ${etiquetaFecha(fecha)}? Se eliminarán también todas sus jornadas.`}
-              eliminarTexto='Eliminar fecha'
-              estaCargando={estaCargandoEliminar}
-              eliminarOnClick={onEliminar}
-              trigger={
-                <Button
-                  variant='ghost'
-                  size='icon'
-                  className='h-7 w-7 text-muted-foreground hover:text-destructive'
-                >
-                  <Icono nombre='Eliminar' className='size-3.5' />
-                </Button>
-              }
-            />
-          )}
+          <BotonEliminar
+            titulo='Eliminar fecha'
+            subtitulo={`¿Confirmás que querés eliminar la ${etiquetaFecha(fecha)}? Se eliminarán también todas sus jornadas.`}
+            eliminarTexto='Eliminar fecha'
+            onEliminar={onEliminar}
+            estaCargando={estaCargandoEliminar}
+            variant='ghost'
+            compacto
+            tooltip='Eliminar fecha'
+          />
         </div>
       </div>
 

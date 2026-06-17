@@ -1,22 +1,12 @@
 import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from '@/design-system/base-ui/alert-dialog'
-import {
   Tooltip,
   TooltipContent,
   TooltipTrigger
 } from '@/design-system/base-ui/tooltip'
-import ModalEliminacion from '@/design-system/modal-eliminacion'
 import { VisibleSoloParaAdmin } from '@/design-system/visible-solo-para-admin'
 import { Boton } from '@/design-system/ykn-ui/boton'
+import { BotonEliminar } from '@/design-system/ykn-ui/boton-eliminar'
 import Icono, { type NombreIcono } from '@/design-system/ykn-ui/icono'
-import { cn } from '@/logica-compartida/utils'
 import * as React from 'react'
 
 export interface IconoBotonera {
@@ -55,97 +45,49 @@ export interface BotoneraProps {
 
 function IconoBoton({ item }: { item: IconoBotonera }) {
   const esEliminar = !!item.modalEliminacion
-  const puedeEliminar = item.puedeEliminar !== false
-  const [abrirNoSePuede, setAbrirNoSePuede] = React.useState(false)
 
-  const iconoNombre: NombreIcono =
-    item.icono ?? (esEliminar ? 'Eliminar' : 'Editar')
+  if (esEliminar) {
+    return (
+      <BotonEliminar
+        onEliminar={item.alApretar}
+        titulo={item.modalEliminacion!.titulo}
+        subtitulo={item.modalEliminacion!.subtitulo}
+        eliminarTexto={
+          item.modalEliminacion!.eliminarTexto ?? item.modalEliminacion!.titulo
+        }
+        estaCargando={item.estaCargando ?? item.modalEliminacion?.estaCargando}
+        tooltip={item.tooltip}
+        puedeEliminar={item.puedeEliminar}
+        textoNoSePuedeEliminar={item.textoNoSePuedeEliminar}
+        compacto
+      />
+    )
+  }
+
+  const iconoNombre: NombreIcono = item.icono ?? 'Editar'
 
   const boton = (
     <Boton
       variant='outline'
       aria-label={item.tooltip}
-      className={cn(
-        'h-8 w-8 min-w-8 p-0 border-none shadow-none',
-        esEliminar &&
-          puedeEliminar &&
-          'border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive'
-      )}
-      onClick={
-        esEliminar && !puedeEliminar
-          ? () => setAbrirNoSePuede(true)
-          : esEliminar
-            ? undefined
-            : item.alApretar
-      }
-      estaCargando={item.estaCargando ?? item.modalEliminacion?.estaCargando}
+      className='h-8 w-8 min-w-8 p-0 border-none shadow-none'
+      onClick={item.alApretar}
+      estaCargando={item.estaCargando}
     >
       <Icono nombre={iconoNombre} className='h-5 w-5 shrink-0' />
     </Boton>
   )
 
-  const tooltipContent = (
-    <TooltipContent
-      side='bottom'
-      className='max-w-xs text-base px-4 py-3'
-      sideOffset={8}
-    >
-      <p>{item.tooltip}</p>
-    </TooltipContent>
-  )
-
-  if (esEliminar && puedeEliminar) {
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <span className='inline-flex'>
-            <ModalEliminacion
-              titulo={item.modalEliminacion!.titulo}
-              subtitulo={item.modalEliminacion!.subtitulo}
-              eliminarOnClick={item.alApretar}
-              eliminarTexto={
-                item.modalEliminacion!.eliminarTexto ??
-                item.modalEliminacion!.titulo
-              }
-              trigger={boton}
-              estaCargando={item.modalEliminacion?.estaCargando}
-            />
-          </span>
-        </TooltipTrigger>
-        {tooltipContent}
-      </Tooltip>
-    )
-  }
-
-  if (esEliminar && !puedeEliminar) {
-    return (
-      <>
-        <Tooltip>
-          <TooltipTrigger asChild>{boton}</TooltipTrigger>
-          {tooltipContent}
-        </Tooltip>
-        <AlertDialog open={abrirNoSePuede} onOpenChange={setAbrirNoSePuede}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>No se puede eliminar</AlertDialogTitle>
-              <AlertDialogDescription>
-                {item.textoNoSePuedeEliminar ??
-                  'No se puede realizar esta acción.'}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Volver</AlertDialogCancel>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </>
-    )
-  }
-
   return (
     <Tooltip>
       <TooltipTrigger asChild>{boton}</TooltipTrigger>
-      {tooltipContent}
+      <TooltipContent
+        side='bottom'
+        className='max-w-xs text-base px-4 py-3'
+        sideOffset={8}
+      >
+        <p>{item.tooltip}</p>
+      </TooltipContent>
     </Tooltip>
   )
 }
@@ -159,7 +101,7 @@ export default function Botonera({ iconos, children }: BotoneraProps) {
           const boton = <IconoBoton key={index} item={item} />
           const esEliminar = !!item.modalEliminacion
           const visibleSoloAdmin = item.visibleSoloParaAdmin ?? esEliminar
-          return visibleSoloAdmin ? (
+          return visibleSoloAdmin && !esEliminar ? (
             <VisibleSoloParaAdmin key={index}>{boton}</VisibleSoloParaAdmin>
           ) : (
             <React.Fragment key={index}>{boton}</React.Fragment>

@@ -1,7 +1,6 @@
 import { Card, CardContent } from '@/design-system/base-ui/card'
-import ModalEliminacion from '@/design-system/modal-eliminacion'
 import { Boton } from '@/design-system/ykn-ui/boton'
-import Icono from '@/design-system/ykn-ui/icono'
+import { BotonEliminar } from '@/design-system/ykn-ui/boton-eliminar'
 import { useDroppable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
 import {
@@ -153,13 +152,13 @@ export function GrupoDeFasesItem({
   const puedeAgregarSubgrupo = profundidad < PROFUNDIDAD_MAX_GRUPO
 
   const botonEliminar = (
-    <Boton
-      type='button'
-      variant='outline'
-      className='h-8 w-8 min-w-8 p-0 border-none shadow-none text-destructive hover:text-destructive'
-    >
-      <Icono nombre='Eliminar' className='h-5 w-5 shrink-0' />
-    </Boton>
+    <BotonEliminar
+      titulo='Eliminar grupo de fases'
+      subtitulo={`¿Estás seguro de que querés eliminar el grupo "${grupo.nombre}"? Las fases volverán al contenedor padre.`}
+      onEliminar={() => onEliminarGrupo(grupo.idLocal)}
+      compacto
+      tooltip='Eliminar grupo de fases'
+    />
   )
 
   const card = (
@@ -206,13 +205,7 @@ export function GrupoDeFasesItem({
                 Subgrupo
               </Boton>
             )}
-            <ModalEliminacion
-              titulo='Eliminar grupo de fases'
-              subtitulo={`¿Estás seguro de que querés eliminar el grupo "${grupo.nombre}"? Las fases volverán al contenedor padre.`}
-              eliminarOnClick={() => onEliminarGrupo(grupo.idLocal)}
-              eliminarTexto='Eliminar'
-              trigger={botonEliminar}
-            />
+            {botonEliminar}
           </div>
         </div>
 

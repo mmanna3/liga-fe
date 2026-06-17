@@ -3,12 +3,11 @@ import useApiMutation from '@/api/hooks/use-api-mutation'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { Card, CardContent } from '@/design-system/base-ui/card'
 import { ContenedorCargandoYError } from '@/design-system/cargando-y-error-contenedor'
-import ModalEliminacion from '@/design-system/modal-eliminacion'
 import { VisibleSoloParaAdmin } from '@/design-system/visible-solo-para-admin'
 import { Boton } from '@/design-system/ykn-ui/boton'
+import { BotonEliminar } from '@/design-system/ykn-ui/boton-eliminar'
 import BotonVolver from '@/design-system/ykn-ui/boton-volver'
 import DetalleItem from '@/design-system/ykn-ui/detalle-item'
-import Icono from '@/design-system/ykn-ui/icono'
 import JugadorEquipoEstadoBadge from '@/design-system/ykn-ui/jugador-equipo-estado-badge'
 import Link from '@/design-system/ykn-ui/link'
 import { EstadoJugador } from '@/logica-compartida/utils'
@@ -75,26 +74,15 @@ export default function DetalleJugador() {
                 alt={`${jugador.nombre} ${jugador.apellido}`}
                 className='my-8 w-40 h-40 rounded-lg object-cover'
               />
-              <VisibleSoloParaAdmin>
-                <div className='mt-4 flex justify-end w-full'>
-                  <ModalEliminacion
-                    titulo='Eliminar jugador'
-                    subtitulo='Al eliminar el jugador, se lo desvinculará también de todos los equipos.'
-                    eliminarOnClick={() => eliminarMutation.mutate(jugador.id!)}
-                    eliminarTexto='Eliminar jugador'
-                    estaCargando={eliminarMutation.isPending}
-                    trigger={
-                      <Boton
-                        variant='outline'
-                        size='icon'
-                        className='h-10 w-10 border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive'
-                      >
-                        <Icono nombre='Eliminar' className='h-5 w-5' />
-                      </Boton>
-                    }
-                  />
-                </div>
-              </VisibleSoloParaAdmin>
+              <div className='mt-4 flex justify-end w-full'>
+                <BotonEliminar
+                  titulo='Eliminar jugador'
+                  subtitulo='Al eliminar el jugador, se lo desvinculará también de todos los equipos.'
+                  eliminarTexto='Eliminar jugador'
+                  onEliminar={() => eliminarMutation.mutate(jugador.id!)}
+                  estaCargando={eliminarMutation.isPending}
+                />
+              </div>
             </div>
           </Card>
 

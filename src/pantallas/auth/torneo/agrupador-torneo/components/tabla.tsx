@@ -1,22 +1,12 @@
 import { api } from '@/api/api'
 import { TorneoAgrupadorDTO } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from '@/design-system/base-ui/alert-dialog'
-import { Boton } from '@/design-system/ykn-ui/boton'
-import Icono from '@/design-system/ykn-ui/icono'
+import { BotonEliminar } from '@/design-system/ykn-ui/boton-eliminar'
 import Tabla from '@/design-system/ykn-ui/tabla'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { ColumnDef } from '@tanstack/react-table'
 import { useQueryClient } from '@tanstack/react-query'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 interface ITablaAgrupadorTorneo {
@@ -39,8 +29,6 @@ export default function TablaAgrupadorTorneo({
 }: ITablaAgrupadorTorneo) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const [agrupadorAEliminar, setAgrupadorAEliminar] =
-    useState<TorneoAgrupadorDTO | null>(null)
 
   const eliminarMutation = useApiMutation<number>({
     fn: async (id) => {
@@ -49,7 +37,6 @@ export default function TablaAgrupadorTorneo({
     mensajeDeExito: 'Agrupador eliminado',
     antesDeMensajeExito: () => {
       queryClient.invalidateQueries({ queryKey: ['torneoAgrupadores'] })
-      setAgrupadorAEliminar(null)
     },
     mensajeDeError: 'No se pudo eliminar el agrupador'
   })
@@ -89,78 +76,39 @@ export default function TablaAgrupadorTorneo({
           return (
             <div
               className={`flex h-9 ${anchoColumnaAcciones} shrink-0 items-center justify-end pr-0.5`}
+              onClick={(e) => e.stopPropagation()}
             >
-              {mostrarEliminar ? (
-                <button
-                  type='button'
-                  className='inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive'
-                  aria-label={`Eliminar agrupador ${row.original.nombre}`}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setAgrupadorAEliminar(row.original)
-                  }}
-                >
-                  <Icono nombre='Eliminar' className='size-4' />
-                </button>
+              {mostrarEliminar && row.original.id != null ? (
+                <BotonEliminar
+                  titulo='Eliminar agrupador'
+                  subtitulo={`¿Eliminar «${row.original.nombre}»? No tiene torneos asociados. Esta acción no se puede deshacer.`}
+                  onEliminar={() => eliminarMutation.mutate(row.original.id!)}
+                  estaCargando={
+                    eliminarMutation.isPending &&
+                    eliminarMutation.variables === row.original.id
+                  }
+                  tooltip={`Eliminar agrupador ${row.original.nombre}`}
+                  variant='ghost'
+                  compacto
+                />
               ) : null}
             </div>
           )
         }
       }
     ],
-    []
+    [eliminarMutation]
   )
 
   return (
-    <>
-      <Tabla<TorneoAgrupadorDTO>
-        columnas={columnas}
-        data={data || []}
-        estaCargando={isLoading}
-        hayError={isError}
-        onRowClick={(row) =>
-          navigate(
-            `${rutasNavegacion.editarAgrupadorTorneo}/${row.original.id}`
-          )
-        }
-      />
-
-      <AlertDialog
-        open={agrupadorAEliminar != null}
-        onOpenChange={(open) => {
-          if (!open) setAgrupadorAEliminar(null)
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Eliminar agrupador</AlertDialogTitle>
-            <AlertDialogDescription>
-              ¿Eliminar «{agrupadorAEliminar?.nombre ?? ''}»? No tiene torneos
-              asociados. Esta acción no se puede deshacer.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={eliminarMutation.isPending}>
-              Cancelar
-            </AlertDialogCancel>
-            <Boton
-              type='button'
-              variant='destructive'
-              disabled={
-                eliminarMutation.isPending || agrupadorAEliminar?.id == null
-              }
-              estaCargando={eliminarMutation.isPending}
-              onClick={() => {
-                if (agrupadorAEliminar?.id != null) {
-                  eliminarMutation.mutate(agrupadorAEliminar.id)
-                }
-              }}
-            >
-              Eliminar
-            </Boton>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+    <Tabla<TorneoAgrupadorDTO>
+      columnas={columnas}
+      data={data || []}
+      estaCargando={isLoading}
+      hayError={isError}
+      onRowClick={(row) =>
+        navigate(`${rutasNavegacion.editarAgrupadorTorneo}/${row.original.id}`)
+      }
+    />
   )
 }

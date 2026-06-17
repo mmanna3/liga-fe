@@ -6,7 +6,6 @@ import type {
   JornadaDTO
 } from '@/api/clients'
 import useApiMutation from '@/api/hooks/use-api-mutation'
-import { useAuth } from '@/logica-compartida/hooks/use-auth'
 import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { ModalAgregarJornada } from '../modal-agregar-jornada'
@@ -29,7 +28,6 @@ export function FechaCard({
   equipos: EquipoDeLaZonaDTO[]
   zonaId: number
 }) {
-  const { esAdmin } = useAuth()
   const queryClient = useQueryClient()
 
   const [editando, setEditando] = useState(false)
@@ -134,7 +132,6 @@ export function FechaCard({
             onEditar={handleEditar}
             onEliminar={() => eliminarMutation.mutate()}
             estaCargandoEliminar={eliminarMutation.isPending}
-            mostrarBotonEliminar={esAdmin()}
           />
         ) : (
           borrador && (

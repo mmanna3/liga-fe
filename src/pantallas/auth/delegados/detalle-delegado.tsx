@@ -21,8 +21,8 @@ import {
 } from '@/logica-compartida/utils'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { BotonEliminar } from '@/design-system/ykn-ui/boton-eliminar'
 import DialogoBlanquearClaveDelegado from './components/dialogo-blanquear-clave-delegado'
-import DialogoEliminarDelegado from './components/dialogo-eliminar-delegado'
 
 export default function DetalleDelegado() {
   const navigate = useNavigate()
@@ -108,22 +108,12 @@ export default function DetalleDelegado() {
                         </TooltipContent>
                       </Tooltip>
                     )}
-                  <DialogoEliminarDelegado
-                    descripcion='Si confirmás la eliminación, toda su información se perderá y tendrá que volver a ficharse.'
-                    delegadoId={delegado.id!}
-                    onConfirm={(delegadoId) =>
-                      eliminarMutation.mutate(delegadoId)
-                    }
+                  <BotonEliminar
+                    titulo='¿Estás seguro de borrar definitivamente del sistema este delegado?'
+                    subtitulo='Si confirmás la eliminación, toda su información se perderá y tendrá que volver a ficharse.'
+                    eliminarTexto='Eliminar definitivamente'
+                    onEliminar={() => eliminarMutation.mutate(delegado.id!)}
                     estaCargando={eliminarMutation.isPending}
-                    trigger={
-                      <Boton
-                        variant='outline'
-                        size='icon'
-                        className='h-10 w-10 border-destructive text-destructive hover:bg-destructive/10'
-                      >
-                        <Icono nombre='Eliminar' className='h-5 w-5' />
-                      </Boton>
-                    }
                   />
                 </div>
               </VisibleSoloParaAdmin>
