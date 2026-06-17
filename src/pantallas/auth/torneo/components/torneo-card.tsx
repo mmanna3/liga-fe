@@ -9,7 +9,6 @@ import { Card, CardContent } from '@/design-system/base-ui/card'
 import Icono from '@/design-system/ykn-ui/icono'
 import { cn } from '@/logica-compartida/utils'
 import { rutasNavegacion } from '@/ruteo/rutas'
-import { Layers } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 interface TorneoCardProps {
@@ -23,53 +22,97 @@ interface FaseResumen {
   tipoDeFaseNombre?: string
 }
 
-function FaseResumenItem({
-  fase,
-  compact = false
+function FilaElementoTopLevel({
+  numero,
+  titulo,
+  subtitulo
 }: {
-  fase: FaseResumen
-  compact?: boolean
+  numero?: number
+  titulo: string
+  subtitulo?: string
 }) {
-  const titulo = `${fase.nombre ?? ''}`.trim()
-  const subtitulo = fase.tipoDeFaseNombre ?? ''
-
   return (
-    <li
-      className={cn(
-        'flex min-w-0 gap-2',
-        compact
-          ? 'rounded-sm px-1 py-0.5'
-          : 'rounded-md border border-border bg-muted/30 px-2.5 py-1.5'
-      )}
-    >
-      <span
-        className={cn(
-          'flex shrink-0 items-center justify-center rounded-full bg-primary/15 font-semibold text-primary',
-          compact ? 'h-5 w-5 text-[10px]' : 'h-6 w-6 text-xs'
-        )}
-      >
-        {fase.numero}
+    <div className='flex min-w-0 gap-2 rounded-md border border-border bg-muted/30 px-2.5 py-1.5'>
+      <span className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/15 text-xs font-semibold text-primary'>
+        {numero}
       </span>
       <div className='min-w-0 flex-1'>
-        <p
-          className={cn(
-            'truncate font-medium',
-            compact ? 'text-xs leading-tight' : 'text-sm'
-          )}
-        >
-          {titulo}
-        </p>
+        <p className='truncate text-sm font-medium'>{titulo}</p>
         {subtitulo && (
-          <p
-            className={cn(
-              'truncate text-muted-foreground',
-              compact ? 'text-[10px] leading-tight' : 'text-xs'
-            )}
-          >
+          <p className='truncate text-xs text-muted-foreground'>{subtitulo}</p>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function FilaElementoHijo({
+  numero,
+  titulo,
+  subtitulo,
+  numeroSutil = false
+}: {
+  numero?: number
+  titulo: string
+  subtitulo?: string
+  numeroSutil?: boolean
+}) {
+  return (
+    <div className='flex min-w-0 gap-2 rounded-sm px-1 py-0.5'>
+      <span
+        className={cn(
+          'flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px]',
+          numeroSutil
+            ? 'border border-dashed border-muted-foreground/40 font-medium text-muted-foreground'
+            : 'bg-primary/15 font-semibold text-primary'
+        )}
+      >
+        {numero}
+      </span>
+      <div className='min-w-0 flex-1'>
+        <p className='truncate text-xs font-medium leading-tight'>{titulo}</p>
+        {subtitulo && (
+          <p className='truncate text-[10px] leading-tight text-muted-foreground'>
             {subtitulo}
           </p>
         )}
       </div>
+    </div>
+  )
+}
+
+function FaseResumenItem({
+  fase,
+  compact = false,
+  dentroDeSubgrupo = false
+}: {
+  fase: FaseResumen
+  compact?: boolean
+  dentroDeSubgrupo?: boolean
+}) {
+  const titulo = `${fase.nombre ?? ''}`.trim()
+  const subtitulo = fase.tipoDeFaseNombre ?? ''
+
+  if (compact) {
+    return (
+      <li>
+        <FilaElementoHijo
+          numero={fase.numero}
+          titulo={titulo}
+          subtitulo={subtitulo}
+          numeroSutil={dentroDeSubgrupo}
+        />
+      </li>
+    )
+  }
+
+  return (
+    <li>
+      <FilaElementoTopLevel
+        numero={fase.numero}
+        titulo={titulo}
+        subtitulo={subtitulo}
+      />
     </li>
   )
 }
@@ -85,33 +128,33 @@ function GrupoResumen({
 }) {
   const esSubgrupo = profundidad > 1
 
-  return (
-    <li className='list-none'>
-      <div
-        className={cn(
-          'space-y-1.5 rounded-md border border-dashed p-2',
-          esSubgrupo
-            ? 'border-muted-foreground/30 bg-background'
-            : 'border-border bg-muted/15'
-        )}
-      >
-        <div className='flex min-w-0 items-center gap-1.5'>
-          <span className='flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-[10px] font-semibold text-muted-foreground'>
-            {grupo.numero}
-          </span>
-          <Layers className='h-3 w-3 shrink-0 text-muted-foreground' />
-          <p className='min-w-0 flex-1 truncate text-xs font-semibold leading-tight'>
-            {grupo.nombre}
-          </p>
-        </div>
+  if (esSubgrupo) {
+    return (
+      <li className='list-none'>
+        <FilaElementoHijo numero={grupo.numero} titulo={grupo.nombre} />
         {grupo.elementos.length > 0 && (
           <EstructuraFasesResumen
             elementos={grupo.elementos}
             torneoFases={torneoFases}
             profundidad={profundidad}
+            anidado
           />
         )}
-      </div>
+      </li>
+    )
+  }
+
+  return (
+    <li className='list-none'>
+      <FilaElementoTopLevel numero={grupo.numero} titulo={grupo.nombre} />
+      {grupo.elementos.length > 0 && (
+        <EstructuraFasesResumen
+          elementos={grupo.elementos}
+          torneoFases={torneoFases}
+          profundidad={profundidad}
+          anidado
+        />
+      )}
     </li>
   )
 }
@@ -119,11 +162,13 @@ function GrupoResumen({
 function EstructuraFasesResumen({
   elementos,
   torneoFases,
-  profundidad = 0
+  profundidad = 0,
+  anidado = false
 }: {
   elementos: ElementoEstructuraTorneo[]
   torneoFases: FaseDTO[]
   profundidad?: number
+  anidado?: boolean
 }) {
   const dentroDeGrupo = profundidad > 0
 
@@ -131,7 +176,11 @@ function EstructuraFasesResumen({
     <ul
       className={cn(
         'flex flex-col',
-        dentroDeGrupo ? 'gap-0.5 pl-1' : 'gap-1.5'
+        anidado
+          ? 'ml-4 gap-0.5 border-l border-border pl-2'
+          : dentroDeGrupo
+            ? 'gap-0.5'
+            : 'gap-1.5'
       )}
     >
       {elementos.map((el, index) => {
@@ -148,6 +197,7 @@ function EstructuraFasesResumen({
                 tipoDeFaseNombre: faseApi.tipoDeFaseNombre
               }}
               compact={dentroDeGrupo}
+              dentroDeSubgrupo={profundidad > 1}
             />
           )
         }
