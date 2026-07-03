@@ -220,7 +220,23 @@ export default function ModalZonaLeyendas({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='flex max-h-[min(90vh,720px)] flex-col gap-0 overflow-hidden sm:max-w-xl'>
+      <DialogContent
+        className='flex max-h-[min(90vh,720px)] flex-col gap-0 overflow-hidden sm:max-w-xl'
+        onClick={(e) => e.stopPropagation()}
+        onPointerDown={(e) => e.stopPropagation()}
+        onPointerDownOutside={(e) => {
+          const target = e.target as HTMLElement
+          if (target.closest('[role="listbox"]')) {
+            e.preventDefault()
+          }
+        }}
+        onInteractOutside={(e) => {
+          const target = e.target as HTMLElement
+          if (target.closest('[role="listbox"]')) {
+            e.preventDefault()
+          }
+        }}
+      >
         <DialogHeader className='shrink-0 space-y-1 pr-8 text-left'>
           <DialogTitle className='flex items-center gap-2 text-left'>
             <MessageSquareMore

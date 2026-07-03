@@ -7,7 +7,7 @@ import {
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { MessageSquareMore } from 'lucide-react'
-import { useMemo, useRef, useState } from 'react'
+import { Fragment, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ModalZonaLeyendas from './modal-zona-leyendas'
 
@@ -50,7 +50,6 @@ function ZonaItem({
 }) {
   const navigate = useNavigate()
   const [modalLeyendasAbierto, setModalLeyendasAbierto] = useState(false)
-  const ignorarClickFixtureRef = useRef(false)
   const nombre = zona.nombre ?? '—'
   const nEquipos = zona.cantidadDeEquipos ?? 0
   const subtitulo = nEquipos === 1 ? '1 equipo' : `${nEquipos} equipos`
@@ -62,87 +61,83 @@ function ZonaItem({
   const puedeAccionesZona =
     zona.id != null && torneoId != null && faseId != null && faseId > 0
 
-  const manejarCambioModalLeyendas = (abierto: boolean) => {
-    if (!abierto) {
-      ignorarClickFixtureRef.current = true
-      window.setTimeout(() => {
-        ignorarClickFixtureRef.current = false
-      }, 100)
-    }
-    setModalLeyendasAbierto(abierto)
-  }
-
   const irAlFixture = () => {
-    if (ignorarClickFixtureRef.current || !pathFixture) return
+    if (modalLeyendasAbierto || !pathFixture) return
     navigate(pathFixture)
   }
 
   return (
-    <li
-      className={`flex gap-3 items-center rounded-md border border-border bg-muted/30 px-3 py-2${
-        pathFixture ? ' cursor-pointer transition-colors hover:bg-muted/50' : ''
-      }`}
-      onClick={pathFixture ? irAlFixture : undefined}
-      onKeyDown={
-        pathFixture
-          ? (e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                irAlFixture()
+    <Fragment>
+      <li
+        className={`flex gap-3 items-center rounded-md border border-border bg-muted/30 px-3 py-2${
+          pathFixture
+            ? ' cursor-pointer transition-colors hover:bg-muted/50'
+            : ''
+        }`}
+        onClick={pathFixture ? irAlFixture : undefined}
+        onKeyDown={
+          pathFixture
+            ? (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  irAlFixture()
+                }
               }
-            }
-          : undefined
-      }
-      role={pathFixture ? 'button' : undefined}
-      tabIndex={pathFixture ? 0 : undefined}
-      aria-label={pathFixture ? `Ir al fixture de ${nombre}` : undefined}
-    >
-      <div className='min-w-0 flex-1'>
-        <p className='truncate font-medium text-sm'>{nombre}</p>
-        <p className='text-muted-foreground text-xs'>{subtitulo}</p>
-      </div>
-      {puedeAccionesZona && (
-        <>
-          <div
-            className='flex shrink-0 items-center'
-            onClick={(e) => e.stopPropagation()}
-            onPointerDown={(e) => e.stopPropagation()}
-          >
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Boton
-                  type='button'
-                  variant='outline'
-                  className='h-5 w-5 min-w-5 shrink-0 border-none bg-transparent p-0 shadow-none'
-                  aria-label='Leyendas de la zona'
-                  onClick={() => setModalLeyendasAbierto(true)}
+            : undefined
+        }
+        role={pathFixture ? 'button' : undefined}
+        tabIndex={pathFixture ? 0 : undefined}
+        aria-label={pathFixture ? `Ir al fixture de ${nombre}` : undefined}
+      >
+        <div className='min-w-0 flex-1'>
+          <p className='truncate font-medium text-sm'>{nombre}</p>
+          <p className='text-muted-foreground text-xs'>{subtitulo}</p>
+        </div>
+        {puedeAccionesZona && (
+          <>
+            <div
+              className='flex shrink-0 items-center'
+              onClick={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Boton
+                    type='button'
+                    variant='outline'
+                    className='h-5 w-5 min-w-5 shrink-0 border-none bg-transparent p-0 shadow-none'
+                    aria-label='Leyendas de la zona'
+                    onClick={() => setModalLeyendasAbierto(true)}
+                  >
+                    <MessageSquareMore className='h-4 w-4 shrink-0' />
+                  </Boton>
+                </TooltipTrigger>
+                <TooltipContent
+                  side='bottom'
+                  className='max-w-xs px-4 py-3'
+                  sideOffset={8}
                 >
-                  <MessageSquareMore className='h-4 w-4 shrink-0' />
-                </Boton>
-              </TooltipTrigger>
-              <TooltipContent
-                side='bottom'
-                className='max-w-xs px-4 py-3'
-                sideOffset={8}
-              >
-                <p>Leyendas de la zona</p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
-          <ModalZonaLeyendas
-            open={modalLeyendasAbierto}
-            onOpenChange={manejarCambioModalLeyendas}
-            faseId={faseId!}
-            zonaId={zona.id!}
-            nombreTorneo={nombreTorneo ?? '—'}
-            nombreFase={nombreFase ?? '—'}
-            tipoDeFase={tipoDeFase}
-            nombreZona={nombre}
-            categorias={categorias}
-          />
-        </>
+                  <p>Leyendas de la zona</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          </>
+        )}
+      </li>
+      {puedeAccionesZona && (
+        <ModalZonaLeyendas
+          open={modalLeyendasAbierto}
+          onOpenChange={setModalLeyendasAbierto}
+          faseId={faseId!}
+          zonaId={zona.id!}
+          nombreTorneo={nombreTorneo ?? '—'}
+          nombreFase={nombreFase ?? '—'}
+          tipoDeFase={tipoDeFase}
+          nombreZona={nombre}
+          categorias={categorias}
+        />
       )}
-    </li>
+    </Fragment>
   )
 }
 
