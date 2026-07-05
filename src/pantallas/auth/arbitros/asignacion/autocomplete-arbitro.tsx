@@ -28,8 +28,8 @@ export interface OpcionArbitroAutocomplete {
   nombre: string
   nombrePila: string
   apellido: string
-  tieneConflicto: boolean
-  textoConflicto: string | null
+  tieneAdvertencias: boolean
+  advertencias: string[]
 }
 
 interface AutocompleteArbitroProps {
@@ -37,7 +37,7 @@ interface AutocompleteArbitroProps {
   valor: string
   opciones: OpcionArbitroAutocomplete[]
   deshabilitado?: boolean
-  textoConflictoSeleccionado?: string | null
+  advertenciasSeleccionadas?: string[]
   accionDerecha?: React.ReactNode
   alCambiar: (arbitroId: string) => void
 }
@@ -45,19 +45,19 @@ interface AutocompleteArbitroProps {
 export function construirOpcionesArbitro(
   arbitros: ArbitroElegibleAsignacionDTO[],
   otroSlotArbitroId: string,
-  obtenerConflicto: (arbitro: ArbitroElegibleAsignacionDTO) => string | null
+  obtenerAdvertencias: (arbitro: ArbitroElegibleAsignacionDTO) => string[]
 ): OpcionArbitroAutocomplete[] {
   return arbitros
     .filter((a) => String(a.id) !== otroSlotArbitroId)
     .map((a) => {
-      const textoConflicto = obtenerConflicto(a)
+      const advertencias = obtenerAdvertencias(a)
       return {
         id: String(a.id),
         nombre: nombreCompletoArbitro(a.nombre, a.apellido),
         nombrePila: a.nombre ?? '',
         apellido: a.apellido ?? '',
-        tieneConflicto: textoConflicto != null,
-        textoConflicto
+        tieneAdvertencias: advertencias.length > 0,
+        advertencias
       }
     })
 }
@@ -67,7 +67,7 @@ export default function AutocompleteArbitro({
   valor,
   opciones,
   deshabilitado,
-  textoConflictoSeleccionado,
+  advertenciasSeleccionadas = [],
   accionDerecha,
   alCambiar
 }: AutocompleteArbitroProps) {
@@ -85,14 +85,14 @@ export default function AutocompleteArbitro({
       coincideBusquedaArbitro(o.nombrePila, o.apellido, busqueda)
     )
 
-    const sinConflicto = filtradas
-      .filter((o) => !o.tieneConflicto)
+    const sinAdvertencias = filtradas
+      .filter((o) => !o.tieneAdvertencias)
       .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'))
-    const conConflicto = filtradas
-      .filter((o) => o.tieneConflicto)
+    const conAdvertencias = filtradas
+      .filter((o) => o.tieneAdvertencias)
       .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'))
 
-    return [...sinConflicto, ...conConflicto]
+    return [...sinAdvertencias, ...conAdvertencias]
   }, [opciones, busqueda])
 
   useEffect(() => {
@@ -117,6 +117,8 @@ export default function AutocompleteArbitro({
     }
   }
 
+  const hayAdvertencias = advertenciasSeleccionadas.length > 0
+
   return (
     <div className='min-w-[200px] flex-1 space-y-1'>
       <Label className='text-sm font-medium'>{titulo}</Label>
@@ -131,8 +133,7 @@ export default function AutocompleteArbitro({
               disabled={deshabilitado}
               className={cn(
                 'min-w-0 flex-1 justify-between font-normal',
-                textoConflictoSeleccionado &&
-                  'border-amber-500/60 bg-amber-50/50'
+                hayAdvertencias && 'border-amber-500/60 bg-amber-50/50'
               )}
             >
               <span className='truncate'>{etiquetaSeleccionada}</span>
@@ -184,20 +185,22 @@ export default function AutocompleteArbitro({
                             className={cn(
                               'flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm hover:bg-accent',
                               valor === opcion.id && 'bg-accent',
-                              opcion.tieneConflicto &&
+                              opcion.tieneAdvertencias &&
                                 'text-amber-800 hover:bg-amber-50'
                             )}
                             onClick={() => seleccionar(opcion.id)}
                           >
-                            {opcion.tieneConflicto && (
+                            {opcion.tieneAdvertencias && (
                               <AlertTriangle className='h-3.5 w-3.5 shrink-0' />
                             )}
                             <span className='truncate'>{opcion.nombre}</span>
                           </button>
                         </TooltipTrigger>
-                        {opcion.textoConflicto && (
+                        {opcion.advertencias.length > 0 && (
                           <TooltipContent side='right' className='max-w-xs'>
-                            Ya tiene jornada ese día: {opcion.textoConflicto}
+                            {opcion.advertencias.map((advertencia) => (
+                              <p key={advertencia}>{advertencia}</p>
+                            ))}
                           </TooltipContent>
                         )}
                       </Tooltip>
@@ -210,16 +213,21 @@ export default function AutocompleteArbitro({
         </Popover>
         {accionDerecha}
       </div>
-      <p
+      <div
         className={cn(
-          'flex min-h-4 items-center gap-1 text-xs text-amber-700',
-          !textoConflictoSeleccionado && 'invisible'
+          'min-h-4 space-y-0.5 text-xs text-amber-700',
+          !hayAdvertencias && 'invisible'
         )}
-        aria-hidden={!textoConflictoSeleccionado}
+        aria-hidden={!hayAdvertencias}
+        data-testid={hayAdvertencias ? 'advertencias-arbitro' : undefined}
       >
-        <AlertTriangle className='h-3.5 w-3.5 shrink-0' />
-        Ya tiene jornada ese día
-      </p>
+        {advertenciasSeleccionadas.map((advertencia) => (
+          <p key={advertencia} className='flex items-center gap-1'>
+            <AlertTriangle className='h-3.5 w-3.5 shrink-0' />
+            {advertencia}
+          </p>
+        ))}
+      </div>
     </div>
   )
 }

@@ -23,6 +23,7 @@
  *   torneo_zonas_con_datos   Página de zonas con una zona y equipo asignado
  *   arbitros_historico       Asignaciones históricas de árbitros con datos
  *   arbitros_historico_vacio Asignaciones históricas sin resultados
+ *   arbitros_prohibidos      Equipos prohibidos + advertencia en Próxima fecha
  */
 const http = require('http')
 const { URL } = require('url')
@@ -220,6 +221,170 @@ const EQUIPO_PARA_ZONA_2 = {
   club: 'Atlético San Martín',
   codigoAlfanumerico: 'B002',
   zonas: []
+}
+
+const ANIO_ACTUAL = new Date().getFullYear()
+const EQUIPO_PARA_ZONA_1_CON_TORNEO = {
+  ...EQUIPO_PARA_ZONA_1,
+  zonas: [
+    {
+      id: 1,
+      nombre: 'Zona A',
+      torneoId: 1,
+      anio: ANIO_ACTUAL,
+      torneo: 'Torneo Apertura 2026',
+      agrupador: 'Liga Infantil',
+      agrupadorId: 1,
+      fase: 'Fase regular',
+      faseId: 100
+    }
+  ]
+}
+const EQUIPO_PARA_ZONA_2_CON_TORNEO = {
+  ...EQUIPO_PARA_ZONA_2,
+  zonas: [
+    {
+      id: 1,
+      nombre: 'Zona A',
+      torneoId: 1,
+      anio: ANIO_ACTUAL,
+      torneo: 'Torneo Apertura 2026',
+      agrupador: 'Liga Infantil',
+      agrupadorId: 1,
+      fase: 'Fase regular',
+      faseId: 100
+    }
+  ]
+}
+
+const TORNEO_ARB_PROXIMO = {
+  id: 1,
+  nombre: 'Torneo Apertura 2026',
+  anio: ANIO_ACTUAL,
+  torneoAgrupadorId: 1,
+  torneoAgrupadorNombre: 'Liga Infantil',
+  fases: []
+}
+
+function crearArbitroProhibidosEstado() {
+  return {
+    id: 1,
+    dni: '30111222',
+    nombre: 'Juan',
+    apellido: 'Uno',
+    telefonoCelular: '+5491111223344',
+    torneoAgrupadorIds: [1],
+    torneoAgrupadores: [
+      { torneoAgrupadorId: 1, torneoAgrupadorNombre: 'Liga Infantil' }
+    ],
+    equipoProhibidoIds: [],
+    equiposProhibidos: []
+  }
+}
+
+function crearAsignacionProximaProhibidos(arbitroEstado) {
+  const diaProximo = new Date()
+  diaProximo.setDate(diaProximo.getDate() + 1)
+  const diaStr = diaProximo.toISOString().slice(0, 10)
+  const diasSemana = [
+    'Domingo',
+    'Lunes',
+    'Martes',
+    'Miércoles',
+    'Jueves',
+    'Viernes',
+    'Sábado'
+  ]
+  const diaSemana = diasSemana[diaProximo.getDay()]
+
+  const equiposProhibidosIds = arbitroEstado.equipoProhibidoIds ?? []
+
+  return {
+    arbitrosElegibles: [
+      {
+        id: 1,
+        nombre: 'Juan',
+        apellido: 'Uno',
+        telefonoCelular: '+5491111223344',
+        equiposProhibidosIds,
+        jornadasAsignadasEnProximasFechas: []
+      },
+      {
+        id: 2,
+        nombre: 'Pedro',
+        apellido: 'Dos',
+        telefonoCelular: null,
+        equiposProhibidosIds: [],
+        jornadasAsignadasEnProximasFechas: []
+      }
+    ],
+    torneos: [
+      {
+        id: 1,
+        nombre: 'Torneo Apertura 2026',
+        horarioDeJuego: '20:00',
+        fases: [
+          {
+            id: 100,
+            nombre: 'Fase regular',
+            categorias: [
+              {
+                id: 1001,
+                nombre: 'Sub 12',
+                anioDesde: 2014,
+                anioHasta: 2015,
+                faseId: 100,
+                orden: 1
+              }
+            ],
+            zonas: [
+              {
+                id: 1,
+                nombre: 'Zona A',
+                proximaFecha: {
+                  fechaId: 50,
+                  dia: diaStr,
+                  diaSemana,
+                  numero: 2,
+                  instanciaNombre: null,
+                  jornadas: [
+                    {
+                      id: 600,
+                      dia: diaStr,
+                      diaSemana,
+                      torneoNombre: 'Torneo Apertura 2026',
+                      faseNombre: 'Fase regular',
+                      zonaNombre: 'Zona A',
+                      local: 'Infantil A',
+                      visitante: 'Infantil B',
+                      localEquipoId: 1,
+                      visitanteEquipoId: 2,
+                      nombreClubLocal: 'Club Defensores del Norte',
+                      direccionLocal: 'Av. Test 123',
+                      localidadLocal: 'Rosario',
+                      arbitrosAsignados: []
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+
+let arbitroProhibidosEstado = crearArbitroProhibidosEstado()
+let asignacionProximaProhibidosEstado = crearAsignacionProximaProhibidos(
+  arbitroProhibidosEstado
+)
+
+function reiniciarEscenarioArbitrosProhibidos() {
+  arbitroProhibidosEstado = crearArbitroProhibidosEstado()
+  asignacionProximaProhibidosEstado = crearAsignacionProximaProhibidos(
+    arbitroProhibidosEstado
+  )
 }
 
 const ZONA_1 = {
@@ -818,7 +983,11 @@ const ROUTES = [
     scenarios: {
       happy: [],
       torneo_zonas_vacio: [EQUIPO_PARA_ZONA_1, EQUIPO_PARA_ZONA_2],
-      torneo_zonas_con_datos: [EQUIPO_PARA_ZONA_1, EQUIPO_PARA_ZONA_2]
+      torneo_zonas_con_datos: [EQUIPO_PARA_ZONA_1, EQUIPO_PARA_ZONA_2],
+      arbitros_prohibidos: [
+        EQUIPO_PARA_ZONA_1_CON_TORNEO,
+        EQUIPO_PARA_ZONA_2_CON_TORNEO
+      ]
     }
   },
 
@@ -905,7 +1074,8 @@ const ROUTES = [
       torneo_editable: [TORNEO_EDITABLE],
       torneo_con_agrupadores: [],
       arbitros_historico: [TORNEO_ARB_HISTORICO, TORNEO_ARB_HISTORICO_2],
-      arbitros_historico_vacio: [TORNEO_ARB_HISTORICO]
+      arbitros_historico_vacio: [TORNEO_ARB_HISTORICO],
+      arbitros_prohibidos: [TORNEO_ARB_PROXIMO]
     }
   },
   // Torneos — detalle
@@ -1022,7 +1192,8 @@ const ROUTES = [
       torneo_detalle: [AGRUPADOR_1],
       torneo_editable: [AGRUPADOR_1],
       torneo_zonas_vacio: [AGRUPADOR_1],
-      torneo_zonas_con_datos: [AGRUPADOR_1]
+      torneo_zonas_con_datos: [AGRUPADOR_1],
+      arbitros_prohibidos: [AGRUPADOR_1]
     }
   },
   // Agrupadores de torneo — detalle
@@ -1203,7 +1374,37 @@ const ROUTES = [
   {
     method: 'PUT',
     pattern: /^\/api\/Arbitro\/jornada\/\d+\/arbitros$/,
-    scenarios: { happy: null, arbitros_historico: null }
+    scenarios: { happy: null, arbitros_historico: null, arbitros_prohibidos: null }
+  },
+
+  {
+    method: 'GET',
+    pattern: '/api/Arbitro',
+    scenarios: {
+      arbitros_prohibidos: () => [arbitroProhibidosEstado]
+    }
+  },
+
+  {
+    method: 'GET',
+    pattern: /^\/api\/Arbitro\/\d+$/,
+    scenarios: {
+      arbitros_prohibidos: () => arbitroProhibidosEstado
+    }
+  },
+
+  {
+    method: 'PUT',
+    pattern: /^\/api\/Arbitro\/\d+$/,
+    scenarios: { arbitros_prohibidos: null }
+  },
+
+  {
+    method: 'GET',
+    pattern: /^\/api\/Arbitro\/asignacion-por-agrupador/,
+    scenarios: {
+      arbitros_prohibidos: () => asignacionProximaProhibidosEstado
+    }
   },
 
   {
@@ -1312,6 +1513,9 @@ const server = http.createServer((req, res) => {
         if (scenario === 'arbitros_historico') {
           asignacionHistoricaEstado = crearAsignacionHistoricaArb()
         }
+        if (scenario === 'arbitros_prohibidos') {
+          reiniciarEscenarioArbitrosProhibidos()
+        }
         console.log(`[mock] Escenario cambiado a: ${scenario}`)
         res.writeHead(200, { 'Content-Type': 'application/json' })
         res.end(JSON.stringify({ ok: true }))
@@ -1385,12 +1589,91 @@ const server = http.createServer((req, res) => {
     return
   }
 
+  if (req.method === 'PUT' && /^\/api\/Arbitro\/\d+$/.test(pathname)) {
+    let body = ''
+    req.on('data', (chunk) => {
+      body += chunk
+    })
+    req.on('end', () => {
+      if (SCENARIO === 'arbitros_prohibidos') {
+        try {
+          const dto = JSON.parse(body)
+          const ids = dto.equipoProhibidoIds ?? []
+          arbitroProhibidosEstado = {
+            ...arbitroProhibidosEstado,
+            ...dto,
+            equipoProhibidoIds: ids,
+            equiposProhibidos: ids.map((equipoId) => {
+              const equipo =
+                equipoId === 1
+                  ? EQUIPO_PARA_ZONA_1_CON_TORNEO
+                  : EQUIPO_PARA_ZONA_2_CON_TORNEO
+              return {
+                equipoId,
+                nombre: equipo.nombre,
+                clubNombre: equipo.club,
+                codigoAlfanumerico: equipo.codigoAlfanumerico,
+                torneosActuales: [
+                  `Torneo Apertura 2026 ${ANIO_ACTUAL}`
+                ]
+              }
+            })
+          }
+          asignacionProximaProhibidosEstado = crearAsignacionProximaProhibidos(
+            arbitroProhibidosEstado
+          )
+        } catch {
+          // ignorar body inválido
+        }
+      }
+      res.writeHead(204)
+      res.end()
+    })
+    return
+  }
+
   if (req.method === 'PUT' && /^\/api\/Arbitro\/jornada\/\d+\/arbitros$/.test(pathname)) {
     let body = ''
     req.on('data', (chunk) => {
       body += chunk
     })
     req.on('end', () => {
+      if (SCENARIO === 'arbitros_prohibidos') {
+        const jornadaId = Number(pathname.match(/\/jornada\/(\d+)\/arbitros$/)[1])
+        let arbitroIds = []
+        try {
+          arbitroIds = JSON.parse(body).arbitroIds ?? []
+        } catch {
+          arbitroIds = []
+        }
+        for (const torneo of asignacionProximaProhibidosEstado.torneos ?? []) {
+          for (const fase of torneo.fases ?? []) {
+            for (const zona of fase.zonas ?? []) {
+              for (const jornada of zona.proximaFecha?.jornadas ?? []) {
+                if (jornada.id === jornadaId) {
+                  jornada.arbitrosAsignados = arbitroIds.map((id, index) => {
+                    const arbitro = asignacionProximaProhibidosEstado.arbitrosElegibles.find(
+                      (a) => a.id === id
+                    )
+                    return {
+                      id,
+                      nombre: arbitro?.nombre ?? 'Árbitro',
+                      apellido: arbitro?.apellido ?? '',
+                      telefonoCelular: arbitro?.telefonoCelular ?? null,
+                      orden: index + 1,
+                      whatsappEnviado: false,
+                      whatsapp: null
+                    }
+                  })
+                }
+              }
+            }
+          }
+        }
+        res.writeHead(204)
+        res.end()
+        return
+      }
       if (SCENARIO === 'arbitros_historico') {
         const jornadaId = Number(pathname.match(/\/jornada\/(\d+)\/arbitros$/)[1])
         let arbitroIds = []
@@ -1444,7 +1727,10 @@ const server = http.createServer((req, res) => {
   }
 
   const respond = () => {
-    const responseBody = route.scenarios[SCENARIO] ?? route.scenarios['happy']
+    let responseBody = route.scenarios[SCENARIO] ?? route.scenarios['happy']
+    if (typeof responseBody === 'function') {
+      responseBody = responseBody()
+    }
     res.writeHead(200, { 'Content-Type': 'application/json' })
     res.end(JSON.stringify(responseBody))
   }

@@ -10657,6 +10657,8 @@ export class ArbitroDTO implements IArbitroDTO {
   telefonoCelular?: string | undefined
   torneoAgrupadorIds?: number[] | undefined
   torneoAgrupadores?: ArbitroTorneoAgrupadorDTO[] | undefined
+  equipoProhibidoIds?: number[] | undefined
+  equiposProhibidos?: ArbitroEquipoProhibidoDTO[] | undefined
 
   constructor(data?: IArbitroDTO) {
     if (data) {
@@ -10683,6 +10685,16 @@ export class ArbitroDTO implements IArbitroDTO {
         this.torneoAgrupadores = [] as any
         for (let item of _data['torneoAgrupadores'])
           this.torneoAgrupadores!.push(ArbitroTorneoAgrupadorDTO.fromJS(item))
+      }
+      if (Array.isArray(_data['equipoProhibidoIds'])) {
+        this.equipoProhibidoIds = [] as any
+        for (let item of _data['equipoProhibidoIds'])
+          this.equipoProhibidoIds!.push(item)
+      }
+      if (Array.isArray(_data['equiposProhibidos'])) {
+        this.equiposProhibidos = [] as any
+        for (let item of _data['equiposProhibidos'])
+          this.equiposProhibidos!.push(ArbitroEquipoProhibidoDTO.fromJS(item))
       }
     }
   }
@@ -10711,6 +10723,16 @@ export class ArbitroDTO implements IArbitroDTO {
       for (let item of this.torneoAgrupadores)
         data['torneoAgrupadores'].push(item.toJSON())
     }
+    if (Array.isArray(this.equipoProhibidoIds)) {
+      data['equipoProhibidoIds'] = []
+      for (let item of this.equipoProhibidoIds)
+        data['equipoProhibidoIds'].push(item)
+    }
+    if (Array.isArray(this.equiposProhibidos)) {
+      data['equiposProhibidos'] = []
+      for (let item of this.equiposProhibidos)
+        data['equiposProhibidos'].push(item.toJSON())
+    }
     return data
   }
 }
@@ -10723,6 +10745,8 @@ export interface IArbitroDTO {
   telefonoCelular?: string | undefined
   torneoAgrupadorIds?: number[] | undefined
   torneoAgrupadores?: ArbitroTorneoAgrupadorDTO[] | undefined
+  equipoProhibidoIds?: number[] | undefined
+  equiposProhibidos?: ArbitroEquipoProhibidoDTO[] | undefined
 }
 
 export class ArbitroElegibleAsignacionDTO implements IArbitroElegibleAsignacionDTO {
@@ -10731,6 +10755,7 @@ export class ArbitroElegibleAsignacionDTO implements IArbitroElegibleAsignacionD
   apellido!: string | undefined
   telefonoCelular?: string | undefined
   jornadasAsignadasEnProximasFechas!: JornadaAsignadaResumenDTO[] | undefined
+  equiposProhibidosIds?: number[] | undefined
 
   constructor(data?: IArbitroElegibleAsignacionDTO) {
     if (data) {
@@ -10754,6 +10779,11 @@ export class ArbitroElegibleAsignacionDTO implements IArbitroElegibleAsignacionD
             JornadaAsignadaResumenDTO.fromJS(item)
           )
       }
+      if (Array.isArray(_data['equiposProhibidosIds'])) {
+        this.equiposProhibidosIds = [] as any
+        for (let item of _data['equiposProhibidosIds'])
+          this.equiposProhibidosIds!.push(item)
+      }
     }
   }
 
@@ -10775,6 +10805,11 @@ export class ArbitroElegibleAsignacionDTO implements IArbitroElegibleAsignacionD
       for (let item of this.jornadasAsignadasEnProximasFechas)
         data['jornadasAsignadasEnProximasFechas'].push(item.toJSON())
     }
+    if (Array.isArray(this.equiposProhibidosIds)) {
+      data['equiposProhibidosIds'] = []
+      for (let item of this.equiposProhibidosIds)
+        data['equiposProhibidosIds'].push(item)
+    }
     return data
   }
 }
@@ -10785,6 +10820,66 @@ export interface IArbitroElegibleAsignacionDTO {
   apellido: string | undefined
   telefonoCelular?: string | undefined
   jornadasAsignadasEnProximasFechas: JornadaAsignadaResumenDTO[] | undefined
+  equiposProhibidosIds?: number[] | undefined
+}
+
+export class ArbitroEquipoProhibidoDTO implements IArbitroEquipoProhibidoDTO {
+  equipoId!: number
+  nombre!: string | undefined
+  clubNombre?: string | undefined
+  codigoAlfanumerico?: string | undefined
+  torneosActuales?: string[] | undefined
+
+  constructor(data?: IArbitroEquipoProhibidoDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.equipoId = _data['equipoId']
+      this.nombre = _data['nombre']
+      this.clubNombre = _data['clubNombre']
+      this.codigoAlfanumerico = _data['codigoAlfanumerico']
+      if (Array.isArray(_data['torneosActuales'])) {
+        this.torneosActuales = [] as any
+        for (let item of _data['torneosActuales'])
+          this.torneosActuales!.push(item)
+      }
+    }
+  }
+
+  static fromJS(data: any): ArbitroEquipoProhibidoDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new ArbitroEquipoProhibidoDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['equipoId'] = this.equipoId
+    data['nombre'] = this.nombre
+    data['clubNombre'] = this.clubNombre
+    data['codigoAlfanumerico'] = this.codigoAlfanumerico
+    if (Array.isArray(this.torneosActuales)) {
+      data['torneosActuales'] = []
+      for (let item of this.torneosActuales) data['torneosActuales'].push(item)
+    }
+    return data
+  }
+}
+
+export interface IArbitroEquipoProhibidoDTO {
+  equipoId: number
+  nombre: string | undefined
+  clubNombre?: string | undefined
+  codigoAlfanumerico?: string | undefined
+  torneosActuales?: string[] | undefined
 }
 
 export class ArbitroTorneoAgrupadorDTO implements IArbitroTorneoAgrupadorDTO {
@@ -14176,6 +14271,8 @@ export class JornadaAsignacionDTO implements IJornadaAsignacionDTO {
   zonaNombre!: string | undefined
   local!: string | undefined
   visitante!: string | undefined
+  localEquipoId!: number
+  visitanteEquipoId!: number
   nombreClubLocal!: string | undefined
   direccionLocal?: string | undefined
   localidadLocal?: string | undefined
@@ -14202,6 +14299,8 @@ export class JornadaAsignacionDTO implements IJornadaAsignacionDTO {
       this.zonaNombre = _data['zonaNombre']
       this.local = _data['local']
       this.visitante = _data['visitante']
+      this.localEquipoId = _data['localEquipoId']
+      this.visitanteEquipoId = _data['visitanteEquipoId']
       this.nombreClubLocal = _data['nombreClubLocal']
       this.direccionLocal = _data['direccionLocal']
       this.localidadLocal = _data['localidadLocal']
@@ -14230,6 +14329,8 @@ export class JornadaAsignacionDTO implements IJornadaAsignacionDTO {
     data['zonaNombre'] = this.zonaNombre
     data['local'] = this.local
     data['visitante'] = this.visitante
+    data['localEquipoId'] = this.localEquipoId
+    data['visitanteEquipoId'] = this.visitanteEquipoId
     data['nombreClubLocal'] = this.nombreClubLocal
     data['direccionLocal'] = this.direccionLocal
     data['localidadLocal'] = this.localidadLocal
@@ -14251,6 +14352,8 @@ export interface IJornadaAsignacionDTO {
   zonaNombre: string | undefined
   local: string | undefined
   visitante: string | undefined
+  localEquipoId: number
+  visitanteEquipoId: number
   nombreClubLocal: string | undefined
   direccionLocal?: string | undefined
   localidadLocal?: string | undefined

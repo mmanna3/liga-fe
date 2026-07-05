@@ -20,7 +20,9 @@ interface SelectorArbitroJornadaProps {
   alCambiar: (arbitroId: string) => void
 }
 
-function obtenerConflicto(
+const MENSAJE_EQUIPO_PROHIBIDO = 'Este equipo está prohibido para este árbitro'
+
+function obtenerConflictoFecha(
   arbitro: ArbitroElegibleAsignacionDTO,
   jornada: JornadaAsignacionDTO
 ): string | null {
@@ -32,7 +34,35 @@ function obtenerConflicto(
       mismaFechaCalendario(new Date(j.dia), jornada.dia)
   )
   if (!conflicto) return null
-  return `${conflicto.torneoNombre} · ${conflicto.local} vs ${conflicto.visitante}`
+  return `Ya tiene jornada ese día: ${conflicto.torneoNombre} · ${conflicto.local} vs ${conflicto.visitante}`
+}
+
+function obtenerProhibicionEquipo(
+  arbitro: ArbitroElegibleAsignacionDTO,
+  jornada: JornadaAsignacionDTO
+): string | null {
+  const ids = arbitro.equiposProhibidosIds ?? []
+  const local = jornada.localEquipoId
+  const visitante = jornada.visitanteEquipoId
+  if (
+    (local != null && ids.includes(local)) ||
+    (visitante != null && ids.includes(visitante))
+  ) {
+    return MENSAJE_EQUIPO_PROHIBIDO
+  }
+  return null
+}
+
+function obtenerAdvertencias(
+  arbitro: ArbitroElegibleAsignacionDTO,
+  jornada: JornadaAsignacionDTO
+): string[] {
+  const advertencias: string[] = []
+  const conflictoFecha = obtenerConflictoFecha(arbitro, jornada)
+  if (conflictoFecha) advertencias.push(conflictoFecha)
+  const prohibicion = obtenerProhibicionEquipo(arbitro, jornada)
+  if (prohibicion) advertencias.push(prohibicion)
+  return advertencias
 }
 
 export default function SelectorArbitroJornada({
@@ -51,7 +81,7 @@ export default function SelectorArbitroJornada({
       construirOpcionesArbitro(
         arbitrosElegibles,
         otroSlotArbitroId,
-        mostrarConflictos ? (a) => obtenerConflicto(a, jornada) : () => null
+        mostrarConflictos ? (a) => obtenerAdvertencias(a, jornada) : () => []
       ),
     [arbitrosElegibles, otroSlotArbitroId, jornada, mostrarConflictos]
   )
@@ -59,10 +89,10 @@ export default function SelectorArbitroJornada({
   const arbitroSeleccionado = arbitrosElegibles.find(
     (a) => String(a.id) === valor
   )
-  const textoConflicto =
+  const advertenciasSeleccionadas =
     mostrarConflictos && arbitroSeleccionado && valor !== 'sin-arbitro'
-      ? obtenerConflicto(arbitroSeleccionado, jornada)
-      : null
+      ? obtenerAdvertencias(arbitroSeleccionado, jornada)
+      : []
 
   return (
     <AutocompleteArbitro
@@ -70,7 +100,7 @@ export default function SelectorArbitroJornada({
       valor={valor}
       opciones={opciones}
       deshabilitado={deshabilitado}
-      textoConflictoSeleccionado={textoConflicto}
+      advertenciasSeleccionadas={advertenciasSeleccionadas}
       accionDerecha={accionDerecha}
       alCambiar={alCambiar}
     />

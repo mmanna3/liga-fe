@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import InputTelefonoCelular from './components/input-telefono-celular'
 import SelectorAgrupadoresMultiples from './components/selector-agrupadores-multiples'
+import SelectorEquiposProhibidos from './components/selector-equipos-prohibidos'
 import {
   extraerDigitosTelefonoCelular,
   filtrarDigitosTelefonoCelular,
@@ -35,6 +36,7 @@ export default function EditarArbitro() {
   const [telefonoCelular, setTelefonoCelular] = useState<string>('')
   const [errorTelefono, setErrorTelefono] = useState<string>('')
   const [torneoAgrupadorIds, setTorneoAgrupadorIds] = useState<number[]>([])
+  const [equipoProhibidoIds, setEquipoProhibidoIds] = useState<number[]>([])
 
   const {
     data: arbitro,
@@ -67,6 +69,7 @@ export default function EditarArbitro() {
       setApellido(arbitro.apellido || '')
       setTelefonoCelular(extraerDigitosTelefonoCelular(arbitro.telefonoCelular))
       setTorneoAgrupadorIds(arbitro.torneoAgrupadorIds ?? [])
+      setEquipoProhibidoIds(arbitro.equipoProhibidoIds ?? [])
     }
   }, [arbitro])
 
@@ -75,13 +78,15 @@ export default function EditarArbitro() {
     arbitro?.telefonoCelular
   )
   const agrupadoresIniciales = arbitro?.torneoAgrupadorIds ?? []
+  const equiposProhibidosIniciales = arbitro?.equipoProhibidoIds ?? []
   const hayCambios =
     !!arbitro &&
     (dni !== arbitro.dni ||
       nombre !== arbitro.nombre ||
       apellido !== arbitro.apellido ||
       telefonoCelular !== telefonoInicial ||
-      !mismosIds(torneoAgrupadorIds, agrupadoresIniciales))
+      !mismosIds(torneoAgrupadorIds, agrupadoresIniciales) ||
+      !mismosIds(equipoProhibidoIds, equiposProhibidosIniciales))
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -104,7 +109,8 @@ export default function EditarArbitro() {
         nombre,
         apellido,
         telefonoCelular: telefonoBackend,
-        torneoAgrupadorIds
+        torneoAgrupadorIds,
+        equipoProhibidoIds
       })
     )
     navigate(rutasNavegacion.datosArbitros)
@@ -171,6 +177,11 @@ export default function EditarArbitro() {
             <SelectorAgrupadoresMultiples
               valor={torneoAgrupadorIds}
               alCambiar={setTorneoAgrupadorIds}
+            />
+            <SelectorEquiposProhibidos
+              valor={equipoProhibidoIds}
+              equiposIniciales={arbitro?.equiposProhibidos}
+              alCambiar={setEquipoProhibidoIds}
             />
             <div className='flex justify-between gap-2'>
               {arbitro && (
