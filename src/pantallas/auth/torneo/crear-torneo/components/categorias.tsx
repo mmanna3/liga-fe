@@ -2,6 +2,7 @@ import { Badge } from '@/design-system/base-ui/badge'
 import { Input } from '@/design-system/base-ui/input'
 import { Label } from '@/design-system/base-ui/label'
 import { Boton } from '@/design-system/ykn-ui/boton'
+import { IconoInformacion } from '@/design-system/ykn-ui/icono-informacion'
 import { cn } from '@/logica-compartida/utils'
 import {
   DndContext,
@@ -64,6 +65,8 @@ interface CategoriasProps {
   alCambiar: (categorias: Categoria[]) => void
   error?: string
   titulo?: string
+  /** Texto del tooltip junto al título (icono de información) */
+  infoTitulo?: string
   /** Si true, solo muestra las categorías sin posibilidad de editar/agregar/quitar */
   soloLectura?: boolean
 }
@@ -153,6 +156,7 @@ export function Categorias({
   alCambiar,
   error,
   titulo = 'Categorías',
+  infoTitulo,
   soloLectura = false
 }: CategoriasProps) {
   const [editandoCategoriaId, setEditandoCategoriaId] = useState<string | null>(
@@ -356,11 +360,12 @@ export function Categorias({
       {titulo ? (
         <Label
           className={cn(
-            'block mb-2 font-semibold',
+            'flex items-center gap-1.5 mb-2 font-semibold',
             soloLectura ? 'text-sm text-muted-foreground' : 'text-md'
           )}
         >
-          {titulo}
+          <span>{titulo}</span>
+          {infoTitulo ? <IconoInformacion texto={infoTitulo} /> : null}
         </Label>
       ) : null}
 

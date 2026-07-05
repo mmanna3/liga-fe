@@ -4,7 +4,7 @@ import { login, setScenario } from './helpers'
 /** Sección de categorías plantilla del torneo (no las de cada fase). */
 function seccionCategoriasTorneo(page: Page) {
   return page.locator('[data-slot="card-content"]').filter({
-    has: page.getByText('Categorías del torneo (plantilla para nuevas fases)', {
+    has: page.getByText('Categorías del torneo', {
       exact: true
     })
   })
@@ -24,7 +24,9 @@ test.describe('Torneos — flujos profundos', () => {
   // Crear torneo
   // -------------------------------------------------------------------------
 
-  test('muestra el selector de agrupador al entrar a crear torneo', async ({ page }) => {
+  test('muestra el selector de agrupador al entrar a crear torneo', async ({
+    page
+  }) => {
     await setScenario('torneo_con_agrupadores')
     await login(page)
     await page.goto('/torneos/crear')
@@ -68,7 +70,9 @@ test.describe('Torneos — flujos profundos', () => {
   // Detalle del torneo
   // -------------------------------------------------------------------------
 
-  test('muestra el detalle del torneo con sus fases y categorías', async ({ page }) => {
+  test('muestra el detalle del torneo con sus fases y categorías', async ({
+    page
+  }) => {
     await setScenario('torneo_detalle')
     await login(page)
     await page.goto('/torneos/detalle/1')
@@ -80,7 +84,9 @@ test.describe('Torneos — flujos profundos', () => {
     await expect(page.getByText('Sub 12')).toHaveCount(2)
   })
 
-  test('agrega una fase nueva desde el detalle del torneo', async ({ page }) => {
+  test('agrega una fase nueva desde el detalle del torneo', async ({
+    page
+  }) => {
     await setScenario('torneo_editable')
     await login(page)
     await page.goto('/torneos/detalle/1')
@@ -97,13 +103,17 @@ test.describe('Torneos — flujos profundos', () => {
     await expect(page.getByText('Nueva fase')).toBeVisible()
   })
 
-  test('el botón Guardar aparece al entrar en modo edición', async ({ page }) => {
+  test('el botón Guardar aparece al entrar en modo edición', async ({
+    page
+  }) => {
     await setScenario('torneo_editable')
     await login(page)
     await page.goto('/torneos/detalle/1')
 
     // Por defecto no hay botón Guardar
-    await expect(page.getByRole('button', { name: 'Guardar' })).not.toBeVisible()
+    await expect(
+      page.getByRole('button', { name: 'Guardar' })
+    ).not.toBeVisible()
 
     // Al hacer clic en el lápiz, aparece Guardar
     await page.getByRole('button', { name: 'Editar torneo' }).click()
@@ -114,7 +124,9 @@ test.describe('Torneos — flujos profundos', () => {
   // Zonas de una fase — visualización
   // -------------------------------------------------------------------------
 
-  test('navega a las zonas de una fase desde el detalle del torneo', async ({ page }) => {
+  test('navega a las zonas de una fase desde el detalle del torneo', async ({
+    page
+  }) => {
     await setScenario('torneo_detalle')
     await login(page)
     await page.goto('/torneos/detalle/1')
@@ -127,7 +139,9 @@ test.describe('Torneos — flujos profundos', () => {
     await expect(page).toHaveURL('/torneos/detalle/1/fases/100/zonas')
   })
 
-  test('muestra la pantalla de zonas vacía con equipos disponibles', async ({ page }) => {
+  test('muestra la pantalla de zonas vacía con equipos disponibles', async ({
+    page
+  }) => {
     await setScenario('torneo_zonas_vacio')
     await login(page)
     await page.goto('/torneos/detalle/1/fases/100/zonas')
@@ -135,7 +149,9 @@ test.describe('Torneos — flujos profundos', () => {
     await expect(page.getByText('Zonas', { exact: true }).first()).toBeVisible()
     await expect(page.getByText('Infantil A')).toBeVisible()
     await expect(page.getByText('Infantil B')).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Agregar Zona' })).toBeVisible()
+    await expect(
+      page.getByRole('button', { name: 'Agregar Zona' })
+    ).toBeVisible()
   })
 
   test('agrega una zona en la pantalla de zonas', async ({ page }) => {
@@ -164,7 +180,9 @@ test.describe('Torneos — flujos profundos', () => {
   // Guardar zonas — verificar body enviado al backend
   // -------------------------------------------------------------------------
 
-  test('crear zonas: envía zonas nuevas con equipos correctos', async ({ page }) => {
+  test('crear zonas: envía zonas nuevas con equipos correctos', async ({
+    page
+  }) => {
     await setScenario('torneo_zonas_vacio')
     await login(page)
     await page.goto('/torneos/detalle/1/fases/100/zonas')
@@ -192,7 +210,10 @@ test.describe('Torneos — flujos profundos', () => {
     await expect(page.getByText('Zonas creadas correctamente')).toBeVisible()
 
     expect(bodyEnviado).toBeTruthy()
-    const body = bodyEnviado as Array<{ nombre: string; equipos: Array<{ id: string }> }>
+    const body = bodyEnviado as Array<{
+      nombre: string
+      equipos: Array<{ id: string }>
+    }>
     expect(body).toHaveLength(1)
     expect(body[0].nombre).toBe('Zona A')
     expect(body[0].equipos).toHaveLength(1)
@@ -229,10 +250,15 @@ test.describe('Torneos — flujos profundos', () => {
     await expect(zonaCard.getByText('Infantil B')).toBeVisible()
 
     await page.getByRole('button', { name: 'Guardar' }).click()
-    await expect(page.getByText('Zonas actualizadas correctamente')).toBeVisible()
+    await expect(
+      page.getByText('Zonas actualizadas correctamente')
+    ).toBeVisible()
 
     expect(bodyEnviado).toBeTruthy()
-    const body = bodyEnviado as Array<{ nombre: string; equipos: Array<{ id: string }> }>
+    const body = bodyEnviado as Array<{
+      nombre: string
+      equipos: Array<{ id: string }>
+    }>
     expect(body).toHaveLength(1)
     expect(body[0].nombre).toBe('Zona A')
     expect(body[0].equipos).toHaveLength(2)
@@ -240,7 +266,9 @@ test.describe('Torneos — flujos profundos', () => {
     expect(ids).toEqual(['1', '2'])
   })
 
-  test('modificar zonas: cambiar nombre envía nombre actualizado', async ({ page }) => {
+  test('modificar zonas: cambiar nombre envía nombre actualizado', async ({
+    page
+  }) => {
     await setScenario('torneo_zonas_con_datos')
     await login(page)
     await page.goto('/torneos/detalle/1/fases/100/zonas')
@@ -265,7 +293,9 @@ test.describe('Torneos — flujos profundos', () => {
     await inputNombre.blur()
 
     await page.getByRole('button', { name: 'Guardar' }).click()
-    await expect(page.getByText('Zonas actualizadas correctamente')).toBeVisible()
+    await expect(
+      page.getByText('Zonas actualizadas correctamente')
+    ).toBeVisible()
 
     expect(bodyEnviado).toBeTruthy()
     const body = bodyEnviado as Array<{ nombre: string }>
@@ -302,7 +332,9 @@ test.describe('Torneos — flujos profundos', () => {
     await page.getByText('Infantil B').first().dragTo(zonaCard)
 
     await page.getByRole('button', { name: 'Guardar' }).click()
-    await expect(page.getByText('Zonas actualizadas correctamente')).toBeVisible()
+    await expect(
+      page.getByText('Zonas actualizadas correctamente')
+    ).toBeVisible()
 
     expect(bodyEnviado).toBeTruthy()
     const body = bodyEnviado as Array<{
@@ -348,7 +380,9 @@ test.describe('Torneos — flujos profundos', () => {
     await rowInfantilA.getByRole('button', { name: 'Quitar equipo' }).click()
 
     await page.getByRole('button', { name: 'Guardar' }).click()
-    await expect(page.getByText('Zonas actualizadas correctamente')).toBeVisible()
+    await expect(
+      page.getByText('Zonas actualizadas correctamente')
+    ).toBeVisible()
 
     expect(bodyEnviado).toBeTruthy()
     const body = bodyEnviado as Array<{ equipos: Array<{ id: string }> }>
@@ -417,7 +451,9 @@ test.describe('Torneos — flujos profundos', () => {
     // Guardar el torneo (único Guardar restante en la página)
     await page.getByRole('button', { name: 'Guardar' }).click()
 
-    await expect(page.getByText('Torneo actualizado correctamente')).toBeVisible()
+    await expect(
+      page.getByText('Torneo actualizado correctamente')
+    ).toBeVisible()
     const body = bodyEnviado as { categorias: Array<{ nombre: string }> }
     expect(body.categorias).toHaveLength(2)
     const nombres = body.categorias.map((c) => c.nombre)
@@ -461,7 +497,9 @@ test.describe('Torneos — flujos profundos', () => {
 
     await page.getByRole('button', { name: 'Guardar' }).click()
 
-    await expect(page.getByText('Torneo actualizado correctamente')).toBeVisible()
+    await expect(
+      page.getByText('Torneo actualizado correctamente')
+    ).toBeVisible()
     const body = bodyEnviado as { categorias: Array<{ nombre: string }> }
     expect(body.categorias).toHaveLength(0)
   })
@@ -506,10 +544,15 @@ test.describe('Torneos — flujos profundos', () => {
     // Cambiar el escenario antes de confirmar para que el refetch devuelva el torneo sin fases
     await setScenario('torneo_editable_sin_fases')
 
-    await page.getByRole('alertdialog').getByRole('button', { name: 'Eliminar' }).click()
+    await page
+      .getByRole('alertdialog')
+      .getByRole('button', { name: 'Eliminar' })
+      .click()
 
     await expect(page.getByRole('alertdialog')).not.toBeVisible()
-    await expect(page.getByText('Primera Fase', { exact: true })).not.toBeVisible()
+    await expect(
+      page.getByText('Primera Fase', { exact: true })
+    ).not.toBeVisible()
   })
 
   test('eliminar fase no editable: muestra aviso "No se puede eliminar"', async ({
@@ -526,9 +569,14 @@ test.describe('Torneos — flujos profundos', () => {
     await botonesContainer.locator('button').last().click()
 
     await expect(page.getByRole('alertdialog')).toBeVisible()
-    await expect(page.getByRole('alertdialog')).toContainText('No se puede eliminar')
+    await expect(page.getByRole('alertdialog')).toContainText(
+      'No se puede eliminar'
+    )
 
-    await page.getByRole('alertdialog').getByRole('button', { name: 'Volver' }).click()
+    await page
+      .getByRole('alertdialog')
+      .getByRole('button', { name: 'Volver' })
+      .click()
     await expect(page.getByRole('alertdialog')).not.toBeVisible()
   })
 
@@ -548,7 +596,9 @@ test.describe('Torneos — flujos profundos', () => {
     await expect(page.getByPlaceholder('Ej: Torneo Anual 2026')).toHaveValue(
       'Torneo Apertura 2026'
     )
-    await expect(page.getByPlaceholder('2026', { exact: true })).toHaveValue('2026')
+    await expect(page.getByPlaceholder('2026', { exact: true })).toHaveValue(
+      '2026'
+    )
   })
 
   test('guardar envía torneoPUT con los datos actualizados y sin fases en el body', async ({
@@ -580,7 +630,9 @@ test.describe('Torneos — flujos profundos', () => {
 
     await page.getByRole('button', { name: 'Guardar' }).click()
 
-    await expect(page.getByText('Torneo actualizado correctamente')).toBeVisible()
+    await expect(
+      page.getByText('Torneo actualizado correctamente')
+    ).toBeVisible()
     expect(bodyEnviado).toBeTruthy()
     const body = bodyEnviado as Record<string, unknown>
     expect(body.nombre).toBe('Torneo Modificado 2026')
@@ -603,7 +655,9 @@ test.describe('Torneos — flujos profundos', () => {
 
     await expect(inputNombre).not.toBeVisible()
     await expect(page.getByText('Torneo Apertura 2026').first()).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Guardar' })).not.toBeVisible()
+    await expect(
+      page.getByRole('button', { name: 'Guardar' })
+    ).not.toBeVisible()
   })
 
   // -------------------------------------------------------------------------
@@ -745,7 +799,9 @@ test.describe('Torneos — flujos profundos', () => {
     await expect(page.getByText('Infantil B')).toBeVisible()
   })
 
-  test('crear zonas: dos zonas con equipos distintos envía ambas', async ({ page }) => {
+  test('crear zonas: dos zonas con equipos distintos envía ambas', async ({
+    page
+  }) => {
     await setScenario('torneo_zonas_vacio')
     await login(page)
     await page.goto('/torneos/detalle/1/fases/100/zonas')
@@ -781,7 +837,10 @@ test.describe('Torneos — flujos profundos', () => {
     await expect(page.getByText('Zonas creadas correctamente')).toBeVisible()
 
     expect(bodyEnviado).toBeTruthy()
-    const body = bodyEnviado as Array<{ nombre: string; equipos: Array<{ id: string }> }>
+    const body = bodyEnviado as Array<{
+      nombre: string
+      equipos: Array<{ id: string }>
+    }>
     expect(body).toHaveLength(2)
 
     const zonaA = body.find((z) => z.nombre === 'Zona A')

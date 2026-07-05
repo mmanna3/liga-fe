@@ -2,8 +2,8 @@ import { Card, CardContent } from '@/design-system/base-ui/card'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/ykn-ui/input'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
-import { rutasNavegacion } from '@/ruteo/rutas'
 import { ModuloSistema } from '@/logica-compartida/hooks/use-auth'
+import { rutasNavegacion } from '@/ruteo/rutas'
 import { Fragment, useState } from 'react'
 import { Categorias } from './crear-torneo/components/categorias'
 import { SelectorAgrupador } from './crear-torneo/components/selector-agrupador'
@@ -232,7 +232,8 @@ export default function DetalleTorneo() {
                 )}
 
                 <Categorias
-                  titulo='Categorías del torneo (plantilla para nuevas fases)'
+                  titulo='Categorías del torneo'
+                  infoTitulo='Estas son las categorías que aparecerá en las planillas. No se tendrán en cuenta para las planillas las categorías particulares de cada fase.'
                   valor={categorias}
                   alCambiar={setCategorias}
                   soloLectura={!editando}
