@@ -42,4 +42,21 @@ test.describe('Equipos prohibidos para árbitros', () => {
       page.getByText('Este equipo está prohibido para este árbitro')
     ).toBeVisible()
   })
+
+  test('muestra advertencia de historial reciente al seleccionar árbitro', async ({
+    page
+  }) => {
+    await login(page)
+    await page.goto('/arbitros/asignacion')
+    await expect(page.getByText('Infantil A vs Infantil B')).toBeVisible()
+
+    await page.getByRole('combobox').nth(1).click()
+    await page.getByPlaceholder('Buscar nombre o apellido…').fill('Juan')
+    await page.getByRole('button', { name: 'Uno, Juan' }).click()
+    await expect(page.getByRole('combobox').nth(1)).toContainText('Uno, Juan')
+
+    await expect(
+      page.getByText('Este árbitro ya dirigió a Infantil A en la fecha 1')
+    ).toBeVisible()
+  })
 })

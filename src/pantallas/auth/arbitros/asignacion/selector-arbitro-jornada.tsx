@@ -6,7 +6,11 @@ import { useMemo } from 'react'
 import AutocompleteArbitro, {
   construirOpcionesArbitro
 } from './autocomplete-arbitro'
-import { mismaFechaCalendario } from './utilidades-asignacion'
+import {
+  type AdvertenciaArbitro,
+  formatearEtiquetaFechaAsignacion,
+  mismaFechaCalendario
+} from './utilidades-asignacion'
 
 interface SelectorArbitroJornadaProps {
   titulo: string
@@ -25,7 +29,7 @@ const MENSAJE_EQUIPO_PROHIBIDO = 'Este equipo está prohibido para este árbitro
 function obtenerConflictoFecha(
   arbitro: ArbitroElegibleAsignacionDTO,
   jornada: JornadaAsignacionDTO
-): string | null {
+): AdvertenciaArbitro | null {
   const asignaciones = arbitro.jornadasAsignadasEnProximasFechas ?? []
   const conflicto = asignaciones.find(
     (j) =>
@@ -34,13 +38,17 @@ function obtenerConflictoFecha(
       mismaFechaCalendario(new Date(j.dia), jornada.dia)
   )
   if (!conflicto) return null
-  return `Ya tiene jornada ese día: ${conflicto.torneoNombre} · ${conflicto.local} vs ${conflicto.visitante}`
+  return {
+    tipo: 'conflicto_fecha',
+    titulo: 'Ya tiene jornada ese día',
+    detalle: `${conflicto.torneoNombre} · ${conflicto.local} vs ${conflicto.visitante}`
+  }
 }
 
 function obtenerProhibicionEquipo(
   arbitro: ArbitroElegibleAsignacionDTO,
   jornada: JornadaAsignacionDTO
-): string | null {
+): AdvertenciaArbitro | null {
   const ids = arbitro.equiposProhibidosIds ?? []
   const local = jornada.localEquipoId
   const visitante = jornada.visitanteEquipoId
@@ -48,20 +56,61 @@ function obtenerProhibicionEquipo(
     (local != null && ids.includes(local)) ||
     (visitante != null && ids.includes(visitante))
   ) {
-    return MENSAJE_EQUIPO_PROHIBIDO
+    return {
+      tipo: 'equipo_prohibido',
+      titulo: MENSAJE_EQUIPO_PROHIBIDO
+    }
   }
   return null
+}
+
+function obtenerAdvertenciasDirigioReciente(
+  arbitro: ArbitroElegibleAsignacionDTO,
+  jornada: JornadaAsignacionDTO
+): AdvertenciaArbitro[] {
+  const recientes =
+    arbitro.jornadasEnUltimasFechas?.filter(
+      (j) => j.zonaId === jornada.zonaId
+    ) ?? []
+
+  const equiposJornada = [
+    { id: jornada.localEquipoId, nombre: jornada.local ?? '' },
+    { id: jornada.visitanteEquipoId, nombre: jornada.visitante ?? '' }
+  ]
+
+  const advertencias: AdvertenciaArbitro[] = []
+
+  for (const equipo of equiposJornada) {
+    for (const pasada of recientes) {
+      const participo =
+        pasada.localEquipoId === equipo.id ||
+        pasada.visitanteEquipoId === equipo.id
+      if (!participo) continue
+
+      const numeroFecha = formatearEtiquetaFechaAsignacion(
+        pasada.fechaNumero,
+        pasada.instanciaNombre
+      )
+      advertencias.push({
+        tipo: 'dirigio_reciente',
+        titulo: `Este árbitro ya dirigió a ${equipo.nombre} en la fecha ${numeroFecha}`
+      })
+    }
+  }
+
+  return advertencias
 }
 
 function obtenerAdvertencias(
   arbitro: ArbitroElegibleAsignacionDTO,
   jornada: JornadaAsignacionDTO
-): string[] {
-  const advertencias: string[] = []
+): AdvertenciaArbitro[] {
+  const advertencias: AdvertenciaArbitro[] = []
   const conflictoFecha = obtenerConflictoFecha(arbitro, jornada)
   if (conflictoFecha) advertencias.push(conflictoFecha)
   const prohibicion = obtenerProhibicionEquipo(arbitro, jornada)
   if (prohibicion) advertencias.push(prohibicion)
+  advertencias.push(...obtenerAdvertenciasDirigioReciente(arbitro, jornada))
   return advertencias
 }
 

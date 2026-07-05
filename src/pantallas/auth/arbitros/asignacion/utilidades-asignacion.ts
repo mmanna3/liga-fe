@@ -352,3 +352,38 @@ export function idsDesdeSlots(arbitro1: string, arbitro2: string): number[] {
     ids.push(Number(arbitro2))
   return ids
 }
+
+export type TipoAdvertenciaArbitro =
+  | 'conflicto_fecha'
+  | 'equipo_prohibido'
+  | 'dirigio_reciente'
+
+export interface AdvertenciaArbitro {
+  tipo: TipoAdvertenciaArbitro
+  titulo: string
+  detalle?: string
+}
+
+export const ETIQUETA_TIPO_ADVERTENCIA_ARBITRO: Record<
+  TipoAdvertenciaArbitro,
+  string
+> = {
+  conflicto_fecha: 'Conflicto de fecha',
+  equipo_prohibido: 'Equipo prohibido',
+  dirigio_reciente: 'Historial reciente'
+}
+
+export function claveAdvertenciaArbitro(
+  advertencia: AdvertenciaArbitro
+): string {
+  return `${advertencia.tipo}:${advertencia.titulo}:${advertencia.detalle ?? ''}`
+}
+
+export function formatearEtiquetaFechaAsignacion(
+  fechaNumero?: number | null,
+  instanciaNombre?: string | null
+): string {
+  if (fechaNumero != null) return String(fechaNumero)
+  if (instanciaNombre) return instanciaNombre
+  return '?'
+}

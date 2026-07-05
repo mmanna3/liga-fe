@@ -17,6 +17,9 @@ import { cn } from '@/logica-compartida/utils'
 import { AlertTriangle, ChevronsUpDown } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
+  type AdvertenciaArbitro,
+  ETIQUETA_TIPO_ADVERTENCIA_ARBITRO,
+  claveAdvertenciaArbitro,
   coincideBusquedaArbitro,
   nombreCompletoArbitro
 } from './utilidades-asignacion'
@@ -29,7 +32,7 @@ export interface OpcionArbitroAutocomplete {
   nombrePila: string
   apellido: string
   tieneAdvertencias: boolean
-  advertencias: string[]
+  advertencias: AdvertenciaArbitro[]
 }
 
 interface AutocompleteArbitroProps {
@@ -37,7 +40,7 @@ interface AutocompleteArbitroProps {
   valor: string
   opciones: OpcionArbitroAutocomplete[]
   deshabilitado?: boolean
-  advertenciasSeleccionadas?: string[]
+  advertenciasSeleccionadas?: AdvertenciaArbitro[]
   accionDerecha?: React.ReactNode
   alCambiar: (arbitroId: string) => void
 }
@@ -45,7 +48,9 @@ interface AutocompleteArbitroProps {
 export function construirOpcionesArbitro(
   arbitros: ArbitroElegibleAsignacionDTO[],
   otroSlotArbitroId: string,
-  obtenerAdvertencias: (arbitro: ArbitroElegibleAsignacionDTO) => string[]
+  obtenerAdvertencias: (
+    arbitro: ArbitroElegibleAsignacionDTO
+  ) => AdvertenciaArbitro[]
 ): OpcionArbitroAutocomplete[] {
   return arbitros
     .filter((a) => String(a.id) !== otroSlotArbitroId)
@@ -60,6 +65,27 @@ export function construirOpcionesArbitro(
         advertencias
       }
     })
+}
+
+function ContenidoAdvertenciasTooltip({
+  advertencias
+}: {
+  advertencias: AdvertenciaArbitro[]
+}) {
+  return (
+    <ul className='space-y-2'>
+      {advertencias.map((advertencia) => (
+        <li key={claveAdvertenciaArbitro(advertencia)}>
+          <p className='font-bold text-primary-foreground'>
+            {ETIQUETA_TIPO_ADVERTENCIA_ARBITRO[advertencia.tipo]}
+          </p>
+          <p className='text-xs text-primary-foreground'>
+            {advertencia.detalle ?? advertencia.titulo}
+          </p>
+        </li>
+      ))}
+    </ul>
+  )
 }
 
 export default function AutocompleteArbitro({
@@ -198,9 +224,9 @@ export default function AutocompleteArbitro({
                         </TooltipTrigger>
                         {opcion.advertencias.length > 0 && (
                           <TooltipContent side='right' className='max-w-xs'>
-                            {opcion.advertencias.map((advertencia) => (
-                              <p key={advertencia}>{advertencia}</p>
-                            ))}
+                            <ContenidoAdvertenciasTooltip
+                              advertencias={opcion.advertencias}
+                            />
                           </TooltipContent>
                         )}
                       </Tooltip>
@@ -222,9 +248,12 @@ export default function AutocompleteArbitro({
         data-testid={hayAdvertencias ? 'advertencias-arbitro' : undefined}
       >
         {advertenciasSeleccionadas.map((advertencia) => (
-          <p key={advertencia} className='flex items-center gap-1'>
+          <p
+            key={claveAdvertenciaArbitro(advertencia)}
+            className='flex items-center gap-1'
+          >
             <AlertTriangle className='h-3.5 w-3.5 shrink-0' />
-            {advertencia}
+            {advertencia.titulo}
           </p>
         ))}
       </div>

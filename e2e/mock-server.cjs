@@ -282,6 +282,19 @@ function crearArbitroProhibidosEstado() {
   }
 }
 
+const JORNADAS_EN_ULTIMAS_FECHAS_JUAN = [
+  {
+    zonaId: 1,
+    jornadaId: 550,
+    fechaNumero: 1,
+    instanciaNombre: null,
+    localEquipoId: 1,
+    visitanteEquipoId: 2,
+    local: 'Infantil A',
+    visitante: 'Infantil B'
+  }
+]
+
 function crearAsignacionProximaProhibidos(arbitroEstado) {
   const diaProximo = new Date()
   diaProximo.setDate(diaProximo.getDate() + 1)
@@ -307,7 +320,8 @@ function crearAsignacionProximaProhibidos(arbitroEstado) {
         apellido: 'Uno',
         telefonoCelular: '+5491111223344',
         equiposProhibidosIds,
-        jornadasAsignadasEnProximasFechas: []
+        jornadasAsignadasEnProximasFechas: [],
+        jornadasEnUltimasFechas: JORNADAS_EN_ULTIMAS_FECHAS_JUAN
       },
       {
         id: 2,
@@ -315,7 +329,8 @@ function crearAsignacionProximaProhibidos(arbitroEstado) {
         apellido: 'Dos',
         telefonoCelular: null,
         equiposProhibidosIds: [],
-        jornadasAsignadasEnProximasFechas: []
+        jornadasAsignadasEnProximasFechas: [],
+        jornadasEnUltimasFechas: []
       }
     ],
     torneos: [
@@ -355,6 +370,7 @@ function crearAsignacionProximaProhibidos(arbitroEstado) {
                       torneoNombre: 'Torneo Apertura 2026',
                       faseNombre: 'Fase regular',
                       zonaNombre: 'Zona A',
+                      zonaId: 1,
                       local: 'Infantil A',
                       visitante: 'Infantil B',
                       localEquipoId: 1,

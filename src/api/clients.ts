@@ -10756,6 +10756,7 @@ export class ArbitroElegibleAsignacionDTO implements IArbitroElegibleAsignacionD
   telefonoCelular?: string | undefined
   jornadasAsignadasEnProximasFechas!: JornadaAsignadaResumenDTO[] | undefined
   equiposProhibidosIds?: number[] | undefined
+  jornadasEnUltimasFechas?: JornadaAsignadaRecienteDTO[] | undefined
 
   constructor(data?: IArbitroElegibleAsignacionDTO) {
     if (data) {
@@ -10784,6 +10785,13 @@ export class ArbitroElegibleAsignacionDTO implements IArbitroElegibleAsignacionD
         for (let item of _data['equiposProhibidosIds'])
           this.equiposProhibidosIds!.push(item)
       }
+      if (Array.isArray(_data['jornadasEnUltimasFechas'])) {
+        this.jornadasEnUltimasFechas = [] as any
+        for (let item of _data['jornadasEnUltimasFechas'])
+          this.jornadasEnUltimasFechas!.push(
+            JornadaAsignadaRecienteDTO.fromJS(item)
+          )
+      }
     }
   }
 
@@ -10810,6 +10818,11 @@ export class ArbitroElegibleAsignacionDTO implements IArbitroElegibleAsignacionD
       for (let item of this.equiposProhibidosIds)
         data['equiposProhibidosIds'].push(item)
     }
+    if (Array.isArray(this.jornadasEnUltimasFechas)) {
+      data['jornadasEnUltimasFechas'] = []
+      for (let item of this.jornadasEnUltimasFechas)
+        data['jornadasEnUltimasFechas'].push(item.toJSON())
+    }
     return data
   }
 }
@@ -10821,6 +10834,7 @@ export interface IArbitroElegibleAsignacionDTO {
   telefonoCelular?: string | undefined
   jornadasAsignadasEnProximasFechas: JornadaAsignadaResumenDTO[] | undefined
   equiposProhibidosIds?: number[] | undefined
+  jornadasEnUltimasFechas?: JornadaAsignadaRecienteDTO[] | undefined
 }
 
 export class ArbitroEquipoProhibidoDTO implements IArbitroEquipoProhibidoDTO {
@@ -14269,6 +14283,7 @@ export class JornadaAsignacionDTO implements IJornadaAsignacionDTO {
   torneoNombre!: string | undefined
   faseNombre!: string | undefined
   zonaNombre!: string | undefined
+  zonaId!: number
   local!: string | undefined
   visitante!: string | undefined
   localEquipoId!: number
@@ -14297,6 +14312,7 @@ export class JornadaAsignacionDTO implements IJornadaAsignacionDTO {
       this.torneoNombre = _data['torneoNombre']
       this.faseNombre = _data['faseNombre']
       this.zonaNombre = _data['zonaNombre']
+      this.zonaId = _data['zonaId']
       this.local = _data['local']
       this.visitante = _data['visitante']
       this.localEquipoId = _data['localEquipoId']
@@ -14327,6 +14343,7 @@ export class JornadaAsignacionDTO implements IJornadaAsignacionDTO {
     data['torneoNombre'] = this.torneoNombre
     data['faseNombre'] = this.faseNombre
     data['zonaNombre'] = this.zonaNombre
+    data['zonaId'] = this.zonaId
     data['local'] = this.local
     data['visitante'] = this.visitante
     data['localEquipoId'] = this.localEquipoId
@@ -14350,6 +14367,7 @@ export interface IJornadaAsignacionDTO {
   torneoNombre: string | undefined
   faseNombre: string | undefined
   zonaNombre: string | undefined
+  zonaId: number
   local: string | undefined
   visitante: string | undefined
   localEquipoId: number
@@ -14358,6 +14376,70 @@ export interface IJornadaAsignacionDTO {
   direccionLocal?: string | undefined
   localidadLocal?: string | undefined
   arbitrosAsignados: ArbitroAsignadoDTO[] | undefined
+}
+
+export class JornadaAsignadaRecienteDTO implements IJornadaAsignadaRecienteDTO {
+  zonaId!: number
+  jornadaId!: number
+  fechaNumero?: number | undefined
+  instanciaNombre?: string | undefined
+  localEquipoId!: number
+  visitanteEquipoId!: number
+  local!: string | undefined
+  visitante!: string | undefined
+
+  constructor(data?: IJornadaAsignadaRecienteDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.zonaId = _data['zonaId']
+      this.jornadaId = _data['jornadaId']
+      this.fechaNumero = _data['fechaNumero']
+      this.instanciaNombre = _data['instanciaNombre']
+      this.localEquipoId = _data['localEquipoId']
+      this.visitanteEquipoId = _data['visitanteEquipoId']
+      this.local = _data['local']
+      this.visitante = _data['visitante']
+    }
+  }
+
+  static fromJS(data: any): JornadaAsignadaRecienteDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new JornadaAsignadaRecienteDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['zonaId'] = this.zonaId
+    data['jornadaId'] = this.jornadaId
+    data['fechaNumero'] = this.fechaNumero
+    data['instanciaNombre'] = this.instanciaNombre
+    data['localEquipoId'] = this.localEquipoId
+    data['visitanteEquipoId'] = this.visitanteEquipoId
+    data['local'] = this.local
+    data['visitante'] = this.visitante
+    return data
+  }
+}
+
+export interface IJornadaAsignadaRecienteDTO {
+  zonaId: number
+  jornadaId: number
+  fechaNumero?: number | undefined
+  instanciaNombre?: string | undefined
+  localEquipoId: number
+  visitanteEquipoId: number
+  local: string | undefined
+  visitante: string | undefined
 }
 
 export class JornadaAsignadaResumenDTO implements IJornadaAsignadaResumenDTO {

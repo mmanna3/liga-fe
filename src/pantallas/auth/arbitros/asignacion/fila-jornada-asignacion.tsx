@@ -132,7 +132,7 @@ export default function FilaJornadaAsignacion({
   return (
     <div
       className={cn(
-        'flex flex-col gap-3 border-b border-border py-4 pl-3 last:border-b-0 lg:flex-row lg:items-end lg:justify-between',
+        'flex flex-col gap-3 border-b border-border py-4 pl-3 last:border-b-0 lg:flex-row lg:items-start lg:justify-between',
         tieneAsignacion && 'border-l-4 border-emerald-500 bg-emerald-50/40'
       )}
     >
@@ -164,7 +164,7 @@ export default function FilaJornadaAsignacion({
           </p>
         )}
       </div>
-      <div className='flex flex-col gap-3 sm:flex-row sm:items-end'>
+      <div className='flex flex-col gap-3 sm:flex-row sm:items-start'>
         <SlotArbitroConWhatsapp
           titulo='Árbitro 1'
           jornada={jornada}
