@@ -446,8 +446,36 @@ const TORNEO_ARB_HISTORICO = {
   fases: []
 }
 
-const ASIGNACION_HISTORICA_ARB = {
-  torneos: [
+const TORNEO_ARB_HISTORICO_2 = {
+  id: 2,
+  nombre: 'Torneo Clausura 2026',
+  anio: new Date().getFullYear(),
+  torneoAgrupadorId: 1,
+  torneoAgrupadorNombre: 'Liga Infantil',
+  fases: []
+}
+
+const ARBITROS_ELEGIBLES_HISTORICO = [
+  {
+    id: 1,
+    nombre: 'Juan',
+    apellido: 'Uno',
+    telefonoCelular: '+5491111223344',
+    jornadasAsignadasEnProximasFechas: []
+  },
+  {
+    id: 2,
+    nombre: 'Pedro',
+    apellido: 'Dos',
+    telefonoCelular: null,
+    jornadasAsignadasEnProximasFechas: []
+  }
+]
+
+function crearAsignacionHistoricaArb() {
+  return {
+    arbitrosElegibles: ARBITROS_ELEGIBLES_HISTORICO,
+    torneos: [
     {
       id: 1,
       nombre: 'Torneo Apertura 2026',
@@ -507,6 +535,92 @@ const ASIGNACION_HISTORICA_ARB = {
                           }
                         }
                       ]
+                    },
+                    {
+                      id: 501,
+                      dia: '2026-01-10',
+                      diaSemana: 'Sábado',
+                      torneoNombre: 'Torneo Apertura 2026',
+                      faseNombre: 'Fase regular',
+                      zonaNombre: 'Zona A',
+                      local: 'Infantil C',
+                      visitante: 'Infantil D',
+                      nombreClubLocal: 'Club Atlético',
+                      direccionLocal: null,
+                      localidadLocal: 'Rosario',
+                      arbitrosAsignados: []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              id: 2,
+              nombre: 'Zona B',
+              fechasHistoricas: [
+                {
+                  fechaId: 51,
+                  dia: '2025-12-20',
+                  diaSemana: 'Sábado',
+                  numero: 2,
+                  instanciaNombre: null,
+                  jornadas: [
+                    {
+                      id: 502,
+                      dia: '2025-12-20',
+                      diaSemana: 'Sábado',
+                      torneoNombre: 'Torneo Apertura 2026',
+                      faseNombre: 'Fase regular',
+                      zonaNombre: 'Zona B',
+                      local: 'Infantil E',
+                      visitante: 'Infantil F',
+                      nombreClubLocal: 'Club Sur',
+                      direccionLocal: null,
+                      localidadLocal: 'Rosario',
+                      arbitrosAsignados: []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 2,
+      nombre: 'Torneo Clausura 2026',
+      horarioDeJuego: '18:00',
+      fases: [
+        {
+          id: 200,
+          nombre: 'Fase única',
+          categorias: [],
+          zonas: [
+            {
+              id: 3,
+              nombre: 'Zona única',
+              fechasHistoricas: [
+                {
+                  fechaId: 60,
+                  dia: '2026-02-01',
+                  diaSemana: 'Domingo',
+                  numero: 1,
+                  instanciaNombre: null,
+                  jornadas: [
+                    {
+                      id: 600,
+                      dia: '2026-02-01',
+                      diaSemana: 'Domingo',
+                      torneoNombre: 'Torneo Clausura 2026',
+                      faseNombre: 'Fase única',
+                      zonaNombre: 'Zona única',
+                      local: 'Reserva A',
+                      visitante: 'Reserva B',
+                      nombreClubLocal: 'Club Norte',
+                      direccionLocal: null,
+                      localidadLocal: 'Rosario',
+                      arbitrosAsignados: []
                     }
                   ]
                 }
@@ -547,9 +661,13 @@ const ASIGNACION_HISTORICA_ARB = {
       ]
     }
   ]
+  }
 }
 
+let asignacionHistoricaEstado = crearAsignacionHistoricaArb()
+
 const ASIGNACION_HISTORICA_VACIA = {
+  arbitrosElegibles: [],
   torneos: [],
   arbitrosConJornadas: []
 }
@@ -786,7 +904,7 @@ const ROUTES = [
       torneo_detalle: [TORNEO_CON_FASES],
       torneo_editable: [TORNEO_EDITABLE],
       torneo_con_agrupadores: [],
-      arbitros_historico: [TORNEO_ARB_HISTORICO],
+      arbitros_historico: [TORNEO_ARB_HISTORICO, TORNEO_ARB_HISTORICO_2],
       arbitros_historico_vacio: [TORNEO_ARB_HISTORICO]
     }
   },
@@ -1083,11 +1201,17 @@ const ROUTES = [
   },
 
   {
+    method: 'PUT',
+    pattern: /^\/api\/Arbitro\/jornada\/\d+\/arbitros$/,
+    scenarios: { happy: null, arbitros_historico: null }
+  },
+
+  {
     method: 'GET',
     pattern: /^\/api\/Arbitro\/asignacion-historica-por-agrupador/,
     scenarios: {
       happy: ASIGNACION_HISTORICA_VACIA,
-      arbitros_historico: ASIGNACION_HISTORICA_ARB,
+      arbitros_historico: asignacionHistoricaEstado,
       arbitros_historico_vacio: ASIGNACION_HISTORICA_VACIA
     }
   },
@@ -1185,6 +1309,9 @@ const server = http.createServer((req, res) => {
       try {
         const { scenario } = JSON.parse(body)
         SCENARIO = scenario
+        if (scenario === 'arbitros_historico') {
+          asignacionHistoricaEstado = crearAsignacionHistoricaArb()
+        }
         console.log(`[mock] Escenario cambiado a: ${scenario}`)
         res.writeHead(200, { 'Content-Type': 'application/json' })
         res.end(JSON.stringify({ ok: true }))
@@ -1254,6 +1381,53 @@ const server = http.createServer((req, res) => {
       res.end(
         JSON.stringify({ exito: true, token: login.token, permisos: login.permisos })
       )
+    })
+    return
+  }
+
+  if (req.method === 'PUT' && /^\/api\/Arbitro\/jornada\/\d+\/arbitros$/.test(pathname)) {
+    let body = ''
+    req.on('data', (chunk) => {
+      body += chunk
+    })
+    req.on('end', () => {
+      if (SCENARIO === 'arbitros_historico') {
+        const jornadaId = Number(pathname.match(/\/jornada\/(\d+)\/arbitros$/)[1])
+        let arbitroIds = []
+        try {
+          arbitroIds = JSON.parse(body).arbitroIds ?? []
+        } catch {
+          arbitroIds = []
+        }
+        for (const torneo of asignacionHistoricaEstado.torneos) {
+          for (const fase of torneo.fases ?? []) {
+            for (const zona of fase.zonas ?? []) {
+              for (const fecha of zona.fechasHistoricas ?? []) {
+                const jornada = (fecha.jornadas ?? []).find((j) => j.id === jornadaId)
+                if (jornada) {
+                  jornada.arbitrosAsignados = arbitroIds.map((id, index) => {
+                    const arbitro = ARBITROS_ELEGIBLES_HISTORICO.find((a) => a.id === id)
+                    return {
+                      id,
+                      nombre: arbitro?.nombre ?? 'Árbitro',
+                      apellido: arbitro?.apellido ?? '',
+                      telefonoCelular: arbitro?.telefonoCelular ?? null,
+                      orden: index + 1,
+                      whatsappEnviado: false,
+                      whatsapp: null
+                    }
+                  })
+                }
+              }
+            }
+          }
+        }
+        res.writeHead(204)
+        res.end()
+        return
+      }
+      res.writeHead(204)
+      res.end()
     })
     return
   }

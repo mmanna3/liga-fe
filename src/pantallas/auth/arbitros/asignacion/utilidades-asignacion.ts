@@ -1,3 +1,11 @@
+import type {
+  AsignacionHistoricaArbitrosPorAgrupadorDTO,
+  FechaHistoricaAsignacionDTO,
+  FaseCategoriaDTO,
+  JornadaAsignacionDTO,
+  TorneoAsignacionHistoricaDTO
+} from '@/api/clients'
+
 export function formatearDiaCorto(fecha: Date): string {
   const dia = fecha.getUTCDate()
   const mes = fecha.getUTCMonth() + 1
@@ -210,4 +218,137 @@ export function obtenerRangoAniosArbitros(anioActual: number): number[] {
   const anios: number[] = []
   for (let a = hasta; a >= desde; a--) anios.push(a)
   return anios
+}
+
+export interface OpcionFechaHistorica {
+  value: string
+  label: string
+  zonaNombre: string
+  faseNombre: string
+  faseId: number
+  zonaId: number
+  fecha: FechaHistoricaAsignacionDTO
+}
+
+export interface ContextoFechaHistorica {
+  torneo: TorneoAsignacionHistoricaDTO
+  faseNombre: string
+  faseId: number
+  zonaNombre: string
+  zonaId: number
+  fecha: FechaHistoricaAsignacionDTO
+  jornadas: JornadaAsignacionDTO[]
+  categoriasFase: FaseCategoriaDTO[]
+  horarioDeJuegoTorneo?: string | null
+}
+
+function etiquetaFechaHistorica(
+  fecha: FechaHistoricaAsignacionDTO,
+  zonaNombre: string
+): string {
+  const partes = [
+    fecha.numero != null ? `Fecha ${fecha.numero}` : fecha.instanciaNombre,
+    fecha.diaSemana,
+    fecha.dia ? formatearDiaCorto(fecha.dia) : null,
+    zonaNombre
+  ].filter(Boolean)
+  return partes.join(' · ')
+}
+
+export function construirOpcionesFechasHistoricas(
+  torneo: TorneoAsignacionHistoricaDTO
+): OpcionFechaHistorica[] {
+  const opciones: OpcionFechaHistorica[] = []
+
+  for (const fase of torneo.fases ?? []) {
+    const faseNombre = fase.nombre ?? `Fase ${fase.id}`
+    for (const zona of fase.zonas ?? []) {
+      const zonaNombre = zona.nombre ?? `Zona ${zona.id}`
+      for (const fecha of zona.fechasHistoricas ?? []) {
+        opciones.push({
+          value: String(fecha.fechaId),
+          label: etiquetaFechaHistorica(fecha, zonaNombre),
+          zonaNombre,
+          faseNombre,
+          faseId: fase.id!,
+          zonaId: zona.id!,
+          fecha
+        })
+      }
+    }
+  }
+
+  return opciones.sort((a, b) => {
+    const diaA = a.fecha.dia ? new Date(a.fecha.dia).getTime() : 0
+    const diaB = b.fecha.dia ? new Date(b.fecha.dia).getTime() : 0
+    return diaB - diaA
+  })
+}
+
+export function obtenerContextoFechaHistorica(
+  data: AsignacionHistoricaArbitrosPorAgrupadorDTO,
+  torneoId: number,
+  fechaId: number
+): ContextoFechaHistorica | null {
+  const torneo = (data.torneos ?? []).find((t) => t.id === torneoId)
+  if (!torneo) return null
+
+  for (const fase of torneo.fases ?? []) {
+    const faseNombre = fase.nombre ?? `Fase ${fase.id}`
+    for (const zona of fase.zonas ?? []) {
+      const zonaNombre = zona.nombre ?? `Zona ${zona.id}`
+      const fecha = (zona.fechasHistoricas ?? []).find(
+        (f) => f.fechaId === fechaId
+      )
+      if (!fecha) continue
+
+      return {
+        torneo,
+        faseNombre,
+        faseId: fase.id!,
+        zonaNombre,
+        zonaId: zona.id!,
+        fecha,
+        jornadas: fecha.jornadas ?? [],
+        categoriasFase: fase.categorias ?? [],
+        horarioDeJuegoTorneo: torneo.horarioDeJuego
+      }
+    }
+  }
+
+  return null
+}
+
+export function obtenerJornadaIdsDeFecha(
+  data: AsignacionHistoricaArbitrosPorAgrupadorDTO,
+  torneoId: number,
+  fechaId: number
+): Set<number> {
+  const contexto = obtenerContextoFechaHistorica(data, torneoId, fechaId)
+  if (!contexto) return new Set()
+  return new Set(contexto.jornadas.map((j) => j.id!))
+}
+
+export function construirSlotsInicialesDesdeJornadas(
+  jornadas: JornadaAsignacionDTO[]
+): Record<number, { arbitro1: string; arbitro2: string }> {
+  const slots: Record<number, { arbitro1: string; arbitro2: string }> = {}
+  for (const jornada of jornadas) {
+    const asignados = [...(jornada.arbitrosAsignados ?? [])].sort(
+      (a, b) => a.orden - b.orden
+    )
+    slots[jornada.id!] = {
+      arbitro1: asignados[0] ? String(asignados[0].id) : 'sin-arbitro',
+      arbitro2: asignados[1] ? String(asignados[1].id) : 'sin-arbitro'
+    }
+  }
+  return slots
+}
+
+export function idsDesdeSlots(arbitro1: string, arbitro2: string): number[] {
+  const ids: number[] = []
+  if (arbitro1 !== 'sin-arbitro') ids.push(Number(arbitro1))
+  if (arbitro2 !== 'sin-arbitro' && arbitro2 !== arbitro1)
+    ids.push(Number(arbitro2))
+  return ids
 }

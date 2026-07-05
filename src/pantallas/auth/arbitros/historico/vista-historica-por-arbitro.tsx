@@ -18,27 +18,54 @@ import DetalleWhatsappHistorico from './detalle-whatsapp-historico'
 
 interface VistaHistoricaPorArbitroProps {
   arbitros: ArbitroConJornadasHistoricasDTO[]
+  jornadaIdsFiltrados: Set<number>
+  sinDatosHistoricos: boolean
+  filtrosCompletos: boolean
 }
 
 export default function VistaHistoricaPorArbitro({
-  arbitros
+  arbitros,
+  jornadaIdsFiltrados,
+  sinDatosHistoricos,
+  filtrosCompletos
 }: VistaHistoricaPorArbitroProps) {
   const [busqueda, setBusqueda] = useState('')
 
+  const arbitrosConJornadasFiltradas = useMemo(() => {
+    if (!filtrosCompletos) return []
+
+    return arbitros
+      .map((arbitro) => ({
+        ...arbitro,
+        jornadasHistoricas: (arbitro.jornadasHistoricas ?? []).filter((j) =>
+          jornadaIdsFiltrados.has(j.jornadaId!)
+        )
+      }))
+      .filter((a) => (a.jornadasHistoricas ?? []).length > 0)
+  }, [arbitros, jornadaIdsFiltrados, filtrosCompletos])
+
   const arbitrosFiltrados = useMemo(() => {
-    if (!busqueda.trim()) return arbitros
-    return arbitros.filter((a) =>
+    if (!busqueda.trim()) return arbitrosConJornadasFiltradas
+    return arbitrosConJornadasFiltradas.filter((a) =>
       coincideBusquedaArbitro(a.nombre, a.apellido, busqueda)
     )
-  }, [arbitros, busqueda])
+  }, [arbitrosConJornadasFiltradas, busqueda])
 
-  if (arbitros.length === 0) {
+  if (sinDatosHistoricos) {
     return (
       <p
         className='py-8 text-center text-muted-foreground'
         data-testid='historico-vacio-por-arbitro'
       >
-        No hay asignaciones históricas para este agrupador y año.
+        No hay fechas pasadas para este agrupador y año.
+      </p>
+    )
+  }
+
+  if (!filtrosCompletos) {
+    return (
+      <p className='py-8 text-center text-muted-foreground'>
+        Seleccioná torneo y fecha para ver las jornadas.
       </p>
     )
   }
@@ -57,7 +84,9 @@ export default function VistaHistoricaPorArbitro({
 
       {arbitrosFiltrados.length === 0 ? (
         <p className='py-8 text-center text-muted-foreground'>
-          No hay árbitros que coincidan con la búsqueda.
+          {busqueda.trim()
+            ? 'No hay árbitros que coincidan con la búsqueda.'
+            : 'No hay árbitros asignados en la fecha seleccionada.'}
         </p>
       ) : (
         <div className='grid gap-4 md:grid-cols-2'>
@@ -74,7 +103,8 @@ export default function VistaHistoricaPorArbitro({
                   </CardTitle>
                   <p className='text-sm text-muted-foreground'>
                     {jornadas.length}{' '}
-                    {jornadas.length === 1 ? 'jornada' : 'jornadas'} históricas
+                    {jornadas.length === 1 ? 'jornada' : 'jornadas'} en esta
+                    fecha
                   </p>
                 </CardHeader>
                 <CardContent className='space-y-4'>

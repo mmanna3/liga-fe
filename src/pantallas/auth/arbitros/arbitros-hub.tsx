@@ -78,8 +78,8 @@ export default function ArbitrosHub() {
                 Asignaciones históricas
               </CardTitle>
               <CardDescription>
-                Consultá asignaciones de fechas pasadas y los datos enviados por
-                WhatsApp.
+                Consultá y corregí asignaciones de fechas pasadas y los datos
+                enviados por WhatsApp.
               </CardDescription>
             </CardHeader>
           </Card>

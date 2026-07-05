@@ -10903,6 +10903,7 @@ export interface IAsignacionArbitrosPorAgrupadorDTO {
 }
 
 export class AsignacionHistoricaArbitrosPorAgrupadorDTO implements IAsignacionHistoricaArbitrosPorAgrupadorDTO {
+  arbitrosElegibles!: ArbitroElegibleAsignacionDTO[] | undefined
   torneos!: TorneoAsignacionHistoricaDTO[] | undefined
   arbitrosConJornadas!: ArbitroConJornadasHistoricasDTO[] | undefined
 
@@ -10917,6 +10918,13 @@ export class AsignacionHistoricaArbitrosPorAgrupadorDTO implements IAsignacionHi
 
   init(_data?: any) {
     if (_data) {
+      if (Array.isArray(_data['arbitrosElegibles'])) {
+        this.arbitrosElegibles = [] as any
+        for (let item of _data['arbitrosElegibles'])
+          this.arbitrosElegibles!.push(
+            ArbitroElegibleAsignacionDTO.fromJS(item)
+          )
+      }
       if (Array.isArray(_data['torneos'])) {
         this.torneos = [] as any
         for (let item of _data['torneos'])
@@ -10941,6 +10949,11 @@ export class AsignacionHistoricaArbitrosPorAgrupadorDTO implements IAsignacionHi
 
   toJSON(data?: any) {
     data = typeof data === 'object' ? data : {}
+    if (Array.isArray(this.arbitrosElegibles)) {
+      data['arbitrosElegibles'] = []
+      for (let item of this.arbitrosElegibles)
+        data['arbitrosElegibles'].push(item.toJSON())
+    }
     if (Array.isArray(this.torneos)) {
       data['torneos'] = []
       for (let item of this.torneos) data['torneos'].push(item.toJSON())
@@ -10955,6 +10968,7 @@ export class AsignacionHistoricaArbitrosPorAgrupadorDTO implements IAsignacionHi
 }
 
 export interface IAsignacionHistoricaArbitrosPorAgrupadorDTO {
+  arbitrosElegibles: ArbitroElegibleAsignacionDTO[] | undefined
   torneos: TorneoAsignacionHistoricaDTO[] | undefined
   arbitrosConJornadas: ArbitroConJornadasHistoricasDTO[] | undefined
 }

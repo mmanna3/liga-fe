@@ -15,6 +15,7 @@ interface SelectorArbitroJornadaProps {
   valor: string
   otroSlotArbitroId: string
   deshabilitado?: boolean
+  mostrarConflictos?: boolean
   accionDerecha?: React.ReactNode
   alCambiar: (arbitroId: string) => void
 }
@@ -41,22 +42,25 @@ export default function SelectorArbitroJornada({
   valor,
   otroSlotArbitroId,
   deshabilitado,
+  mostrarConflictos = true,
   accionDerecha,
   alCambiar
 }: SelectorArbitroJornadaProps) {
   const opciones = useMemo(
     () =>
-      construirOpcionesArbitro(arbitrosElegibles, otroSlotArbitroId, (a) =>
-        obtenerConflicto(a, jornada)
+      construirOpcionesArbitro(
+        arbitrosElegibles,
+        otroSlotArbitroId,
+        mostrarConflictos ? (a) => obtenerConflicto(a, jornada) : () => null
       ),
-    [arbitrosElegibles, otroSlotArbitroId, jornada]
+    [arbitrosElegibles, otroSlotArbitroId, jornada, mostrarConflictos]
   )
 
   const arbitroSeleccionado = arbitrosElegibles.find(
     (a) => String(a.id) === valor
   )
   const textoConflicto =
-    arbitroSeleccionado && valor !== 'sin-arbitro'
+    mostrarConflictos && arbitroSeleccionado && valor !== 'sin-arbitro'
       ? obtenerConflicto(arbitroSeleccionado, jornada)
       : null
 

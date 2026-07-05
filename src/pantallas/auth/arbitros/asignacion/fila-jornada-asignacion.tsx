@@ -23,6 +23,8 @@ interface FilaJornadaAsignacionProps {
   arbitro2Id: string
   whatsappEnviadoPorAsignacion: Record<string, boolean>
   guardando: boolean
+  mostrarWhatsapp?: boolean
+  mostrarConflictos?: boolean
   alCambiarArbitro1: (arbitroId: string) => void
   alCambiarArbitro2: (arbitroId: string) => void
   alMarcarWhatsappEnviado: (
@@ -42,6 +44,8 @@ function SlotArbitroConWhatsapp({
   otroSlotArbitroId,
   whatsappEnviado,
   guardando,
+  mostrarWhatsapp = true,
+  mostrarConflictos = true,
   alCambiar,
   alMarcarWhatsappEnviado
 }: {
@@ -54,6 +58,8 @@ function SlotArbitroConWhatsapp({
   otroSlotArbitroId: string
   whatsappEnviado: boolean
   guardando: boolean
+  mostrarWhatsapp?: boolean
+  mostrarConflictos?: boolean
   alCambiar: (arbitroId: string) => void
   alMarcarWhatsappEnviado: (
     jornadaId: number,
@@ -69,21 +75,24 @@ function SlotArbitroConWhatsapp({
       valor={arbitroId}
       otroSlotArbitroId={otroSlotArbitroId}
       deshabilitado={guardando}
+      mostrarConflictos={mostrarConflictos}
       alCambiar={alCambiar}
       accionDerecha={
-        <BotonWhatsappArbitro
-          jornada={jornada}
-          arbitroId={arbitroId}
-          arbitrosElegibles={arbitrosElegibles}
-          categoriasFase={categoriasFase}
-          horarioDeJuegoTorneo={horarioDeJuegoTorneo}
-          whatsappEnviado={whatsappEnviado}
-          deshabilitado={guardando}
-          alMarcarEnviado={(datos) => {
-            if (arbitroId === 'sin-arbitro') return
-            alMarcarWhatsappEnviado(jornada.id, Number(arbitroId), datos)
-          }}
-        />
+        mostrarWhatsapp ? (
+          <BotonWhatsappArbitro
+            jornada={jornada}
+            arbitroId={arbitroId}
+            arbitrosElegibles={arbitrosElegibles}
+            categoriasFase={categoriasFase}
+            horarioDeJuegoTorneo={horarioDeJuegoTorneo}
+            whatsappEnviado={whatsappEnviado}
+            deshabilitado={guardando}
+            alMarcarEnviado={(datos) => {
+              if (arbitroId === 'sin-arbitro') return
+              alMarcarWhatsappEnviado(jornada.id, Number(arbitroId), datos)
+            }}
+          />
+        ) : undefined
       }
     />
   )
@@ -98,6 +107,8 @@ export default function FilaJornadaAsignacion({
   arbitro2Id,
   whatsappEnviadoPorAsignacion,
   guardando,
+  mostrarWhatsapp = true,
+  mostrarConflictos = true,
   alCambiarArbitro1,
   alCambiarArbitro2,
   alMarcarWhatsappEnviado
@@ -164,6 +175,8 @@ export default function FilaJornadaAsignacion({
           otroSlotArbitroId={arbitro2Id}
           whatsappEnviado={whatsappEnviado1}
           guardando={guardando}
+          mostrarWhatsapp={mostrarWhatsapp}
+          mostrarConflictos={mostrarConflictos}
           alCambiar={alCambiarArbitro1}
           alMarcarWhatsappEnviado={alMarcarWhatsappEnviado}
         />
@@ -177,6 +190,8 @@ export default function FilaJornadaAsignacion({
           otroSlotArbitroId={arbitro1Id}
           whatsappEnviado={whatsappEnviado2}
           guardando={guardando}
+          mostrarWhatsapp={mostrarWhatsapp}
+          mostrarConflictos={mostrarConflictos}
           alCambiar={alCambiarArbitro2}
           alMarcarWhatsappEnviado={alMarcarWhatsappEnviado}
         />
