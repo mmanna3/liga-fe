@@ -1,6 +1,13 @@
 import { Card, CardContent } from '@/design-system/base-ui/card'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@/design-system/base-ui/tooltip'
+import { VisibleSoloParaAdmin } from '@/design-system/visible-solo-para-admin'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { BotonEliminar } from '@/design-system/ykn-ui/boton-eliminar'
+import Icono from '@/design-system/ykn-ui/icono'
 import { useDroppable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
 import {
@@ -10,7 +17,8 @@ import {
 } from '@dnd-kit/sortable'
 import { cn } from '@/logica-compartida/utils'
 import { GripVertical, Layers } from 'lucide-react'
-import type { FaseDTO } from '@/api/clients'
+import type { FaseDTO, GrupoDeFasesDTO } from '@/api/clients'
+import { useToggleVisibilidadGrupoDeFasesEnApp } from '@/api/hooks/use-visibilidad-en-app'
 import { TituloFase } from '../../../crear-torneo/components/titulo-fase'
 import { FaseItem } from '../fase-item/fase-item'
 import type { FaseEstado } from '../../lib'
@@ -38,6 +46,7 @@ interface GrupoDeFasesItemProps extends GrupoDeFasesCallbacks {
   torneoId: number
   nombreTorneo: string
   torneoFases: FaseDTO[]
+  torneoGrupos: GrupoDeFasesDTO[]
   estaGuardando: boolean
   sortable?: boolean
 }
@@ -131,6 +140,7 @@ export function GrupoDeFasesItem({
   torneoId,
   nombreTorneo,
   torneoFases,
+  torneoGrupos,
   onActualizarGrupo,
   onActualizarFase,
   onEliminarFase,
@@ -143,6 +153,13 @@ export function GrupoDeFasesItem({
   const dropId = idDragGrupoDrop(grupo.idLocal)
   const { setNodeRef, isOver } = useDroppable({ id: dropId })
 
+  const grupoOriginal = torneoGrupos.find((g) => g.id === grupo.id)
+  const toggleVisibilidadGrupoMutation = useToggleVisibilidadGrupoDeFasesEnApp(
+    torneoId,
+    grupoOriginal?.id,
+    grupoOriginal?.esVisibleEnApp
+  )
+
   const sortableHook = useSortable({
     id: idDragGrupoTopLevel(grupo),
     disabled: !sortable
@@ -150,6 +167,48 @@ export function GrupoDeFasesItem({
 
   const idsOrdenados = grupo.elementos.map(idTopLevelDesdeElemento)
   const puedeAgregarSubgrupo = profundidad < PROFUNDIDAD_MAX_GRUPO
+  const esVisibleGrupoEnApp = grupoOriginal?.esVisibleEnApp ?? true
+
+  const claseBotonAccion =
+    'h-7 w-7 min-w-7 p-0 border-none shadow-none text-muted-foreground hover:text-foreground/80 hover:bg-muted/50'
+
+  const botonVisibilidadEnApp =
+    grupoOriginal?.id != null ? (
+      <VisibleSoloParaAdmin>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Boton
+              type='button'
+              variant='outline'
+              className={claseBotonAccion}
+              estaCargando={toggleVisibilidadGrupoMutation.isPending}
+              aria-label={
+                esVisibleGrupoEnApp
+                  ? 'Grupo de fases visible en la app'
+                  : 'Grupo de fases no visible en la app'
+              }
+              onClick={() => toggleVisibilidadGrupoMutation.mutate()}
+            >
+              <Icono
+                nombre={esVisibleGrupoEnApp ? 'Visible' : 'NoVisible'}
+                className='h-4 w-4 shrink-0'
+              />
+            </Boton>
+          </TooltipTrigger>
+          <TooltipContent
+            side='bottom'
+            className='max-w-xs px-4 py-3'
+            sideOffset={8}
+          >
+            <p>
+              {esVisibleGrupoEnApp
+                ? 'El grupo de fases es visible en la app'
+                : 'El grupo de fases no es visible en la app'}
+            </p>
+          </TooltipContent>
+        </Tooltip>
+      </VisibleSoloParaAdmin>
+    ) : null
 
   const botonEliminar = (
     <BotonEliminar
@@ -205,6 +264,7 @@ export function GrupoDeFasesItem({
                 Subgrupo
               </Boton>
             )}
+            {botonVisibilidadEnApp}
             {botonEliminar}
           </div>
         </div>
@@ -264,6 +324,7 @@ export function GrupoDeFasesItem({
                     torneoId={torneoId}
                     nombreTorneo={nombreTorneo}
                     torneoFases={torneoFases}
+                    torneoGrupos={torneoGrupos}
                     callbacks={{
                       onActualizarGrupo,
                       onActualizarFase,
@@ -307,6 +368,7 @@ interface SubgrupoEnContenedorProps {
   torneoId: number
   nombreTorneo: string
   torneoFases: FaseDTO[]
+  torneoGrupos: GrupoDeFasesDTO[]
   callbacks: GrupoDeFasesCallbacks
   estaGuardando: boolean
 }
@@ -318,6 +380,7 @@ function SubgrupoEnContenedor({
   torneoId,
   nombreTorneo,
   torneoFases,
+  torneoGrupos,
   callbacks,
   estaGuardando
 }: SubgrupoEnContenedorProps) {
@@ -362,6 +425,7 @@ function SubgrupoEnContenedor({
           torneoId={torneoId}
           nombreTorneo={nombreTorneo}
           torneoFases={torneoFases}
+          torneoGrupos={torneoGrupos}
           {...callbacks}
           estaGuardando={estaGuardando}
         />

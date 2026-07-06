@@ -1,6 +1,7 @@
 import {
   fechaCambiarVisibilidadEnApp,
   faseCambiarVisibilidadEnApp,
+  grupoDeFasesCambiarVisibilidadEnApp,
   torneoCambiarVisibilidadEnApp
 } from '@/api/visibilidad-en-app-api'
 import useApiMutation from '@/api/hooks/use-api-mutation'
@@ -37,6 +38,27 @@ export function useToggleVisibilidadFaseEnApp(
       if (faseId === undefined) return
       const actual = esVisibleEnApp ?? true
       await faseCambiarVisibilidadEnApp(torneoId, faseId, !actual)
+    },
+    antesDeMensajeExito: () => {
+      queryClient.invalidateQueries({ queryKey: ['torneo'] })
+    },
+    mensajeDeExito: MENSAJE
+  })
+}
+
+/** Toggle de visibilidad en app de un grupo de fases (PUT dedicado; invalida queries del torneo). */
+export function useToggleVisibilidadGrupoDeFasesEnApp(
+  torneoId: number,
+  grupoId: number | undefined,
+  esVisibleEnApp: boolean | undefined
+) {
+  const queryClient = useQueryClient()
+
+  return useApiMutation<void>({
+    fn: async () => {
+      if (grupoId === undefined) return
+      const actual = esVisibleEnApp ?? true
+      await grupoDeFasesCambiarVisibilidadEnApp(torneoId, grupoId, !actual)
     },
     antesDeMensajeExito: () => {
       queryClient.invalidateQueries({ queryKey: ['torneo'] })

@@ -56,3 +56,15 @@ export async function fechaCambiarVisibilidadEnApp(
     esVisibleEnApp
   )
 }
+
+/** PUT /api/Torneo/{torneoId}/grupos-de-fases/{grupoId}/visibilidad-en-app */
+export async function grupoDeFasesCambiarVisibilidadEnApp(
+  torneoId: number,
+  grupoId: number,
+  esVisibleEnApp: boolean
+): Promise<void> {
+  await putVisibilidadEnApp(
+    `/api/Torneo/${torneoId}/grupos-de-fases/${grupoId}/visibilidad-en-app`,
+    esVisibleEnApp
+  )
+}

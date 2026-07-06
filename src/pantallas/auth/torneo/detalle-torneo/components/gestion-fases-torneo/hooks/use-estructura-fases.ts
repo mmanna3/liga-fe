@@ -164,6 +164,7 @@ export function useEstructuraFases({
     setElementos((prev) => actualizarNombreGrupo(prev, grupoIdLocal, nombre))
     const grupo = encontrarGrupoPorIdLocal(elementos, grupoIdLocal)
     if (grupo?.id) {
+      const grupoApi = torneo?.gruposDeFases?.find((g) => g.id === grupo.id)
       void gruposDeFasesPUT(
         torneoId,
         grupo.id,
@@ -172,6 +173,7 @@ export function useEstructuraFases({
           nombre,
           numero: grupo.numero,
           torneoId,
+          esVisibleEnApp: grupoApi?.esVisibleEnApp ?? true,
           grupoDeFasesPadreId: grupo.grupoDeFasesPadreId ?? undefined
         })
       ).catch(() => toast.error('No se pudo guardar el nombre del grupo'))
@@ -208,6 +210,7 @@ export function useEstructuraFases({
           new GrupoDeFasesDTO({
             nombre: 'Grupo de fases',
             numero,
+            esVisibleEnApp: true,
             grupoDeFasesPadreId: padre?.id ?? undefined
           })
         )

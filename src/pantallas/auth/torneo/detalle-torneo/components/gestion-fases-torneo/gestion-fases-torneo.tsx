@@ -119,6 +119,7 @@ export function GestionFasesTorneo({
                   torneoId={torneoId}
                   nombreTorneo={torneo.nombre ?? ''}
                   torneoFases={torneoFases}
+                  torneoGrupos={torneo.gruposDeFases ?? []}
                   onActualizarGrupo={actualizarGrupo}
                   onActualizarFase={actualizarFaseEnGrupo}
                   onEliminarFase={eliminarFasePorId}

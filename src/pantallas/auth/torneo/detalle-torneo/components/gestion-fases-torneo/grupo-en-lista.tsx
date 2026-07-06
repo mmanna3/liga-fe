@@ -1,5 +1,5 @@
 import { cn } from '@/logica-compartida/utils'
-import type { FaseDTO } from '@/api/clients'
+import type { FaseDTO, GrupoDeFasesDTO } from '@/api/clients'
 import { GrupoDeFasesItem } from './grupo-de-fases-item'
 import type { GrupoDeFasesEstado } from './lib/tipos'
 import type { GrupoDeFasesCallbacks } from './grupo-de-fases-item'
@@ -9,6 +9,7 @@ interface GrupoEnListaProps extends GrupoDeFasesCallbacks {
   torneoId: number
   nombreTorneo: string
   torneoFases: FaseDTO[]
+  torneoGrupos: GrupoDeFasesDTO[]
   estaGuardando: boolean
 }
 
@@ -17,6 +18,7 @@ export function GrupoEnLista({
   torneoId,
   nombreTorneo,
   torneoFases,
+  torneoGrupos,
   onActualizarGrupo,
   onActualizarFase,
   onEliminarFase,
@@ -33,6 +35,7 @@ export function GrupoEnLista({
         torneoId={torneoId}
         nombreTorneo={nombreTorneo}
         torneoFases={torneoFases}
+        torneoGrupos={torneoGrupos}
         onActualizarGrupo={onActualizarGrupo}
         onActualizarFase={onActualizarFase}
         onEliminarFase={onEliminarFase}
