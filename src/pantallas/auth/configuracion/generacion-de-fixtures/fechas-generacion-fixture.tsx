@@ -22,6 +22,7 @@ import { Boton } from '@/design-system/ykn-ui/boton'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
 import { Input } from '@/design-system/ykn-ui/input'
 import { rutasNavegacion } from '@/ruteo/rutas'
+import { compararFixtureAlgoritmoFechas } from '@/logica-compartida/fixture-algoritmo-fechas'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -37,6 +38,9 @@ function agruparPorFecha(
     const lista = mapa.get(f.fecha) ?? []
     lista.push(f)
     mapa.set(f.fecha, lista)
+  }
+  for (const [fecha, lista] of mapa) {
+    mapa.set(fecha, [...lista].sort(compararFixtureAlgoritmoFechas))
   }
   return mapa
 }
@@ -59,10 +63,16 @@ function buildFechasEdicion(data: {
           ? {
               id: existente.id,
               fecha: numFecha,
+              orden: row + 1,
               equipoLocal: existente.equipoLocal,
               equipoVisitante: existente.equipoVisitante
             }
-          : { fecha: numFecha, equipoLocal: 0, equipoVisitante: 0 }
+          : {
+              fecha: numFecha,
+              orden: row + 1,
+              equipoLocal: 0,
+              equipoVisitante: 0
+            }
       )
     }
   }

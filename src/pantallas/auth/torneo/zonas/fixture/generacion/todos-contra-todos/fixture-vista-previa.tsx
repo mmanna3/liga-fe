@@ -17,6 +17,7 @@ import {
   labelItem,
   type ItemFixture
 } from '../../tipos'
+import { ordenarFixtureAlgoritmoFechas } from '@/logica-compartida/fixture-algoritmo-fechas'
 
 type JornadaItem = { local: number; visitante: number }
 type FechaConJornadas = { fecha: number; jornadas: JornadaItem[] }
@@ -25,7 +26,7 @@ function buildFechasConJornadas(
   fechas: FixtureAlgoritmoFechaDTO[]
 ): FechaConJornadas[] {
   const map = new Map<number, JornadaItem[]>()
-  for (const f of [...fechas].sort((a, b) => (a.id ?? 0) - (b.id ?? 0))) {
+  for (const f of ordenarFixtureAlgoritmoFechas(fechas)) {
     if (!map.has(f.fecha)) map.set(f.fecha, [])
     map
       .get(f.fecha)!

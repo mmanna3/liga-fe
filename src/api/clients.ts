@@ -13752,6 +13752,7 @@ export interface IFixtureAlgoritmoDTO {
 export class FixtureAlgoritmoFechaDTO implements IFixtureAlgoritmoFechaDTO {
   id?: number
   fecha!: number
+  orden!: number
   equipoLocal!: number
   equipoVisitante!: number
 
@@ -13768,6 +13769,7 @@ export class FixtureAlgoritmoFechaDTO implements IFixtureAlgoritmoFechaDTO {
     if (_data) {
       this.id = _data['id']
       this.fecha = _data['fecha']
+      this.orden = _data['orden']
       this.equipoLocal = _data['equipoLocal']
       this.equipoVisitante = _data['equipoVisitante']
     }
@@ -13784,6 +13786,7 @@ export class FixtureAlgoritmoFechaDTO implements IFixtureAlgoritmoFechaDTO {
     data = typeof data === 'object' ? data : {}
     data['id'] = this.id
     data['fecha'] = this.fecha
+    data['orden'] = this.orden
     data['equipoLocal'] = this.equipoLocal
     data['equipoVisitante'] = this.equipoVisitante
     return data
@@ -13793,6 +13796,7 @@ export class FixtureAlgoritmoFechaDTO implements IFixtureAlgoritmoFechaDTO {
 export interface IFixtureAlgoritmoFechaDTO {
   id?: number
   fecha: number
+  orden: number
   equipoLocal: number
   equipoVisitante: number
 }
