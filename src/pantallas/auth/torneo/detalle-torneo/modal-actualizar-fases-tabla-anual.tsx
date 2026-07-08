@@ -51,8 +51,23 @@ function opcionesConHuerfanas(
   return base
 }
 
+const SIN_FASE = '__sin_fase__'
+
+const OPCION_SIN_FASE: OpcionDesplegable = {
+  value: SIN_FASE,
+  label: 'Sin seleccionar'
+}
+
+function esSinFase(valor: string): boolean {
+  return valor === SIN_FASE || valor === ''
+}
+
+function idAFaseSeleccionada(valor: string): number | undefined {
+  return esSinFase(valor) ? undefined : Number(valor)
+}
+
 const TEXTO_EXPLICATIVO =
-  'Al seleccionar estas fases, aparecerá en la app y en la web una nueva fase de nombre "Anual", listando todas las zonas de la fase seleccionada como "Apertura" y todas las zonas de la seleccionada como "Clausura". Las zonas que tengan el mismo nombre se unirán en una única tabla anual en la que se sumarán todas las columnas de todos los equipos de la zona'
+  'Al seleccionar estas fases, aparecerá en la app y en la web una nueva fase de nombre "Anual", listando todas las zonas de la fase seleccionada como "Apertura" y todas las zonas de la seleccionada como "Clausura". Las zonas que tengan el mismo nombre se unirán en una única tabla anual en la que se sumarán todas las columnas de todos los equipos de la zona. Para ocultar la tabla anual, dejá ambas fases sin seleccionar.'
 
 export interface ModalActualizarFasesTablaAnualProps {
   open: boolean
@@ -84,25 +99,35 @@ export default function ModalActualizarFasesTablaAnual({
   const fasesTct = useMemo(() => fasesTodosContraTodos(fases), [fases])
 
   const opcionesApertura = useMemo(
-    () => opcionesConHuerfanas(fasesTct, faseAperturaId, faseAperturaNombre),
+    () => [
+      OPCION_SIN_FASE,
+      ...opcionesConHuerfanas(fasesTct, faseAperturaId, faseAperturaNombre)
+    ],
     [fasesTct, faseAperturaId, faseAperturaNombre]
   )
 
   const opcionesClausura = useMemo(
-    () => opcionesConHuerfanas(fasesTct, faseClausuraId, faseClausuraNombre),
+    () => [
+      OPCION_SIN_FASE,
+      ...opcionesConHuerfanas(fasesTct, faseClausuraId, faseClausuraNombre)
+    ],
     [fasesTct, faseClausuraId, faseClausuraNombre]
   )
 
-  const [apertura, setApertura] = useState('')
-  const [clausura, setClausura] = useState('')
+  const [apertura, setApertura] = useState(SIN_FASE)
+  const [clausura, setClausura] = useState(SIN_FASE)
 
   useEffect(() => {
     if (!open) return
     setApertura(
-      faseAperturaId != null && faseAperturaId > 0 ? String(faseAperturaId) : ''
+      faseAperturaId != null && faseAperturaId > 0
+        ? String(faseAperturaId)
+        : SIN_FASE
     )
     setClausura(
-      faseClausuraId != null && faseClausuraId > 0 ? String(faseClausuraId) : ''
+      faseClausuraId != null && faseClausuraId > 0
+        ? String(faseClausuraId)
+        : SIN_FASE
     )
   }, [open, faseAperturaId, faseClausuraId])
 
@@ -116,8 +141,16 @@ export default function ModalActualizarFasesTablaAnual({
     }
   })
 
+  const tieneApertura = !esSinFase(apertura)
+  const tieneClausura = !esSinFase(clausura)
+  const ambasVacias = !tieneApertura && !tieneClausura
+  const ambasLlenas = tieneApertura && tieneClausura
+  const seleccionParcial = tieneApertura !== tieneClausura
+
   const puedeGuardar =
-    apertura !== '' && clausura !== '' && !guardarMutation.isPending
+    !seleccionParcial &&
+    (ambasVacias || (ambasLlenas && apertura !== clausura)) &&
+    !guardarMutation.isPending
 
   const hayAlgoParaElegir =
     fasesTct.length > 0 ||
@@ -128,8 +161,8 @@ export default function ModalActualizarFasesTablaAnual({
     if (!puedeGuardar) return
     guardarMutation.mutate(
       new EditarFasesParaTablaAnualDTO({
-        faseAperturaId: Number(apertura),
-        faseClausuraId: Number(clausura)
+        faseAperturaId: idAFaseSeleccionada(apertura),
+        faseClausuraId: idAFaseSeleccionada(clausura)
       })
     )
   }
@@ -175,6 +208,12 @@ export default function ModalActualizarFasesTablaAnual({
               placeholder='Elegí una fase'
               id='fase-clausura-tabla-anual'
             />
+            {seleccionParcial && (
+              <p className='text-sm text-destructive'>
+                Elegí ambas fases o dejá las dos sin seleccionar para ocultar la
+                tabla anual.
+              </p>
+            )}
           </div>
         )}
 
