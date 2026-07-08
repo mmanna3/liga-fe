@@ -1,9 +1,16 @@
 import { EquipoDTO } from '@/api/clients'
 import { arrayMove } from '@dnd-kit/sortable'
 import { useCallback, useMemo, useState } from 'react'
-import type { ZonaEstado } from '../components/tipos'
+import {
+  aplicarAgregarEquipoAZona,
+  type ValidarZonasOpciones,
+  type ZonaEstado
+} from '../components/tipos'
 
-export function useZonasEstado(initial: ZonaEstado[]) {
+export function useZonasEstado(
+  initial: ZonaEstado[],
+  opciones: ValidarZonasOpciones = {}
+) {
   const [zonasEstado, setZonasEstado] = useState<ZonaEstado[]>(initial)
 
   const equiposEnZonas = useMemo(
@@ -24,27 +31,14 @@ export function useZonasEstado(initial: ZonaEstado[]) {
     []
   )
 
-  const agregarEquipoAZona = useCallback((index: number, equipo: EquipoDTO) => {
-    setZonasEstado((prev) => {
-      const equipoId = equipo.id
-      let zonasActualizadas = prev
-
-      const indiceOrigen = prev.findIndex(
-        (z, i) => i !== index && z.equipos.some((e) => e.id === equipoId)
+  const agregarEquipoAZona = useCallback(
+    (index: number, equipo: EquipoDTO) => {
+      setZonasEstado((prev) =>
+        aplicarAgregarEquipoAZona(prev, index, equipo, opciones)
       )
-      if (indiceOrigen >= 0) {
-        zonasActualizadas = zonasActualizadas.map((z, i) =>
-          i === indiceOrigen
-            ? { ...z, equipos: z.equipos.filter((e) => e.id !== equipoId) }
-            : z
-        )
-      }
-
-      return zonasActualizadas.map((z, i) =>
-        i === index ? { ...z, equipos: [...z.equipos, equipo] } : z
-      )
-    })
-  }, [])
+    },
+    [opciones]
+  )
 
   const quitarEquipoDeZona = useCallback((index: number, equipoId: number) => {
     setZonasEstado((prev) =>

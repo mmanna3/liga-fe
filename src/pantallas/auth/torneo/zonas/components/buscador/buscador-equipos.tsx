@@ -15,6 +15,7 @@ import { RenglonBuscadorDeEquipos } from './renglon-equipo'
 
 interface BuscadorDeEquiposParaZonaProps {
   equiposEnZonas: EquipoDTO[]
+  permitirEquiposRepetidosEntreZonas?: boolean
   zonasVisibles: ZonaVisibleParaModal[]
   onAgregarSeleccionadosAZona: (
     indiceZona: number,
@@ -24,6 +25,7 @@ interface BuscadorDeEquiposParaZonaProps {
 
 export function BuscadorDeEquiposParaZona({
   equiposEnZonas,
+  permitirEquiposRepetidosEntreZonas = false,
   zonasVisibles,
   onAgregarSeleccionadosAZona
 }: BuscadorDeEquiposParaZonaProps) {
@@ -53,7 +55,10 @@ export function BuscadorDeEquiposParaZona({
     handleSeleccionVariosChange,
     limpiarSeleccion,
     handleDragStart
-  } = useBuscadorEquipos({ equiposEnZonas })
+  } = useBuscadorEquipos({
+    equiposEnZonas,
+    permitirEquiposRepetidosEntreZonas
+  })
 
   const equiposSeleccionados = useMemo(
     () =>

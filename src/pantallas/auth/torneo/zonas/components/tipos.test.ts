@@ -1,6 +1,7 @@
 import { EquipoDeLaZonaDTO, EquipoDTO, IZonaDTO, ZonaDTO } from '@/api/clients'
 import { describe, expect, it } from 'vitest'
 import {
+  aplicarAgregarEquipoAZona,
   idSortableZona,
   validarZonasParaGuardar,
   zonaDtoAEstado,
@@ -54,6 +55,83 @@ describe('validarZonasParaGuardar', () => {
     expect(
       validarZonasParaGuardar([{ nombre: 'Zona A', equipos: [] }]).valido
     ).toBe(true)
+  })
+
+  it('devuelve inválido si un equipo está en dos zonas (todos contra todos)', () => {
+    const equipo = new EquipoDTO({
+      id: 1,
+      nombre: 'Equipo 1',
+      clubId: 1,
+      zonas: []
+    })
+    const zonas = [
+      { nombre: 'Zona A', equipos: [equipo] },
+      { nombre: 'Zona B', equipos: [equipo] }
+    ]
+    const resultado = validarZonasParaGuardar(zonas)
+    expect(resultado.valido).toBe(false)
+    expect(resultado.mensaje).toContain('repetidos')
+  })
+
+  it('permite equipos repetidos entre zonas en eliminación directa', () => {
+    const equipo = new EquipoDTO({
+      id: 1,
+      nombre: 'Equipo 1',
+      clubId: 1,
+      zonas: []
+    })
+    const zonas = [
+      { nombre: 'Cat A', equipos: [equipo] },
+      { nombre: 'Cat B', equipos: [equipo] }
+    ]
+    expect(
+      validarZonasParaGuardar(zonas, {
+        permitirEquiposRepetidosEntreZonas: true
+      }).valido
+    ).toBe(true)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// aplicarAgregarEquipoAZona
+// ---------------------------------------------------------------------------
+
+describe('aplicarAgregarEquipoAZona', () => {
+  const equipo = new EquipoDTO({
+    id: 10,
+    nombre: 'Equipo X',
+    clubId: 1,
+    zonas: []
+  })
+
+  it('en todos contra todos mueve el equipo desde otra zona', () => {
+    const zonas = [
+      { nombre: 'Zona A', equipos: [equipo] },
+      { nombre: 'Zona B', equipos: [] }
+    ]
+    const resultado = aplicarAgregarEquipoAZona(zonas, 1, equipo)
+    expect(resultado[0].equipos).toHaveLength(0)
+    expect(resultado[1].equipos).toHaveLength(1)
+  })
+
+  it('en eliminación directa conserva el equipo en la zona origen', () => {
+    const zonas = [
+      { nombre: 'Cat A', equipos: [equipo] },
+      { nombre: 'Cat B', equipos: [] }
+    ]
+    const resultado = aplicarAgregarEquipoAZona(zonas, 1, equipo, {
+      permitirEquiposRepetidosEntreZonas: true
+    })
+    expect(resultado[0].equipos).toHaveLength(1)
+    expect(resultado[1].equipos).toHaveLength(1)
+  })
+
+  it('no duplica el equipo en la misma zona', () => {
+    const zonas = [{ nombre: 'Zona A', equipos: [equipo] }]
+    const resultado = aplicarAgregarEquipoAZona(zonas, 0, equipo, {
+      permitirEquiposRepetidosEntreZonas: true
+    })
+    expect(resultado[0].equipos).toHaveLength(1)
   })
 })
 

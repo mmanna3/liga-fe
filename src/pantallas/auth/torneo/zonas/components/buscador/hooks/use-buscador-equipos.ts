@@ -33,10 +33,13 @@ function equipoParaZonasAEquipoDto(e: EquipoParaZonasDTO): EquipoDTO {
 
 export interface UseBuscadorEquiposParams {
   equiposEnZonas: EquipoDTO[]
+  /** En eliminación directa un equipo puede figurar en varias zonas de la fase. */
+  permitirEquiposRepetidosEntreZonas?: boolean
 }
 
 export function useBuscadorEquipos({
-  equiposEnZonas
+  equiposEnZonas,
+  permitirEquiposRepetidosEntreZonas = false
 }: UseBuscadorEquiposParams) {
   const [modo, setModo] = useState(MODO_BUSCAR)
   const [textoBusqueda, setTextoBusqueda] = useState('')
@@ -85,16 +88,16 @@ export function useBuscadorEquipos({
     })
   }, [torneosTodos, filtroAnio, filtroAgrupadorId])
 
-  /** Equipos que aún no están en ninguna zona (catálogo para selección y drag). */
+  /** Catálogo para selección y drag. En TCT excluye equipos ya asignados a alguna zona. */
   const catalogoEquiposDisponibles = useMemo(() => {
-    const lista = equiposParaZonas.filter(
-      (e) => e.id != null && !idsEnZonas.has(e.id)
-    )
+    const lista = permitirEquiposRepetidosEntreZonas
+      ? equiposParaZonas.filter((e) => e.id != null)
+      : equiposParaZonas.filter((e) => e.id != null && !idsEnZonas.has(e.id))
     const ordenada = [...lista].sort((a, b) =>
       (a.nombre ?? '').localeCompare(b.nombre ?? '', 'es')
     )
     return ordenada.map(equipoParaZonasAEquipoDto)
-  }, [equiposParaZonas, idsEnZonas])
+  }, [equiposParaZonas, idsEnZonas, permitirEquiposRepetidosEntreZonas])
 
   const equiposFiltrados = useMemo(() => {
     let lista = catalogoEquiposDisponibles

@@ -6,19 +6,25 @@ import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useCallback, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { validarZonasParaGuardar, zonaEstadoADto } from '../components/tipos'
-import type { ZonaEstado } from '../components/tipos'
+import {
+  validarZonasParaGuardar,
+  zonaEstadoADto,
+  type ValidarZonasOpciones,
+  type ZonaEstado
+} from '../components/tipos'
 
 interface UseGuardarZonasParams {
   zonasEstado: ZonaEstado[]
   modo: 'crear' | 'modificar'
   refetch: () => Promise<unknown>
+  opcionesValidacion?: ValidarZonasOpciones
 }
 
 export function useGuardarZonas({
   zonasEstado,
   modo,
-  refetch
+  refetch,
+  opcionesValidacion = {}
 }: UseGuardarZonasParams) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -58,7 +64,10 @@ export function useGuardarZonas({
 
   const guardar = useCallback(
     (destino?: string) => {
-      const validacion = validarZonasParaGuardar(zonasEstado)
+      const validacion = validarZonasParaGuardar(
+        zonasEstado,
+        opcionesValidacion
+      )
       if (!validacion.valido) {
         toast.error(validacion.mensaje)
         return
@@ -67,7 +76,7 @@ export function useGuardarZonas({
       const body = zonasEstado.map((z, i) => zonaEstadoADto(z, faseId, i + 1))
       guardarMutation.mutate(body)
     },
-    [zonasEstado, faseId, guardarMutation]
+    [zonasEstado, faseId, guardarMutation, opcionesValidacion]
   )
 
   const handleGuardar = useCallback(() => guardar(), [guardar])

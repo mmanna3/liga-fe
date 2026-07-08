@@ -76,9 +76,47 @@ export interface ValidacionZonasResultado {
   mensaje?: string
 }
 
-/** Valida que las zonas puedan guardarse: todas con equipos y nombres únicos */
+export interface ValidarZonasOpciones {
+  /** En eliminación directa el mismo equipo puede estar en varias zonas de la fase. */
+  permitirEquiposRepetidosEntreZonas?: boolean
+}
+
+/** Agrega un equipo a una zona respetando las reglas de unicidad por tipo de fase. */
+export function aplicarAgregarEquipoAZona(
+  zonas: ZonaEstado[],
+  index: number,
+  equipo: EquipoDTO,
+  opciones: ValidarZonasOpciones = {}
+): ZonaEstado[] {
+  const permitirRepetidos = opciones.permitirEquiposRepetidosEntreZonas ?? false
+  const equipoId = equipo.id
+  if (equipoId == null || zonas[index] == null) return zonas
+
+  if (zonas[index].equipos.some((e) => e.id === equipoId)) return zonas
+
+  let zonasActualizadas = zonas
+  if (!permitirRepetidos) {
+    const indiceOrigen = zonas.findIndex(
+      (z, i) => i !== index && z.equipos.some((e) => e.id === equipoId)
+    )
+    if (indiceOrigen >= 0) {
+      zonasActualizadas = zonasActualizadas.map((z, i) =>
+        i === indiceOrigen
+          ? { ...z, equipos: z.equipos.filter((e) => e.id !== equipoId) }
+          : z
+      )
+    }
+  }
+
+  return zonasActualizadas.map((z, i) =>
+    i === index ? { ...z, equipos: [...z.equipos, equipo] } : z
+  )
+}
+
+/** Valida que las zonas puedan guardarse: nombres únicos y equipos únicos entre zonas (TCT). */
 export function validarZonasParaGuardar(
-  zonas: ZonaEstado[]
+  zonas: ZonaEstado[],
+  opciones: ValidarZonasOpciones = {}
 ): ValidacionZonasResultado {
   const nombres = zonas.map((z) => z.nombre?.trim().toLowerCase() ?? '')
   const nombresUnicos = new Set(nombres)
@@ -86,6 +124,23 @@ export function validarZonasParaGuardar(
     return {
       valido: false,
       mensaje: 'No puede haber dos zonas con el mismo nombre.'
+    }
+  }
+
+  if (!opciones.permitirEquiposRepetidosEntreZonas) {
+    const equiposVistos = new Set<number>()
+    for (const zona of zonas) {
+      for (const equipo of zona.equipos) {
+        if (equipo.id == null) continue
+        if (equiposVistos.has(equipo.id)) {
+          return {
+            valido: false,
+            mensaje:
+              'No puede haber equipos repetidos entre zonas de la misma fase.'
+          }
+        }
+        equiposVistos.add(equipo.id)
+      }
     }
   }
 

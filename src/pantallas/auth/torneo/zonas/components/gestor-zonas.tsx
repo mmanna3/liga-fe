@@ -39,7 +39,12 @@ export function GestorZonas({
     () => torneo?.fases?.find((f) => f.id === faseId),
     [torneo, faseId]
   )
-  const nombreZonaEditable = fase?.tipoDeFase !== TipoDeFaseEnum._2
+  const esEliminacionDirecta = fase?.tipoDeFase === TipoDeFaseEnum._2
+  const nombreZonaEditable = !esEliminacionDirecta
+  const opcionesEquiposEnZonas = useMemo(
+    () => ({ permitirEquiposRepetidosEntreZonas: esEliminacionDirecta }),
+    [esEliminacionDirecta]
+  )
 
   const zonasInicialesCrear = useMemo(
     () => [{ nombre: 'Zona A', equipos: [], clientKey: crypto.randomUUID() }],
@@ -62,7 +67,10 @@ export function GestorZonas({
     eliminarZona,
     agregarZona,
     reordenarZonas
-  } = useZonasEstado(modo === 'crear' ? zonasInicialesCrear : [])
+  } = useZonasEstado(
+    modo === 'crear' ? zonasInicialesCrear : [],
+    opcionesEquiposEnZonas
+  )
 
   // Solo sincronizar desde la API en la carga inicial.
   // Un refetch en background (ej: window focus) NO debe pisar los cambios del usuario.
@@ -85,7 +93,8 @@ export function GestorZonas({
   const { guardarMutation, handleGuardar, handleIrAFixture } = useGuardarZonas({
     zonasEstado,
     modo,
-    refetch
+    refetch,
+    opcionesValidacion: opcionesEquiposEnZonas
   })
 
   const agregarSeleccionadosAZona = useCallback(
@@ -124,6 +133,9 @@ export function GestorZonas({
       cardAdicional={
         <BuscadorDeEquiposParaZona
           equiposEnZonas={equiposEnZonas}
+          permitirEquiposRepetidosEntreZonas={
+            opcionesEquiposEnZonas.permitirEquiposRepetidosEntreZonas
+          }
           zonasVisibles={zonasParaElegirEnModal}
           onAgregarSeleccionadosAZona={agregarSeleccionadosAZona}
         />
