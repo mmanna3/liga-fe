@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest'
 import {
   categoriasACategoriaDto,
   categoriasDtoACategoria,
+  esFaseEliminacionDirecta,
   faseCategoriasACategoriaDto,
   faseCategoriasDtoACategoria,
   formatearHorarioDeJuego,
@@ -76,6 +77,60 @@ describe('tipoDeFaseNombreDesdeEnum', () => {
 
   it('undefined → guión', () => {
     expect(tipoDeFaseNombreDesdeEnum(undefined)).toBe('—')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// esFaseEliminacionDirecta
+// ---------------------------------------------------------------------------
+
+describe('esFaseEliminacionDirecta', () => {
+  it('detecta enum numérico _2', () => {
+    expect(
+      esFaseEliminacionDirecta({
+        tipoDeFase: TipoDeFaseEnum._2,
+        tipoDeFaseNombre: 'Eliminación directa'
+      })
+    ).toBe(true)
+  })
+
+  it('detecta enum como string "2"', () => {
+    expect(
+      esFaseEliminacionDirecta({
+        tipoDeFase: '2' as unknown as TipoDeFaseEnum,
+        tipoDeFaseNombre: 'Eliminación directa'
+      })
+    ).toBe(true)
+  })
+
+  it('detecta por tipoDeFaseNombre si el enum no coincide', () => {
+    expect(
+      esFaseEliminacionDirecta({
+        tipoDeFase: 0 as unknown as TipoDeFaseEnum,
+        tipoDeFaseNombre: 'Eliminación directa'
+      })
+    ).toBe(true)
+  })
+
+  it('detecta por zonasConCategoria aunque el enum diga TCT', () => {
+    expect(
+      esFaseEliminacionDirecta(
+        {
+          tipoDeFase: TipoDeFaseEnum._1,
+          tipoDeFaseNombre: 'Todos contra todos'
+        },
+        { zonasConCategoria: true }
+      )
+    ).toBe(true)
+  })
+
+  it('no confunde todos contra todos', () => {
+    expect(
+      esFaseEliminacionDirecta({
+        tipoDeFase: TipoDeFaseEnum._1,
+        tipoDeFaseNombre: 'Todos contra todos'
+      })
+    ).toBe(false)
   })
 })
 

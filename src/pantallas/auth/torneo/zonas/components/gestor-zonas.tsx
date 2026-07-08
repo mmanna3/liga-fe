@@ -1,10 +1,11 @@
 import { api } from '@/api/api'
-import { EquipoDTO, TipoDeFaseEnum } from '@/api/clients'
+import { EquipoDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useParams } from 'react-router-dom'
+import { esFaseEliminacionDirecta } from '../../detalle-torneo/lib'
 import { BuscadorDeEquiposParaZona } from './buscador/buscador-equipos'
 import { useGuardarZonas } from '../hooks/use-guardar-zonas'
 import { useZonasEstado } from '../hooks/use-zonas'
@@ -39,12 +40,6 @@ export function GestorZonas({
     () => torneo?.fases?.find((f) => f.id === faseId),
     [torneo, faseId]
   )
-  const esEliminacionDirecta = fase?.tipoDeFase === TipoDeFaseEnum._2
-  const nombreZonaEditable = !esEliminacionDirecta
-  const opcionesEquiposEnZonas = useMemo(
-    () => ({ permitirEquiposRepetidosEntreZonas: esEliminacionDirecta }),
-    [esEliminacionDirecta]
-  )
 
   const zonasInicialesCrear = useMemo(
     () => [{ nombre: 'Zona A', equipos: [], clientKey: crypto.randomUUID() }],
@@ -56,6 +51,19 @@ export function GestorZonas({
     fn: () => api.zonasAll(faseId),
     activado: modo === 'modificar'
   })
+
+  const esEliminacionDirecta = useMemo(
+    () =>
+      esFaseEliminacionDirecta(fase, {
+        zonasConCategoria: zonasApi.some((z) => z.categoriaId != null)
+      }),
+    [fase, zonasApi]
+  )
+  const nombreZonaEditable = !esEliminacionDirecta
+  const opcionesEquiposEnZonas = useMemo(
+    () => ({ permitirEquiposRepetidosEntreZonas: esEliminacionDirecta }),
+    [esEliminacionDirecta]
+  )
 
   const {
     zonasEstado,

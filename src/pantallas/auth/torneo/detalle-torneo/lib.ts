@@ -1,5 +1,6 @@
 import {
   FaseCategoriaDTO,
+  FaseDTO,
   TorneoCategoriaDTO,
   TipoDeFaseEnum
 } from '@/api/clients'
@@ -39,6 +40,47 @@ export function tipoDeFaseNombreDesdeEnum(tipoDeFase?: TipoDeFaseEnum): string {
   if (tipoDeFase === TipoDeFaseEnum._1) return 'Todos contra todos'
   if (tipoDeFase === TipoDeFaseEnum._2) return 'Eliminación directa'
   return '—'
+}
+
+type FaseConFormato = Pick<
+  FaseDTO,
+  'tipoDeFase' | 'tipoDeFaseNombre' | 'categorias' | 'zonas'
+>
+
+function normalizarTextoFase(valor: string): string {
+  return valor.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase()
+}
+
+/** Detecta eliminación directa aunque el enum venga como string o solo esté el nombre. */
+export function esFaseEliminacionDirecta(
+  fase?: FaseConFormato | null,
+  opciones?: { formatoFase?: string; zonasConCategoria?: boolean }
+): boolean {
+  if (opciones?.formatoFase === 'eliminacion-directa') return true
+  if (opciones?.zonasConCategoria) return true
+  if (!fase) return false
+
+  const tipo = fase.tipoDeFase as unknown
+  if (
+    tipo === TipoDeFaseEnum._2 ||
+    tipo === 2 ||
+    tipo === '2' ||
+    tipo === 'EliminacionDirecta'
+  ) {
+    return true
+  }
+
+  const nombre = normalizarTextoFase(fase.tipoDeFaseNombre ?? '')
+  if (nombre.includes('eliminacion directa')) return true
+
+  if (
+    (fase.categorias?.length ?? 0) > 0 &&
+    (fase.zonas?.some((z) => z.categoriaId != null) ?? false)
+  ) {
+    return true
+  }
+
+  return false
 }
 
 export function categoriasDtoACategoria(
