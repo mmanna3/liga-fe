@@ -117,7 +117,7 @@ export default function ReporteFichajesPagadosPorTorneoPage() {
               e.preventDefault()
               refetch()
             }}
-            className='flex flex-col md:flex-row gap-4'
+            className='flex flex-col md:flex-row gap-4 items-end'
           >
             <ListaDesplegable
               titulo='Año'
@@ -125,11 +125,9 @@ export default function ReporteFichajesPagadosPorTorneoPage() {
               valor={anio}
               alCambiar={setAnio}
               placeholder='Seleccionar año'
-              className='flex-1'
+              className='w-36'
             />
-            <Boton type='submit' className='mt-auto'>
-              Filtrar
-            </Boton>
+            <Boton type='submit'>Filtrar</Boton>
           </form>
         </CardContent>
       </Card>

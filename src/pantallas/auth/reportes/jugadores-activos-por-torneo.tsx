@@ -144,7 +144,7 @@ export default function ReporteJugadoresActivosPorTorneoPage() {
               valor={anio}
               alCambiar={setAnio}
               placeholder='Seleccionar año'
-              className='flex-1'
+              className='w-36'
             />
             <CajitaConTick
               id='mostrar-equipos'
