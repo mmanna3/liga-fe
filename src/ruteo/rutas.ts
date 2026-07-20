@@ -22,8 +22,8 @@ export const rutas = {
   detalleTorneo: 'torneos/detalle',
   reportes: 'reportes',
   reportePagos: 'reportes/pagos',
-  reporteJugadoresHabilitadosPorTorneo:
-    'reportes/jugadores-habilitados-por-torneo',
+  reporteFichajesPagadosPorTorneo: 'reportes/fichajes-pagados-por-torneo',
+  reporteJugadoresActivosPorTorneo: 'reportes/jugadores-activos-por-torneo',
   delegados: 'delegados',
   detalleDelegado: 'delegados/detalle',
   eliminarDelegado: 'delegados/eliminar',

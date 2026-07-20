@@ -30,7 +30,8 @@ import Jugador from '@/pantallas/auth/jugador/jugador'
 import SuspenderActivar from '@/pantallas/auth/jugador/suspender-activar'
 import ReportesPage from '@/pantallas/auth/reportes'
 import ReportePagosPage from '@/pantallas/auth/reportes/pagos'
-import ReporteJugadoresHabilitadosPorTorneoPage from '@/pantallas/auth/reportes/jugadores-habilitados-por-torneo'
+import ReporteFichajesPagadosPorTorneoPage from '@/pantallas/auth/reportes/fichajes-pagados-por-torneo'
+import ReporteJugadoresActivosPorTorneoPage from '@/pantallas/auth/reportes/jugadores-activos-por-torneo'
 import AgrupadorTorneo from '@/pantallas/auth/torneo/agrupador-torneo/agrupador-torneo'
 import CrearAgrupadorTorneo from '@/pantallas/auth/torneo/agrupador-torneo/crear-agrupador-torneo'
 import EditarAgrupadorTorneo from '@/pantallas/auth/torneo/agrupador-torneo/editar-agrupador-torneo'
@@ -144,10 +145,18 @@ export const mapaRutasComponentes = [
         )
       },
       {
-        path: rutas.reporteJugadoresHabilitadosPorTorneo,
+        path: rutas.reporteFichajesPagadosPorTorneo,
         element: (
           <RequierePermisoModulo modulo={ModuloSistema.Reportes}>
-            <ReporteJugadoresHabilitadosPorTorneoPage />
+            <ReporteFichajesPagadosPorTorneoPage />
+          </RequierePermisoModulo>
+        )
+      },
+      {
+        path: rutas.reporteJugadoresActivosPorTorneo,
+        element: (
+          <RequierePermisoModulo modulo={ModuloSistema.Reportes}>
+            <ReporteJugadoresActivosPorTorneoPage />
           </RequierePermisoModulo>
         )
       },

@@ -7804,12 +7804,11 @@ export class Client {
    * @param anio (optional)
    * @return OK
    */
-  obtenerReporteJugadoresHabilitadosPorTorneo(
+  obtenerReporteFichajesPagadosPorTorneo(
     anio: number | undefined
-  ): Promise<ReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO[]> {
+  ): Promise<ReporteFichajesPagadosPorAgrupadorDeTorneoDTO[]> {
     let url_ =
-      this.baseUrl +
-      '/api/Reporte/obtener-reporte-jugadores-habilitados-por-torneo?'
+      this.baseUrl + '/api/Reporte/obtener-reporte-fichajes-pagados-por-torneo?'
     if (anio === null) throw new Error("The parameter 'anio' cannot be null.")
     else if (anio !== undefined)
       url_ += 'anio=' + encodeURIComponent('' + anio) + '&'
@@ -7823,13 +7822,13 @@ export class Client {
     }
 
     return this.http.fetch(url_, options_).then((_response: Response) => {
-      return this.processObtenerReporteJugadoresHabilitadosPorTorneo(_response)
+      return this.processObtenerReporteFichajesPagadosPorTorneo(_response)
     })
   }
 
-  protected processObtenerReporteJugadoresHabilitadosPorTorneo(
+  protected processObtenerReporteFichajesPagadosPorTorneo(
     response: Response
-  ): Promise<ReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO[]> {
+  ): Promise<ReporteFichajesPagadosPorAgrupadorDeTorneoDTO[]> {
     const status = response.status
     let _headers: any = {}
     if (response.headers && response.headers.forEach) {
@@ -7846,7 +7845,7 @@ export class Client {
           result200 = [] as any
           for (let item of resultData200)
             result200!.push(
-              ReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO.fromJS(item)
+              ReporteFichajesPagadosPorAgrupadorDeTorneoDTO.fromJS(item)
             )
         } else {
           result200 = <any>null
@@ -7863,9 +7862,83 @@ export class Client {
         )
       })
     }
-    return Promise.resolve<
-      ReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO[]
-    >(null as any)
+    return Promise.resolve<ReporteFichajesPagadosPorAgrupadorDeTorneoDTO[]>(
+      null as any
+    )
+  }
+
+  /**
+   * @param anio (optional)
+   * @param mostrarEquipos (optional)
+   * @return OK
+   */
+  obtenerReporteJugadoresActivosPorTorneo(
+    anio: number | undefined,
+    mostrarEquipos: boolean | undefined
+  ): Promise<ReporteJugadoresActivosPorAgrupadorDeTorneoDTO[]> {
+    let url_ =
+      this.baseUrl +
+      '/api/Reporte/obtener-reporte-jugadores-activos-por-torneo?'
+    if (anio === null) throw new Error("The parameter 'anio' cannot be null.")
+    else if (anio !== undefined)
+      url_ += 'anio=' + encodeURIComponent('' + anio) + '&'
+    if (mostrarEquipos === null)
+      throw new Error("The parameter 'mostrarEquipos' cannot be null.")
+    else if (mostrarEquipos !== undefined)
+      url_ += 'mostrarEquipos=' + encodeURIComponent('' + mostrarEquipos) + '&'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processObtenerReporteJugadoresActivosPorTorneo(_response)
+    })
+  }
+
+  protected processObtenerReporteJugadoresActivosPorTorneo(
+    response: Response
+  ): Promise<ReporteJugadoresActivosPorAgrupadorDeTorneoDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(
+              ReporteJugadoresActivosPorAgrupadorDeTorneoDTO.fromJS(item)
+            )
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<ReporteJugadoresActivosPorAgrupadorDeTorneoDTO[]>(
+      null as any
+    )
   }
 
   /**
@@ -13752,7 +13825,7 @@ export interface IFixtureAlgoritmoDTO {
 export class FixtureAlgoritmoFechaDTO implements IFixtureAlgoritmoFechaDTO {
   id?: number
   fecha!: number
-  orden!: number
+  orden?: number
   equipoLocal!: number
   equipoVisitante!: number
 
@@ -13796,7 +13869,7 @@ export class FixtureAlgoritmoFechaDTO implements IFixtureAlgoritmoFechaDTO {
 export interface IFixtureAlgoritmoFechaDTO {
   id?: number
   fecha: number
-  orden: number
+  orden?: number
   equipoLocal: number
   equipoVisitante: number
 }
@@ -15994,7 +16067,7 @@ export interface IReordenarFasesDTO {
   faseIds: number[]
 }
 
-export class ReporteJugadoresHabilitadosFilaDTO implements IReporteJugadoresHabilitadosFilaDTO {
+export class ReporteFichajesPagadosFilaDTO implements IReporteFichajesPagadosFilaDTO {
   torneoId?: number
   nombreTorneo?: string | undefined
   enero?: number
@@ -16011,7 +16084,7 @@ export class ReporteJugadoresHabilitadosFilaDTO implements IReporteJugadoresHabi
   diciembre?: number
   totalEnElAnio?: number
 
-  constructor(data?: IReporteJugadoresHabilitadosFilaDTO) {
+  constructor(data?: IReporteFichajesPagadosFilaDTO) {
     if (data) {
       for (var property in data) {
         if (data.hasOwnProperty(property))
@@ -16040,9 +16113,9 @@ export class ReporteJugadoresHabilitadosFilaDTO implements IReporteJugadoresHabi
     }
   }
 
-  static fromJS(data: any): ReporteJugadoresHabilitadosFilaDTO {
+  static fromJS(data: any): ReporteFichajesPagadosFilaDTO {
     data = typeof data === 'object' ? data : {}
-    let result = new ReporteJugadoresHabilitadosFilaDTO()
+    let result = new ReporteFichajesPagadosFilaDTO()
     result.init(data)
     return result
   }
@@ -16068,7 +16141,7 @@ export class ReporteJugadoresHabilitadosFilaDTO implements IReporteJugadoresHabi
   }
 }
 
-export interface IReporteJugadoresHabilitadosFilaDTO {
+export interface IReporteFichajesPagadosFilaDTO {
   torneoId?: number
   nombreTorneo?: string | undefined
   enero?: number
@@ -16086,11 +16159,11 @@ export interface IReporteJugadoresHabilitadosFilaDTO {
   totalEnElAnio?: number
 }
 
-export class ReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO implements IReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO {
+export class ReporteFichajesPagadosPorAgrupadorDeTorneoDTO implements IReporteFichajesPagadosPorAgrupadorDeTorneoDTO {
   nombreAgrupador?: string | undefined
-  torneos?: ReporteJugadoresHabilitadosFilaDTO[] | undefined
+  torneos?: ReporteFichajesPagadosFilaDTO[] | undefined
 
-  constructor(data?: IReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO) {
+  constructor(data?: IReporteFichajesPagadosPorAgrupadorDeTorneoDTO) {
     if (data) {
       for (var property in data) {
         if (data.hasOwnProperty(property))
@@ -16105,14 +16178,14 @@ export class ReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO implements IRepo
       if (Array.isArray(_data['torneos'])) {
         this.torneos = [] as any
         for (let item of _data['torneos'])
-          this.torneos!.push(ReporteJugadoresHabilitadosFilaDTO.fromJS(item))
+          this.torneos!.push(ReporteFichajesPagadosFilaDTO.fromJS(item))
       }
     }
   }
 
-  static fromJS(data: any): ReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO {
+  static fromJS(data: any): ReporteFichajesPagadosPorAgrupadorDeTorneoDTO {
     data = typeof data === 'object' ? data : {}
-    let result = new ReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO()
+    let result = new ReporteFichajesPagadosPorAgrupadorDeTorneoDTO()
     result.init(data)
     return result
   }
@@ -16128,9 +16201,155 @@ export class ReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO implements IRepo
   }
 }
 
-export interface IReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO {
+export interface IReporteFichajesPagadosPorAgrupadorDeTorneoDTO {
   nombreAgrupador?: string | undefined
-  torneos?: ReporteJugadoresHabilitadosFilaDTO[] | undefined
+  torneos?: ReporteFichajesPagadosFilaDTO[] | undefined
+}
+
+export class ReporteJugadoresActivosEquipoDTO implements IReporteJugadoresActivosEquipoDTO {
+  equipoId?: number
+  nombreEquipo?: string | undefined
+  cantidadJugadoresActivos?: number
+
+  constructor(data?: IReporteJugadoresActivosEquipoDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.equipoId = _data['equipoId']
+      this.nombreEquipo = _data['nombreEquipo']
+      this.cantidadJugadoresActivos = _data['cantidadJugadoresActivos']
+    }
+  }
+
+  static fromJS(data: any): ReporteJugadoresActivosEquipoDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new ReporteJugadoresActivosEquipoDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['equipoId'] = this.equipoId
+    data['nombreEquipo'] = this.nombreEquipo
+    data['cantidadJugadoresActivos'] = this.cantidadJugadoresActivos
+    return data
+  }
+}
+
+export interface IReporteJugadoresActivosEquipoDTO {
+  equipoId?: number
+  nombreEquipo?: string | undefined
+  cantidadJugadoresActivos?: number
+}
+
+export class ReporteJugadoresActivosPorAgrupadorDeTorneoDTO implements IReporteJugadoresActivosPorAgrupadorDeTorneoDTO {
+  nombreAgrupador?: string | undefined
+  torneos?: ReporteJugadoresActivosTorneoDTO[] | undefined
+
+  constructor(data?: IReporteJugadoresActivosPorAgrupadorDeTorneoDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.nombreAgrupador = _data['nombreAgrupador']
+      if (Array.isArray(_data['torneos'])) {
+        this.torneos = [] as any
+        for (let item of _data['torneos'])
+          this.torneos!.push(ReporteJugadoresActivosTorneoDTO.fromJS(item))
+      }
+    }
+  }
+
+  static fromJS(data: any): ReporteJugadoresActivosPorAgrupadorDeTorneoDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new ReporteJugadoresActivosPorAgrupadorDeTorneoDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['nombreAgrupador'] = this.nombreAgrupador
+    if (Array.isArray(this.torneos)) {
+      data['torneos'] = []
+      for (let item of this.torneos) data['torneos'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface IReporteJugadoresActivosPorAgrupadorDeTorneoDTO {
+  nombreAgrupador?: string | undefined
+  torneos?: ReporteJugadoresActivosTorneoDTO[] | undefined
+}
+
+export class ReporteJugadoresActivosTorneoDTO implements IReporteJugadoresActivosTorneoDTO {
+  torneoId?: number
+  nombreTorneo?: string | undefined
+  cantidadJugadoresActivos?: number
+  equipos?: ReporteJugadoresActivosEquipoDTO[] | undefined
+
+  constructor(data?: IReporteJugadoresActivosTorneoDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.torneoId = _data['torneoId']
+      this.nombreTorneo = _data['nombreTorneo']
+      this.cantidadJugadoresActivos = _data['cantidadJugadoresActivos']
+      if (Array.isArray(_data['equipos'])) {
+        this.equipos = [] as any
+        for (let item of _data['equipos'])
+          this.equipos!.push(ReporteJugadoresActivosEquipoDTO.fromJS(item))
+      }
+    }
+  }
+
+  static fromJS(data: any): ReporteJugadoresActivosTorneoDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new ReporteJugadoresActivosTorneoDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['torneoId'] = this.torneoId
+    data['nombreTorneo'] = this.nombreTorneo
+    data['cantidadJugadoresActivos'] = this.cantidadJugadoresActivos
+    if (Array.isArray(this.equipos)) {
+      data['equipos'] = []
+      for (let item of this.equipos) data['equipos'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface IReporteJugadoresActivosTorneoDTO {
+  torneoId?: number
+  nombreTorneo?: string | undefined
+  cantidadJugadoresActivos?: number
+  equipos?: ReporteJugadoresActivosEquipoDTO[] | undefined
 }
 
 export class ReportePagosDTO implements IReportePagosDTO {

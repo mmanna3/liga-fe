@@ -1,12 +1,13 @@
 import { api } from '@/api/api'
 import {
-  ReporteJugadoresHabilitadosFilaDTO,
-  ReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO
+  ReporteFichajesPagadosFilaDTO,
+  ReporteFichajesPagadosPorAgrupadorDeTorneoDTO
 } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle
 } from '@/design-system/base-ui/card'
@@ -41,6 +42,9 @@ const columnasMeses = [
 
 type ClaveMes = (typeof columnasMeses)[number]['key']
 
+const descripcionReporte =
+  'Muestra cuántos fichajes se pagaron en el año seleccionado, desglosados por agrupador, torneo y mes de pago. Solo incluye jugadores cuyo equipo está inscripto en una zona de un torneo de ese año. No refleja el estado actual del jugador (activo, suspendido, etc.), sino la fecha en que se registró el pago.'
+
 const anios = () => {
   const currentYear = new Date().getFullYear()
   return Array.from({ length: 5 }, (_, i) => ({
@@ -49,12 +53,10 @@ const anios = () => {
   }))
 }
 
-const obtenerValorMes = (
-  item: ReporteJugadoresHabilitadosFilaDTO,
-  mes: ClaveMes
-) => item[mes] ?? 0
+const obtenerValorMes = (item: ReporteFichajesPagadosFilaDTO, mes: ClaveMes) =>
+  item[mes] ?? 0
 
-const sumarMeses = (filas: ReporteJugadoresHabilitadosFilaDTO[]) =>
+const sumarMeses = (filas: ReporteFichajesPagadosFilaDTO[]) =>
   columnasMeses.reduce(
     (acc, { key }) => {
       acc[key] = filas.reduce(
@@ -66,18 +68,16 @@ const sumarMeses = (filas: ReporteJugadoresHabilitadosFilaDTO[]) =>
     {} as Record<ClaveMes, number>
   )
 
-export default function ReporteJugadoresHabilitadosPorTorneoPage() {
+export default function ReporteFichajesPagadosPorTorneoPage() {
   const navigate = useNavigate()
   const [anio, setAnio] = useState<string>(new Date().getFullYear() + '')
 
   const { data, isLoading, refetch } = useApiQuery<
-    ReporteJugadoresHabilitadosPorAgrupadorDeTorneoDTO[]
+    ReporteFichajesPagadosPorAgrupadorDeTorneoDTO[]
   >({
-    key: ['reporte-jugadores-habilitados-por-torneo', anio],
+    key: ['reporte-fichajes-pagados-por-torneo', anio],
     fn: async () => {
-      return await api.obtenerReporteJugadoresHabilitadosPorTorneo(
-        parseInt(anio)
-      )
+      return await api.obtenerReporteFichajesPagadosPorTorneo(parseInt(anio))
     }
   })
 
@@ -95,8 +95,13 @@ export default function ReporteJugadoresHabilitadosPorTorneoPage() {
 
   return (
     <div className='space-y-4'>
-      <div className='flex items-center justify-between'>
-        <h1 className='text-2xl font-bold'>Jugadores habilitados por torneo</h1>
+      <div className='flex items-center justify-between gap-4'>
+        <div className='space-y-2'>
+          <h1 className='text-2xl font-bold'>Fichajes pagados por torneo</h1>
+          <p className='text-sm text-muted-foreground max-w-3xl'>
+            {descripcionReporte}
+          </p>
+        </div>
         <Boton variant='outline' onClick={() => navigate(-1)}>
           Volver
         </Boton>
@@ -132,6 +137,9 @@ export default function ReporteJugadoresHabilitadosPorTorneoPage() {
       <Card>
         <CardHeader>
           <CardTitle>Resultados</CardTitle>
+          <CardDescription>
+            Totales por mes según la fecha de pago del fichaje
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
