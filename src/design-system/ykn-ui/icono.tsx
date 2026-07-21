@@ -78,6 +78,7 @@ const MAPEO_ICONOS: Record<
   // SuperAdmin
   SuperAdmin: LucideIcons.ShieldCheck,
   BaseDeDatos: LucideIcons.Database,
+  Logs: LucideIcons.ScrollText,
 
   // Configuración / listas
   DNIsExpulsados: LucideIcons.OctagonMinus,

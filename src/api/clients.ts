@@ -7198,6 +7198,129 @@ export class Client {
   }
 
   /**
+   * @param texto (optional)
+   * @param dias (optional)
+   * @param maxResultados (optional)
+   * @return OK
+   */
+  logsBuscar(
+    texto: string | undefined,
+    dias: number | undefined,
+    maxResultados: number | undefined
+  ): Promise<BusquedaLogsDTO> {
+    let url_ = this.baseUrl + '/api/Logs/buscar?'
+    if (texto === null) throw new Error("The parameter 'texto' cannot be null.")
+    else if (texto !== undefined)
+      url_ += 'texto=' + encodeURIComponent('' + texto) + '&'
+    if (dias === null) throw new Error("The parameter 'dias' cannot be null.")
+    else if (dias !== undefined)
+      url_ += 'dias=' + encodeURIComponent('' + dias) + '&'
+    if (maxResultados === null)
+      throw new Error("The parameter 'maxResultados' cannot be null.")
+    else if (maxResultados !== undefined)
+      url_ += 'maxResultados=' + encodeURIComponent('' + maxResultados) + '&'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processLogsBuscar(_response)
+    })
+  }
+
+  protected processLogsBuscar(response: Response): Promise<BusquedaLogsDTO> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = BusquedaLogsDTO.fromJS(resultData200)
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<BusquedaLogsDTO>(null as any)
+  }
+
+  /**
+   * @param dias (optional)
+   * @return OK
+   */
+  logsArchivos(dias: number | undefined): Promise<LogArchivoDTO[]> {
+    let url_ = this.baseUrl + '/api/Logs/archivos?'
+    if (dias === null) throw new Error("The parameter 'dias' cannot be null.")
+    else if (dias !== undefined)
+      url_ += 'dias=' + encodeURIComponent('' + dias) + '&'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processLogsArchivos(_response)
+    })
+  }
+
+  protected processLogsArchivos(response: Response): Promise<LogArchivoDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(LogArchivoDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<LogArchivoDTO[]>(null as any)
+  }
+
+  /**
    * @param dni (optional)
    * @return OK
    */
@@ -11257,6 +11380,75 @@ export interface IAsignarArbitrosJornadaDTO {
   arbitroIds: number[] | undefined
 }
 
+export class BusquedaLogsDTO implements IBusquedaLogsDTO {
+  texto?: string | undefined
+  dias?: number
+  maxResultados?: number
+  truncado?: boolean
+  advertencias?: string[] | undefined
+  resultados?: LogHitDTO[] | undefined
+
+  constructor(data?: IBusquedaLogsDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.texto = _data['texto']
+      this.dias = _data['dias']
+      this.maxResultados = _data['maxResultados']
+      this.truncado = _data['truncado']
+      if (Array.isArray(_data['advertencias'])) {
+        this.advertencias = [] as any
+        for (let item of _data['advertencias']) this.advertencias!.push(item)
+      }
+      if (Array.isArray(_data['resultados'])) {
+        this.resultados = [] as any
+        for (let item of _data['resultados'])
+          this.resultados!.push(LogHitDTO.fromJS(item))
+      }
+    }
+  }
+
+  static fromJS(data: any): BusquedaLogsDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new BusquedaLogsDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['texto'] = this.texto
+    data['dias'] = this.dias
+    data['maxResultados'] = this.maxResultados
+    data['truncado'] = this.truncado
+    if (Array.isArray(this.advertencias)) {
+      data['advertencias'] = []
+      for (let item of this.advertencias) data['advertencias'].push(item)
+    }
+    if (Array.isArray(this.resultados)) {
+      data['resultados'] = []
+      for (let item of this.resultados) data['resultados'].push(item.toJSON())
+    }
+    return data
+  }
+}
+
+export interface IBusquedaLogsDTO {
+  texto?: string | undefined
+  dias?: number
+  maxResultados?: number
+  truncado?: boolean
+  advertencias?: string[] | undefined
+  resultados?: LogHitDTO[] | undefined
+}
+
 export class CambiarEscudoDTO implements ICambiarEscudoDTO {
   imagenBase64!: string
 
@@ -15283,6 +15475,104 @@ export interface ILeyendaTablaPosicionesDTO {
 export enum LocalVisitanteEnum {
   _1 = 1,
   _2 = 2
+}
+
+export class LogArchivoDTO implements ILogArchivoDTO {
+  nombre?: string | undefined
+  tamanioBytes?: number
+  ultimaModificacion?: Date
+
+  constructor(data?: ILogArchivoDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.nombre = _data['nombre']
+      this.tamanioBytes = _data['tamanioBytes']
+      this.ultimaModificacion = _data['ultimaModificacion']
+        ? new Date(_data['ultimaModificacion'].toString())
+        : <any>undefined
+    }
+  }
+
+  static fromJS(data: any): LogArchivoDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new LogArchivoDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['nombre'] = this.nombre
+    data['tamanioBytes'] = this.tamanioBytes
+    data['ultimaModificacion'] = this.ultimaModificacion
+      ? this.ultimaModificacion.toISOString()
+      : <any>undefined
+    return data
+  }
+}
+
+export interface ILogArchivoDTO {
+  nombre?: string | undefined
+  tamanioBytes?: number
+  ultimaModificacion?: Date
+}
+
+export class LogHitDTO implements ILogHitDTO {
+  archivo?: string | undefined
+  linea?: number
+  contenido?: string | undefined
+  fecha?: Date | undefined
+
+  constructor(data?: ILogHitDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.archivo = _data['archivo']
+      this.linea = _data['linea']
+      this.contenido = _data['contenido']
+      this.fecha = _data['fecha']
+        ? new Date(_data['fecha'].toString())
+        : <any>undefined
+    }
+  }
+
+  static fromJS(data: any): LogHitDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new LogHitDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['archivo'] = this.archivo
+    data['linea'] = this.linea
+    data['contenido'] = this.contenido
+    data['fecha'] = this.fecha ? this.fecha.toISOString() : <any>undefined
+    return data
+  }
+}
+
+export interface ILogHitDTO {
+  archivo?: string | undefined
+  linea?: number
+  contenido?: string | undefined
+  fecha?: Date | undefined
 }
 
 export class LoginDTO implements ILoginDTO {
