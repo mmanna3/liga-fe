@@ -37,9 +37,10 @@ export default function CardBuscarLogs() {
           Buscar en logs
         </CardTitle>
         <CardDescription>
-          Busca un DNI u otro texto en los archivos de log del servidor (nlog y
-          stdout). Hoy solo se registran errores: si no hubo una excepción con
-          ese texto, puede no haber resultados.
+          Buscá un DNI o el texto JUGADOR_AUDIT. Las operaciones de
+          eliminar/desvincular/pase se registran desde el deploy de esta
+          instrumentación; casos anteriores no aparecen. También incluye errores
+          de la app (nlog) y stdout de IIS.
         </CardDescription>
       </CardHeader>
 
