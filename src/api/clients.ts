@@ -3760,6 +3760,62 @@ export class Client {
   }
 
   /**
+   * @return OK
+   */
+  equiposListado(): Promise<EquipoListadoDTO[]> {
+    let url_ = this.baseUrl + '/api/Equipo/listado'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processEquiposListado(_response)
+    })
+  }
+
+  protected processEquiposListado(
+    response: Response
+  ): Promise<EquipoListadoDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(EquipoListadoDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<EquipoListadoDTO[]>(null as any)
+  }
+
+  /**
    * @param ids (optional)
    * @return OK
    */
@@ -6929,6 +6985,72 @@ export class Client {
       })
     }
     return Promise.resolve<JugadorDTO[]>(null as any)
+  }
+
+  /**
+   * @param estados (optional)
+   * @return OK
+   */
+  jugadoresListado(
+    estados: EstadoJugadorEnum[] | undefined
+  ): Promise<JugadorListadoDTO[]> {
+    let url_ = this.baseUrl + '/api/Jugador/listado?'
+    if (estados === null)
+      throw new Error("The parameter 'estados' cannot be null.")
+    else if (estados !== undefined)
+      estados &&
+        estados.forEach((item) => {
+          url_ += 'estados=' + encodeURIComponent('' + item) + '&'
+        })
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processJugadoresListado(_response)
+    })
+  }
+
+  protected processJugadoresListado(
+    response: Response
+  ): Promise<JugadorListadoDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(JugadorListadoDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<JugadorListadoDTO[]>(null as any)
   }
 
   /**
@@ -12967,6 +13089,68 @@ export interface IEquipoDelJugadorDTO {
   tarjetasRojas?: number
 }
 
+export class EquipoListadoDTO implements IEquipoListadoDTO {
+  id?: number
+  nombre?: string | undefined
+  clubNombre?: string | undefined
+  codigoAlfanumerico?: string | undefined
+  torneos?: string[] | undefined
+  cantidadJugadores?: number
+
+  constructor(data?: IEquipoListadoDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.nombre = _data['nombre']
+      this.clubNombre = _data['clubNombre']
+      this.codigoAlfanumerico = _data['codigoAlfanumerico']
+      if (Array.isArray(_data['torneos'])) {
+        this.torneos = [] as any
+        for (let item of _data['torneos']) this.torneos!.push(item)
+      }
+      this.cantidadJugadores = _data['cantidadJugadores']
+    }
+  }
+
+  static fromJS(data: any): EquipoListadoDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new EquipoListadoDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['nombre'] = this.nombre
+    data['clubNombre'] = this.clubNombre
+    data['codigoAlfanumerico'] = this.codigoAlfanumerico
+    if (Array.isArray(this.torneos)) {
+      data['torneos'] = []
+      for (let item of this.torneos) data['torneos'].push(item)
+    }
+    data['cantidadJugadores'] = this.cantidadJugadores
+    return data
+  }
+}
+
+export interface IEquipoListadoDTO {
+  id?: number
+  nombre?: string | undefined
+  clubNombre?: string | undefined
+  codigoAlfanumerico?: string | undefined
+  torneos?: string[] | undefined
+  cantidadJugadores?: number
+}
+
 export class EquipoParaZonasDTO implements IEquipoParaZonasDTO {
   id?: number
   nombre?: string | undefined
@@ -15363,6 +15547,82 @@ export interface IJugadorDelEquipoDTO {
   motivo?: string | undefined
   tarjetasAmarillas?: number
   tarjetasRojas?: number
+}
+
+export class JugadorListadoDTO implements IJugadorListadoDTO {
+  id?: number
+  dni?: string | undefined
+  nombre?: string | undefined
+  apellido?: string | undefined
+  delegadoId?: number | undefined
+  jugadorEquipoId?: number
+  equipoId?: number
+  equipoNombre?: string | undefined
+  club?: string | undefined
+  torneo?: string | undefined
+  estado?: EstadoJugadorEnum
+
+  constructor(data?: IJugadorListadoDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.dni = _data['dni']
+      this.nombre = _data['nombre']
+      this.apellido = _data['apellido']
+      this.delegadoId = _data['delegadoId']
+      this.jugadorEquipoId = _data['jugadorEquipoId']
+      this.equipoId = _data['equipoId']
+      this.equipoNombre = _data['equipoNombre']
+      this.club = _data['club']
+      this.torneo = _data['torneo']
+      this.estado = _data['estado']
+    }
+  }
+
+  static fromJS(data: any): JugadorListadoDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new JugadorListadoDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['dni'] = this.dni
+    data['nombre'] = this.nombre
+    data['apellido'] = this.apellido
+    data['delegadoId'] = this.delegadoId
+    data['jugadorEquipoId'] = this.jugadorEquipoId
+    data['equipoId'] = this.equipoId
+    data['equipoNombre'] = this.equipoNombre
+    data['club'] = this.club
+    data['torneo'] = this.torneo
+    data['estado'] = this.estado
+    return data
+  }
+}
+
+export interface IJugadorListadoDTO {
+  id?: number
+  dni?: string | undefined
+  nombre?: string | undefined
+  apellido?: string | undefined
+  delegadoId?: number | undefined
+  jugadorEquipoId?: number
+  equipoId?: number
+  equipoNombre?: string | undefined
+  club?: string | undefined
+  torneo?: string | undefined
+  estado?: EstadoJugadorEnum
 }
 
 export class JugadoresPorCategoriaDTO implements IJugadoresPorCategoriaDTO {

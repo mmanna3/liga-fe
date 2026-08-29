@@ -6,7 +6,7 @@ import Tabla from './tabla'
 export default function EquipoHome() {
   const { data, isLoading, isError } = useApiQuery({
     key: ['equipos'],
-    fn: async () => await api.equipoAll()
+    fn: async () => await api.equiposListado()
   })
 
   return (

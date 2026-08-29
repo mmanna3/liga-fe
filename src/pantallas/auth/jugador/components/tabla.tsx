@@ -1,5 +1,5 @@
 import { api } from '@/api/api'
-import { EquipoDelJugadorDTO, JugadorDTO } from '@/api/clients'
+import { JugadorListadoDTO } from '@/api/clients'
 import { EstadoJugadorEnum } from '@/api/clients'
 import JugadorEquipoEstadoBadge from '@/design-system/ykn-ui/jugador-equipo-estado-badge'
 import Tabla from '@/design-system/ykn-ui/tabla'
@@ -10,6 +10,7 @@ import { rutasNavegacion } from '@/ruteo/rutas'
 import { useJugadoresListaUiStore } from '../stores/use-jugadores-lista-ui-store'
 import { useTablaListaUi } from '@/logica-compartida/hooks/use-tabla-lista-ui'
 import { ColumnDef } from '@tanstack/react-table'
+import { useMemo } from 'react'
 import {
   Popover,
   PopoverContent,
@@ -43,7 +44,9 @@ export default function TablaJugador() {
   const { data, isLoading, isError } = useApiQuery({
     key: ['jugadores', filtroEstados.toString()],
     fn: async () =>
-      await api.listarConFiltro(filtroEstados as unknown as EstadoJugadorEnum[])
+      await api.jugadoresListado(
+        filtroEstados as unknown as EstadoJugadorEnum[]
+      )
   })
 
   const filtro = (
@@ -78,103 +81,82 @@ export default function TablaJugador() {
     </Popover>
   )
 
-  const columnas: ColumnDef<JugadorDTO>[] = [
-    {
-      accessorKey: 'dni',
-      header: 'DNI',
-      cell: ({ row }) => <span>{row.getValue('dni')}</span>
-    },
-    {
-      accessorKey: 'nombre',
-      header: 'Nombre',
-      cell: ({ row }) => <span>{row.getValue('nombre')}</span>
-    },
-    {
-      accessorKey: 'apellido',
-      header: 'Apellido',
-      cell: ({ row }) => <span>{row.getValue('apellido')}</span>
-    },
-    {
-      accessorKey: 'equipos',
-      header: 'Equipo',
-      cell: ({ row }) => (
-        <span>
-          {(row.getValue('equipos') as EquipoDelJugadorDTO[]).length > 0
-            ? (row.getValue('equipos') as EquipoDelJugadorDTO[])[0].nombre
-            : ''}
-        </span>
-      )
-    },
-    {
-      id: 'club',
-      accessorFn: (row) =>
-        row.equipos?.length ? (row.equipos[0].club ?? '') : '',
-      header: 'Club',
-      cell: ({ row }) => (
-        <span>
-          {row.original.equipos?.length
-            ? (row.original.equipos[0].club ?? '')
-            : ''}
-        </span>
-      )
-    },
-    {
-      accessorKey: 'equipos',
-      header: 'Torneo',
-      cell: ({ row }) => (
-        <span>
-          {/* El mapeo de este request deja a todos los jugadores con un array de 1 equipo */}
-          {(row.getValue('equipos') as EquipoDelJugadorDTO[]).length > 0
-            ? (row.getValue('equipos') as EquipoDelJugadorDTO[])[0].torneo
-            : ''}
-        </span>
-      )
-    },
-    {
-      accessorKey: 'equipos',
-      header: 'Estado',
-      cell: ({ row }) => {
-        if ((row.getValue('equipos') as EquipoDelJugadorDTO[]).length === 0) {
-          return ''
-        }
+  const columnas = useMemo<ColumnDef<JugadorListadoDTO>[]>(
+    () => [
+      {
+        accessorKey: 'dni',
+        header: 'DNI',
+        cell: ({ row }) => <span>{row.getValue('dni')}</span>
+      },
+      {
+        accessorKey: 'nombre',
+        header: 'Nombre',
+        cell: ({ row }) => <span>{row.getValue('nombre')}</span>
+      },
+      {
+        accessorKey: 'apellido',
+        header: 'Apellido',
+        cell: ({ row }) => <span>{row.getValue('apellido')}</span>
+      },
+      {
+        accessorKey: 'equipoNombre',
+        header: 'Equipo',
+        cell: ({ row }) => <span>{row.getValue('equipoNombre')}</span>
+      },
+      {
+        accessorKey: 'club',
+        header: 'Club',
+        cell: ({ row }) => <span>{row.getValue('club')}</span>
+      },
+      {
+        accessorKey: 'torneo',
+        header: 'Torneo',
+        cell: ({ row }) => <span>{row.getValue('torneo')}</span>
+      },
+      {
+        accessorKey: 'estado',
+        header: 'Estado',
+        cell: ({ row }) => {
+          const estado = row.original.estado as unknown as EstadoJugador
+          const esPendienteORechazo =
+            estado === EstadoJugador.FichajePendienteDeAprobacion ||
+            estado === EstadoJugador.FichajeRechazado
 
-        const equipo = (row.getValue('equipos') as EquipoDelJugadorDTO[])[0]
-        const estado = equipo.estado as unknown as EstadoJugador
-        const esPendienteORechazo =
-          estado === EstadoJugador.FichajePendienteDeAprobacion ||
-          estado === EstadoJugador.FichajeRechazado
-
-        return (
-          <div
-            className={esPendienteORechazo && esAdmin() ? 'cursor-pointer' : ''}
-            onClick={(e) => {
-              e.stopPropagation()
-              if (esPendienteORechazo && esAdmin()) {
-                navigate(
-                  `${rutasNavegacion.aprobarRechazarJugador}/${equipo.id}/${row.original.id}`
-                )
+          return (
+            <div
+              className={
+                esPendienteORechazo && esAdmin() ? 'cursor-pointer' : ''
               }
-            }}
-          >
-            <JugadorEquipoEstadoBadge estado={estado} />
-          </div>
-        )
+              onClick={(e) => {
+                e.stopPropagation()
+                if (esPendienteORechazo && esAdmin()) {
+                  navigate(
+                    `${rutasNavegacion.aprobarRechazarJugador}/${row.original.jugadorEquipoId}/${row.original.id}`
+                  )
+                }
+              }}
+            >
+              <JugadorEquipoEstadoBadge estado={estado} />
+            </div>
+          )
+        }
+      },
+      {
+        id: 'esDelegado',
+        header: 'Es delegado',
+        cell: ({ row }) =>
+          row.original.delegadoId != null ? (
+            <span className='flex justify-center text-green-600 font-bold'>
+              ✓
+            </span>
+          ) : null
       }
-    },
-    {
-      id: 'esDelegado',
-      header: 'Es delegado',
-      cell: ({ row }) =>
-        row.original.delegadoId != null ? (
-          <span className='flex justify-center text-green-600 font-bold'>
-            ✓
-          </span>
-        ) : null
-    }
-  ]
+    ],
+    [esAdmin, navigate]
+  )
 
   return (
-    <Tabla<JugadorDTO>
+    <Tabla<JugadorListadoDTO>
       columnas={columnas}
       data={data || []}
       estaCargando={isLoading}
