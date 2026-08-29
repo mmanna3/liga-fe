@@ -156,6 +156,24 @@ const JUGADOR_PENDIENTE = {
   ]
 }
 
+// Forma plana de JugadorListadoDTO (endpoint GET /api/Jugador/listado).
+// Una fila por vínculo jugador-equipo.
+const JUGADOR_LISTADO_1 = {
+  id: 1,
+  dni: '12345678',
+  nombre: 'Juan',
+  apellido: 'González',
+  delegadoId: null,
+  jugadorEquipoId: 10,
+  equipoId: 10,
+  equipoNombre: 'Infantil A',
+  club: 'Club Defensores del Norte',
+  torneo: 'Torneo Apertura 2026',
+  estado: 3
+}
+
+const JUGADOR_LISTADO_PENDIENTE = { ...JUGADOR_LISTADO_1, estado: 1 }
+
 const DELEGADO_1 = {
   id: 1,
   nombre: 'Carlos',
@@ -990,8 +1008,10 @@ const ROUTES = [
     scenarios: { happy: null }
   },
 
-  // Equipos — lista
+  // Equipos — lista (legacy, sigue existiendo en el back)
   { method: 'GET', pattern: '/api/Equipo', scenarios: { happy: [] } },
+  // Equipos — listado liviano (home de equipos)
+  { method: 'GET', pattern: '/api/Equipo/listado', scenarios: { happy: [] } },
   // Equipos — para zonas
   {
     method: 'GET',
@@ -1007,7 +1027,7 @@ const ROUTES = [
     }
   },
 
-  // Jugadores — lista con filtro
+  // Jugadores — lista con filtro (legacy, sigue existiendo en el back)
   {
     method: 'GET',
     pattern: /^\/api\/Jugador\/listar-con-filtro/,
@@ -1015,6 +1035,16 @@ const ROUTES = [
       happy: [],
       jugadores_con_datos: [JUGADOR_1],
       jugador_pendiente: [JUGADOR_PENDIENTE]
+    }
+  },
+  // Jugadores — listado liviano (home de jugadores)
+  {
+    method: 'GET',
+    pattern: /^\/api\/Jugador\/listado/,
+    scenarios: {
+      happy: [],
+      jugadores_con_datos: [JUGADOR_LISTADO_1],
+      jugador_pendiente: [JUGADOR_LISTADO_PENDIENTE]
     }
   },
   // Jugadores — detalle
