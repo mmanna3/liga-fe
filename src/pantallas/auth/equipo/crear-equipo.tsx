@@ -23,7 +23,7 @@ export default function CrearEquipo() {
 
   const { data: torneos = [], isLoading: torneosCargando } = useApiQuery({
     key: ['torneosFiltrar', anioActual()],
-    fn: () => api.torneosFiltrar(anioActual(), undefined)
+    fn: () => api.torneosListado(anioActual(), undefined)
   })
 
   const torneoSeleccionado = useMemo(

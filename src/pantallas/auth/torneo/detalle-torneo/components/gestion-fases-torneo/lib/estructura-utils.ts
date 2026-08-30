@@ -1,8 +1,29 @@
-import type { FaseDTO, GrupoDeFasesDTO } from '@/api/clients'
+import type { TipoDeFaseEnum } from '@/api/clients'
 import type { EstructuraFasesItemPayload } from '@/api/estructura-fases-api'
 import { arrayMove } from '@dnd-kit/sortable'
 import { tipoDeFaseAOpción, type FaseEstado } from '../../../lib'
 import type { ElementoEstructuraTorneo, GrupoDeFasesEstado } from './tipos'
+
+/**
+ * Forma mínima de fase que necesita el armado de estructura. La satisfacen tanto
+ * `FaseDTO` (detalle de torneo) como `FaseResumenDTO` (home de torneos).
+ */
+export interface FaseParaEstructura {
+  id?: number
+  numero?: number
+  nombre?: string
+  grupoDeFasesId?: number
+  tipoDeFase?: TipoDeFaseEnum
+  sePuedeEditar?: boolean
+}
+
+/** Forma mínima de grupo de fases para el armado de estructura. */
+export interface GrupoParaEstructura {
+  id?: number
+  numero?: number
+  nombre?: string
+  grupoDeFasesPadreId?: number
+}
 
 export const PREFIJO_DRAG_FASE_TOP = 'top-fase-'
 export const PREFIJO_DRAG_GRUPO_TOP = 'top-grupo-'
@@ -14,7 +35,7 @@ export function generarIdLocal(): string {
   return `local-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
 }
 
-export function faseDtoAFaseEstado(f: FaseDTO): FaseEstado {
+export function faseDtoAFaseEstado(f: FaseParaEstructura): FaseEstado {
   return {
     id: f.id,
     numero: f.numero ?? 0,
@@ -25,15 +46,15 @@ export function faseDtoAFaseEstado(f: FaseDTO): FaseEstado {
 }
 
 export function torneoAElementos(
-  fases: FaseDTO[],
-  grupos: GrupoDeFasesDTO[] = []
+  fases: FaseParaEstructura[],
+  grupos: GrupoParaEstructura[] = []
 ): ElementoEstructuraTorneo[] {
   return construirElementosDesdeApi(fases, grupos, null)
 }
 
 function construirElementosDesdeApi(
-  fases: FaseDTO[],
-  grupos: GrupoDeFasesDTO[],
+  fases: FaseParaEstructura[],
+  grupos: GrupoParaEstructura[],
   contenedorGrupoId: number | null
 ): ElementoEstructuraTorneo[] {
   type Item = { numero: number; id: number; el: ElementoEstructuraTorneo }
@@ -569,7 +590,7 @@ export function buscarFaseEnElementos(
 
 /** @deprecated usar torneoAElementos */
 export function torneoFasesAElementos(
-  fases: FaseDTO[]
+  fases: FaseParaEstructura[]
 ): ElementoEstructuraTorneo[] {
   return torneoAElementos(fases, [])
 }

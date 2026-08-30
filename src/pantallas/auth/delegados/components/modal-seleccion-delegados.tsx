@@ -1,5 +1,5 @@
 import { api } from '@/api/api'
-import { DelegadoClubDTO, DelegadoDTO } from '@/api/clients'
+import { DelegadoClubResumenDTO, DelegadoListadoDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { Checkbox } from '@/design-system/base-ui/checkbox'
 import {
@@ -24,13 +24,17 @@ export default function ModalSeleccionDelegados({
   open,
   onOpenChange
 }: ModalSeleccionDelegadosProps) {
-  const { data: delegados = [], isLoading } = useApiQuery<DelegadoDTO[]>({
-    key: ['delegados-seleccion', open ? 'open' : 'closed'],
-    fn: () => api.listarDelegadosConFiltro(undefined),
-    activado: open
-  })
+  const { data: delegados = [], isLoading } = useApiQuery<DelegadoListadoDTO[]>(
+    {
+      key: ['delegados-seleccion', open ? 'open' : 'closed'],
+      fn: () => api.delegadosListado(undefined),
+      activado: open
+    }
+  )
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
-  const [selectedDelegados, setSelectedDelegados] = useState<DelegadoDTO[]>([])
+  const [selectedDelegados, setSelectedDelegados] = useState<
+    DelegadoListadoDTO[]
+  >([])
   const [generandoPDF, setGenerandoPDF] = useState(false)
 
   useEffect(() => {
@@ -38,7 +42,7 @@ export default function ModalSeleccionDelegados({
     const selected = Object.keys(rowSelection)
       .filter((key) => (rowSelection as Record<string, boolean>)[key])
       .map((key) => delegados[parseInt(key, 10)])
-      .filter((d): d is DelegadoDTO => d != null)
+      .filter((d): d is DelegadoListadoDTO => d != null)
     setSelectedDelegados(selected)
   }, [rowSelection, delegados])
 
@@ -58,7 +62,7 @@ export default function ModalSeleccionDelegados({
     }
   }
 
-  const columnas: ColumnDef<DelegadoDTO>[] = [
+  const columnas: ColumnDef<DelegadoListadoDTO>[] = [
     {
       id: 'select',
       header: ({ table }) => (
@@ -70,7 +74,7 @@ export default function ModalSeleccionDelegados({
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         />
       ),
-      cell: ({ row }: { row: Row<DelegadoDTO> }) => (
+      cell: ({ row }: { row: Row<DelegadoListadoDTO> }) => (
         <Checkbox
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -79,11 +83,9 @@ export default function ModalSeleccionDelegados({
     },
     {
       id: 'nombreUsuario',
-      accessorFn: (row) => row.usuario?.nombreUsuario,
+      accessorFn: (row) => row.nombreUsuario,
       header: 'Usuario',
-      cell: ({ row }) => (
-        <span>{row.original.usuario?.nombreUsuario ?? ''}</span>
-      )
+      cell: ({ row }) => <span>{row.original.nombreUsuario ?? ''}</span>
     },
     {
       accessorKey: 'nombre',
@@ -96,15 +98,15 @@ export default function ModalSeleccionDelegados({
     {
       id: 'clubs',
       accessorFn: (row) =>
-        row.delegadoClubs
-          ?.map((dc: DelegadoClubDTO) => dc.clubNombre)
+        row.clubs
+          ?.map((dc: DelegadoClubResumenDTO) => dc.clubNombre)
           .filter(Boolean)
           .join(', ') ?? '',
       header: 'Clubs',
       cell: ({ row }) => (
         <span>
-          {row.original.delegadoClubs
-            ?.map((dc: DelegadoClubDTO) => dc.clubNombre)
+          {row.original.clubs
+            ?.map((dc: DelegadoClubResumenDTO) => dc.clubNombre)
             .filter(Boolean)
             .join(', ') ?? ''}
         </span>
@@ -114,24 +116,29 @@ export default function ModalSeleccionDelegados({
       id: 'estado',
       header: 'Estado',
       cell: ({ row }) => {
-        const clubs = row.original.delegadoClubs ?? []
+        const clubs = row.original.clubs ?? []
         const estadosUnicos = [
           ...new Map(
             clubs
-              .map((dc) => dc.estadoDelegado)
-              .filter((e): e is NonNullable<typeof e> => e != null)
-              .map((e) => [e.id, e])
-          ).values()
+              .filter((dc) => dc.estadoDelegadoId != null)
+              .map(
+                (dc) =>
+                  [
+                    dc.estadoDelegadoId as number,
+                    dc.estadoDelegado ?? ''
+                  ] as const
+              )
+          ).entries()
         ]
         if (estadosUnicos.length === 0) return null
         return (
           <div className='flex flex-wrap gap-1'>
-            {estadosUnicos.map((estado) => (
+            {estadosUnicos.map(([id, texto]) => (
               <span
-                key={estado.id}
-                className={`px-2 py-0.5 rounded text-xs ${estadoBadgeClassDelegado[estado.id!] ?? ''}`}
+                key={id}
+                className={`px-2 py-0.5 rounded text-xs ${estadoBadgeClassDelegado[id] ?? ''}`}
               >
-                {estado.estado}
+                {texto}
               </span>
             ))}
           </div>
@@ -147,7 +154,7 @@ export default function ModalSeleccionDelegados({
           <DialogTitle>Selección de delegados</DialogTitle>
         </DialogHeader>
         <div className='flex-1 overflow-auto min-h-0'>
-          <Tabla<DelegadoDTO>
+          <Tabla<DelegadoListadoDTO>
             columnas={columnas}
             data={delegados ?? []}
             estaCargando={isLoading}

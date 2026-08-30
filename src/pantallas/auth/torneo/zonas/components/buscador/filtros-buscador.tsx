@@ -46,8 +46,8 @@ export function FiltrosBuscadorDeEquipos({
   })
 
   const { data: torneosTodos = [] } = useApiQuery({
-    key: ['torneoAll'],
-    fn: () => api.torneoAll()
+    key: ['torneosListado'],
+    fn: () => api.torneosListado(undefined, undefined)
   })
 
   const torneos = useMemo(() => {

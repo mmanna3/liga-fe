@@ -90,7 +90,7 @@ export default function AsignacionPorJornada() {
 
   const { data: torneosAnio } = useApiQuery({
     key: ['torneos', 'filtrar', anio],
-    fn: async () => await api.torneosFiltrar(anio, undefined)
+    fn: async () => await api.torneosListado(anio, undefined)
   })
 
   const agrupadoresConTorneos = useMemo(() => {

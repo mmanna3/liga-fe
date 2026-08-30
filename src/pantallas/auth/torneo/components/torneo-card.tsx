@@ -1,4 +1,4 @@
-import type { TorneoDTO, FaseDTO } from '@/api/clients'
+import type { TorneoListadoDTO, FaseResumenDTO } from '@/api/clients'
 import { formatearHorarioDeJuego } from '../detalle-torneo/lib'
 import { torneoAElementos } from '../detalle-torneo/components/gestion-fases-torneo/lib/estructura-utils'
 import type {
@@ -12,7 +12,7 @@ import { rutasNavegacion } from '@/ruteo/rutas'
 import { useNavigate } from 'react-router-dom'
 
 interface TorneoCardProps {
-  torneo: TorneoDTO
+  torneo: TorneoListadoDTO
 }
 
 interface FaseResumen {
@@ -123,7 +123,7 @@ function GrupoResumen({
   profundidad
 }: {
   grupo: GrupoDeFasesEstado
-  torneoFases: FaseDTO[]
+  torneoFases: FaseResumenDTO[]
   profundidad: number
 }) {
   const esSubgrupo = profundidad > 1
@@ -166,7 +166,7 @@ function EstructuraFasesResumen({
   anidado = false
 }: {
   elementos: ElementoEstructuraTorneo[]
-  torneoFases: FaseDTO[]
+  torneoFases: FaseResumenDTO[]
   profundidad?: number
   anidado?: boolean
 }) {

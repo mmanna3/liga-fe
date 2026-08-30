@@ -71,8 +71,8 @@ export function useBuscadorEquipos({
   })
 
   const { data: torneosTodos = [] } = useApiQuery({
-    key: ['torneoAll'],
-    fn: () => api.torneoAll(),
+    key: ['torneosListado'],
+    fn: () => api.torneosListado(undefined, undefined),
     activado: modo === MODO_OTRO_TORNEO
   })
 

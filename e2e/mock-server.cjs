@@ -156,6 +156,34 @@ const JUGADOR_PENDIENTE = {
   ]
 }
 
+// Forma plana de DelegadoListadoDTO (endpoint GET /api/Delegado/listado).
+const DELEGADO_LISTADO_1 = {
+  id: 1,
+  nombre: 'Carlos',
+  apellido: 'Martínez',
+  nombreUsuario: 'carlos.martinez',
+  jugadorId: null,
+  blanqueoPendiente: false,
+  clubs: [
+    {
+      clubNombre: 'Club Defensores del Norte',
+      estadoDelegadoId: 3,
+      estadoDelegado: 'Activo'
+    }
+  ]
+}
+
+const DELEGADO_LISTADO_PENDIENTE = {
+  ...DELEGADO_LISTADO_1,
+  clubs: [
+    {
+      clubNombre: 'Club Defensores del Norte',
+      estadoDelegadoId: 1,
+      estadoDelegado: 'Pendiente de aprobación'
+    }
+  ]
+}
+
 // Forma plana de JugadorListadoDTO (endpoint GET /api/Jugador/listado).
 // Una fila por vínculo jugador-equipo.
 const JUGADOR_LISTADO_1 = {
@@ -979,10 +1007,16 @@ const ROUTES = [
     }
   },
 
-  // Clubs — lista
+  // Clubs — lista (legacy, sigue existiendo en el back)
   {
     method: 'GET',
     pattern: '/api/Club',
+    scenarios: { happy: [], clubs_con_datos: [CLUB_1, CLUB_2] }
+  },
+  // Clubs — listado liviano (home de clubes + combo de selección de club)
+  {
+    method: 'GET',
+    pattern: '/api/Club/listado',
     scenarios: { happy: [], clubs_con_datos: [CLUB_1, CLUB_2] }
   },
   // Clubs — detalle
@@ -1076,7 +1110,7 @@ const ROUTES = [
     scenarios: { happy: 1 }
   },
 
-  // Delegados — lista con filtro
+  // Delegados — lista con filtro (legacy, sigue existiendo en el back)
   {
     method: 'GET',
     pattern: /^\/api\/Delegado\/listar-delegados-con-filtro/,
@@ -1084,6 +1118,16 @@ const ROUTES = [
       happy: [],
       delegados_con_datos: [DELEGADO_1],
       delegado_pendiente: [DELEGADO_PENDIENTE]
+    }
+  },
+  // Delegados — listado liviano (home de delegados + modal PDF)
+  {
+    method: 'GET',
+    pattern: /^\/api\/Delegado\/listado/,
+    scenarios: {
+      happy: [],
+      delegados_con_datos: [DELEGADO_LISTADO_1],
+      delegado_pendiente: [DELEGADO_LISTADO_PENDIENTE]
     }
   },
   // Delegados — detalle
@@ -1109,10 +1153,25 @@ const ROUTES = [
     scenarios: { happy: 1 }
   },
 
-  // Torneos — filtrar
+  // Torneos — filtrar (legacy, sigue existiendo en el back)
   {
     method: 'GET',
     pattern: /^\/api\/Torneo\/filtrar/,
+    scenarios: {
+      happy: [],
+      torneos_con_datos: [TORNEO_1],
+      torneo_detalle: [TORNEO_CON_FASES],
+      torneo_editable: [TORNEO_EDITABLE],
+      torneo_con_agrupadores: [],
+      arbitros_historico: [TORNEO_ARB_HISTORICO, TORNEO_ARB_HISTORICO_2],
+      arbitros_historico_vacio: [TORNEO_ARB_HISTORICO],
+      arbitros_prohibidos: [TORNEO_ARB_PROXIMO]
+    }
+  },
+  // Torneos — listado liviano (home de torneos + selectores)
+  {
+    method: 'GET',
+    pattern: /^\/api\/Torneo\/listado/,
     scenarios: {
       happy: [],
       torneos_con_datos: [TORNEO_1],

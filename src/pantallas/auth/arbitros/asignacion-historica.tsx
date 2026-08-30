@@ -52,7 +52,7 @@ export default function AsignacionHistorica() {
 
   const { data: torneos = [] } = useApiQuery({
     key: ['torneos', 'filtrar', anioEfectivo],
-    fn: async () => await api.torneosFiltrar(anioEfectivo, undefined)
+    fn: async () => await api.torneosListado(anioEfectivo, undefined)
   })
 
   const agrupadoresConTorneos = useMemo(() => {

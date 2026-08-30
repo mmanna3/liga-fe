@@ -1,5 +1,5 @@
 import { api } from '@/api/api'
-import type { TorneoDTO } from '@/api/clients'
+import type { TorneoListadoDTO } from '@/api/clients'
 import { Card, CardContent } from '@/design-system/base-ui/card'
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
 import { ListaDesplegable } from '@/design-system/ykn-ui/lista-desplegable'
@@ -30,7 +30,9 @@ interface AgrupadorOpcion {
   nombre: string
 }
 
-function obtenerAgrupadoresConId(torneos: TorneoDTO[]): AgrupadorOpcion[] {
+function obtenerAgrupadoresConId(
+  torneos: TorneoListadoDTO[]
+): AgrupadorOpcion[] {
   const mapa = new Map<string, string>()
   for (const t of torneos) {
     const nombre = t.torneoAgrupadorNombre?.trim() || 'Sin agrupador'
@@ -72,7 +74,7 @@ export default function Torneo() {
 
   const { data: torneosPorAnio = [] } = useQuery({
     queryKey: ['torneos', 'filtrar', anioEfectivo, undefined],
-    queryFn: () => api.torneosFiltrar(anioEfectivo, undefined),
+    queryFn: () => api.torneosListado(anioEfectivo, undefined),
     enabled: anioEfectivo > 0
   })
 
@@ -82,7 +84,7 @@ export default function Torneo() {
     isError
   } = useQuery({
     queryKey: ['torneos', 'filtrar', anioEfectivo, agrupadorIdParaApi],
-    queryFn: () => api.torneosFiltrar(anioEfectivo, agrupadorIdParaApi),
+    queryFn: () => api.torneosListado(anioEfectivo, agrupadorIdParaApi),
     enabled: anioEfectivo > 0
   })
 

@@ -1,5 +1,5 @@
 import { api } from '@/api/api'
-import { ClubDTO } from '@/api/clients'
+import { ClubListadoDTO } from '@/api/clients'
 import useApiQuery from '@/api/hooks/use-api-query'
 import { ListaDesplegable } from '@/design-system/ykn-ui/lista-desplegable'
 
@@ -10,12 +10,12 @@ interface ComboboxClubProps {
 }
 
 export function ComboboxClub({ value, onChange, required }: ComboboxClubProps) {
-  const { data: clubs } = useApiQuery<ClubDTO[]>({
+  const { data: clubs } = useApiQuery<ClubListadoDTO[]>({
     key: ['clubs'],
-    fn: async () => await api.clubAll()
+    fn: async () => await api.clubesListado()
   })
 
-  const opciones = (clubs ?? []).map((club: ClubDTO) => ({
+  const opciones = (clubs ?? []).map((club: ClubListadoDTO) => ({
     value: club.id?.toString() || '',
     label: club.nombre ?? ''
   }))

@@ -10,7 +10,7 @@ export default function Club() {
 
   const { data, isLoading, isError } = useApiQuery({
     key: ['clubs'],
-    fn: async () => await api.clubAll()
+    fn: async () => await api.clubesListado()
   })
 
   return (
