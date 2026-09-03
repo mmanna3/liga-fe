@@ -37,6 +37,7 @@ export default function EditarAgrupadorTorneo() {
   const [nombre, setNombre] = useState('')
   const [color, setColor] = useState<string>(COLORES_AGRUPADOR_TORNEO[0])
   const [esVisibleEnApp, setVisibleEnApp] = useState(false)
+  const [permiteLimpiarAmarillas, setPermiteLimpiarAmarillas] = useState(false)
 
   const {
     data: agrupador,
@@ -61,6 +62,7 @@ export default function EditarAgrupadorTorneo() {
     if (agrupador) {
       setNombre(agrupador.nombre || '')
       setVisibleEnApp(agrupador.esVisibleEnApp ?? false)
+      setPermiteLimpiarAmarillas(agrupador.permiteLimpiarAmarillas ?? false)
       setColor(colorAgrupadorValidoODefecto(agrupador.color))
     }
   }, [agrupador])
@@ -73,6 +75,8 @@ export default function EditarAgrupadorTorneo() {
     if (
       nombre === agrupador.nombre &&
       esVisibleEnApp === (agrupador.esVisibleEnApp ?? false) &&
+      permiteLimpiarAmarillas ===
+        (agrupador.permiteLimpiarAmarillas ?? false) &&
       color === colorInicial
     )
       return
@@ -82,7 +86,8 @@ export default function EditarAgrupadorTorneo() {
         id: agrupador.id,
         nombre,
         color,
-        esVisibleEnApp
+        esVisibleEnApp,
+        permiteLimpiarAmarillas
       })
     )
     navigate(rutasNavegacion.agrupadoresTorneo)
@@ -118,6 +123,23 @@ export default function EditarAgrupadorTorneo() {
                 id='esVisibleEnApp'
                 checked={esVisibleEnApp}
                 onCheckedChange={setVisibleEnApp}
+              />
+            </div>
+
+            <div className='flex items-center justify-between space-x-2'>
+              <div className='space-y-0.5'>
+                <Label htmlFor='permiteLimpiarAmarillas'>
+                  Permite limpiar tarjetas amarillas
+                </Label>
+                <p className='text-sm text-muted-foreground'>
+                  Habilita poner en cero las tarjetas amarillas de los torneos
+                  de este agrupador (Futsal).
+                </p>
+              </div>
+              <Switch
+                id='permiteLimpiarAmarillas'
+                checked={permiteLimpiarAmarillas}
+                onCheckedChange={setPermiteLimpiarAmarillas}
               />
             </div>
 
@@ -175,6 +197,8 @@ export default function EditarAgrupadorTorneo() {
                   !agrupador ||
                   (nombre === agrupador.nombre &&
                     esVisibleEnApp === (agrupador.esVisibleEnApp ?? false) &&
+                    permiteLimpiarAmarillas ===
+                      (agrupador.permiteLimpiarAmarillas ?? false) &&
                     color === colorAgrupadorValidoODefecto(agrupador.color))
                 }
               >

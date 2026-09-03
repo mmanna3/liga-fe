@@ -981,6 +981,25 @@ const TORNEO_EDITABLE_CON_NUEVA_FASE = {
   ]
 }
 
+const TORNEO_FUTSAL = {
+  id: 1,
+  nombre: 'Futsal Apertura 2026',
+  anio: 2026,
+  torneoAgrupadorId: 1,
+  torneoAgrupadorNombre: 'Futsal',
+  permiteLimpiarAmarillas: true,
+  sePuedeEditar: false,
+  categorias: [],
+  fases: [
+    { id: 100, numero: 1, nombre: 'Primera Fase', tipoDeFase: 1, tipoDeFaseNombre: 'Todos contra todos', sePuedeEditar: false, zonas: [], estadoFaseId: 100, categorias: [] }
+  ]
+}
+
+const JUGADORES_CON_AMARILLAS = [
+  { jugadorEquipoId: 9001, jugadorId: 7001, nombreCompleto: 'Ana Zapata', dni: '40000001', equipoId: 501, nombreEquipo: 'Los Amarillos', clubId: 301, nombreClub: 'Club Futsal', tarjetasAmarillas: 3 },
+  { jugadorEquipoId: 9002, jugadorId: 7002, nombreCompleto: 'Caro Diaz', dni: '40000002', equipoId: 501, nombreEquipo: 'Los Amarillos', clubId: 301, nombreClub: 'Club Futsal', tarjetasAmarillas: 1 }
+]
+
 const GRUPO_FASES_1 = { id: 50, nombre: 'Grupo A', numero: 2, torneoId: 1, grupoDeFasesPadreId: null }
 
 const TORNEO_CON_GRUPOS = {
@@ -1192,6 +1211,8 @@ const ROUTES = [
       torneo_detalle: TORNEO_CON_FASES,
       torneo_editable: TORNEO_EDITABLE,
       torneo_con_grupos: TORNEO_CON_GRUPOS,
+      torneo_futsal_amarillas: TORNEO_FUTSAL,
+      torneo_futsal_amarillas_vacio: TORNEO_FUTSAL,
       torneo_editable_sin_fases: { ...TORNEO_EDITABLE, fases: [] },
       torneo_editable_con_nueva_fase: TORNEO_EDITABLE_CON_NUEVA_FASE,
       torneo_zonas_vacio: TORNEO_CON_FASES,
@@ -1273,6 +1294,22 @@ const ROUTES = [
     method: 'PUT',
     pattern: /^\/api\/Torneo\/\d+\/estructura-fases$/,
     scenarios: { happy: null, torneo_con_grupos: null, torneo_editable: null }
+  },
+  // Torneos — jugadores con tarjetas amarillas (Futsal)
+  {
+    method: 'GET',
+    pattern: /^\/api\/Torneo\/\d+\/jugadores-con-amarillas$/,
+    scenarios: {
+      happy: JUGADORES_CON_AMARILLAS,
+      torneo_futsal_amarillas: JUGADORES_CON_AMARILLAS,
+      torneo_futsal_amarillas_vacio: []
+    }
+  },
+  // Torneos — limpiar todas las amarillas (Futsal)
+  {
+    method: 'POST',
+    pattern: /^\/api\/Torneo\/\d+\/limpiar-amarillas$/,
+    scenarios: { happy: 2, torneo_futsal_amarillas: 2, torneo_futsal_amarillas_vacio: 0 }
   },
   // Torneos — actualizar
   {

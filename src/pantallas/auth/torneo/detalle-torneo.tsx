@@ -5,6 +5,7 @@ import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import { ModuloSistema } from '@/logica-compartida/hooks/use-auth'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { Fragment, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Categorias } from './crear-torneo/components/categorias'
 import { SelectorAgrupador } from './crear-torneo/components/selector-agrupador'
 import { SwitchVerGoles } from './crear-torneo/components/switch-ver-goles'
@@ -17,6 +18,7 @@ import { formatearHorarioDeJuego } from './detalle-torneo/lib'
 import ModalActualizarFasesTablaAnual from './detalle-torneo/modal-actualizar-fases-tabla-anual'
 
 export default function DetalleTorneo() {
+  const navigate = useNavigate()
   const [modalTablaAnualAbierto, setModalTablaAnualAbierto] = useState(false)
   const detalle = useDetalleTorneo()
   const {
@@ -101,6 +103,19 @@ export default function DetalleTorneo() {
               alApretar: () => setEditando(true),
               tooltip: 'Editar torneo'
             },
+            ...(torneo.permiteLimpiarAmarillas
+              ? [
+                  {
+                    icono: 'Tarjetas' as const,
+                    alApretar: () =>
+                      navigate(
+                        `${rutasNavegacion.detalleTorneo}/${torneoId}/amarillas`
+                      ),
+                    tooltip: 'Limpiar tarjetas amarillas',
+                    visibleSoloParaAdmin: true
+                  }
+                ]
+              : []),
             {
               alApretar: () => eliminarMutation.mutate(undefined),
               tooltip: 'Eliminar',

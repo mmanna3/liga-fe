@@ -8940,6 +8940,117 @@ export class Client {
   /**
    * @return OK
    */
+  torneoJugadoresConAmarillas(id: number): Promise<JugadorConAmarillasDTO[]> {
+    let url_ = this.baseUrl + '/api/Torneo/{id}/jugadores-con-amarillas'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processTorneoJugadoresConAmarillas(_response)
+    })
+  }
+
+  protected processTorneoJugadoresConAmarillas(
+    response: Response
+  ): Promise<JugadorConAmarillasDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(JugadorConAmarillasDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<JugadorConAmarillasDTO[]>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
+  torneoLimpiarAmarillas(id: number): Promise<number> {
+    let url_ = this.baseUrl + '/api/Torneo/{id}/limpiar-amarillas'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'POST',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processTorneoLimpiarAmarillas(_response)
+    })
+  }
+
+  protected processTorneoLimpiarAmarillas(response: Response): Promise<number> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = resultData200 !== undefined ? resultData200 : <any>null
+
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<number>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
   torneoAll(): Promise<TorneoDTO[]> {
     let url_ = this.baseUrl + '/api/Torneo'
     url_ = url_.replace(/[?&]$/, '')
@@ -12581,6 +12692,7 @@ export class CrearTorneoDTO implements ICrearTorneoDTO {
   faseClausuraId?: number | undefined
   faseClausuraNombre?: string | undefined
   torneoAgrupadorNombre?: string | undefined
+  permiteLimpiarAmarillas?: boolean
   sePuedeEditar?: boolean
   fases?: FaseDTO[] | undefined
   gruposDeFases?: GrupoDeFasesDTO[] | undefined
@@ -12611,6 +12723,7 @@ export class CrearTorneoDTO implements ICrearTorneoDTO {
       this.faseClausuraId = _data['faseClausuraId']
       this.faseClausuraNombre = _data['faseClausuraNombre']
       this.torneoAgrupadorNombre = _data['torneoAgrupadorNombre']
+      this.permiteLimpiarAmarillas = _data['permiteLimpiarAmarillas']
       this.sePuedeEditar = _data['sePuedeEditar']
       if (Array.isArray(_data['fases'])) {
         this.fases = [] as any
@@ -12654,6 +12767,7 @@ export class CrearTorneoDTO implements ICrearTorneoDTO {
     data['faseClausuraId'] = this.faseClausuraId
     data['faseClausuraNombre'] = this.faseClausuraNombre
     data['torneoAgrupadorNombre'] = this.torneoAgrupadorNombre
+    data['permiteLimpiarAmarillas'] = this.permiteLimpiarAmarillas
     data['sePuedeEditar'] = this.sePuedeEditar
     if (Array.isArray(this.fases)) {
       data['fases'] = []
@@ -12688,6 +12802,7 @@ export interface ICrearTorneoDTO {
   faseClausuraId?: number | undefined
   faseClausuraNombre?: string | undefined
   torneoAgrupadorNombre?: string | undefined
+  permiteLimpiarAmarillas?: boolean
   sePuedeEditar?: boolean
   fases?: FaseDTO[] | undefined
   gruposDeFases?: GrupoDeFasesDTO[] | undefined
@@ -15803,6 +15918,74 @@ export interface IJugadorBaseDTO {
   fechaNacimiento: Date
 }
 
+export class JugadorConAmarillasDTO implements IJugadorConAmarillasDTO {
+  jugadorEquipoId?: number
+  jugadorId?: number
+  nombreCompleto?: string | undefined
+  dni?: string | undefined
+  equipoId?: number
+  nombreEquipo?: string | undefined
+  clubId?: number
+  nombreClub?: string | undefined
+  tarjetasAmarillas?: number
+
+  constructor(data?: IJugadorConAmarillasDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.jugadorEquipoId = _data['jugadorEquipoId']
+      this.jugadorId = _data['jugadorId']
+      this.nombreCompleto = _data['nombreCompleto']
+      this.dni = _data['dni']
+      this.equipoId = _data['equipoId']
+      this.nombreEquipo = _data['nombreEquipo']
+      this.clubId = _data['clubId']
+      this.nombreClub = _data['nombreClub']
+      this.tarjetasAmarillas = _data['tarjetasAmarillas']
+    }
+  }
+
+  static fromJS(data: any): JugadorConAmarillasDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new JugadorConAmarillasDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['jugadorEquipoId'] = this.jugadorEquipoId
+    data['jugadorId'] = this.jugadorId
+    data['nombreCompleto'] = this.nombreCompleto
+    data['dni'] = this.dni
+    data['equipoId'] = this.equipoId
+    data['nombreEquipo'] = this.nombreEquipo
+    data['clubId'] = this.clubId
+    data['nombreClub'] = this.nombreClub
+    data['tarjetasAmarillas'] = this.tarjetasAmarillas
+    return data
+  }
+}
+
+export interface IJugadorConAmarillasDTO {
+  jugadorEquipoId?: number
+  jugadorId?: number
+  nombreCompleto?: string | undefined
+  dni?: string | undefined
+  equipoId?: number
+  nombreEquipo?: string | undefined
+  clubId?: number
+  nombreClub?: string | undefined
+  tarjetasAmarillas?: number
+}
+
 export class JugadorDTO implements IJugadorDTO {
   id?: number
   dni!: string
@@ -17593,6 +17776,7 @@ export class TorneoAgrupadorDTO implements ITorneoAgrupadorDTO {
   nombre!: string
   color!: string | undefined
   esVisibleEnApp!: boolean
+  permiteLimpiarAmarillas?: boolean
   cantidadDeTorneos?: number
   torneos?: TorneoDTO[] | undefined
 
@@ -17611,6 +17795,7 @@ export class TorneoAgrupadorDTO implements ITorneoAgrupadorDTO {
       this.nombre = _data['nombre']
       this.color = _data['color']
       this.esVisibleEnApp = _data['esVisibleEnApp']
+      this.permiteLimpiarAmarillas = _data['permiteLimpiarAmarillas']
       this.cantidadDeTorneos = _data['cantidadDeTorneos']
       if (Array.isArray(_data['torneos'])) {
         this.torneos = [] as any
@@ -17633,6 +17818,7 @@ export class TorneoAgrupadorDTO implements ITorneoAgrupadorDTO {
     data['nombre'] = this.nombre
     data['color'] = this.color
     data['esVisibleEnApp'] = this.esVisibleEnApp
+    data['permiteLimpiarAmarillas'] = this.permiteLimpiarAmarillas
     data['cantidadDeTorneos'] = this.cantidadDeTorneos
     if (Array.isArray(this.torneos)) {
       data['torneos'] = []
@@ -17647,6 +17833,7 @@ export interface ITorneoAgrupadorDTO {
   nombre: string
   color: string | undefined
   esVisibleEnApp: boolean
+  permiteLimpiarAmarillas?: boolean
   cantidadDeTorneos?: number
   torneos?: TorneoDTO[] | undefined
 }
@@ -17830,6 +18017,7 @@ export class TorneoDTO implements ITorneoDTO {
   faseClausuraId?: number | undefined
   faseClausuraNombre?: string | undefined
   torneoAgrupadorNombre?: string | undefined
+  permiteLimpiarAmarillas?: boolean
   sePuedeEditar?: boolean
   fases?: FaseDTO[] | undefined
   gruposDeFases?: GrupoDeFasesDTO[] | undefined
@@ -17859,6 +18047,7 @@ export class TorneoDTO implements ITorneoDTO {
       this.faseClausuraId = _data['faseClausuraId']
       this.faseClausuraNombre = _data['faseClausuraNombre']
       this.torneoAgrupadorNombre = _data['torneoAgrupadorNombre']
+      this.permiteLimpiarAmarillas = _data['permiteLimpiarAmarillas']
       this.sePuedeEditar = _data['sePuedeEditar']
       if (Array.isArray(_data['fases'])) {
         this.fases = [] as any
@@ -17899,6 +18088,7 @@ export class TorneoDTO implements ITorneoDTO {
     data['faseClausuraId'] = this.faseClausuraId
     data['faseClausuraNombre'] = this.faseClausuraNombre
     data['torneoAgrupadorNombre'] = this.torneoAgrupadorNombre
+    data['permiteLimpiarAmarillas'] = this.permiteLimpiarAmarillas
     data['sePuedeEditar'] = this.sePuedeEditar
     if (Array.isArray(this.fases)) {
       data['fases'] = []
@@ -17930,6 +18120,7 @@ export interface ITorneoDTO {
   faseClausuraId?: number | undefined
   faseClausuraNombre?: string | undefined
   torneoAgrupadorNombre?: string | undefined
+  permiteLimpiarAmarillas?: boolean
   sePuedeEditar?: boolean
   fases?: FaseDTO[] | undefined
   gruposDeFases?: GrupoDeFasesDTO[] | undefined

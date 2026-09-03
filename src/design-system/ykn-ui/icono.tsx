@@ -32,6 +32,7 @@ const MAPEO_ICONOS: Record<
   Editar: LucideIcons.Pencil,
   Eliminar: LucideIcons.Trash2,
   limpiar: LucideIcons.BrushCleaning,
+  Tarjetas: IconoTarjetaArbitro,
   Agregar: LucideIcons.Plus,
   'Agregar equipo': LucideIcons.CirclePlus,
   Subir: LucideIcons.Upload,

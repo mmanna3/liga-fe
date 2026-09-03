@@ -20,6 +20,8 @@ export default function CrearAgrupadorTorneo() {
   const navigate = useNavigate()
   const [nombre, setNombre] = useState<string>('')
   const [esVisibleEnApp, setVisibleEnApp] = useState<boolean>(true)
+  const [permiteLimpiarAmarillas, setPermiteLimpiarAmarillas] =
+    useState<boolean>(false)
 
   const mutation = useApiMutation({
     fn: async (nuevoAgrupador: TorneoAgrupadorDTO) => {
@@ -35,6 +37,7 @@ export default function CrearAgrupadorTorneo() {
       new TorneoAgrupadorDTO({
         nombre,
         esVisibleEnApp,
+        permiteLimpiarAmarillas,
         color: 'Negro'
       })
     )
@@ -84,6 +87,22 @@ export default function CrearAgrupadorTorneo() {
                 </p>
               </TooltipContent>
             </Tooltip>
+          </div>
+          <div className='flex items-center justify-between space-x-2'>
+            <div className='space-y-0.5'>
+              <Label htmlFor='permiteLimpiarAmarillas'>
+                Permite limpiar tarjetas amarillas
+              </Label>
+              <p className='text-sm text-muted-foreground'>
+                Habilita, en los torneos de este agrupador, la acción de poner
+                en cero las tarjetas amarillas de todos los jugadores (Futsal).
+              </p>
+            </div>
+            <Switch
+              id='permiteLimpiarAmarillas'
+              checked={permiteLimpiarAmarillas}
+              onCheckedChange={setPermiteLimpiarAmarillas}
+            />
           </div>
           <ContenedorBotones>
             <Boton type='submit' estaCargando={mutation.isPending}>
