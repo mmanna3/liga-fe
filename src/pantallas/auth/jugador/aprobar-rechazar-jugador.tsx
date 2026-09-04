@@ -15,10 +15,12 @@ import { rutasNavegacion } from '@/ruteo/rutas'
 import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
+import { useQueryClient } from '@tanstack/react-query'
 import AprobarRechazarHeader from './components/aprobar-rechazar-header'
 
 const AprobarRechazarJugador: React.FC = () => {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const { jugadorequipoid, jugadorid } = useParams<{
     jugadorequipoid: string
     jugadorid: string
@@ -40,6 +42,10 @@ const AprobarRechazarJugador: React.FC = () => {
       await api.aprobarJugador(dto)
     },
     antesDeMensajeExito: () => {
+      // Sin esto, la pantalla de detalle (misma key ['jugador', id]) sirve el
+      // estado "Pendiente de aprobación" desde cache en vez de refetchear.
+      void queryClient.invalidateQueries({ queryKey: ['jugador', jugadorid] })
+      void queryClient.invalidateQueries({ queryKey: ['jugadores'] })
       if (jugadorid == null) return
       navigate(`${rutasNavegacion.detalleJugador}/${jugadorid}`)
     },
@@ -50,7 +56,11 @@ const AprobarRechazarJugador: React.FC = () => {
     fn: async (dto: RechazarJugadorDTO) => {
       await api.rechazarJugador(dto)
     },
-    antesDeMensajeExito: () => navigate(-1),
+    antesDeMensajeExito: () => {
+      void queryClient.invalidateQueries({ queryKey: ['jugador', jugadorid] })
+      void queryClient.invalidateQueries({ queryKey: ['jugadores'] })
+      navigate(-1)
+    },
     mensajeDeExito: `Jugador rechazado`
   })
 
