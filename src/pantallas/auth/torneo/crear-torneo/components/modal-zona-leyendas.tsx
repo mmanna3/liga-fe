@@ -22,9 +22,15 @@ import {
   SelectValue
 } from '@/design-system/base-ui/select'
 import { Switch } from '@/design-system/base-ui/switch'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@/design-system/base-ui/tooltip'
 import { Textarea } from '@/design-system/base-ui/textarea'
 import { Boton } from '@/design-system/ykn-ui/boton'
 import { BotonEliminar } from '@/design-system/ykn-ui/boton-eliminar'
+import Icono from '@/design-system/ykn-ui/icono'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { MessageSquareMore } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
@@ -107,6 +113,8 @@ export default function ModalZonaLeyendas({
   const [quitarPuntos, setQuitarPuntos] = useState(false)
   const [equipoIdSeleccionado, setEquipoIdSeleccionado] = useState<string>('')
   const [puntosQuitadosTexto, setPuntosQuitadosTexto] = useState('')
+  /** Id de la leyenda que se está editando; null = el formulario crea una nueva. */
+  const [editandoId, setEditandoId] = useState<number | null>(null)
 
   const {
     data: leyendas = [],
@@ -143,17 +151,48 @@ export default function ModalZonaLeyendas({
     queryClient.invalidateQueries({ queryKey: ['leyendas-zona', zonaId] })
   }
 
+  const limpiarFormulario = () => {
+    setEditandoId(null)
+    setTextoNueva('')
+    setCategoriaSeleccionada(VALOR_CATEGORIA_GENERAL)
+    setQuitarPuntos(false)
+    setEquipoIdSeleccionado('')
+    setPuntosQuitadosTexto('')
+  }
+
+  const cargarParaEditar = (item: LeyendaTablaPosicionesDTO) => {
+    if (item.id == null) return
+    setEditandoId(item.id)
+    setTextoNueva(item.leyenda ?? '')
+    setCategoriaSeleccionada(
+      item.categoriaId != null
+        ? String(item.categoriaId)
+        : VALOR_CATEGORIA_GENERAL
+    )
+    const tieneQuita = item.equipoId != null
+    setQuitarPuntos(tieneQuita)
+    setEquipoIdSeleccionado(tieneQuita ? String(item.equipoId) : '')
+    setPuntosQuitadosTexto(tieneQuita ? String(item.quitaDePuntos ?? '') : '')
+  }
+
   const guardarMutation = useApiMutation({
     fn: async (body: LeyendaTablaPosicionesDTO) => {
       await api.leyendasPOST(zonaId, body)
     },
     mensajeDeExito: 'Leyenda guardada',
     antesDeMensajeExito: () => {
-      setTextoNueva('')
-      setCategoriaSeleccionada(VALOR_CATEGORIA_GENERAL)
-      setQuitarPuntos(false)
-      setEquipoIdSeleccionado('')
-      setPuntosQuitadosTexto('')
+      limpiarFormulario()
+      invalidar()
+    }
+  })
+
+  const editarMutation = useApiMutation({
+    fn: async (body: LeyendaTablaPosicionesDTO) => {
+      await api.leyendasPUT(zonaId, body.id!, body)
+    },
+    mensajeDeExito: 'Leyenda actualizada',
+    antesDeMensajeExito: () => {
+      limpiarFormulario()
       invalidar()
     }
   })
@@ -163,16 +202,17 @@ export default function ModalZonaLeyendas({
       await api.leyendasDELETE(zonaId, id)
     },
     mensajeDeExito: 'Leyenda eliminada',
-    antesDeMensajeExito: invalidar
+    antesDeMensajeExito: () => {
+      // Si se borra la leyenda que se estaba editando, salir del modo edición.
+      if (editandoId != null && eliminarMutation.variables === editandoId)
+        limpiarFormulario()
+      invalidar()
+    }
   })
 
   useEffect(() => {
     if (!open) {
-      setTextoNueva('')
-      setCategoriaSeleccionada(VALOR_CATEGORIA_GENERAL)
-      setQuitarPuntos(false)
-      setEquipoIdSeleccionado('')
-      setPuntosQuitadosTexto('')
+      limpiarFormulario()
     }
   }, [open])
 
@@ -195,6 +235,7 @@ export default function ModalZonaLeyendas({
     const leyenda = textoNueva.trim()
 
     const base = {
+      id: editandoId ?? undefined,
       leyenda,
       zonaId,
       categoriaId:
@@ -203,20 +244,23 @@ export default function ModalZonaLeyendas({
           : Number(categoriaSeleccionada)
     } as const
 
-    if (!quitarPuntos) {
-      guardarMutation.mutate(LeyendaTablaPosicionesDTO.fromJS({ ...base }))
-      return
-    }
+    const dto = !quitarPuntos
+      ? LeyendaTablaPosicionesDTO.fromJS({ ...base })
+      : LeyendaTablaPosicionesDTO.fromJS({
+          ...base,
+          equipoId: Number(equipoIdSeleccionado),
+          quitaDePuntos: puntosQuitadosNum
+        })
 
-    const equipoId = Number(equipoIdSeleccionado)
-    guardarMutation.mutate(
-      LeyendaTablaPosicionesDTO.fromJS({
-        ...base,
-        equipoId,
-        quitaDePuntos: puntosQuitadosNum
-      })
-    )
+    if (editandoId != null) {
+      editarMutation.mutate(dto)
+    } else {
+      guardarMutation.mutate(dto)
+    }
   }
+
+  const guardandoOEditando =
+    guardarMutation.isPending || editarMutation.isPending
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -291,7 +335,9 @@ export default function ModalZonaLeyendas({
             </Select>
           </div>
           <div className='space-y-2'>
-            <Label htmlFor='nueva-leyenda-zona'>Nueva Leyenda</Label>
+            <Label htmlFor='nueva-leyenda-zona'>
+              {editandoId != null ? 'Editar leyenda' : 'Nueva Leyenda'}
+            </Label>
             <div className='relative'>
               <Textarea
                 id='nueva-leyenda-zona'
@@ -366,14 +412,24 @@ export default function ModalZonaLeyendas({
                 aria-label='Cantidad de puntos quitados'
               />
             </div>
-            <div className='flex justify-end'>
+            <div className='flex justify-end gap-2'>
+              {editandoId != null && (
+                <Boton
+                  type='button'
+                  variant='outline'
+                  onClick={limpiarFormulario}
+                  disabled={guardandoOEditando}
+                >
+                  Cancelar
+                </Boton>
+              )}
               <Boton
                 type='button'
                 onClick={guardar}
-                estaCargando={guardarMutation.isPending}
-                disabled={!puedeGuardar || guardarMutation.isPending}
+                estaCargando={guardandoOEditando}
+                disabled={!puedeGuardar || guardandoOEditando}
               >
-                Guardar
+                {editandoId != null ? 'Guardar cambios' : 'Guardar'}
               </Boton>
             </div>
           </div>
@@ -401,7 +457,11 @@ export default function ModalZonaLeyendas({
                     {items.map((item, idx) => (
                       <li
                         key={item.id ?? `leyenda-${idx}`}
-                        className='flex gap-2 rounded-md border border-border bg-muted/20 px-3 py-2'
+                        className={`flex gap-2 rounded-md border px-3 py-2 ${
+                          item.id != null && item.id === editandoId
+                            ? 'border-primary bg-primary/5'
+                            : 'border-border bg-muted/20'
+                        }`}
                       >
                         <div className='min-w-0 flex-1'>
                           <p className='whitespace-pre-wrap text-sm'>
@@ -417,22 +477,41 @@ export default function ModalZonaLeyendas({
                             </p>
                           )}
                         </div>
-                        <BotonEliminar
-                          titulo='Eliminar leyenda'
-                          subtitulo='¿Confirmás que querés eliminar esta leyenda de la zona?'
-                          eliminarTexto='Eliminar'
-                          onEliminar={() => {
-                            if (item.id != null)
-                              eliminarMutation.mutate(item.id)
-                          }}
-                          estaCargando={
-                            eliminarMutation.isPending &&
-                            eliminarMutation.variables === item.id
-                          }
-                          variant='ghost'
-                          tooltip='Eliminar leyenda'
-                          className='h-8 w-8 shrink-0 text-destructive hover:bg-destructive/10 hover:text-destructive'
-                        />
+                        <div className='flex shrink-0 items-center gap-1'>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Boton
+                                type='button'
+                                variant='ghost'
+                                aria-label='Editar leyenda'
+                                onClick={() => cargarParaEditar(item)}
+                                disabled={guardandoOEditando}
+                                className='h-8 w-8 p-0'
+                              >
+                                <Icono nombre='Editar' className='h-4 w-4' />
+                              </Boton>
+                            </TooltipTrigger>
+                            <TooltipContent side='bottom'>
+                              <p>Editar leyenda</p>
+                            </TooltipContent>
+                          </Tooltip>
+                          <BotonEliminar
+                            titulo='Eliminar leyenda'
+                            subtitulo='¿Confirmás que querés eliminar esta leyenda de la zona?'
+                            eliminarTexto='Eliminar'
+                            onEliminar={() => {
+                              if (item.id != null)
+                                eliminarMutation.mutate(item.id)
+                            }}
+                            estaCargando={
+                              eliminarMutation.isPending &&
+                              eliminarMutation.variables === item.id
+                            }
+                            variant='ghost'
+                            tooltip='Eliminar leyenda'
+                            className='h-8 w-8 shrink-0 text-destructive hover:bg-destructive/10 hover:text-destructive'
+                          />
+                        </div>
                       </li>
                     ))}
                   </ul>
