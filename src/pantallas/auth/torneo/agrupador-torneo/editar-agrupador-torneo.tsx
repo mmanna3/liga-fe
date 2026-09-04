@@ -25,6 +25,7 @@ import {
   colorAgrupadorValidoODefecto
 } from './colores-agrupador-torneo'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 
 /** TorneoAgrupadorDTO con torneos (viene del GET por id) */
 type TorneoAgrupadorConTorneos = TorneoAgrupadorDTO & {
@@ -34,6 +35,7 @@ type TorneoAgrupadorConTorneos = TorneoAgrupadorDTO & {
 export default function EditarAgrupadorTorneo() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [nombre, setNombre] = useState('')
   const [color, setColor] = useState<string>(COLORES_AGRUPADOR_TORNEO[0])
   const [esVisibleEnApp, setVisibleEnApp] = useState(false)
@@ -54,6 +56,12 @@ export default function EditarAgrupadorTorneo() {
   const mutation = useApiMutation({
     fn: async (dto: TorneoAgrupadorDTO) => {
       await api.torneoAgrupadorPUT(Number(id), dto)
+    },
+    antesDeMensajeExito: () => {
+      // Sin esto, la query queda "fresca" (staleTime) y al volver a entrar
+      // se sigue mostrando el valor anterior en vez del recién guardado.
+      void queryClient.invalidateQueries({ queryKey: ['torneoAgrupador', id] })
+      void queryClient.invalidateQueries({ queryKey: ['torneoAgrupadores'] })
     },
     mensajeDeExito: 'Agrupador actualizado correctamente'
   })

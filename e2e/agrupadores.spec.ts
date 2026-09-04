@@ -169,6 +169,50 @@ test.describe('Agrupadores de torneo', () => {
     expect(body.color).toBe('Verde')
   })
 
+  test('editar agrupador: guardar invalida la cache (reingresar sin recargar vuelve a pedir los datos)', async ({
+    page
+  }) => {
+    await setScenario('torneo_con_agrupadores')
+    await login(page)
+    await page.goto('/torneos/agrupadores')
+
+    let getCount = 0
+    await page.route('**/api/TorneoAgrupador/1', async (route) => {
+      if (route.request().method() === 'GET') getCount++
+      if (route.request().method() === 'PUT') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(null)
+        })
+        return
+      }
+      await route.continue()
+    })
+
+    // Entrar a editar por primera vez (navegación SPA, no recarga de página).
+    await page.getByRole('row', { name: /Liga Infantil/ }).click()
+    await page.waitForURL('/torneos/agrupadores/editar/1')
+    await expect(page.getByLabel('Nombre')).toHaveValue('Liga Infantil')
+    const getsAlEntrar = getCount
+    expect(getsAlEntrar).toBeGreaterThan(0)
+
+    // Guardar y volver a la lista.
+    await page.getByLabel('Nombre').fill('Liga Infantil Modificada')
+    await page.getByRole('button', { name: 'Guardar' }).click()
+    await expect(
+      page.getByText('Agrupador actualizado correctamente')
+    ).toBeVisible()
+    await page.waitForURL('/torneos/agrupadores')
+
+    // Reingresar (SPA, sin recarga): sin invalidar la cache, TanStack Query serviría
+    // el valor previo (dentro del staleTime) y no dispararía un nuevo GET.
+    await page.getByRole('row', { name: /Liga Infantil/ }).click()
+    await page.waitForURL('/torneos/agrupadores/editar/1')
+    await expect(page.getByLabel('Nombre')).toBeVisible()
+    await expect.poll(() => getCount).toBeGreaterThan(getsAlEntrar)
+  })
+
   test('editar agrupador: el botón Guardar está deshabilitado sin cambios', async ({
     page
   }) => {
