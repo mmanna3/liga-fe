@@ -1122,6 +1122,12 @@ const ROUTES = [
     pattern: '/api/Jugador/rechazar-jugador',
     scenarios: { happy: 1 }
   },
+  // Jugadores — desvincular del equipo
+  {
+    method: 'POST',
+    pattern: '/api/Jugador/desvincular-jugador-del-equipo',
+    scenarios: { happy: 1 }
+  },
   // Jugadores — actualizar tarjetas (amarillas / rojas)
   {
     method: 'POST',

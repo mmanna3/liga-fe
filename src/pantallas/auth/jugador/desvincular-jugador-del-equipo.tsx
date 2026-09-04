@@ -6,6 +6,7 @@ import ContenedorBotones from '@/design-system/ykn-ui/contenedor-botones'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import { rutasNavegacion } from '@/ruteo/rutas'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 
 export default function DesvincularJugadorDelEquipo() {
   const { id, dni, equipoId, equipoNombre } = useParams<{
@@ -15,11 +16,18 @@ export default function DesvincularJugadorDelEquipo() {
     equipoNombre: string
   }>()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const mutation = useApiMutation({
     fn: async (dto: DesvincularJugadorDelEquipoDTO) => {
       await api.desvincularJugadorDelEquipo(dto)
     },
-    antesDeMensajeExito: () => navigate(rutasNavegacion.jugadores),
+    antesDeMensajeExito: () => {
+      // Sin esto, la lista de jugadores (y el detalle si se vuelve a entrar)
+      // siguen sirviendo desde cache el vínculo con el equipo ya desvinculado.
+      void queryClient.invalidateQueries({ queryKey: ['jugadores'] })
+      void queryClient.invalidateQueries({ queryKey: ['jugador', id] })
+      navigate(rutasNavegacion.jugadores)
+    },
     mensajeDeExito: `El jugador de DNI '${dni}' fue desvinculado del equipo '${equipoNombre}'.`
   })
 
