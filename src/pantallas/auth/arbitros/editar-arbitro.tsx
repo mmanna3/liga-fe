@@ -8,11 +8,19 @@ import { Boton } from '@/design-system/ykn-ui/boton'
 import { Input } from '@/design-system/ykn-ui/input'
 import LayoutSegundoNivel from '@/design-system/ykn-ui/layout-segundo-nivel'
 import { rutasNavegacion } from '@/ruteo/rutas'
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import CamposDatosAdicionalesArbitro from './components/campos-datos-adicionales-arbitro'
 import InputTelefonoCelular from './components/input-telefono-celular'
 import SelectorAgrupadoresMultiples from './components/selector-agrupadores-multiples'
 import SelectorEquiposProhibidos from './components/selector-equipos-prohibidos'
+import {
+  datosAdicionalesDesdeArbitro,
+  datosAdicionalesParaBackend,
+  mismosDatosAdicionales,
+  validarDatosAdicionales
+} from './utilidades-datos-arbitro'
 import {
   extraerDigitosTelefonoCelular,
   filtrarDigitosTelefonoCelular,
@@ -30,6 +38,7 @@ function mismosIds(a: number[], b: number[]): boolean {
 export default function EditarArbitro() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [dni, setDni] = useState<string>('')
   const [nombre, setNombre] = useState<string>('')
   const [apellido, setApellido] = useState<string>('')
@@ -37,6 +46,10 @@ export default function EditarArbitro() {
   const [errorTelefono, setErrorTelefono] = useState<string>('')
   const [torneoAgrupadorIds, setTorneoAgrupadorIds] = useState<number[]>([])
   const [equipoProhibidoIds, setEquipoProhibidoIds] = useState<number[]>([])
+  const [datosAdicionales, setDatosAdicionales] = useState(() =>
+    datosAdicionalesDesdeArbitro(undefined)
+  )
+  const [errorInstitucion, setErrorInstitucion] = useState<string>()
 
   const {
     data: arbitro,
@@ -50,6 +63,11 @@ export default function EditarArbitro() {
   const mutation = useApiMutation({
     fn: async (arbitroActualizado: ArbitroDTO) => {
       await api.arbitroPUT(Number(id), arbitroActualizado)
+    },
+    antesDeMensajeExito: () => {
+      // Con datos viejos en cache, guardar de nuevo pisaría lo recién editado.
+      void queryClient.invalidateQueries({ queryKey: ['arbitro', id] })
+      void queryClient.invalidateQueries({ queryKey: ['arbitros'] })
     },
     mensajeDeExito: 'Árbitro actualizado correctamente'
   })
@@ -70,6 +88,7 @@ export default function EditarArbitro() {
       setTelefonoCelular(extraerDigitosTelefonoCelular(arbitro.telefonoCelular))
       setTorneoAgrupadorIds(arbitro.torneoAgrupadorIds ?? [])
       setEquipoProhibidoIds(arbitro.equipoProhibidoIds ?? [])
+      setDatosAdicionales(datosAdicionalesDesdeArbitro(arbitro))
     }
   }, [arbitro])
 
@@ -86,7 +105,11 @@ export default function EditarArbitro() {
       apellido !== arbitro.apellido ||
       telefonoCelular !== telefonoInicial ||
       !mismosIds(torneoAgrupadorIds, agrupadoresIniciales) ||
-      !mismosIds(equipoProhibidoIds, equiposProhibidosIniciales))
+      !mismosIds(equipoProhibidoIds, equiposProhibidosIniciales) ||
+      !mismosDatosAdicionales(
+        datosAdicionales,
+        datosAdicionalesDesdeArbitro(arbitro)
+      ))
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -100,8 +123,12 @@ export default function EditarArbitro() {
     }
 
     if (!hayCambios) return
-
     setErrorTelefono('')
+
+    const errorDatosAdicionales = validarDatosAdicionales(datosAdicionales)
+    setErrorInstitucion(errorDatosAdicionales)
+    if (errorDatosAdicionales) return
+
     await mutation.mutateAsync(
       new ArbitroDTO({
         id: arbitro.id,
@@ -109,6 +136,7 @@ export default function EditarArbitro() {
         nombre,
         apellido,
         telefonoCelular: telefonoBackend,
+        ...datosAdicionalesParaBackend(datosAdicionales),
         torneoAgrupadorIds,
         equipoProhibidoIds
       })
@@ -173,6 +201,11 @@ export default function EditarArbitro() {
               valor={telefonoCelular}
               error={errorTelefono}
               onChange={handleTelefonoChange}
+            />
+            <CamposDatosAdicionalesArbitro
+              valor={datosAdicionales}
+              alCambiar={setDatosAdicionales}
+              errorInstitucion={errorInstitucion}
             />
             <SelectorAgrupadoresMultiples
               valor={torneoAgrupadorIds}

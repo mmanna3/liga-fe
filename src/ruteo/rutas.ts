@@ -34,6 +34,8 @@ export const rutas = {
   historicoArbitros: 'arbitros/historico',
   crearArbitro: 'arbitros/crear',
   editarArbitro: 'arbitros/editar',
+  arbitrosPendientes: 'arbitros/pendientes',
+  aprobarRechazarArbitro: 'arbitros/aprobar-rechazar',
   configuracion: 'configuracion',
   generacionDeFixtures: 'configuracion/generacion-de-fixtures',
   fechasGeneracionFixture: 'configuracion/generacion-de-fixtures/fechas',

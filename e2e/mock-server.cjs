@@ -24,6 +24,7 @@
  *   arbitros_historico       Asignaciones históricas de árbitros con datos
  *   arbitros_historico_vacio Asignaciones históricas sin resultados
  *   arbitros_prohibidos      Equipos prohibidos + advertencia en Próxima fecha
+ *   arbitros_pendientes      Árbitros registrados desde la app para aprobar o rechazar
  */
 const http = require('http')
 const { URL } = require('url')
@@ -447,6 +448,90 @@ function reiniciarEscenarioArbitrosProhibidos() {
   asignacionProximaProhibidosEstado = crearAsignacionProximaProhibidos(
     arbitroProhibidosEstado
   )
+}
+
+const AGRUPADOR_2 = {
+  id: 2,
+  nombre: 'Futsal Mayores',
+  color: 'Azul',
+  esVisibleEnApp: true,
+  cantidadDeTorneos: 1
+}
+const AGRUPADORES_PENDIENTES = [AGRUPADOR_1, AGRUPADOR_2]
+const EQUIPOS_PENDIENTES = [
+  EQUIPO_PARA_ZONA_1_CON_TORNEO,
+  EQUIPO_PARA_ZONA_2_CON_TORNEO
+]
+
+function agrupadoresDeArbitro(ids) {
+  return ids.map((torneoAgrupadorId) => ({
+    torneoAgrupadorId,
+    torneoAgrupadorNombre: AGRUPADORES_PENDIENTES.find(
+      (a) => a.id === torneoAgrupadorId
+    )?.nombre
+  }))
+}
+
+function equiposProhibidosDeArbitro(ids) {
+  return ids.map((equipoId) => {
+    const equipo = EQUIPOS_PENDIENTES.find((e) => e.id === equipoId)
+    return {
+      equipoId,
+      nombre: equipo?.nombre,
+      clubNombre: equipo?.club,
+      codigoAlfanumerico: equipo?.codigoAlfanumerico,
+      torneosActuales: [`Torneo Apertura 2026 ${ANIO_ACTUAL}`]
+    }
+  })
+}
+
+function crearArbitroPendiente(datos) {
+  return {
+    telefonoCelular: '+5491155556666',
+    direccion: 'San Martín 1234',
+    localidad: 'Rosario',
+    fechaNacimiento: '1995-03-20T00:00:00',
+    tipoMovilidad: 1,
+    franjasHorarias: [1, 5],
+    tieneRelacionInstitucional: true,
+    institucion: 'Club Defensores del Norte',
+    torneoAgrupadorIds: [1],
+    torneoAgrupadores: agrupadoresDeArbitro([1]),
+    equipoProhibidoIds: [],
+    equiposProhibidos: [],
+    ...datos
+  }
+}
+
+function crearArbitrosPendientesEstado() {
+  return {
+    activos: [crearArbitroProhibidosEstado()],
+    pendientes: [
+      crearArbitroPendiente({
+        id: 10,
+        dni: '40111222',
+        nombre: 'Ana',
+        apellido: 'Pendiente'
+      }),
+      crearArbitroPendiente({
+        id: 11,
+        dni: '40333444',
+        nombre: 'Beto',
+        apellido: 'Rechazable',
+        tieneRelacionInstitucional: false,
+        institucion: null
+      })
+    ]
+  }
+}
+
+let arbitrosPendientesEstado = crearArbitrosPendientesEstado()
+
+function buscarArbitroEscenarioPendientes(id) {
+  return [
+    ...arbitrosPendientesEstado.activos,
+    ...arbitrosPendientesEstado.pendientes
+  ].find((a) => a.id === id)
 }
 
 const ZONA_1 = {
@@ -1076,7 +1161,8 @@ const ROUTES = [
       arbitros_prohibidos: [
         EQUIPO_PARA_ZONA_1_CON_TORNEO,
         EQUIPO_PARA_ZONA_2_CON_TORNEO
-      ]
+      ],
+      arbitros_pendientes: EQUIPOS_PENDIENTES
     }
   },
 
@@ -1341,7 +1427,8 @@ const ROUTES = [
       torneo_editable: [AGRUPADOR_1],
       torneo_zonas_vacio: [AGRUPADOR_1],
       torneo_zonas_con_datos: [AGRUPADOR_1],
-      arbitros_prohibidos: [AGRUPADOR_1]
+      arbitros_prohibidos: [AGRUPADOR_1],
+      arbitros_pendientes: AGRUPADORES_PENDIENTES
     }
   },
   // Agrupadores de torneo — detalle
@@ -1529,7 +1616,17 @@ const ROUTES = [
     method: 'GET',
     pattern: '/api/Arbitro',
     scenarios: {
-      arbitros_prohibidos: () => [arbitroProhibidosEstado]
+      arbitros_prohibidos: () => [arbitroProhibidosEstado],
+      arbitros_pendientes: () => arbitrosPendientesEstado.activos
+    }
+  },
+
+  {
+    method: 'GET',
+    pattern: '/api/Arbitro/pendientes',
+    scenarios: {
+      happy: [],
+      arbitros_pendientes: () => arbitrosPendientesEstado.pendientes
     }
   },
 
@@ -1664,6 +1761,9 @@ const server = http.createServer((req, res) => {
         if (scenario === 'arbitros_prohibidos') {
           reiniciarEscenarioArbitrosProhibidos()
         }
+        if (scenario === 'arbitros_pendientes') {
+          arbitrosPendientesEstado = crearArbitrosPendientesEstado()
+        }
         console.log(`[mock] Escenario cambiado a: ${scenario}`)
         res.writeHead(200, { 'Content-Type': 'application/json' })
         res.end(JSON.stringify({ ok: true }))
@@ -1737,12 +1837,109 @@ const server = http.createServer((req, res) => {
     return
   }
 
+  if (SCENARIO === 'arbitros_pendientes') {
+    const matchId = pathname.match(/^\/api\/Arbitro\/(\d+)$/)
+    const matchAprobar = pathname.match(/^\/api\/Arbitro\/(\d+)\/aprobar$/)
+
+    if (req.method === 'GET' && matchId) {
+      const arbitro = buscarArbitroEscenarioPendientes(Number(matchId[1]))
+      res.writeHead(arbitro ? 200 : 404, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify(arbitro ?? null))
+      return
+    }
+
+    if (req.method === 'DELETE' && matchId) {
+      const id = Number(matchId[1])
+      arbitrosPendientesEstado.pendientes =
+        arbitrosPendientesEstado.pendientes.filter((a) => a.id !== id)
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify(id))
+      return
+    }
+
+    if (req.method === 'POST' && matchAprobar) {
+      let body = ''
+      req.on('data', (chunk) => {
+        body += chunk
+      })
+      req.on('end', () => {
+        const id = Number(matchAprobar[1])
+        const pendiente = arbitrosPendientesEstado.pendientes.find(
+          (a) => a.id === id
+        )
+        if (!pendiente) {
+          res.writeHead(404)
+          res.end()
+          return
+        }
+        let dto = {}
+        try {
+          dto = JSON.parse(body)
+        } catch {
+          // body vacío: sin agrupadores ni equipos
+        }
+        const agrupadorIds = dto.torneoAgrupadorIds ?? []
+        const equipoIds = dto.equipoProhibidoIds ?? []
+        arbitrosPendientesEstado.pendientes =
+          arbitrosPendientesEstado.pendientes.filter((a) => a.id !== id)
+        arbitrosPendientesEstado.activos.push({
+          ...pendiente,
+          torneoAgrupadorIds: agrupadorIds,
+          torneoAgrupadores: agrupadoresDeArbitro(agrupadorIds),
+          equipoProhibidoIds: equipoIds,
+          equiposProhibidos: equiposProhibidosDeArbitro(equipoIds)
+        })
+        res.writeHead(200, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify(id))
+      })
+      return
+    }
+  }
+
   if (req.method === 'PUT' && /^\/api\/Arbitro\/\d+$/.test(pathname)) {
     let body = ''
     req.on('data', (chunk) => {
       body += chunk
     })
     req.on('end', () => {
+      if (SCENARIO === 'arbitros_pendientes') {
+        try {
+          const dto = JSON.parse(body)
+          const id = Number(pathname.match(/^\/api\/Arbitro\/(\d+)$/)[1])
+          const agrupadorIds = dto.torneoAgrupadorIds ?? []
+          const equipoIds = dto.equipoProhibidoIds ?? []
+          // Igual que el back: lo que no llega en el PUT queda vacío.
+          arbitrosPendientesEstado.activos = arbitrosPendientesEstado.activos.map(
+            (a) =>
+              a.id !== id
+                ? a
+                : {
+                    id,
+                    dni: dto.dni,
+                    nombre: dto.nombre,
+                    apellido: dto.apellido,
+                    telefonoCelular: dto.telefonoCelular ?? null,
+                    direccion: dto.direccion ?? null,
+                    localidad: dto.localidad ?? null,
+                    // La base no guarda zona horaria: el back la devuelve sin la Z.
+                    fechaNacimiento: dto.fechaNacimiento
+                      ? dto.fechaNacimiento.replace(/(\.\d+)?Z$/, '')
+                      : null,
+                    tipoMovilidad: dto.tipoMovilidad ?? null,
+                    franjasHorarias: dto.franjasHorarias ?? [],
+                    tieneRelacionInstitucional:
+                      dto.tieneRelacionInstitucional ?? null,
+                    institucion: dto.institucion ?? null,
+                    torneoAgrupadorIds: agrupadorIds,
+                    torneoAgrupadores: agrupadoresDeArbitro(agrupadorIds),
+                    equipoProhibidoIds: equipoIds,
+                    equiposProhibidos: equiposProhibidosDeArbitro(equipoIds)
+                  }
+          )
+        } catch {
+          // ignorar body inválido
+        }
+      }
       if (SCENARIO === 'arbitros_prohibidos') {
         try {
           const dto = JSON.parse(body)

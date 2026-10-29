@@ -15,6 +15,8 @@ import AsignacionPorJornada from '@/pantallas/auth/arbitros/asignacion-por-jorna
 import AsignacionHistorica from '@/pantallas/auth/arbitros/asignacion-historica'
 import CrearArbitro from '@/pantallas/auth/arbitros/crear-arbitro'
 import EditarArbitro from '@/pantallas/auth/arbitros/editar-arbitro'
+import ArbitrosPendientes from '@/pantallas/auth/arbitros/arbitros-pendientes'
+import AprobarRechazarArbitro from '@/pantallas/auth/arbitros/aprobar-rechazar-arbitro'
 import Delegados from '@/pantallas/auth/delegados/delegados'
 import DetalleDelegado from '@/pantallas/auth/delegados/detalle-delegado'
 import EliminarDelegado from '@/pantallas/auth/delegados/eliminar-delegado'
@@ -233,6 +235,11 @@ export const mapaRutasComponentes = [
       { path: rutas.historicoArbitros, element: <AsignacionHistorica /> },
       { path: rutas.crearArbitro, element: <CrearArbitro /> },
       { path: `${rutas.editarArbitro}/:id`, element: <EditarArbitro /> },
+      { path: rutas.arbitrosPendientes, element: <ArbitrosPendientes /> },
+      {
+        path: `${rutas.aprobarRechazarArbitro}/:id`,
+        element: <AprobarRechazarArbitro />
+      },
       { path: `${rutas.detalleDelegado}/:id`, element: <DetalleDelegado /> },
       {
         path: `${rutas.aprobarRechazarDelegado}/:id/:delegadoClubId`,
