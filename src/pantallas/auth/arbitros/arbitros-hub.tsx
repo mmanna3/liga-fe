@@ -45,6 +45,28 @@ export default function ArbitrosHub() {
             className='cursor-pointer transition-colors hover:bg-muted/50'
             role='button'
             tabIndex={0}
+            data-testid='hub-arbitros-pendientes'
+            onClick={() => navigate(rutasNavegacion.arbitrosPendientes)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') e.currentTarget.click()
+            }}
+          >
+            <CardHeader>
+              <CardTitle className='flex items-center gap-2'>
+                <Icono nombre='Arbitros' className='h-8 w-8' />
+                Pendientes de aprobación
+              </CardTitle>
+              <CardDescription>
+                Árbitros que se registraron desde la app. Revisá sus datos y
+                aprobalos o rechazalos.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card
+            className='cursor-pointer transition-colors hover:bg-muted/50'
+            role='button'
+            tabIndex={0}
             onClick={() => navigate(rutasNavegacion.asignacionArbitros)}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') e.currentTarget.click()
