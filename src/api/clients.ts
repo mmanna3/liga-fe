@@ -778,6 +778,122 @@ export class Client {
   }
 
   /**
+   * @return OK
+   */
+  arbitrosPendientes(): Promise<ArbitroDTO[]> {
+    let url_ = this.baseUrl + '/api/Arbitro/pendientes'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processArbitrosPendientes(_response)
+    })
+  }
+
+  protected processArbitrosPendientes(
+    response: Response
+  ): Promise<ArbitroDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(ArbitroDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<ArbitroDTO[]>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  aprobarArbitro(
+    id: number,
+    body: AprobarArbitroDTO | undefined
+  ): Promise<number> {
+    let url_ = this.baseUrl + '/api/Arbitro/{id}/aprobar'
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.")
+    url_ = url_.replace('{id}', encodeURIComponent('' + id))
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processAprobarArbitro(_response)
+    })
+  }
+
+  protected processAprobarArbitro(response: Response): Promise<number> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = resultData200 !== undefined ? resultData200 : <any>null
+
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<number>(null as any)
+  }
+
+  /**
    * @param agrupadorId (optional)
    * @param anio (optional)
    * @return OK
@@ -8060,6 +8176,116 @@ export class Client {
   /**
    * @return OK
    */
+  torneoAgrupadoresParaArbitros(): Promise<TorneoAgrupadorParaArbitroDTO[]> {
+    let url_ = this.baseUrl + '/api/publico/torneo-agrupadores-para-arbitros'
+    url_ = url_.replace(/[?&]$/, '')
+
+    let options_: RequestInit = {
+      method: 'GET',
+      headers: {
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processTorneoAgrupadoresParaArbitros(_response)
+    })
+  }
+
+  protected processTorneoAgrupadoresParaArbitros(
+    response: Response
+  ): Promise<TorneoAgrupadorParaArbitroDTO[]> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        if (Array.isArray(resultData200)) {
+          result200 = [] as any
+          for (let item of resultData200)
+            result200!.push(TorneoAgrupadorParaArbitroDTO.fromJS(item))
+        } else {
+          result200 = <any>null
+        }
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<TorneoAgrupadorParaArbitroDTO[]>(null as any)
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  registroArbitro(body: RegistroArbitroDTO | undefined): Promise<number> {
+    let url_ = this.baseUrl + '/api/publico/registro-arbitro'
+    url_ = url_.replace(/[?&]$/, '')
+
+    const content_ = JSON.stringify(body)
+
+    let options_: RequestInit = {
+      body: content_,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/plain'
+      }
+    }
+
+    return this.http.fetch(url_, options_).then((_response: Response) => {
+      return this.processRegistroArbitro(_response)
+    })
+  }
+
+  protected processRegistroArbitro(response: Response): Promise<number> {
+    const status = response.status
+    let _headers: any = {}
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v))
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null
+        let resultData200 =
+          _responseText === ''
+            ? null
+            : JSON.parse(_responseText, this.jsonParseReviver)
+        result200 = resultData200 !== undefined ? resultData200 : <any>null
+
+        return result200
+      })
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          'An unexpected server error occurred.',
+          status,
+          _responseText,
+          _headers
+        )
+      })
+    }
+    return Promise.resolve<number>(null as any)
+  }
+
+  /**
+   * @return OK
+   */
   sponsorLogo(id: number): Promise<void> {
     let url_ = this.baseUrl + '/api/publico/sponsor-logo/{id}'
     if (id === undefined || id === null)
@@ -11024,6 +11250,62 @@ export interface IActualizarTarjetasJugadorDTO {
   tarjetasRojas?: number
 }
 
+export class AprobarArbitroDTO implements IAprobarArbitroDTO {
+  torneoAgrupadorIds?: number[] | undefined
+  equipoProhibidoIds?: number[] | undefined
+
+  constructor(data?: IAprobarArbitroDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      if (Array.isArray(_data['torneoAgrupadorIds'])) {
+        this.torneoAgrupadorIds = [] as any
+        for (let item of _data['torneoAgrupadorIds'])
+          this.torneoAgrupadorIds!.push(item)
+      }
+      if (Array.isArray(_data['equipoProhibidoIds'])) {
+        this.equipoProhibidoIds = [] as any
+        for (let item of _data['equipoProhibidoIds'])
+          this.equipoProhibidoIds!.push(item)
+      }
+    }
+  }
+
+  static fromJS(data: any): AprobarArbitroDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new AprobarArbitroDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    if (Array.isArray(this.torneoAgrupadorIds)) {
+      data['torneoAgrupadorIds'] = []
+      for (let item of this.torneoAgrupadorIds)
+        data['torneoAgrupadorIds'].push(item)
+    }
+    if (Array.isArray(this.equipoProhibidoIds)) {
+      data['equipoProhibidoIds'] = []
+      for (let item of this.equipoProhibidoIds)
+        data['equipoProhibidoIds'].push(item)
+    }
+    return data
+  }
+}
+
+export interface IAprobarArbitroDTO {
+  torneoAgrupadorIds?: number[] | undefined
+  equipoProhibidoIds?: number[] | undefined
+}
+
 export class AprobarDelegadoEnElClubDTO implements IAprobarDelegadoEnElClubDTO {
   id?: number
   dni!: string
@@ -11334,6 +11616,13 @@ export class ArbitroDTO implements IArbitroDTO {
   nombre!: string
   apellido!: string
   telefonoCelular?: string | undefined
+  direccion?: string | undefined
+  localidad?: string | undefined
+  fechaNacimiento?: Date | undefined
+  tipoMovilidad?: TipoMovilidadArbitroEnum
+  franjasHorarias?: FranjaHorariaArbitroEnum[] | undefined
+  tieneRelacionInstitucional?: boolean | undefined
+  institucion?: string | undefined
   torneoAgrupadorIds?: number[] | undefined
   torneoAgrupadores?: ArbitroTorneoAgrupadorDTO[] | undefined
   equipoProhibidoIds?: number[] | undefined
@@ -11355,6 +11644,19 @@ export class ArbitroDTO implements IArbitroDTO {
       this.nombre = _data['nombre']
       this.apellido = _data['apellido']
       this.telefonoCelular = _data['telefonoCelular']
+      this.direccion = _data['direccion']
+      this.localidad = _data['localidad']
+      this.fechaNacimiento = _data['fechaNacimiento']
+        ? new Date(_data['fechaNacimiento'].toString())
+        : <any>undefined
+      this.tipoMovilidad = _data['tipoMovilidad']
+      if (Array.isArray(_data['franjasHorarias'])) {
+        this.franjasHorarias = [] as any
+        for (let item of _data['franjasHorarias'])
+          this.franjasHorarias!.push(item)
+      }
+      this.tieneRelacionInstitucional = _data['tieneRelacionInstitucional']
+      this.institucion = _data['institucion']
       if (Array.isArray(_data['torneoAgrupadorIds'])) {
         this.torneoAgrupadorIds = [] as any
         for (let item of _data['torneoAgrupadorIds'])
@@ -11392,6 +11694,18 @@ export class ArbitroDTO implements IArbitroDTO {
     data['nombre'] = this.nombre
     data['apellido'] = this.apellido
     data['telefonoCelular'] = this.telefonoCelular
+    data['direccion'] = this.direccion
+    data['localidad'] = this.localidad
+    data['fechaNacimiento'] = this.fechaNacimiento
+      ? this.fechaNacimiento.toISOString()
+      : <any>undefined
+    data['tipoMovilidad'] = this.tipoMovilidad
+    if (Array.isArray(this.franjasHorarias)) {
+      data['franjasHorarias'] = []
+      for (let item of this.franjasHorarias) data['franjasHorarias'].push(item)
+    }
+    data['tieneRelacionInstitucional'] = this.tieneRelacionInstitucional
+    data['institucion'] = this.institucion
     if (Array.isArray(this.torneoAgrupadorIds)) {
       data['torneoAgrupadorIds'] = []
       for (let item of this.torneoAgrupadorIds)
@@ -11422,6 +11736,13 @@ export interface IArbitroDTO {
   nombre: string
   apellido: string
   telefonoCelular?: string | undefined
+  direccion?: string | undefined
+  localidad?: string | undefined
+  fechaNacimiento?: Date | undefined
+  tipoMovilidad?: TipoMovilidadArbitroEnum
+  franjasHorarias?: FranjaHorariaArbitroEnum[] | undefined
+  tieneRelacionInstitucional?: boolean | undefined
+  institucion?: string | undefined
   torneoAgrupadorIds?: number[] | undefined
   torneoAgrupadores?: ArbitroTorneoAgrupadorDTO[] | undefined
   equipoProhibidoIds?: number[] | undefined
@@ -14920,6 +15241,14 @@ export interface IFixturePartidoDTO {
   visitante?: string | undefined
 }
 
+export enum FranjaHorariaArbitroEnum {
+  _1 = 1,
+  _2 = 2,
+  _3 = 3,
+  _4 = 4,
+  _5 = 5
+}
+
 export class GrupoDeFasesDTO implements IGrupoDeFasesDTO {
   id?: number
   nombre!: string
@@ -17216,6 +17545,109 @@ export interface IRechazarJugadorDTO {
   motivo?: string | undefined
 }
 
+export class RegistroArbitroDTO implements IRegistroArbitroDTO {
+  dni!: string
+  nombre!: string
+  apellido!: string
+  telefonoCelular!: string
+  direccion!: string
+  localidad!: string
+  fechaNacimiento!: Date
+  tipoMovilidad!: TipoMovilidadArbitroEnum
+  torneoAgrupadorIds!: number[]
+  franjasHorarias!: FranjaHorariaArbitroEnum[]
+  tieneRelacionInstitucional!: boolean
+  institucion?: string | undefined
+
+  constructor(data?: IRegistroArbitroDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+    if (!data) {
+      this.torneoAgrupadorIds = []
+      this.franjasHorarias = []
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.dni = _data['dni']
+      this.nombre = _data['nombre']
+      this.apellido = _data['apellido']
+      this.telefonoCelular = _data['telefonoCelular']
+      this.direccion = _data['direccion']
+      this.localidad = _data['localidad']
+      this.fechaNacimiento = _data['fechaNacimiento']
+        ? new Date(_data['fechaNacimiento'].toString())
+        : <any>undefined
+      this.tipoMovilidad = _data['tipoMovilidad']
+      if (Array.isArray(_data['torneoAgrupadorIds'])) {
+        this.torneoAgrupadorIds = [] as any
+        for (let item of _data['torneoAgrupadorIds'])
+          this.torneoAgrupadorIds!.push(item)
+      }
+      if (Array.isArray(_data['franjasHorarias'])) {
+        this.franjasHorarias = [] as any
+        for (let item of _data['franjasHorarias'])
+          this.franjasHorarias!.push(item)
+      }
+      this.tieneRelacionInstitucional = _data['tieneRelacionInstitucional']
+      this.institucion = _data['institucion']
+    }
+  }
+
+  static fromJS(data: any): RegistroArbitroDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new RegistroArbitroDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['dni'] = this.dni
+    data['nombre'] = this.nombre
+    data['apellido'] = this.apellido
+    data['telefonoCelular'] = this.telefonoCelular
+    data['direccion'] = this.direccion
+    data['localidad'] = this.localidad
+    data['fechaNacimiento'] = this.fechaNacimiento
+      ? this.fechaNacimiento.toISOString()
+      : <any>undefined
+    data['tipoMovilidad'] = this.tipoMovilidad
+    if (Array.isArray(this.torneoAgrupadorIds)) {
+      data['torneoAgrupadorIds'] = []
+      for (let item of this.torneoAgrupadorIds)
+        data['torneoAgrupadorIds'].push(item)
+    }
+    if (Array.isArray(this.franjasHorarias)) {
+      data['franjasHorarias'] = []
+      for (let item of this.franjasHorarias) data['franjasHorarias'].push(item)
+    }
+    data['tieneRelacionInstitucional'] = this.tieneRelacionInstitucional
+    data['institucion'] = this.institucion
+    return data
+  }
+}
+
+export interface IRegistroArbitroDTO {
+  dni: string
+  nombre: string
+  apellido: string
+  telefonoCelular: string
+  direccion: string
+  localidad: string
+  fechaNacimiento: Date
+  tipoMovilidad: TipoMovilidadArbitroEnum
+  torneoAgrupadorIds: number[]
+  franjasHorarias: FranjaHorariaArbitroEnum[]
+  tieneRelacionInstitucional: boolean
+  institucion?: string | undefined
+}
+
 export class ReordenarFasesDTO implements IReordenarFasesDTO {
   faseIds!: number[]
 
@@ -17771,6 +18203,13 @@ export enum TipoDeFaseEnum {
   _2 = 2
 }
 
+export enum TipoMovilidadArbitroEnum {
+  _1 = 1,
+  _2 = 2,
+  _3 = 3,
+  _4 = 4
+}
+
 export class TorneoAgrupadorDTO implements ITorneoAgrupadorDTO {
   id?: number
   nombre!: string
@@ -17836,6 +18275,46 @@ export interface ITorneoAgrupadorDTO {
   permiteLimpiarAmarillas?: boolean
   cantidadDeTorneos?: number
   torneos?: TorneoDTO[] | undefined
+}
+
+export class TorneoAgrupadorParaArbitroDTO implements ITorneoAgrupadorParaArbitroDTO {
+  id?: number
+  nombre?: string | undefined
+
+  constructor(data?: ITorneoAgrupadorParaArbitroDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.id = _data['id']
+      this.nombre = _data['nombre']
+    }
+  }
+
+  static fromJS(data: any): TorneoAgrupadorParaArbitroDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new TorneoAgrupadorParaArbitroDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['id'] = this.id
+    data['nombre'] = this.nombre
+    return data
+  }
+}
+
+export interface ITorneoAgrupadorParaArbitroDTO {
+  id?: number
+  nombre?: string | undefined
 }
 
 export class TorneoAsignacionDTO implements ITorneoAsignacionDTO {

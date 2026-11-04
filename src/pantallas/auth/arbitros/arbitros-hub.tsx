@@ -1,3 +1,5 @@
+import { api } from '@/api/api'
+import { Badge } from '@/design-system/base-ui/badge'
 import {
   Card,
   CardDescription,
@@ -7,10 +9,16 @@ import {
 import FlujoHomeLayout from '@/design-system/ykn-ui/flujo-home-layout'
 import Icono from '@/design-system/ykn-ui/icono'
 import { rutasNavegacion } from '@/ruteo/rutas'
+import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 
 export default function ArbitrosHub() {
   const navigate = useNavigate()
+  const { data: pendientes } = useQuery({
+    queryKey: ['arbitrosPendientes'],
+    queryFn: () => api.arbitrosPendientes(),
+    throwOnError: false
+  })
 
   return (
     <FlujoHomeLayout
@@ -37,6 +45,36 @@ export default function ArbitrosHub() {
               <CardDescription>
                 Alta, baja y modificación de árbitros y sus agrupadores de
                 torneo.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card
+            className='cursor-pointer transition-colors hover:bg-muted/50'
+            role='button'
+            tabIndex={0}
+            data-testid='hub-arbitros-pendientes'
+            onClick={() => navigate(rutasNavegacion.arbitrosPendientes)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') e.currentTarget.click()
+            }}
+          >
+            <CardHeader>
+              <CardTitle className='flex items-center gap-2'>
+                <Icono nombre='Arbitros' className='h-8 w-8' />
+                Pendientes de aprobación
+                {pendientes !== undefined && (
+                  <Badge
+                    variant={pendientes.length > 0 ? 'default' : 'secondary'}
+                    data-testid='hub-arbitros-pendientes-cantidad'
+                  >
+                    {pendientes.length}
+                  </Badge>
+                )}
+              </CardTitle>
+              <CardDescription>
+                Árbitros que se registraron desde la app. Revisá sus datos y
+                aprobalos o rechazalos.
               </CardDescription>
             </CardHeader>
           </Card>
