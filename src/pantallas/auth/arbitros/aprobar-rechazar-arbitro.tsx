@@ -27,6 +27,7 @@ export default function AprobarRechazarArbitro() {
   const { id } = useParams<{ id: string }>()
   const [torneoAgrupadorIds, setTorneoAgrupadorIds] = useState<number[]>([])
   const [equipoProhibidoIds, setEquipoProhibidoIds] = useState<number[]>([])
+  const [sincronizadoPara, setSincronizadoPara] = useState<string | undefined>()
 
   const {
     data: arbitro,
@@ -38,8 +39,10 @@ export default function AprobarRechazarArbitro() {
   })
 
   useEffect(() => {
-    if (arbitro) setTorneoAgrupadorIds(arbitro.torneoAgrupadorIds ?? [])
-  }, [arbitro])
+    if (!arbitro || String(arbitro.id) !== id) return
+    setTorneoAgrupadorIds(arbitro.torneoAgrupadorIds ?? [])
+    setSincronizadoPara(id)
+  }, [arbitro, id])
 
   const volverALaLista = () => {
     void queryClient.invalidateQueries({ queryKey: ['arbitrosPendientes'] })
@@ -65,6 +68,9 @@ export default function AprobarRechazarArbitro() {
   })
 
   const estaProcesando = aprobarMutation.isPending || rechazarMutation.isPending
+  const agrupadoresSincronizados = sincronizadoPara === id
+  const faltaAgrupador =
+    agrupadoresSincronizados && torneoAgrupadorIds.length === 0
   const franjas = textosFranjasHorarias(arbitro?.franjasHorarias)
 
   return (
@@ -143,19 +149,34 @@ export default function AprobarRechazarArbitro() {
               deshabilitado={estaProcesando}
             />
 
+            {faltaAgrupador && (
+              <p
+                id='motivo-falta-agrupador'
+                className='text-sm text-muted-foreground'
+              >
+                Elegí al menos un agrupador para poder aprobarlo. Sin agrupador
+                no aparece para asignar.
+              </p>
+            )}
+
             <div className='flex gap-6'>
               <Boton
                 variant='default'
                 className='w-full'
                 estaCargando={estaProcesando}
-                onClick={() =>
+                disabled={!agrupadoresSincronizados || faltaAgrupador}
+                aria-describedby={
+                  faltaAgrupador ? 'motivo-falta-agrupador' : undefined
+                }
+                onClick={() => {
+                  if (torneoAgrupadorIds.length === 0) return
                   aprobarMutation.mutate(
                     new AprobarArbitroDTO({
                       torneoAgrupadorIds,
                       equipoProhibidoIds
                     })
                   )
-                }
+                }}
               >
                 Aprobar
               </Boton>

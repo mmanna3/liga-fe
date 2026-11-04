@@ -17,6 +17,9 @@ test.describe('Aprobación y rechazo de árbitros', () => {
   }) => {
     await login(page)
     await page.goto('/arbitros')
+    await expect(
+      page.getByTestId('hub-arbitros-pendientes-cantidad')
+    ).toHaveText('2')
     await page.getByTestId('hub-arbitros-pendientes').click()
     await page.waitForURL('/arbitros/pendientes')
 
@@ -35,6 +38,27 @@ test.describe('Aprobación y rechazo de árbitros', () => {
     await expect(
       page.getByRole('checkbox', { name: 'Futsal Mayores' })
     ).not.toBeChecked()
+  })
+
+  test('no deja aprobar sin al menos un agrupador', async ({ page }) => {
+    await login(page)
+    await page.goto('/arbitros/aprobar-rechazar/10')
+    await expect(page.getByText('Ana Pendiente')).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Aprobar' })).toBeEnabled()
+
+    await page.getByRole('checkbox', { name: 'Liga Infantil' }).click()
+    await expect(page.getByRole('button', { name: 'Aprobar' })).toBeDisabled()
+    await expect(
+      page.getByText(
+        'Elegí al menos un agrupador para poder aprobarlo. Sin agrupador no aparece para asignar.'
+      )
+    ).toBeVisible()
+
+    await page.getByRole('checkbox', { name: 'Futsal Mayores' }).click()
+    await expect(page.getByRole('button', { name: 'Aprobar' })).toBeEnabled()
+    await expect(
+      page.getByText('Elegí al menos un agrupador para poder aprobarlo')
+    ).not.toBeVisible()
   })
 
   test('aprueba con agrupador y equipo prohibido, y aparece en Datos de los árbitros', async ({
