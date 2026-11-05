@@ -11,7 +11,8 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # Fijo en 24.04: Playwright 1.58.2 no soporta Ubuntu 26.04 (el actual ubuntu-latest).
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkoutear repo
         uses: actions/checkout@v5
