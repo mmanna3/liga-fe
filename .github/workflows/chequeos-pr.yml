@@ -1,0 +1,57 @@
+name: Chequeos en PR
+
+# Chequeos estáticos y tests en cada pull request, sin secrets ni deploy.
+# El deploy lo hace gh-pages.yml al pushear a main.
+on:
+  pull_request:
+
+concurrency:
+  group: chequeos-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  chequeos-y-tests:
+    name: Chequeos estáticos y tests
+    # Fijo en 24.04: Playwright 1.58.2 no soporta Ubuntu 26.04 (el actual ubuntu-latest).
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup de Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Instalar dependencias
+        run: npm ci --legacy-peer-deps
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Formato
+        run: npx prettier --check --log-level warn --ignore-unknown ./src
+
+      - name: Type check y build
+        run: npm run build-con-ts
+
+      - name: Tests unitarios
+        run: npm test
+
+      - name: Instalar Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Tests E2E
+        run: npm run e2e
+
+      - uses: actions/upload-artifact@v5
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
