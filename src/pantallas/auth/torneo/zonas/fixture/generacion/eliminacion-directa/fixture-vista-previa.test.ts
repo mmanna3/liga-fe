@@ -1,7 +1,10 @@
 import { EquipoDeLaZonaDTO, LocalVisitanteEnum } from '@/api/clients'
 import type { ItemFixture } from '../../tipos'
 import { describe, expect, it } from 'vitest'
-import { buildPayloadEliminacionDirecta } from './fixture-vista-previa'
+import {
+  buildPayloadEliminacionDirecta,
+  equipoCampeonSinJugar
+} from './fixture-vista-previa'
 
 function itemEquipo(id: string, nombre: string): ItemFixture {
   return {
@@ -109,5 +112,39 @@ describe('buildPayloadEliminacionDirecta', () => {
     expect(j.tipo).toBe('Libre')
     expect(j.equipoId).toBe('20')
     expect(j.localOVisitante).toBe(LocalVisitanteEnum._2)
+  })
+
+  it('un único equipo: solo la Final con una jornada Libre (campeón sin jugar)', () => {
+    const lista: ItemFixture[] = [itemEquipo('10', 'Alpha')]
+    const payload = buildPayloadEliminacionDirecta(lista, fecha)
+    expect(payload).not.toBeNull()
+    expect(payload!.instanciaId).toBe(2)
+    expect(payload!.jornadas).toHaveLength(1)
+    const j = payload!.jornadas![0] as {
+      tipo?: string
+      equipoId?: unknown
+      localOVisitante?: unknown
+    }
+    expect(j.tipo).toBe('Libre')
+    expect(j.equipoId).toBe('10')
+    expect(j.localOVisitante).toBe(LocalVisitanteEnum._1)
+  })
+})
+
+describe('equipoCampeonSinJugar', () => {
+  it('devuelve el equipo cuando la lista tiene un único equipo', () => {
+    expect(equipoCampeonSinJugar([itemEquipo('10', 'Alpha')])?.nombre).toBe(
+      'Alpha'
+    )
+  })
+
+  it('devuelve null con un único elemento especial', () => {
+    expect(equipoCampeonSinJugar([libre()])).toBeNull()
+  })
+
+  it('devuelve null con más de un elemento', () => {
+    expect(
+      equipoCampeonSinJugar([itemEquipo('10', 'Alpha'), libre()])
+    ).toBeNull()
   })
 })

@@ -12,7 +12,10 @@ import type { SensorDescriptor } from '@dnd-kit/core'
 import { useEffect, useState } from 'react'
 import type { ItemFixture } from '../../tipos'
 import { FixtureGeneracionListaEquipos } from '../lista-equipos'
-import { FixtureVistaPrevia } from './fixture-vista-previa'
+import {
+  equipoCampeonSinJugar,
+  FixtureVistaPrevia
+} from './fixture-vista-previa'
 import { FixtureSelectorFecha } from '../selector-fecha'
 
 const CONTEOS_VALIDOS_ELIMINACION_DIRECTA = [2, 4, 8, 16]
@@ -41,7 +44,9 @@ export function PanelEliminacionDirecta({
   hashEquipos
 }: PanelEliminacionDirectaProps) {
   const cantidadEquipos = listaOrdenada.length
-  const esValido = esConteoValidoEliminacionDirecta(cantidadEquipos)
+  const esValido =
+    esConteoValidoEliminacionDirecta(cantidadEquipos) ||
+    equipoCampeonSinJugar(listaOrdenada) != null
 
   const [listaFijada, setListaFijada] = useState<ItemFixture[] | null>(() => {
     const b = useFixtureBorradorStore.getState().porZona[zonaId]
@@ -87,7 +92,8 @@ export function PanelEliminacionDirecta({
             </Button>
             {!esValido && (
               <p className='text-sm text-muted-foreground mt-3'>
-                La cantidad de equipos tiene que ser 2, 4, 8 o 16
+                La cantidad de equipos tiene que ser 1 (campeón directo), 2, 4,
+                8 o 16
               </p>
             )}
           </CardContent>

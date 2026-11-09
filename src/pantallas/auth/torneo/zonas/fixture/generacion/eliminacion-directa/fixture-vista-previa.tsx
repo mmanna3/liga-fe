@@ -1,6 +1,7 @@
 import { api } from '@/api/api'
 import {
   LocalVisitanteEnum,
+  type EquipoDeLaZonaDTO,
   type FechaEliminacionDirectaDTO,
   type JornadaDTO
 } from '@/api/clients'
@@ -11,6 +12,7 @@ import { useFixtureBorradorStore } from '@/pantallas/auth/torneo/zonas/fixture/b
 import { useQueryClient } from '@tanstack/react-query'
 import { addWeeks, format } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { TarjetaCampeonSinJugar } from '../../components/tarjeta-campeon-sin-jugar'
 import {
   claseVistaPreviaEspecial,
   labelItem,
@@ -150,10 +152,40 @@ function buildJornada(j: JornadaItem, lista: ItemFixture[]): JornadaDTO {
   } as unknown as JornadaDTO
 }
 
+/**
+ * Zona de un único equipo: el fixture no tiene partidos y ese equipo es campeón directo.
+ * Devuelve el equipo, o null si la lista no es de un solo equipo.
+ */
+export function equipoCampeonSinJugar(
+  lista: ItemFixture[]
+): EquipoDeLaZonaDTO | null {
+  if (lista.length !== 1) return null
+  const unico = lista[0]
+  return unico?.type === 'equipo' ? unico.equipo : null
+}
+
 export function buildPayloadEliminacionDirecta(
   lista: ItemFixture[],
   primeraFecha: Date
 ): FechaEliminacionDirectaDTO | null {
+  const campeon = equipoCampeonSinJugar(lista)
+  if (campeon != null) {
+    // Se guarda como una Final con una jornada libre: el back la muestra como campeón, sin partido.
+    return {
+      dia: primeraFecha,
+      esVisibleEnApp: false,
+      instanciaId: 2,
+      jornadas: [
+        {
+          tipo: 'Libre',
+          resultadosVerificados: false,
+          equipoId: campeon.id!,
+          localOVisitante: LocalVisitanteEnum._1
+        } as unknown as JornadaDTO
+      ]
+    } as FechaEliminacionDirectaDTO
+  }
+
   const nombres = lista.map(nombreParaBracket)
   const instanciasCompletas = buildBracket(nombres)
   const primeraInstancia = instanciasCompletas[0]
@@ -277,6 +309,7 @@ export function FixtureVistaPrevia({
   const queryClient = useQueryClient()
   const nombres = lista.map(nombreParaBracket)
   const instancias = buildBracket(nombres)
+  const campeon = equipoCampeonSinJugar(lista)
 
   const crearMutation = useApiMutation<FechaEliminacionDirectaDTO>({
     fn: (body) => api.crearFechasEliminaciondirectaMasivamente(zonaId, body),
@@ -307,7 +340,9 @@ export function FixtureVistaPrevia({
             }}
             estaCargando={crearMutation.isPending}
           >
-            Crear el fixture con las fechas que aparecen a continuación
+            {campeon != null
+              ? 'Crear el fixture con el campeón'
+              : 'Crear el fixture con las fechas que aparecen a continuación'}
           </Boton>
           <span className='text-sm text-muted-foreground font-light mt-2 ml-3'>
             El fixture generado, de ser necesario, podrá modificarse luego.
@@ -315,6 +350,27 @@ export function FixtureVistaPrevia({
         </CardContent>
       </Card>
 
+      {campeon != null ? (
+        <TarjetaCampeonSinJugar equipo={campeon.nombre ?? '—'} />
+      ) : (
+        <BracketVistaPrevia
+          instancias={instancias}
+          primeraFecha={primeraFecha}
+        />
+      )}
+    </div>
+  )
+}
+
+function BracketVistaPrevia({
+  instancias,
+  primeraFecha
+}: {
+  instancias: InstanciaBracket[]
+  primeraFecha: Date
+}) {
+  return (
+    <>
       {/* Títulos de instancias — fuera de la card */}
       <div className='flex gap-6 mb-2'>
         {instancias.map((instancia, rIdx) => {
@@ -356,6 +412,6 @@ export function FixtureVistaPrevia({
           </div>
         </CardContent>
       </Card>
-    </div>
+    </>
   )
 }

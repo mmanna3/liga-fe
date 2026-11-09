@@ -24,6 +24,8 @@ import {
   jornadaTieneResultadosCargados,
   type EstadoBotonCargarResultados
 } from '../components/boton-cargar-resultados'
+import { TarjetaCampeonSinJugar } from '../components/tarjeta-campeon-sin-jugar'
+import { campeonSinJugarDeFechas } from './lib'
 import { NOMBRES_INSTANCIA_BRACKET } from '../generacion/eliminacion-directa/fixture-vista-previa'
 import { EncabezadoFechaColumna } from './encabezado-fecha-columna'
 import { ModalCargarResultados } from './modal-cargar-resultados'
@@ -225,6 +227,25 @@ export function FechasEliminacionDirecta({ zonaId }: { zonaId: number }) {
       <p className='text-muted-foreground py-4'>
         No hay fechas cargadas para esta zona.
       </p>
+    )
+  }
+
+  const campeonSinJugar = campeonSinJugarDeFechas(fechas)
+  if (campeonSinJugar != null) {
+    return (
+      <TarjetaCampeonSinJugar
+        equipo={campeonSinJugar.equipo}
+        acciones={
+          <EncabezadoTituloYAccionesEliminacion
+            titulo='Visible en la app'
+            hayJornadaCargable={false}
+            estadoBotonCargar={ESTADO_BOTON_CARGAR_RESULTADOS[0]}
+            onCargarResultados={() => {}}
+            zonaId={zonaId}
+            fecha={campeonSinJugar.fecha}
+          />
+        }
+      />
     )
   }
 
