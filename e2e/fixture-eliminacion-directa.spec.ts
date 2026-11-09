@@ -29,7 +29,9 @@ test.describe('Fixture — Eliminación Directa', () => {
       page.getByRole('button', { name: 'Generar vista previa' })
     ).toBeDisabled()
     await expect(
-      page.getByText('La cantidad de equipos tiene que ser 2, 4, 8 o 16')
+      page.getByText(
+        'La cantidad de equipos tiene que ser 1 (campeón directo), 2, 4, 8 o 16'
+      )
     ).toBeVisible()
   })
 
@@ -130,15 +132,22 @@ test.describe('Fixture — Eliminación Directa', () => {
 
     await page.mouse.move(boxB.x + boxB.width / 2, boxB.y + boxB.height / 2)
     await page.mouse.down()
-    await page.mouse.move(boxB.x + boxB.width / 2 + 10, boxB.y + boxB.height / 2)
-    await page.mouse.move(boxA.x + boxA.width / 2, boxA.y + boxA.height / 2, { steps: 20 })
+    await page.mouse.move(
+      boxB.x + boxB.width / 2 + 10,
+      boxB.y + boxB.height / 2
+    )
+    await page.mouse.move(boxA.x + boxA.width / 2, boxA.y + boxA.height / 2, {
+      steps: 20
+    })
     await page.mouse.up()
 
     // Verificar nuevo orden en la lista
     await expect(liItems.nth(0)).toContainText('Infantil B')
     await expect(liItems.nth(1)).toContainText('Infantil A')
 
-    const btnGenerar = page.getByRole('button', { name: 'Generar vista previa' })
+    const btnGenerar = page.getByRole('button', {
+      name: 'Generar vista previa'
+    })
     await btnGenerar.scrollIntoViewIfNeeded()
     await btnGenerar.click()
 
@@ -148,9 +157,9 @@ test.describe('Fixture — Eliminación Directa', () => {
     ).toBeVisible()
 
     // En el bracket, Infantil B debe aparecer en el primer partido (fue arrastrado al lugar 1)
-    await expect(
-      page.locator('.rounded.border.bg-card').first()
-    ).toContainText('Infantil B')
+    await expect(page.locator('.rounded.border.bg-card').first()).toContainText(
+      'Infantil B'
+    )
   })
 
   // -------------------------------------------------------------------------
@@ -180,7 +189,9 @@ test.describe('Fixture — Eliminación Directa', () => {
     await page.getByRole('button', { name: 'Generar vista previa' }).click()
     await page.getByRole('button', { name: /Crear el fixture/ }).click()
 
-    await expect(page.getByText('Fechas y jornadas creadas correctamente')).toBeVisible()
+    await expect(
+      page.getByText('Fechas y jornadas creadas correctamente')
+    ).toBeVisible()
     expect(urlLlamada).toContain('crear-fechas-eliminaciondirecta-masivamente')
   })
 
@@ -209,7 +220,9 @@ test.describe('Fixture — Eliminación Directa', () => {
     await page.getByRole('button', { name: 'Generar vista previa' }).click()
     await page.getByRole('button', { name: /Crear el fixture/ }).click()
 
-    await expect(page.getByText('Fechas y jornadas creadas correctamente')).toBeVisible()
+    await expect(
+      page.getByText('Fechas y jornadas creadas correctamente')
+    ).toBeVisible()
 
     expect(bodyEnviado).toBeTruthy()
     const body = bodyEnviado as {
@@ -291,10 +304,7 @@ test.describe('Fixture — Eliminación Directa', () => {
     await page.goto(FIXTURE_URL_ED)
 
     // El botón de la Semifinal (primera columna con jornadas cargables)
-    await page
-      .getByTestId('btn-carga-resultados-jornada')
-      .first()
-      .click()
+    await page.getByTestId('btn-carga-resultados-jornada').first().click()
 
     const dialog = page.getByRole('dialog')
     await expect(
@@ -302,8 +312,12 @@ test.describe('Fixture — Eliminación Directa', () => {
     ).toBeVisible()
     await expect(dialog.getByText('Semifinal')).toBeVisible()
     // Dos partidos: A vs B y C vs D
-    await expect(dialog.getByRole('textbox', { name: /Resultado local, Infantil A/ })).toBeVisible()
-    await expect(dialog.getByRole('textbox', { name: /Resultado local, Infantil C/ })).toBeVisible()
+    await expect(
+      dialog.getByRole('textbox', { name: /Resultado local, Infantil A/ })
+    ).toBeVisible()
+    await expect(
+      dialog.getByRole('textbox', { name: /Resultado local, Infantil C/ })
+    ).toBeVisible()
   })
 
   test('guardar resultados de la Semifinal envía un POST por jornada con el body correcto', async ({
@@ -365,7 +379,9 @@ test.describe('Fixture — Eliminación Directa', () => {
     await login(page)
     await page.goto(FIXTURE_URL_ED)
 
-    await page.getByRole('button', { name: 'Borrar llave de eliminación' }).click()
+    await page
+      .getByRole('button', { name: 'Borrar llave de eliminación' })
+      .click()
 
     await expect(
       page.getByText(
@@ -398,7 +414,9 @@ test.describe('Fixture — Eliminación Directa', () => {
       }
     )
 
-    await page.getByRole('button', { name: 'Borrar llave de eliminación' }).click()
+    await page
+      .getByRole('button', { name: 'Borrar llave de eliminación' })
+      .click()
     await page.getByRole('button', { name: 'Borrar llave' }).click()
 
     await expect(page.getByText('Llave de eliminación borrada')).toBeVisible()
@@ -423,7 +441,9 @@ test.describe('Fixture — Eliminación Directa', () => {
       }
     )
 
-    await page.getByRole('button', { name: 'Borrar llave de eliminación' }).click()
+    await page
+      .getByRole('button', { name: 'Borrar llave de eliminación' })
+      .click()
 
     // Cambiar el escenario antes del refetch para simular que ya no hay fechas
     await setScenario('fixture_eliminacion_directa_sin_fechas')

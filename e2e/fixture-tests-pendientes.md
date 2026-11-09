@@ -59,7 +59,7 @@ Escenarios necesarios:
 
 **Test 5 — Cantidad inválida de equipos**
 Con 3 equipos en la zona, el botón "Generar vista previa" está deshabilitado y aparece
-el mensaje "La cantidad de equipos tiene que ser 2, 4, 8 o 16".
+el mensaje "La cantidad de equipos tiene que ser 1 (campeón directo), 2, 4, 8 o 16".
 
 **Test 6 — Cantidad válida habilita el botón**
 Con 4 equipos (2^2), el botón "Generar vista previa" está habilitado.
