@@ -16,10 +16,13 @@ import {
 import { useDetalleTorneo } from './detalle-torneo/hooks/use-detalle-torneo'
 import { formatearHorarioDeJuego } from './detalle-torneo/lib'
 import ModalActualizarFasesTablaAnual from './detalle-torneo/modal-actualizar-fases-tabla-anual'
+import ModalLeyendasTablaAnual from './detalle-torneo/modal-leyendas-tabla-anual'
 
 export default function DetalleTorneo() {
   const navigate = useNavigate()
   const [modalTablaAnualAbierto, setModalTablaAnualAbierto] = useState(false)
+  const [modalLeyendasAnualAbierto, setModalLeyendasAnualAbierto] =
+    useState(false)
   const detalle = useDetalleTorneo()
   const {
     torneo,
@@ -76,6 +79,25 @@ export default function DetalleTorneo() {
   if (!torneo) return <div>No se encontró el torneo</div>
 
   const puedeEliminar = contarFases() === 0
+  const tieneTablaAnual =
+    torneo.faseAperturaId != null && torneo.faseClausuraId != null
+
+  const linkLeyendasTablaAnual = tieneTablaAnual ? (
+    <p
+      className='mt-1 font-medium underline text-green-700 hover:text-green-600 cursor-pointer'
+      role='button'
+      tabIndex={0}
+      onClick={() => setModalLeyendasAnualAbierto(true)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          setModalLeyendasAnualAbierto(true)
+        }
+      }}
+    >
+      Leyendas de la tabla Anual
+    </p>
+  ) : null
 
   return (
     <Fragment>
@@ -186,6 +208,7 @@ export default function DetalleTorneo() {
                             'No hay tabla de posiciones Anual'
                           )}
                         </p>
+                        {linkLeyendasTablaAnual}
                       </div>
                     </div>
                   </>
@@ -234,6 +257,7 @@ export default function DetalleTorneo() {
                           'No hay tabla de posiciones Anual'
                         )}
                       </p>
+                      {linkLeyendasTablaAnual}
                     </div>
                     <div>
                       <label className='text-sm font-semibold text-muted-foreground block mb-2'>
@@ -297,6 +321,14 @@ export default function DetalleTorneo() {
         alGuardarExito={() => {
           void refetch()
         }}
+      />
+      <ModalLeyendasTablaAnual
+        open={modalLeyendasAnualAbierto}
+        onOpenChange={setModalLeyendasAnualAbierto}
+        nombreTorneo={torneo.nombre}
+        fases={torneo.fases ?? []}
+        faseAperturaId={torneo.faseAperturaId}
+        faseClausuraId={torneo.faseClausuraId}
       />
     </Fragment>
   )

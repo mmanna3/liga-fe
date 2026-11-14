@@ -92,6 +92,11 @@ interface ModalZonaLeyendasProps {
   tipoDeFase: string
   nombreZona: string
   categorias: FaseCategoriaDTO[]
+  /**
+   * true = leyendas de la tabla Anual. Se guardan en la zona de Apertura (`zonaId`), no muestran las leyendas de la
+   * fase y no permiten quitar puntos (la tabla Anual ya hereda las quitas de Apertura y Clausura).
+   */
+  esDeTablaAnual?: boolean
 }
 
 export default function ModalZonaLeyendas({
@@ -103,7 +108,8 @@ export default function ModalZonaLeyendas({
   nombreFase,
   tipoDeFase,
   nombreZona,
-  categorias
+  categorias,
+  esDeTablaAnual = false
 }: ModalZonaLeyendasProps) {
   const queryClient = useQueryClient()
   const [textoNueva, setTextoNueva] = useState('')
@@ -117,7 +123,7 @@ export default function ModalZonaLeyendas({
   const [editandoId, setEditandoId] = useState<number | null>(null)
 
   const {
-    data: leyendas = [],
+    data: todasLasLeyendas = [],
     isLoading,
     isError
   } = useQuery({
@@ -126,10 +132,19 @@ export default function ModalZonaLeyendas({
     enabled: open && zonaId > 0
   })
 
+  /** La zona de Apertura guarda también las leyendas de la tabla Anual: cada modal muestra solo las suyas. */
+  const leyendas = useMemo(
+    () =>
+      todasLasLeyendas.filter(
+        (l) => (l.esDeTablaAnual ?? false) === esDeTablaAnual
+      ),
+    [todasLasLeyendas, esDeTablaAnual]
+  )
+
   const { data: zonaDetalle } = useQuery({
     queryKey: ['zona-equipos-leyendas', faseId, zonaId],
     queryFn: (): Promise<ZonaDTO> => api.zonasGET(faseId, zonaId),
-    enabled: open && faseId > 0 && zonaId > 0
+    enabled: open && !esDeTablaAnual && faseId > 0 && zonaId > 0
   })
 
   const equiposZona = useMemo(() => {
@@ -238,6 +253,7 @@ export default function ModalZonaLeyendas({
       id: editandoId ?? undefined,
       leyenda,
       zonaId,
+      esDeTablaAnual,
       categoriaId:
         categoriaSeleccionada === VALOR_CATEGORIA_GENERAL
           ? null
@@ -287,7 +303,9 @@ export default function ModalZonaLeyendas({
               className='h-5 w-5 shrink-0 text-foreground'
               aria-hidden
             />
-            Leyendas de la zona
+            {esDeTablaAnual
+              ? 'Leyendas de la tabla Anual'
+              : 'Leyendas de la zona'}
           </DialogTitle>
           <DialogDescription asChild>
             <div className='space-y-1 text-sm text-muted-foreground'>
@@ -354,64 +372,66 @@ export default function ModalZonaLeyendas({
                 {textoNueva.length}/{MAX_LEYENDA}
               </span>
             </div>
-            <div
-              className='flex flex-wrap items-center gap-3 justify-between'
-              aria-label='Opciones de quita de puntos'
-            >
-              <div className='flex shrink-0 items-center gap-2'>
-                <Switch
-                  id='quitar-puntos-leyenda'
-                  checked={quitarPuntos}
-                  onCheckedChange={(v) => {
-                    setQuitarPuntos(v)
-                    if (!v) {
-                      setEquipoIdSeleccionado('')
-                      setPuntosQuitadosTexto('')
-                    }
-                  }}
-                />
-                <Label
-                  htmlFor='quitar-puntos-leyenda'
-                  className='cursor-pointer text-sm font-normal'
-                >
-                  Quitar puntos
-                </Label>
-              </div>
-              <Select
-                value={equipoIdSeleccionado || undefined}
-                onValueChange={setEquipoIdSeleccionado}
-                disabled={!quitarPuntos}
+            {!esDeTablaAnual && (
+              <div
+                className='flex flex-wrap items-center gap-3 justify-between'
+                aria-label='Opciones de quita de puntos'
               >
-                <SelectTrigger
-                  className='min-w-40 flex-1 sm:max-w-56'
-                  aria-label='Equipo al que se quitan puntos'
+                <div className='flex shrink-0 items-center gap-2'>
+                  <Switch
+                    id='quitar-puntos-leyenda'
+                    checked={quitarPuntos}
+                    onCheckedChange={(v) => {
+                      setQuitarPuntos(v)
+                      if (!v) {
+                        setEquipoIdSeleccionado('')
+                        setPuntosQuitadosTexto('')
+                      }
+                    }}
+                  />
+                  <Label
+                    htmlFor='quitar-puntos-leyenda'
+                    className='cursor-pointer text-sm font-normal'
+                  >
+                    Quitar puntos
+                  </Label>
+                </div>
+                <Select
+                  value={equipoIdSeleccionado || undefined}
+                  onValueChange={setEquipoIdSeleccionado}
+                  disabled={!quitarPuntos}
                 >
-                  <SelectValue placeholder='Equipo' />
-                </SelectTrigger>
-                <SelectContent>
-                  {equiposZona.map((eq) =>
-                    eq.id != null && eq.id !== '' ? (
-                      <SelectItem key={eq.id} value={String(eq.id)}>
-                        {eq.nombre}
-                        {eq.club ? ` (${eq.club})` : ''}
-                      </SelectItem>
-                    ) : null
-                  )}
-                </SelectContent>
-              </Select>
-              <Input
-                type='number'
-                min={1}
-                step={1}
-                inputMode='numeric'
-                placeholder='Puntos quitados'
-                disabled={!quitarPuntos}
-                value={puntosQuitadosTexto}
-                onChange={(e) => setPuntosQuitadosTexto(e.target.value)}
-                className='w-40 shrink-0'
-                aria-label='Cantidad de puntos quitados'
-              />
-            </div>
+                  <SelectTrigger
+                    className='min-w-40 flex-1 sm:max-w-56'
+                    aria-label='Equipo al que se quitan puntos'
+                  >
+                    <SelectValue placeholder='Equipo' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {equiposZona.map((eq) =>
+                      eq.id != null && eq.id !== '' ? (
+                        <SelectItem key={eq.id} value={String(eq.id)}>
+                          {eq.nombre}
+                          {eq.club ? ` (${eq.club})` : ''}
+                        </SelectItem>
+                      ) : null
+                    )}
+                  </SelectContent>
+                </Select>
+                <Input
+                  type='number'
+                  min={1}
+                  step={1}
+                  inputMode='numeric'
+                  placeholder='Puntos quitados'
+                  disabled={!quitarPuntos}
+                  value={puntosQuitadosTexto}
+                  onChange={(e) => setPuntosQuitadosTexto(e.target.value)}
+                  className='w-40 shrink-0'
+                  aria-label='Cantidad de puntos quitados'
+                />
+              </div>
+            )}
             <div className='flex justify-end gap-2'>
               {editandoId != null && (
                 <Boton
@@ -444,7 +464,9 @@ export default function ModalZonaLeyendas({
             <p className='text-muted-foreground text-sm'>Cargando…</p>
           ) : grupos.length === 0 ? (
             <p className='text-muted-foreground text-sm'>
-              No hay leyendas en esta zona.
+              {esDeTablaAnual
+                ? 'No hay leyendas de la tabla Anual en esta zona.'
+                : 'No hay leyendas en esta zona.'}
             </p>
           ) : (
             <ul className='space-y-6'>
@@ -497,7 +519,11 @@ export default function ModalZonaLeyendas({
                           </Tooltip>
                           <BotonEliminar
                             titulo='Eliminar leyenda'
-                            subtitulo='¿Confirmás que querés eliminar esta leyenda de la zona?'
+                            subtitulo={
+                              esDeTablaAnual
+                                ? '¿Confirmás que querés eliminar esta leyenda de la tabla Anual?'
+                                : '¿Confirmás que querés eliminar esta leyenda de la zona?'
+                            }
                             eliminarTexto='Eliminar'
                             onEliminar={() => {
                               if (item.id != null)
