@@ -32,6 +32,17 @@ const leyendaConEquipo = {
   quitaDePuntos: 3
 }
 
+const leyendaAnual = {
+  id: 3,
+  leyenda: 'Leyenda solo de la tabla Anual.',
+  categoriaId: null,
+  zonaId: 5,
+  equipoId: null,
+  equipo: null,
+  quitaDePuntos: 0,
+  esDeTablaAnual: true
+}
+
 const leyendasApi = vi.fn()
 const zonasApi = vi.fn()
 const leyendasPOST = vi.fn()
@@ -52,7 +63,7 @@ vi.mock('@tanstack/react-query', () => ({
   useQuery: (opts: { queryKey: unknown[] }) => {
     if (opts.queryKey[0] === 'leyendas-zona') {
       return {
-        data: [leyendaGeneral, leyendaConEquipo],
+        data: [leyendaGeneral, leyendaConEquipo, leyendaAnual],
         isLoading: false,
         isError: false
       }
@@ -90,7 +101,7 @@ vi.mock('@/api/hooks/use-api-mutation', () => ({
   })
 }))
 
-function renderModal() {
+function renderModal(esDeTablaAnual = false) {
   return render(
     <TooltipProvider>
       <ModalZonaLeyendas
@@ -103,6 +114,7 @@ function renderModal() {
         tipoDeFase='Todos contra todos'
         nombreZona='Zona A'
         categorias={[]}
+        esDeTablaAnual={esDeTablaAnual}
       />
     </TooltipProvider>
   )
@@ -193,5 +205,44 @@ describe('ModalZonaLeyendas — editar leyenda', () => {
 
     expect(leyendasPOST).toHaveBeenCalledTimes(1)
     expect(leyendasPUT).not.toHaveBeenCalled()
+  })
+})
+
+describe('ModalZonaLeyendas — tabla Anual', () => {
+  afterEach(() => {
+    cleanup()
+    leyendasPOST.mockReset()
+  })
+
+  it('en modo zona no muestra las leyendas de la tabla Anual', () => {
+    renderModal()
+
+    expect(screen.getByText('Clasifican los primeros 2.')).toBeTruthy()
+    expect(screen.queryByText('Leyenda solo de la tabla Anual.')).toBeNull()
+  })
+
+  it('en modo anual muestra solo las leyendas anuales y no permite quitar puntos', () => {
+    renderModal(true)
+
+    expect(screen.getByText('Leyendas de la tabla Anual')).toBeTruthy()
+    expect(screen.getByText('Leyenda solo de la tabla Anual.')).toBeTruthy()
+    expect(screen.queryByText('Clasifican los primeros 2.')).toBeNull()
+    expect(screen.queryByText('Descuento por incomparecencia.')).toBeNull()
+    expect(screen.queryByLabelText('Opciones de quita de puntos')).toBeNull()
+  })
+
+  it('en modo anual crea la leyenda marcada como de la tabla Anual', () => {
+    renderModal(true)
+
+    fireEvent.change(screen.getByPlaceholderText('Nueva Leyenda'), {
+      target: { value: 'Nueva anual.' }
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Guardar' }))
+
+    expect(leyendasPOST).toHaveBeenCalledTimes(1)
+    const [zonaId, dto] = leyendasPOST.mock.calls[0]
+    expect(zonaId).toBe(5)
+    expect(dto.esDeTablaAnual).toBe(true)
+    expect(dto.leyenda).toBe('Nueva anual.')
   })
 })

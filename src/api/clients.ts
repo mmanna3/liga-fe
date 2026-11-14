@@ -12389,6 +12389,46 @@ export interface ICambiarVisibilidadEnAppDTO {
   esVisibleEnApp?: boolean
 }
 
+export class CampeonEliminacionDirectaDTO implements ICampeonEliminacionDirectaDTO {
+  equipo?: string | undefined
+  escudo?: string | undefined
+
+  constructor(data?: ICampeonEliminacionDirectaDTO) {
+    if (data) {
+      for (var property in data) {
+        if (data.hasOwnProperty(property))
+          (<any>this)[property] = (<any>data)[property]
+      }
+    }
+  }
+
+  init(_data?: any) {
+    if (_data) {
+      this.equipo = _data['equipo']
+      this.escudo = _data['escudo']
+    }
+  }
+
+  static fromJS(data: any): CampeonEliminacionDirectaDTO {
+    data = typeof data === 'object' ? data : {}
+    let result = new CampeonEliminacionDirectaDTO()
+    result.init(data)
+    return result
+  }
+
+  toJSON(data?: any) {
+    data = typeof data === 'object' ? data : {}
+    data['equipo'] = this.equipo
+    data['escudo'] = this.escudo
+    return data
+  }
+}
+
+export interface ICampeonEliminacionDirectaDTO {
+  equipo?: string | undefined
+  escudo?: string | undefined
+}
+
 export class CargarResultadosDTO implements ICargarResultadosDTO {
   id?: number
   jornadaId!: number
@@ -13591,6 +13631,7 @@ export interface IEfectuarPaseDTO {
 
 export class EliminacionDirectaDTO implements IEliminacionDirectaDTO {
   instancias?: InstanciasDTO[] | undefined
+  campeonSinJugar?: CampeonEliminacionDirectaDTO
 
   constructor(data?: IEliminacionDirectaDTO) {
     if (data) {
@@ -13608,6 +13649,9 @@ export class EliminacionDirectaDTO implements IEliminacionDirectaDTO {
         for (let item of _data['instancias'])
           this.instancias!.push(InstanciasDTO.fromJS(item))
       }
+      this.campeonSinJugar = _data['campeonSinJugar']
+        ? CampeonEliminacionDirectaDTO.fromJS(_data['campeonSinJugar'])
+        : <any>undefined
     }
   }
 
@@ -13624,12 +13668,16 @@ export class EliminacionDirectaDTO implements IEliminacionDirectaDTO {
       data['instancias'] = []
       for (let item of this.instancias) data['instancias'].push(item.toJSON())
     }
+    data['campeonSinJugar'] = this.campeonSinJugar
+      ? this.campeonSinJugar.toJSON()
+      : <any>undefined
     return data
   }
 }
 
 export interface IEliminacionDirectaDTO {
   instancias?: InstanciasDTO[] | undefined
+  campeonSinJugar?: CampeonEliminacionDirectaDTO
 }
 
 export class EquipoBaseDTO implements IEquipoBaseDTO {
@@ -16653,6 +16701,7 @@ export class LeyendaTablaPosicionesDTO implements ILeyendaTablaPosicionesDTO {
   equipoId?: number | undefined
   equipo?: string | undefined
   quitaDePuntos?: number
+  esDeTablaAnual?: boolean
 
   constructor(data?: ILeyendaTablaPosicionesDTO) {
     if (data) {
@@ -16672,6 +16721,7 @@ export class LeyendaTablaPosicionesDTO implements ILeyendaTablaPosicionesDTO {
       this.equipoId = _data['equipoId']
       this.equipo = _data['equipo']
       this.quitaDePuntos = _data['quitaDePuntos']
+      this.esDeTablaAnual = _data['esDeTablaAnual']
     }
   }
 
@@ -16691,6 +16741,7 @@ export class LeyendaTablaPosicionesDTO implements ILeyendaTablaPosicionesDTO {
     data['equipoId'] = this.equipoId
     data['equipo'] = this.equipo
     data['quitaDePuntos'] = this.quitaDePuntos
+    data['esDeTablaAnual'] = this.esDeTablaAnual
     return data
   }
 }
@@ -16703,6 +16754,7 @@ export interface ILeyendaTablaPosicionesDTO {
   equipoId?: number | undefined
   equipo?: string | undefined
   quitaDePuntos?: number
+  esDeTablaAnual?: boolean
 }
 
 export enum LocalVisitanteEnum {
